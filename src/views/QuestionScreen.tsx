@@ -235,8 +235,8 @@ export const QuestionScreen: React.FC<QuestionScreenProps> = ({
         </div>
       </div>
 
-      {/* BOTTOM CTA: Large Rounded Gradient Button (Continue →) */}
-      <div className="mt-6 pt-2">
+      {/* BOTTOM CTA: Large Rounded Gradient Button (Continue to Speak →) */}
+      <div className="sticky bottom-0 mt-6 pt-3 pb-2 bg-gradient-to-t from-[#FFF1F5] via-[#FFF1F5]/95 to-transparent backdrop-blur-xs z-20">
         <button
           onClick={() => {
             stopSpeaking();

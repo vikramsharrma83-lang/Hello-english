@@ -153,46 +153,36 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
       {/* Top Header */}
       <Header streakDays={streakDays} onOpenProfile={() => onNavigateTab('profile')} />
 
-      {/* Main Greeting */}
-      <div className="mt-4 mb-4">
-        <h1 className="text-2xl sm:text-[26px] font-extrabold text-slate-900 tracking-tight leading-snug">
-          Hi! Ready to practice English?
-        </h1>
-      </div>
-
       {/* MAIN HERO CARD: Coach Neha */}
       <motion.div
         whileHover={{ scale: 1.01 }}
         whileTap={{ scale: 0.99 }}
-        className="mt-2 relative rounded-3xl p-5 sm:p-6 bg-gradient-to-br from-[#FFFBEB] via-[#FFF1F2] to-[#FDF2F8] border border-[#FED7AA] pastel-card-shadow overflow-hidden"
+        className="mt-2 relative rounded-2xl p-4 bg-gradient-to-br from-[#FFFBEB] via-[#FFF1F2] to-[#FDF2F8] border border-[#FED7AA] pastel-card-shadow overflow-hidden"
       >
         <div className="absolute top-0 right-0 w-44 h-44 bg-gradient-to-bl from-[#EC4899]/20 via-[#8B5CF6]/20 to-transparent rounded-full blur-2xl pointer-events-none" />
         <div className="absolute -bottom-10 -left-10 w-36 h-36 bg-[#F59E0B]/20 rounded-full blur-xl pointer-events-none" />
 
         <div className="relative z-10 flex flex-col justify-between">
-          <div className="flex items-start justify-between gap-3">
+          <div className="flex items-center justify-between gap-3">
             <div className="flex-1">
               <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">
                 Coach Neha
               </h2>
-              <p className="text-sm font-bold text-[#9A3412] mt-0.5">
-                Let's practice together.
-              </p>
             </div>
 
             <div className="relative">
-              <CoachNehaAvatar size="lg" showBadge />
+              <CoachNehaAvatar size="md" showBadge />
             </div>
           </div>
 
-          <p className="text-xs sm:text-[13px] font-medium text-[#7C2D12] mt-3 leading-relaxed max-w-[90%]">
+          <p className="text-xs sm:text-[13px] font-medium text-[#7C2D12] mt-1.5 leading-relaxed max-w-[92%]">
             Speak without fear. Coach Neha understands your intent and helps you speak fluent workplace English.
           </p>
 
           {/* Large Rounded CTA Button (Picks a random question) */}
           <button
             onClick={handleAnyRandomPractice}
-            className="mt-5 w-full py-3.5 px-6 rounded-2xl bg-gradient-to-r from-[#F97316] via-[#EC4899] to-[#8B5CF6] text-white font-extrabold text-sm sm:text-base flex items-center justify-center gap-2 shadow-lg shadow-[#EC4899]/30 hover:opacity-95 active:scale-[0.98] transition-all cursor-pointer"
+            className="mt-3 w-full py-2.5 px-5 rounded-xl bg-gradient-to-r from-[#F97316] via-[#EC4899] to-[#8B5CF6] text-white font-extrabold text-sm sm:text-base flex items-center justify-center gap-2 shadow-md shadow-[#EC4899]/30 hover:opacity-95 active:scale-[0.98] transition-all cursor-pointer"
           >
             <Dices className="w-4 h-4 stroke-[2.5]" />
             <span>Start Practice (Random Question)</span>
@@ -469,7 +459,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                   onClick={() => handleStartCategoryLevel(selectedCategoryModal, 'Level 1')}
                   className="w-full rounded-2xl p-4 bg-gradient-to-br from-[#F0FDF4] via-[#DCFCE7] to-[#BBF7D0] border-2 border-[#86EFAC] cursor-pointer shadow-xs hover:shadow-md transition-all relative overflow-hidden"
                 >
-                  <div className="flex items-start justify-between gap-3">
+                  <div className="flex items-center justify-between gap-3">
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-1">
                         <span className="px-2 py-0.5 rounded-full bg-emerald-600 text-white text-[9px] font-black uppercase">
@@ -482,18 +472,15 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                       <h4 className="text-sm font-extrabold text-emerald-950">
                         Short Words Questions (2–4 Words)
                       </h4>
-                      <p className="text-[11px] font-medium text-emerald-900 mt-1 leading-relaxed">
-                        Examples: <span className="font-semibold">{activeCategoryMeta.level1Examples}</span>
-                      </p>
-
-                      <div className="mt-2.5 inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white text-emerald-800 text-[11px] font-bold shadow-2xs border border-emerald-300">
-                        <Play className="w-3 h-3 fill-emerald-700 text-emerald-700" />
-                        <span>Practice Random Level 1 Question</span>
-                      </div>
                     </div>
 
-                    <div className="w-8 h-8 rounded-xl bg-white/95 border border-emerald-300 flex items-center justify-center text-emerald-700 shrink-0">
-                      <Zap className="w-4 h-4 fill-emerald-600" />
+                    <div className="flex items-center gap-2 shrink-0">
+                      <div className="w-8 h-8 rounded-xl bg-white text-emerald-800 shadow-2xs border border-emerald-300 flex items-center justify-center">
+                        <Play className="w-3.5 h-3.5 fill-emerald-700 text-emerald-700" />
+                      </div>
+                      <div className="w-8 h-8 rounded-xl bg-white/95 border border-emerald-300 flex items-center justify-center text-emerald-700">
+                        <Zap className="w-4 h-4 fill-emerald-600" />
+                      </div>
                     </div>
                   </div>
                 </motion.div>
@@ -505,7 +492,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                   onClick={() => handleStartCategoryLevel(selectedCategoryModal, 'Level 2')}
                   className="w-full rounded-2xl p-4 bg-gradient-to-br from-[#EFF6FF] via-[#DBEAFE] to-[#BFDBFE] border-2 border-[#93C5FD] cursor-pointer shadow-xs hover:shadow-md transition-all relative overflow-hidden"
                 >
-                  <div className="flex items-start justify-between gap-3">
+                  <div className="flex items-center justify-between gap-3">
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-1">
                         <span className="px-2 py-0.5 rounded-full bg-blue-600 text-white text-[9px] font-black uppercase">
@@ -518,18 +505,15 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                       <h4 className="text-sm font-extrabold text-blue-950">
                         Sentence Building (More Words)
                       </h4>
-                      <p className="text-[11px] font-medium text-blue-900 mt-1 leading-relaxed">
-                        Examples: <span className="font-semibold">{activeCategoryMeta.level2Examples}</span>
-                      </p>
-
-                      <div className="mt-2.5 inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white text-blue-800 text-[11px] font-bold shadow-2xs border border-blue-300">
-                        <Play className="w-3 h-3 fill-blue-700 text-blue-700" />
-                        <span>Practice Random Level 2 Question</span>
-                      </div>
                     </div>
 
-                    <div className="w-8 h-8 rounded-xl bg-white/95 border border-blue-300 flex items-center justify-center text-blue-700 shrink-0">
-                      <HelpCircle className="w-4 h-4 text-blue-600" />
+                    <div className="flex items-center gap-2 shrink-0">
+                      <div className="w-8 h-8 rounded-xl bg-white text-blue-800 shadow-2xs border border-blue-300 flex items-center justify-center">
+                        <Play className="w-3.5 h-3.5 fill-blue-700 text-blue-700" />
+                      </div>
+                      <div className="w-8 h-8 rounded-xl bg-white/95 border border-blue-300 flex items-center justify-center text-blue-700">
+                        <HelpCircle className="w-4 h-4 text-blue-600" />
+                      </div>
                     </div>
                   </div>
                 </motion.div>
@@ -541,7 +525,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                   onClick={() => handleStartCategoryLevel(selectedCategoryModal, 'Level 3')}
                   className="w-full rounded-2xl p-4 bg-gradient-to-br from-[#FFF1F2] via-[#FFE4E6] to-[#FECDD3] border-2 border-[#FDA4AF] cursor-pointer shadow-xs hover:shadow-md transition-all relative overflow-hidden"
                 >
-                  <div className="flex items-start justify-between gap-3">
+                  <div className="flex items-center justify-between gap-3">
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-1">
                         <span className="px-2 py-0.5 rounded-full bg-rose-600 text-white text-[9px] font-black uppercase">
@@ -554,18 +538,15 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                       <h4 className="text-sm font-extrabold text-rose-950">
                         Hard • Real Scenarios & Decisions
                       </h4>
-                      <p className="text-[11px] font-medium text-rose-900 mt-1 leading-relaxed">
-                        “What will you do if this happens?”: <span className="font-semibold">{activeCategoryMeta.level3Examples}</span>
-                      </p>
-
-                      <div className="mt-2.5 inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white text-rose-800 text-[11px] font-bold shadow-2xs border border-rose-300">
-                        <Play className="w-3 h-3 fill-rose-700 text-rose-700" />
-                        <span>Practice Random Level 3 Scenario</span>
-                      </div>
                     </div>
 
-                    <div className="w-8 h-8 rounded-xl bg-white/95 border border-rose-300 flex items-center justify-center text-rose-700 shrink-0">
-                      <AlertTriangle className="w-4 h-4 text-rose-600" />
+                    <div className="flex items-center gap-2 shrink-0">
+                      <div className="w-8 h-8 rounded-xl bg-white text-rose-800 shadow-2xs border border-rose-300 flex items-center justify-center">
+                        <Play className="w-3.5 h-3.5 fill-rose-700 text-rose-700" />
+                      </div>
+                      <div className="w-8 h-8 rounded-xl bg-white/95 border border-rose-300 flex items-center justify-center text-rose-700">
+                        <AlertTriangle className="w-4 h-4 text-rose-600" />
+                      </div>
                     </div>
                   </div>
                 </motion.div>

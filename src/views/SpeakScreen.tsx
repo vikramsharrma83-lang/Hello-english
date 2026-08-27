@@ -323,7 +323,7 @@ export const SpeakScreen: React.FC<SpeakScreenProps> = ({
       </div>
 
       {/* BOTTOM ACTIONS AREA */}
-      <div className="space-y-2.5 pt-2">
+      <div className="sticky bottom-0 mt-4 pt-2 pb-2 bg-gradient-to-t from-[#FFF1F5] via-[#FFF1F5]/95 to-transparent backdrop-blur-xs z-20 space-y-2.5">
         {/* Toggle Mode: Tap to Write / Tap to Speak */}
         <div className="flex justify-center">
           <button

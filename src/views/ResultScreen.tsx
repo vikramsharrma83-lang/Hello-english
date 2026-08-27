@@ -347,7 +347,7 @@ export const ResultScreen: React.FC<ResultScreenProps> = ({
       </div>
 
       {/* BOTTOM ACTIONS: Try Again & Next Question */}
-      <div className="grid grid-cols-2 gap-3 mt-6 pt-2">
+      <div className="sticky bottom-0 mt-6 pt-3 pb-2 bg-gradient-to-t from-[#FFF1F5] via-[#FFF1F5]/95 to-transparent backdrop-blur-xs z-20 grid grid-cols-2 gap-3">
         {/* Button 1: 🎤 Try Again */}
         <button
           onClick={() => {
