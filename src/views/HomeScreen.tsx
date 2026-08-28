@@ -164,9 +164,9 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   };
 
   return (
-    <div className="w-full min-h-screen bg-black text-white pb-24 pt-6 px-4 sm:px-6 flex flex-col justify-between select-none">
-      <div>
-        {/* 1. HERO AREA: CONTINUOUS 360-DEGREE LOOP COVER-FLOW CAROUSEL (NOT STACKED) */}
+    <div className="w-full min-h-screen bg-black text-white pb-24 pt-3 px-4 sm:px-6 flex flex-col justify-between select-none">
+      {/* Top Section: 30% Enlarged Continuous 360 Loop Coverflow Banner */}
+      <div className="w-full flex-1 flex flex-col justify-center my-auto">
         <div className="coverflow-carousel-container">
           <Swiper
             modules={[EffectCoverflow, Mousewheel]}
@@ -179,8 +179,8 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
             speed={420}
             coverflowEffect={{
               rotate: 0,
-              stretch: 6,
-              depth: 70,
+              stretch: 8,
+              depth: 75,
               modifier: 1,
               slideShadows: false,
               scale: 0.88,
@@ -220,7 +220,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
 
                     {/* Subtle Overlay Hint on Active Slide */}
                     {isCenterActive && (
-                      <div className="absolute top-1.5 right-1.5 px-1.5 py-0.5 rounded-full bg-black/80 backdrop-blur-md text-white text-[8px] font-black uppercase tracking-wider flex items-center gap-0.5 shadow-sm">
+                      <div className="absolute top-2 right-2 px-1.5 py-0.5 rounded-full bg-black/80 backdrop-blur-md text-white text-[8px] font-black uppercase tracking-wider flex items-center gap-0.5 shadow-sm">
                         <Layers className="w-2.5 h-2.5" />
                         <span>3 Lvls</span>
                       </div>
@@ -250,34 +250,34 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
             })}
           </div>
         </div>
+      </div>
 
-        {/* 2. GOOD MORNING & DESCRIPTION (REDUCED BY 20%) UNDER CAROUSEL BANNER */}
-        <div className="mt-6 px-3 text-center flex flex-col items-center">
-          <h1 className="text-2xl sm:text-[26px] font-bold text-white tracking-tight leading-tight">
-            {getGreeting()}
-          </h1>
+      {/* Extreme Bottom Section: Good Morning Text + Start Tab Just Above Bottom Bar Menu */}
+      <div className="mt-auto pt-2 flex flex-col items-center text-center">
+        <h1 className="text-2xl sm:text-[26px] font-bold text-white tracking-tight leading-tight">
+          {getGreeting()}
+        </h1>
 
-          <p className="text-xs sm:text-[13px] font-normal text-zinc-400 mt-1.5 max-w-[85%] leading-relaxed">
-            If you want to speak fluent English, you can start your practice with Coach Neha here.
-          </p>
+        <p className="text-xs sm:text-[13px] font-normal text-zinc-400 mt-1 max-w-[88%] leading-relaxed">
+          If you want to speak fluent English, you can start your practice with Coach Neha here.
+        </p>
 
-          {/* Learn More / Choose Level Link (Apple Orange/Gold Style Link) */}
-          <button
-            onClick={() => setSelectedCategoryModal(currentBanner.id)}
-            className="mt-3 inline-flex items-center gap-1.5 text-xs sm:text-[13px] font-medium text-[#F59E0B] hover:text-[#FBBF24] transition-colors cursor-pointer group"
-          >
-            <div className="w-4 h-4 rounded-full bg-[#F59E0B] text-black flex items-center justify-center font-bold text-[10px] group-hover:scale-105 transition-transform">
-              <Info className="w-3 h-3 stroke-[2.5]" />
-            </div>
-            <span>Learn more about {currentBanner.title} Levels</span>
-          </button>
-        </div>
+        {/* Learn More / Choose Level Link */}
+        <button
+          onClick={() => setSelectedCategoryModal(currentBanner.id)}
+          className="mt-2.5 inline-flex items-center gap-1.5 text-xs sm:text-[13px] font-medium text-[#F59E0B] hover:text-[#FBBF24] transition-colors cursor-pointer group"
+        >
+          <div className="w-4 h-4 rounded-full bg-[#F59E0B] text-black flex items-center justify-center font-bold text-[10px] group-hover:scale-105 transition-transform">
+            <Info className="w-3 h-3 stroke-[2.5]" />
+          </div>
+          <span>Learn more about {currentBanner.title} Levels</span>
+        </button>
 
-        {/* 3. ONLY "START" TAB BUTTON (REDUCED BY 30%) */}
-        <div className="mt-7 px-4 flex justify-center">
+        {/* Start Tab Button at extreme bottom */}
+        <div className="w-full mt-3.5 flex justify-center">
           <button
             onClick={() => handleRandomInCategory(currentBanner.id)}
-            className="w-full max-w-[240px] py-2.5 px-6 rounded-full bg-[#2C2C2E] hover:bg-[#3A3A3C] active:bg-[#1C1C1E] text-white font-semibold text-sm sm:text-[15px] flex items-center justify-center gap-1.5 shadow-md shadow-black/60 active:scale-[0.98] transition-all cursor-pointer border border-zinc-700/50"
+            className="w-full max-w-[250px] py-2.5 px-6 rounded-full bg-[#2C2C2E] hover:bg-[#3A3A3C] active:bg-[#1C1C1E] text-white font-semibold text-sm sm:text-[15px] flex items-center justify-center gap-1.5 shadow-md shadow-black/60 active:scale-[0.98] transition-all cursor-pointer border border-zinc-700/50"
           >
             <Play className="w-3.5 h-3.5 fill-white stroke-none" />
             <span>Start</span>

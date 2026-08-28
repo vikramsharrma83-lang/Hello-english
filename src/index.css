@@ -112,29 +112,29 @@
 }
 
 .coverflow-carousel-container .swiper-slide {
-  width: 135px !important;
-  max-width: 44vw;
+  width: 176px !important;
+  max-width: 58vw;
   transition: all 0.45s cubic-bezier(0.25, 1, 0.5, 1);
   transform-style: preserve-3d;
   opacity: 0.45;
   filter: brightness(0.7) saturate(0.8);
-  border-radius: 20px;
+  border-radius: 22px;
   overflow: hidden;
   user-select: none;
   background: #18181B;
   border: 1.5px solid rgba(255, 255, 255, 0.12);
-  box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 10px 28px -4px rgba(0, 0, 0, 0.65);
 }
 
 @media (min-width: 390px) {
   .coverflow-carousel-container .swiper-slide {
-    width: 148px !important;
+    width: 192px !important;
   }
 }
 
 @media (min-width: 640px) {
   .coverflow-carousel-container .swiper-slide {
-    width: 160px !important;
+    width: 210px !important;
   }
 }
 
