@@ -10,6 +10,7 @@ import { ProfileView } from './views/ProfileView';
 import { BottomDockNav, NavTab } from './components/BottomDockNav';
 import { AnalysisResult, Question, SavedPhrase, UserProgress } from './types';
 import { PRACTICE_QUESTIONS } from './data/questions';
+import { generateLocalAnalysis } from './data/patternEngine';
 
 type PracticeStep = 'question' | 'speak' | 'result';
 
@@ -118,20 +119,13 @@ export default function App() {
 
       setPracticeStep('result');
     } catch (err) {
-      console.error('Error analyzing response:', err);
-      // Fallback
-      setAnalysisResult({
-        learnerTranscript: transcript,
-        intendedMeaning: 'You wanted to communicate clearly with your workplace team.',
-        naturalEnglish: 'I will call my supervisor while I am on my way to work.',
-        hindiMeaning: 'मैं काम पर जाते समय अपने सुपरवाइजर को सूचित करूंगा।',
-        encouragingNote: 'Yes, I understand what you mean! Excellent attempt.',
-        keyVocabulary: [
-          { wordOrPhrase: 'on my way', hindiMeaning: 'रास्ते में' },
-          { wordOrPhrase: 'inform my supervisor', hindiMeaning: 'सुपरवाइजर को बताना' }
-        ],
-        confidenceScore: 94,
-      });
+      console.warn('Network issue analyzing response, using dynamic pattern engine fallback:', err);
+      const fallbackResult = generateLocalAnalysis(
+        transcript,
+        currentQuestion.questionEn,
+        currentQuestion.category
+      );
+      setAnalysisResult(fallbackResult);
       setPracticeStep('result');
     } finally {
       setIsAnalyzing(false);

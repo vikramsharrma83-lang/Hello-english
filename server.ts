@@ -3,7 +3,7 @@ import path from "path";
 import { createServer as createViteServer } from "vite";
 import { GoogleGenAI, Type } from "@google/genai";
 import dotenv from "dotenv";
-import { findMatchingPatterns } from "./src/data/patternEngine";
+import { findMatchingPatterns, generateLocalAnalysis } from "./src/data/patternEngine.ts";
 
 dotenv.config();
 
@@ -16,7 +16,7 @@ app.use(express.json());
 function getGeminiClient(): GoogleGenAI | null {
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
-    console.warn("GEMINI_API_KEY is not set in environment. Fallback heuristic engine will be used.");
+    console.warn("GEMINI_API_KEY is not set in environment. Dynamic Pattern Engine will be used.");
     return null;
   }
   return new GoogleGenAI({
@@ -27,78 +27,6 @@ function getGeminiClient(): GoogleGenAI | null {
       },
     },
   });
-}
-
-// Fallback heuristic generator when API key is not yet configured or for instant offline response
-function getFallbackAnalysis(transcript: string, question: string) {
-  const lower = transcript.toLowerCase();
-  let natural = transcript;
-  let hindi = "मैं इसे अच्छे तरीके से समझाऊंगा।";
-  let vocab = [{ wordOrPhrase: "on my way", hindiMeaning: "रास्ते में" }];
-
-  // Reference the English patterns library for matching broken English patterns
-  const matchingPatterns = findMatchingPatterns(transcript, 3);
-  const topPattern = matchingPatterns.length > 0 ? matchingPatterns[0] : null;
-
-  if (topPattern && topPattern.score >= 3.0) {
-    natural = topPattern.pattern.natural_english;
-    hindi = "मैं इसे स्पष्ट और स्वाभाविक अंग्रेजी में कह रहा हूँ।";
-    vocab = [
-      { wordOrPhrase: topPattern.pattern.pattern, hindiMeaning: topPattern.pattern.category }
-    ];
-  } else if (lower.includes("bike") || lower.includes("road") || lower.includes("traffic") || lower.includes("late")) {
-    natural = "I will call my supervisor while I am on my way to work.";
-    hindi = "मैं काम पर जाते समय अपने सुपरवाइजर को सूचित कर दूंगा।";
-    vocab = [
-      { wordOrPhrase: "on my way to work", hindiMeaning: "काम पर जाते समय / रास्ते में" },
-      { wordOrPhrase: "inform my supervisor", hindiMeaning: "अपने सुपरवाइजर को सूचित करना" }
-    ];
-  } else if (lower.includes("sir") && (lower.includes("explain") || lower.includes("help") || lower.includes("not understand"))) {
-    natural = "Excuse me sir, could you please explain this task once again?";
-    hindi = "माफ़ कीजिये सर, क्या आप कृपया यह काम एक बार फिर समझा सकते हैं?";
-    vocab = [
-      { wordOrPhrase: "once again", hindiMeaning: "एक बार फिर" },
-      { wordOrPhrase: "explain this task", hindiMeaning: "इस काम को समझाना" }
-    ];
-  } else if (lower.includes("mistake") || lower.includes("sorry") || lower.includes("wrong")) {
-    natural = "I made a mistake in the order scanning, and I will fix it right away.";
-    hindi = "मुझसे ऑर्डर स्कैनिंग में गलती हो गई, और मैं इसे तुरंत ठीक कर दूंगा।";
-    vocab = [
-      { wordOrPhrase: "right away", hindiMeaning: "तुरंत / अभी" },
-      { wordOrPhrase: "fix it", hindiMeaning: "इसे ठीक करना" }
-    ];
-  } else if (lower.includes("box") || lower.includes("parcel") || lower.includes("damage") || lower.includes("broken")) {
-    natural = "Sir, this parcel arrived in damaged condition and is leaking.";
-    hindi = "सर, यह पार्सल डैमेज स्थिति में मिला है और इसमें से सामान लीक हो रहा है।";
-    vocab = [
-      { wordOrPhrase: "arrived in damaged condition", hindiMeaning: "खराब स्थिति में आया" },
-      { wordOrPhrase: "leaking", hindiMeaning: "रिसाव होना / रिसना" }
-    ];
-  } else if (lower.includes("leave") || lower.includes("doctor") || lower.includes("tomorrow") || lower.includes("urgent")) {
-    natural = "I need one day of leave tomorrow due to an urgent family doctor visit.";
-    hindi = "मुझे परिवार में डॉक्टर के पास जाने के कारण कल एक दिन की छुट्टी चाहिए।";
-    vocab = [
-      { wordOrPhrase: "one day of leave", hindiMeaning: "एक दिन की छुट्टी" },
-      { wordOrPhrase: "due to", hindiMeaning: "के कारण" }
-    ];
-  } else {
-    // General polished sentence
-    const words = transcript.trim().split(/\s+/);
-    if (words.length > 0) {
-      natural = transcript.charAt(0).toUpperCase() + transcript.slice(1);
-      if (!natural.endsWith('.')) natural += '.';
-    }
-  }
-
-  return {
-    learnerTranscript: transcript,
-    intendedMeaning: "You wanted to clearly communicate your message in simple workplace English.",
-    naturalEnglish: natural,
-    hindiMeaning: hindi,
-    encouragingNote: "Great attempt! Coach Neha understood your exact thought.",
-    keyVocabulary: vocab,
-    confidenceScore: 94
-  };
 }
 
 // Endpoint: AI Understanding Pipeline
@@ -113,11 +41,11 @@ app.post("/api/understand", async (req, res) => {
     const ai = getGeminiClient();
 
     if (!ai) {
-      const fallback = getFallbackAnalysis(transcript, question || "");
+      const fallback = generateLocalAnalysis(transcript, question || "", category || "workplace");
       return res.json(fallback);
     }
 
-    // Retrieve relevant reference patterns from englishPatterns.json library
+    // Retrieve relevant reference patterns from englishPatterns library
     const matchingPatterns = findMatchingPatterns(transcript, 6);
     const patternReferenceText = matchingPatterns.length > 0
       ? matchingPatterns
@@ -128,40 +56,34 @@ app.post("/api/understand", async (req, res) => {
           .join("\n")
       : "No direct pattern match; use standard simple conversational English principles.";
 
-    const systemPrompt = `You are Coach Neha, a friendly, warm, and empowering AI English coach designed for Indian blue-collar and entry-level learners (warehouse staff, delivery drivers, QSR & retail workers, supervisors, technicians).
+    const systemPrompt = `You are Coach Neha, a friendly, warm, and empowering AI English coach designed for Indian blue-collar and frontline learners (warehouse staff, delivery riders, QSR & retail workers, drivers, technicians).
 
-PRODUCT PHILOSOPHY & PATTERN LIBRARY ENGINE:
+PRODUCT PHILOSOPHY & PATTERN LIBRARY:
 - "Understand first. Improve second."
-- NEVER make the learner feel that they failed.
-- NEVER use words like "Wrong", "Incorrect", "Grammar Error", "Mistake", or "Failed".
-- The learner may speak imperfect English, literal Hindi-to-English translations (e.g., "bike running", "order making", "traffic stucking", "sir please tell again"), or broken phrases.
+- NEVER make the learner feel that they failed. Never use words like "Wrong", "Incorrect", "Grammar Error", "Mistake", or "Failed".
+- The learner may speak broken English, literal Hindi-to-English translations (e.g. "I reaching warehouse", "Manager telling me", "Why you not pick call", "parcel is break").
 
-REFERENCE LIBRARY RULES (from src/data/englishPatterns.json):
-1. Understand the learner's intended meaning first.
-2. Detect whether their sentence matches or resembles an English pattern in the library.
-3. Use the matching pattern to help produce a simple, correct natural rephrase.
-4. Never force a library sentence if it changes the learner's intended meaning.
-5. Never invent facts that the learner did not say.
-6. Keep the existing My Day behaviour: natural rephrase first, then one relevant leading question to continue the conversation when in conversational dialogue.
+CORE INSTRUCTIONS:
+1. Understand the learner's exact intended message with empathy.
+2. Rephrase what they want to say into clear, natural, workplace-appropriate English. NEVER just repeat their broken sentence.
+3. Provide a clear, natural conversational Hindi translation in Devanagari script.
+4. Write a warm, encouraging one-sentence coaching remark from Coach Neha.
+5. Provide 1 to 2 key phrases/vocabulary with simple Hindi meanings.
+6. Reference patterns from the library to ensure practical, natural phrasing.`;
 
-OUTPUT REQUIREMENTS:
-- Step 1: Detect their true intended meaning with total empathy.
-- Step 2: Formulate the exact natural, clear, workplace-appropriate English sentence that expresses what they want to say. Do NOT make it overly complex, formal, or academic. Keep it practical, polite, and natural.
-- Step 3: Provide a simple Hindi translation of the natural English sentence in Devanagari script.
-- Step 4: Write a warm, encouraging one-sentence coaching remark from Coach Neha.
-- Step 5: Highlight 1 or 2 high-utility vocabulary or phrases with their Hindi meanings.`;
+    const userPrompt = `Category: ${category || 'workplace'}
+Context Situation: "${question || 'Workplace conversation'}"
+Learner Speech: "${transcript}"
 
-    const userPrompt = `Context Question: "${question || 'Workplace situation'}"
-Category: ${category || 'workplace'}
-What the learner said: "${transcript}"
-
-REFERENCE PATTERNS FROM LIBRARY:
+REFERENCE PATTERNS FROM 500-PATTERN LIBRARY:
 ${patternReferenceText}
 
-Analyze the learner's speech according to the 6 engine rules and respond strictly in JSON matching the schema.`;
+Analyze the learner's speech and output strictly valid JSON matching the schema.`;
 
-    const response = await ai.models.generateContent({
-      model: "gemini-3.7-flash",
+    const local = generateLocalAnalysis(transcript, question || "", category || "workplace");
+
+    const generatePromise = ai.models.generateContent({
+      model: "gemini-3.1-flash-lite",
       contents: userPrompt,
       config: {
         systemInstruction: systemPrompt,
@@ -176,11 +98,11 @@ Analyze the learner's speech according to the 6 engine rules and respond strictl
             },
             naturalEnglish: {
               type: Type.STRING,
-              description: "The closest natural, practical workplace English sentence representing what they want to say.",
+              description: "The improved, natural, polite workplace English sentence representing what they want to say.",
             },
             hindiMeaning: {
               type: Type.STRING,
-              description: "Natural conversational Hindi translation of the improved English sentence in Devanagari script.",
+              description: "Natural conversational Hindi translation in Devanagari script.",
             },
             encouragingNote: {
               type: Type.STRING,
@@ -200,7 +122,7 @@ Analyze the learner's speech according to the 6 engine rules and respond strictl
             },
             confidenceScore: {
               type: Type.INTEGER,
-              description: "Confidence percentage of intent comprehension (85 to 99).",
+              description: "Confidence score percentage (85 to 99).",
             },
           },
           required: [
@@ -215,22 +137,32 @@ Analyze the learner's speech according to the 6 engine rules and respond strictl
       },
     });
 
-    const parsed = JSON.parse(response.text || "{}");
+    const timeoutPromise = new Promise((_, reject) =>
+      setTimeout(() => reject(new Error("AI generation timeout")), 12000)
+    );
+
+    let parsed: any = {};
+    try {
+      const response: any = await Promise.race([generatePromise, timeoutPromise]);
+      parsed = JSON.parse(response.text || "{}");
+    } catch (apiErr) {
+      console.warn("AI generation fallback to pattern engine:", apiErr);
+      return res.json(local);
+    }
 
     return res.json({
       learnerTranscript: transcript,
-      intendedMeaning: parsed.intendedMeaning || "You wanted to share your message clearly.",
-      naturalEnglish: parsed.naturalEnglish || transcript,
-      hindiMeaning: parsed.hindiMeaning || "मैं काम पर जाते समय अपने सुपरवाइजर को सूचित करूंगा।",
-      encouragingNote: parsed.encouragingNote || "Yes, I understand what you mean! Great job practicing.",
-      keyVocabulary: parsed.keyVocabulary || [{ wordOrPhrase: "on my way", hindiMeaning: "रास्ते में" }],
-      confidenceScore: parsed.confidenceScore || 95,
+      intendedMeaning: parsed.intendedMeaning || local.intendedMeaning,
+      naturalEnglish: parsed.naturalEnglish || local.naturalEnglish,
+      hindiMeaning: parsed.hindiMeaning || local.hindiMeaning,
+      encouragingNote: parsed.encouragingNote || local.encouragingNote,
+      keyVocabulary: (parsed.keyVocabulary && parsed.keyVocabulary.length > 0) ? parsed.keyVocabulary : local.keyVocabulary,
+      confidenceScore: typeof parsed.confidenceScore === 'number' && parsed.confidenceScore > 1 ? parsed.confidenceScore : local.confidenceScore,
     });
   } catch (error: any) {
-    console.error("Error in /api/understand:", error);
-    // Graceful fallback so learner never experiences a broken screen
-    const { transcript, question } = req.body;
-    const fallback = getFallbackAnalysis(transcript || "I am on the way", question || "");
+    console.error("Error in /api/understand, switching to dynamic pattern engine:", error);
+    const { transcript, question, category } = req.body;
+    const fallback = generateLocalAnalysis(transcript || "", question || "", category || "workplace");
     return res.json(fallback);
   }
 });

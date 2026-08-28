@@ -9,12 +9,8 @@ import {
   Bookmark,
   BookmarkCheck,
   Sparkles,
-  Heart,
-  CheckCircle2,
   Square,
-  HelpCircle,
 } from 'lucide-react';
-import { CoachNehaAvatar } from '../components/CoachNehaAvatar';
 import { AnalysisResult, Question } from '../types';
 import { speakText, stopSpeaking, soundFx } from '../utils/audio';
 
@@ -161,86 +157,61 @@ export const ResultScreen: React.FC<ResultScreenProps> = ({
           </button>
         </div>
 
-        {/* Coach Neha Supportive Greeting Banner */}
-        <motion.div
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mt-4 mb-3 rounded-2xl bg-gradient-to-r from-[#FAF5FF] via-[#FFF1F2] to-[#F0FDF4] p-3.5 border border-[#E9D5FF] flex items-center gap-3 pastel-card-shadow"
-        >
-          <div className="shrink-0">
-            <CoachNehaAvatar size="md" isSpeaking={isPlayingCoach} />
-          </div>
-          <div>
-            <div className="flex items-center gap-1 text-[11px] font-extrabold text-[#7C3AED]">
-              <Sparkles className="w-3.5 h-3.5 text-[#DB2777]" />
-              Coach Neha says
-            </div>
-            <p className="text-xs sm:text-[13px] font-extrabold text-slate-900 leading-snug">
-              “Yes, I understand what you mean!”
-            </p>
-            <p className="text-[10px] font-medium text-slate-500 mt-0.5">
-              {result.encouragingNote || 'Great attempt! Here is how to express it with natural confidence.'}
-            </p>
-          </div>
-        </motion.div>
-
-        {/* TWO LARGE ROUNDED CARDS (Core Product Feature) */}
-        <div className="space-y-3.5 mt-2">
-          {/* CARD 1 — What you said (Soft Pastel Lavender Card) */}
+        {/* TWO PRIMARY INTERACTIVE CARDS */}
+        <div className="space-y-4 mt-4">
+          {/* CARD 1 — What you said (Refined typography & Integrated Smart Speaker Tab) */}
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="rounded-3xl p-4 sm:p-5 bg-gradient-to-br from-[#FAF5FF] via-[#F3E8FF] to-[#EDE9FE] border border-[#DDD6FE] pastel-card-shadow relative"
+            transition={{ delay: 0.05 }}
+            className="rounded-3xl p-5 bg-gradient-to-br from-[#FAF5FF] via-[#F3E8FF]/80 to-[#EDE9FE] border border-[#DDD6FE] pastel-card-shadow relative"
           >
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-extrabold uppercase tracking-wider text-[#6D28D9] flex items-center gap-1.5">
+            <div className="flex items-center justify-between gap-2 mb-3">
+              <span className="text-xs font-black uppercase tracking-wider text-[#6D28D9] flex items-center gap-1.5">
                 <span className="w-2 h-2 rounded-full bg-[#7C3AED]" />
                 What you said
               </span>
-              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-white/90 text-[#6D28D9] border border-[#DDD6FE]">
-                Recorded
-              </span>
-            </div>
 
-            <p className="text-sm sm:text-base font-bold text-slate-900 leading-relaxed">
-              “{result.learnerTranscript}”
-            </p>
-
-            <div className="mt-3 flex items-center justify-between pt-2 border-t border-[#DDD6FE]/80">
+              {/* Smart Speaker Tab for Learner Speech */}
               <button
                 onClick={handlePlayLearnerAudio}
-                className="text-xs font-bold text-[#6D28D9] hover:text-slate-900 inline-flex items-center gap-1.5 cursor-pointer"
+                className={`px-3 py-1.5 rounded-full border text-xs font-bold flex items-center gap-1.5 transition-all shadow-2xs cursor-pointer ${
+                  isPlayingLearner
+                    ? 'bg-[#7C3AED] text-white border-[#6D28D9] shadow-sm'
+                    : 'bg-white/95 text-[#6D28D9] border-[#DDD6FE] hover:bg-[#FAF5FF] hover:border-[#C4B5FD]'
+                }`}
+                title="Listen to your recording"
               >
                 {isPlayingLearner ? (
                   <>
-                    <Square className="w-3.5 h-3.5 fill-[#6D28D9]" />
-                    <span>Playing your voice...</span>
+                    <Square className="w-3.5 h-3.5 fill-white" />
+                    <span>Playing...</span>
                   </>
                 ) : (
                   <>
-                    <Volume2 className="w-3.5 h-3.5" />
-                    <span>Listen to your recording</span>
+                    <Volume2 className="w-3.5 h-3.5 text-[#7C3AED]" />
+                    <span>Listen</span>
                   </>
                 )}
               </button>
-
-              <span className="text-[10px] font-medium text-slate-500">
-                Clear understanding ✓
-              </span>
             </div>
+
+            {/* Increased text font size for learner speech */}
+            <p className="text-base sm:text-lg md:text-xl font-bold text-slate-900 leading-snug">
+              “{result.learnerTranscript}”
+            </p>
           </motion.div>
 
-          {/* CARD 2 — What you want to say (AI's Natural Interpretation Card) */}
+          {/* CARD 2 — What you want to say (Larger System Response & Clean Visual Hierarchy) */}
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
+            transition={{ delay: 0.12 }}
             className="rounded-3xl p-5 sm:p-6 bg-gradient-to-br from-[#FFFBEB] via-[#FFF1F2] to-[#FAF5FF] border-2 border-[#FED7AA] pastel-card-glow relative overflow-hidden"
           >
-            {/* Header pill with high encouragement */}
-            <div className="flex items-center justify-between mb-2.5">
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gradient-to-r from-[#7C3AED] to-[#DB2777] text-white text-xs font-extrabold shadow-sm">
+            {/* Header with pill and speed controls */}
+            <div className="flex items-center justify-between gap-2 mb-3">
+              <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-gradient-to-r from-[#7C3AED] to-[#DB2777] text-white text-xs font-black shadow-sm">
                 <Sparkles className="w-3.5 h-3.5 text-amber-200" />
                 What you want to say
               </div>
@@ -252,7 +223,7 @@ export const ResultScreen: React.FC<ResultScreenProps> = ({
                     setSpeechRate(0.92);
                     handlePlayCoachAudio(0.92);
                   }}
-                  className={`px-2 py-0.5 rounded-full cursor-pointer transition-colors ${
+                  className={`px-2.5 py-0.5 rounded-full cursor-pointer transition-colors ${
                     speechRate === 0.92 ? 'bg-[#7C3AED] text-white' : 'text-slate-600'
                   }`}
                 >
@@ -263,7 +234,7 @@ export const ResultScreen: React.FC<ResultScreenProps> = ({
                     setSpeechRate(0.78);
                     handlePlayCoachAudio(0.78);
                   }}
-                  className={`px-2 py-0.5 rounded-full cursor-pointer transition-colors ${
+                  className={`px-2.5 py-0.5 rounded-full cursor-pointer transition-colors ${
                     speechRate === 0.78 ? 'bg-[#7C3AED] text-white' : 'text-slate-600'
                   }`}
                 >
@@ -272,37 +243,41 @@ export const ResultScreen: React.FC<ResultScreenProps> = ({
               </div>
             </div>
 
-            {/* Improved English Sentence */}
-            <div className="my-3">
-              <p className="text-base sm:text-lg font-extrabold text-slate-900 leading-relaxed">
+            {/* Increased Text Size for System Rephrase */}
+            <div className="my-3.5">
+              <p className="text-lg sm:text-xl md:text-2xl font-black text-slate-900 leading-snug tracking-tight">
                 “{result.naturalEnglish}”
               </p>
             </div>
 
             {/* Hindi Translation Pill Box */}
-            <div className="p-3 rounded-2xl bg-white/90 border border-[#FED7AA] text-xs font-semibold text-slate-700 leading-relaxed flex items-start justify-between gap-2">
+            <div className="p-3.5 rounded-2xl bg-white/95 border border-[#FED7AA] text-sm sm:text-base font-semibold text-slate-800 leading-relaxed flex items-center justify-between gap-3 shadow-2xs">
               <div>
-                <span className="font-bold text-[#C2410C] mr-1.5">हिंदी अर्थ:</span>
-                {result.hindiMeaning}
+                <span className="font-bold text-[#C2410C] mr-2">हिंदी अर्थ:</span>
+                <span>{result.hindiMeaning}</span>
               </div>
               <button
                 onClick={handlePlayHindiAudio}
-                className="shrink-0 p-1.5 rounded-full bg-[#FFF1F2] border border-[#FDA4AF] text-[#BE123C] hover:bg-[#FFE4E6] transition-colors cursor-pointer"
+                className={`shrink-0 p-2 rounded-full border transition-colors cursor-pointer ${
+                  isPlayingHindi
+                    ? 'bg-[#E11D48] text-white border-[#E11D48]'
+                    : 'bg-[#FFF1F2] border-[#FDA4AF] text-[#BE123C] hover:bg-[#FFE4E6]'
+                }`}
                 title="हिंदी में सुनें (Listen in Hindi)"
                 aria-label="Listen in Hindi"
               >
                 {isPlayingHindi ? (
-                  <Square className="w-3.5 h-3.5 fill-[#BE123C]" />
+                  <Square className="w-4 h-4 fill-white" />
                 ) : (
-                  <Volume2 className="w-3.5 h-3.5" />
+                  <Volume2 className="w-4 h-4" />
                 )}
               </button>
             </div>
 
-            {/* Listen Button Pill */}
+            {/* Listen to Coach Neha Full Button */}
             <button
               onClick={() => handlePlayCoachAudio()}
-              className={`mt-4 w-full py-3 px-4 rounded-2xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 border transition-all cursor-pointer shadow-2xs ${
+              className={`mt-4 w-full py-3.5 px-4 rounded-2xl font-extrabold text-sm sm:text-base flex items-center justify-center gap-2 border transition-all cursor-pointer shadow-2xs ${
                 isPlayingCoach
                   ? 'bg-gradient-to-r from-[#7C3AED] to-[#9333EA] text-white border-[#7C3AED] shadow-md shadow-[#7C3AED]/25'
                   : 'bg-white text-slate-800 border-[#E9D5FF] hover:bg-[#FAF5FF] hover:border-[#D8B4FE]'
@@ -316,25 +291,25 @@ export const ResultScreen: React.FC<ResultScreenProps> = ({
               ) : (
                 <>
                   <Volume2 className="w-4 h-4 text-[#7C3AED]" />
-                  <span>🔊 Listen to Coach Neha pronounce it</span>
+                  <span>Listen to Coach Neha pronounce it</span>
                 </>
               )}
             </button>
 
             {/* Key Vocabulary Highlights */}
             {result.keyVocabulary && result.keyVocabulary.length > 0 && (
-              <div className="mt-4 pt-3 border-t border-[#FED7AA]/60">
-                <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#7C3AED] block mb-2">
+              <div className="mt-4 pt-3.5 border-t border-[#FED7AA]/60">
+                <span className="text-[11px] font-extrabold uppercase tracking-wider text-[#7C3AED] block mb-2">
                   Useful Workplace Phrases
                 </span>
                 <div className="flex flex-wrap gap-2">
                   {result.keyVocabulary.map((vocab, vIdx) => (
                     <div
                       key={vIdx}
-                      className="px-3 py-1.5 rounded-xl bg-white/95 border border-[#E9D5FF] flex items-center gap-1.5 text-xs font-bold text-slate-800 shadow-2xs"
+                      className="px-3 py-1.5 rounded-xl bg-white/95 border border-[#E9D5FF] flex items-center gap-1.5 text-xs sm:text-sm font-bold text-slate-800 shadow-2xs"
                     >
                       <span className="text-[#7C3AED] font-extrabold">{vocab.wordOrPhrase}</span>
-                      <span className="text-[10px] font-medium text-slate-500">
+                      <span className="text-xs font-medium text-slate-500">
                         ({vocab.hindiMeaning})
                       </span>
                     </div>

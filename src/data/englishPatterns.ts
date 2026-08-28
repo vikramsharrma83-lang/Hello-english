@@ -1,0 +1,3510 @@
+export interface EnglishPattern {
+  id: string;
+  category: string;
+  pattern: string;
+  broken_english: string;
+  natural_english: string;
+}
+
+export const englishPatterns: EnglishPattern[] = [
+  {
+    "id":"HE-001",
+    "category":"Past tense",
+    "pattern":"Simple past: regular verb",
+    "broken_english":"Yesterday I work in morning",
+    "natural_english":"Yesterday I worked in the morning."
+  },
+  {
+    "id":"HE-002",
+    "category":"Past tense",
+    "pattern":"Simple past: regular verb",
+    "broken_english":"Yesterday I clean the room",
+    "natural_english":"Yesterday I cleaned the room."
+  },
+  {
+    "id":"HE-003",
+    "category":"Past tense",
+    "pattern":"Simple past: regular verb",
+    "broken_english":"I call my manager yesterday",
+    "natural_english":"I called my manager yesterday."
+  },
+  {
+    "id":"HE-004",
+    "category":"Past tense",
+    "pattern":"Simple past: regular verb",
+    "broken_english":"I check the stock yesterday",
+    "natural_english":"I checked the stock yesterday."
+  },
+  {
+    "id":"HE-005",
+    "category":"Past tense",
+    "pattern":"Simple past: regular verb",
+    "broken_english":"I open the shop yesterday",
+    "natural_english":"I opened the shop yesterday."
+  },
+  {
+    "id":"HE-006",
+    "category":"Past tense",
+    "pattern":"Simple past: regular verb",
+    "broken_english":"I close the store at night",
+    "natural_english":"I closed the store at night."
+  },
+  {
+    "id":"HE-007",
+    "category":"Past tense",
+    "pattern":"Simple past: regular verb",
+    "broken_english":"I visit my friend yesterday",
+    "natural_english":"I visited my friend yesterday."
+  },
+  {
+    "id":"HE-008",
+    "category":"Past tense",
+    "pattern":"Simple past: regular verb",
+    "broken_english":"I start work at nine yesterday",
+    "natural_english":"I started work at nine yesterday."
+  },
+  {
+    "id":"HE-009",
+    "category":"Past tense",
+    "pattern":"Simple past: regular verb",
+    "broken_english":"I finish work late yesterday",
+    "natural_english":"I finished work late yesterday."
+  },
+  {
+    "id":"HE-010",
+    "category":"Past tense",
+    "pattern":"Simple past: regular verb",
+    "broken_english":"I wash my bike yesterday",
+    "natural_english":"I washed my bike yesterday."
+  },
+  {
+    "id":"HE-011",
+    "category":"Past tense",
+    "pattern":"Simple past: regular verb",
+    "broken_english":"I help my brother yesterday",
+    "natural_english":"I helped my brother yesterday."
+  },
+  {
+    "id":"HE-012",
+    "category":"Past tense",
+    "pattern":"Simple past: regular verb",
+    "broken_english":"I repair the machine yesterday",
+    "natural_english":"I repaired the machine yesterday."
+  },
+  {
+    "id":"HE-013",
+    "category":"Past tense",
+    "pattern":"Simple past: regular verb",
+    "broken_english":"I clean the table yesterday",
+    "natural_english":"I cleaned the table yesterday."
+  },
+  {
+    "id":"HE-014",
+    "category":"Past tense",
+    "pattern":"Simple past: regular verb",
+    "broken_english":"I answer the customer yesterday",
+    "natural_english":"I answered the customer yesterday."
+  },
+  {
+    "id":"HE-015",
+    "category":"Past tense",
+    "pattern":"Simple past: regular verb",
+    "broken_english":"I report the problem yesterday",
+    "natural_english":"I reported the problem yesterday."
+  },
+  {
+    "id":"HE-016",
+    "category":"Past tense",
+    "pattern":"Simple past: regular verb",
+    "broken_english":"I reach home late yesterday",
+    "natural_english":"I reached home late yesterday."
+  },
+  {
+    "id":"HE-017",
+    "category":"Past tense",
+    "pattern":"Simple past: regular verb",
+    "broken_english":"I wait for the bus yesterday",
+    "natural_english":"I waited for the bus yesterday."
+  },
+  {
+    "id":"HE-018",
+    "category":"Past tense",
+    "pattern":"Simple past: regular verb",
+    "broken_english":"I change my shift yesterday",
+    "natural_english":"I changed my shift yesterday."
+  },
+  {
+    "id":"HE-019",
+    "category":"Past tense",
+    "pattern":"Simple past: regular verb",
+    "broken_english":"I pack the items yesterday",
+    "natural_english":"I packed the items yesterday."
+  },
+  {
+    "id":"HE-020",
+    "category":"Past tense",
+    "pattern":"Simple past: regular verb",
+    "broken_english":"I deliver the order yesterday",
+    "natural_english":"I delivered the order yesterday."
+  },
+  {
+    "id":"HE-021",
+    "category":"Past tense",
+    "pattern":"Simple past: irregular verb",
+    "broken_english":"Yesterday I go market",
+    "natural_english":"Yesterday I went to the market."
+  },
+  {
+    "id":"HE-022",
+    "category":"Past tense",
+    "pattern":"Simple past: irregular verb",
+    "broken_english":"Yesterday I come home early",
+    "natural_english":"Yesterday I came home early."
+  },
+  {
+    "id":"HE-023",
+    "category":"Past tense",
+    "pattern":"Simple past: irregular verb",
+    "broken_english":"I see my manager yesterday",
+    "natural_english":"I saw my manager yesterday."
+  },
+  {
+    "id":"HE-024",
+    "category":"Past tense",
+    "pattern":"Simple past: irregular verb",
+    "broken_english":"I take the bus yesterday",
+    "natural_english":"I took the bus yesterday."
+  },
+  {
+    "id":"HE-025",
+    "category":"Past tense",
+    "pattern":"Simple past: irregular verb",
+    "broken_english":"I give medicine to mother yesterday",
+    "natural_english":"I gave my mother medicine yesterday."
+  },
+  {
+    "id":"HE-026",
+    "category":"Past tense",
+    "pattern":"Simple past: irregular verb",
+    "broken_english":"I get late yesterday",
+    "natural_english":"I got late yesterday."
+  },
+  {
+    "id":"HE-027",
+    "category":"Past tense",
+    "pattern":"Simple past: irregular verb",
+    "broken_english":"I make breakfast yesterday",
+    "natural_english":"I made breakfast yesterday."
+  },
+  {
+    "id":"HE-028",
+    "category":"Past tense",
+    "pattern":"Simple past: irregular verb",
+    "broken_english":"I eat rice in morning",
+    "natural_english":"I ate rice in the morning."
+  },
+  {
+    "id":"HE-029",
+    "category":"Past tense",
+    "pattern":"Simple past: irregular verb",
+    "broken_english":"I drink tea yesterday",
+    "natural_english":"I drank tea yesterday."
+  },
+  {
+    "id":"HE-030",
+    "category":"Past tense",
+    "pattern":"Simple past: irregular verb",
+    "broken_english":"I buy vegetables yesterday",
+    "natural_english":"I bought vegetables yesterday."
+  },
+  {
+    "id":"HE-031",
+    "category":"Past tense",
+    "pattern":"Simple past: irregular verb",
+    "broken_english":"I bring the documents yesterday",
+    "natural_english":"I brought the documents yesterday."
+  },
+  {
+    "id":"HE-032",
+    "category":"Past tense",
+    "pattern":"Simple past: irregular verb",
+    "broken_english":"I find the item yesterday",
+    "natural_english":"I found the item yesterday."
+  },
+  {
+    "id":"HE-033",
+    "category":"Past tense",
+    "pattern":"Simple past: irregular verb",
+    "broken_english":"I come to office at nine",
+    "natural_english":"I came to the office at nine."
+  },
+  {
+    "id":"HE-034",
+    "category":"Past tense",
+    "pattern":"Simple past: irregular verb",
+    "broken_english":"I leave office at six",
+    "natural_english":"I left the office at six."
+  },
+  {
+    "id":"HE-035",
+    "category":"Past tense",
+    "pattern":"Simple past: irregular verb",
+    "broken_english":"I meet customer yesterday",
+    "natural_english":"I met the customer yesterday."
+  },
+  {
+    "id":"HE-036",
+    "category":"Past tense",
+    "pattern":"Simple past: irregular verb",
+    "broken_english":"I tell my manager yesterday",
+    "natural_english":"I told my manager yesterday."
+  },
+  {
+    "id":"HE-037",
+    "category":"Past tense",
+    "pattern":"Simple past: irregular verb",
+    "broken_english":"I feel tired yesterday",
+    "natural_english":"I felt tired yesterday."
+  },
+  {
+    "id":"HE-038",
+    "category":"Past tense",
+    "pattern":"Simple past: irregular verb",
+    "broken_english":"I put the box there yesterday",
+    "natural_english":"I put the box there yesterday."
+  },
+  {
+    "id":"HE-039",
+    "category":"Past tense",
+    "pattern":"Simple past: irregular verb",
+    "broken_english":"I send the message yesterday",
+    "natural_english":"I sent the message yesterday."
+  },
+  {
+    "id":"HE-040",
+    "category":"Past tense",
+    "pattern":"Simple past: irregular verb",
+    "broken_english":"I keep the item there yesterday",
+    "natural_english":"I kept the item there yesterday."
+  },
+  {
+    "id":"HE-041",
+    "category":"Present tense",
+    "pattern":"Simple present for routine",
+    "broken_english":"I go office every day",
+    "natural_english":"I go to the office every day."
+  },
+  {
+    "id":"HE-042",
+    "category":"Present tense",
+    "pattern":"Simple present for routine",
+    "broken_english":"I come at nine every day",
+    "natural_english":"I come at nine every day."
+  },
+  {
+    "id":"HE-043",
+    "category":"Present tense",
+    "pattern":"Simple present for routine",
+    "broken_english":"I work in warehouse",
+    "natural_english":"I work in a warehouse."
+  },
+  {
+    "id":"HE-044",
+    "category":"Present tense",
+    "pattern":"Simple present for routine",
+    "broken_english":"I check stock every morning",
+    "natural_english":"I check the stock every morning."
+  },
+  {
+    "id":"HE-045",
+    "category":"Present tense",
+    "pattern":"Simple present for routine",
+    "broken_english":"I clean the area every day",
+    "natural_english":"I clean the area every day."
+  },
+  {
+    "id":"HE-046",
+    "category":"Present tense",
+    "pattern":"Simple present for routine",
+    "broken_english":"I help customer every day",
+    "natural_english":"I help customers every day."
+  },
+  {
+    "id":"HE-047",
+    "category":"Present tense",
+    "pattern":"Simple present for routine",
+    "broken_english":"I take bus to work",
+    "natural_english":"I take the bus to work."
+  },
+  {
+    "id":"HE-048",
+    "category":"Present tense",
+    "pattern":"Simple present for routine",
+    "broken_english":"I eat breakfast at eight",
+    "natural_english":"I eat breakfast at eight."
+  },
+  {
+    "id":"HE-049",
+    "category":"Present tense",
+    "pattern":"Simple present for routine",
+    "broken_english":"I drink tea in morning",
+    "natural_english":"I drink tea in the morning."
+  },
+  {
+    "id":"HE-050",
+    "category":"Present tense",
+    "pattern":"Simple present for routine",
+    "broken_english":"I call manager when problem comes",
+    "natural_english":"I call my manager when there is a problem."
+  },
+  {
+    "id":"HE-051",
+    "category":"Present tense",
+    "pattern":"Simple present for routine",
+    "broken_english":"I wear uniform at work",
+    "natural_english":"I wear a uniform at work."
+  },
+  {
+    "id":"HE-052",
+    "category":"Present tense",
+    "pattern":"Simple present for routine",
+    "broken_english":"I start shift at nine",
+    "natural_english":"I start my shift at nine."
+  },
+  {
+    "id":"HE-053",
+    "category":"Present tense",
+    "pattern":"Simple present for routine",
+    "broken_english":"I finish shift at six",
+    "natural_english":"I finish my shift at six."
+  },
+  {
+    "id":"HE-054",
+    "category":"Present tense",
+    "pattern":"Simple present for routine",
+    "broken_english":"I receive goods every morning",
+    "natural_english":"I receive goods every morning."
+  },
+  {
+    "id":"HE-055",
+    "category":"Present tense",
+    "pattern":"Simple present for routine",
+    "broken_english":"I check barcode before packing",
+    "natural_english":"I check the barcode before packing."
+  },
+  {
+    "id":"HE-056",
+    "category":"Present tense",
+    "pattern":"Simple present for routine",
+    "broken_english":"I keep items in location",
+    "natural_english":"I keep items in the correct location."
+  },
+  {
+    "id":"HE-057",
+    "category":"Present tense",
+    "pattern":"Simple present for routine",
+    "broken_english":"I talk to customers politely",
+    "natural_english":"I talk to customers politely."
+  },
+  {
+    "id":"HE-058",
+    "category":"Present tense",
+    "pattern":"Simple present for routine",
+    "broken_english":"I report damage to manager",
+    "natural_english":"I report damage to my manager."
+  },
+  {
+    "id":"HE-059",
+    "category":"Present tense",
+    "pattern":"Simple present for routine",
+    "broken_english":"I use scanner at work",
+    "natural_english":"I use a scanner at work."
+  },
+  {
+    "id":"HE-060",
+    "category":"Present tense",
+    "pattern":"Simple present for routine",
+    "broken_english":"I go home by bus",
+    "natural_english":"I go home by bus."
+  },
+  {
+    "id":"HE-061",
+    "category":"Present continuous",
+    "pattern":"am\/is\/are + verb-ing",
+    "broken_english":"I am go to office now",
+    "natural_english":"I am going to the office now."
+  },
+  {
+    "id":"HE-062",
+    "category":"Present continuous",
+    "pattern":"am\/is\/are + verb-ing",
+    "broken_english":"I am coming to work now",
+    "natural_english":"I am coming to work now."
+  },
+  {
+    "id":"HE-063",
+    "category":"Present continuous",
+    "pattern":"am\/is\/are + verb-ing",
+    "broken_english":"I am checking stock now",
+    "natural_english":"I am checking the stock now."
+  },
+  {
+    "id":"HE-064",
+    "category":"Present continuous",
+    "pattern":"am\/is\/are + verb-ing",
+    "broken_english":"I am doing receiving now",
+    "natural_english":"I am doing receiving now."
+  },
+  {
+    "id":"HE-065",
+    "category":"Present continuous",
+    "pattern":"am\/is\/are + verb-ing",
+    "broken_english":"I am packing order now",
+    "natural_english":"I am packing the order now."
+  },
+  {
+    "id":"HE-066",
+    "category":"Present continuous",
+    "pattern":"am\/is\/are + verb-ing",
+    "broken_english":"I am waiting customer",
+    "natural_english":"I am waiting for the customer."
+  },
+  {
+    "id":"HE-067",
+    "category":"Present continuous",
+    "pattern":"am\/is\/are + verb-ing",
+    "broken_english":"I am talking manager",
+    "natural_english":"I am talking to my manager."
+  },
+  {
+    "id":"HE-068",
+    "category":"Present continuous",
+    "pattern":"am\/is\/are + verb-ing",
+    "broken_english":"I am working in warehouse now",
+    "natural_english":"I am working in the warehouse now."
+  },
+  {
+    "id":"HE-069",
+    "category":"Present continuous",
+    "pattern":"am\/is\/are + verb-ing",
+    "broken_english":"I am cleaning area now",
+    "natural_english":"I am cleaning the area now."
+  },
+  {
+    "id":"HE-070",
+    "category":"Present continuous",
+    "pattern":"am\/is\/are + verb-ing",
+    "broken_english":"I am taking lunch now",
+    "natural_english":"I am having lunch now."
+  },
+  {
+    "id":"HE-071",
+    "category":"Present continuous",
+    "pattern":"am\/is\/are + verb-ing",
+    "broken_english":"I am going home now",
+    "natural_english":"I am going home now."
+  },
+  {
+    "id":"HE-072",
+    "category":"Present continuous",
+    "pattern":"am\/is\/are + verb-ing",
+    "broken_english":"He is come late",
+    "natural_english":"He is coming late."
+  },
+  {
+    "id":"HE-073",
+    "category":"Present continuous",
+    "pattern":"am\/is\/are + verb-ing",
+    "broken_english":"He is checking the truck",
+    "natural_english":"He is checking the truck."
+  },
+  {
+    "id":"HE-074",
+    "category":"Present continuous",
+    "pattern":"am\/is\/are + verb-ing",
+    "broken_english":"She is making tea",
+    "natural_english":"She is making tea."
+  },
+  {
+    "id":"HE-075",
+    "category":"Present continuous",
+    "pattern":"am\/is\/are + verb-ing",
+    "broken_english":"She is talking with customer",
+    "natural_english":"She is talking to the customer."
+  },
+  {
+    "id":"HE-076",
+    "category":"Present continuous",
+    "pattern":"am\/is\/are + verb-ing",
+    "broken_english":"They are work outside",
+    "natural_english":"They are working outside."
+  },
+  {
+    "id":"HE-077",
+    "category":"Present continuous",
+    "pattern":"am\/is\/are + verb-ing",
+    "broken_english":"They are waiting for bus",
+    "natural_english":"They are waiting for the bus."
+  },
+  {
+    "id":"HE-078",
+    "category":"Present continuous",
+    "pattern":"am\/is\/are + verb-ing",
+    "broken_english":"We are discuss the problem",
+    "natural_english":"We are discussing the problem."
+  },
+  {
+    "id":"HE-079",
+    "category":"Present continuous",
+    "pattern":"am\/is\/are + verb-ing",
+    "broken_english":"We are prepare the order",
+    "natural_english":"We are preparing the order."
+  },
+  {
+    "id":"HE-080",
+    "category":"Present continuous",
+    "pattern":"am\/is\/are + verb-ing",
+    "broken_english":"The truck is coming now",
+    "natural_english":"The truck is coming now."
+  },
+  {
+    "id":"HE-081",
+    "category":"Future",
+    "pattern":"will + base verb",
+    "broken_english":"I will going tomorrow",
+    "natural_english":"I will go tomorrow."
+  },
+  {
+    "id":"HE-082",
+    "category":"Future",
+    "pattern":"will + base verb",
+    "broken_english":"I will come office tomorrow",
+    "natural_english":"I will come to the office tomorrow."
+  },
+  {
+    "id":"HE-083",
+    "category":"Future",
+    "pattern":"will + base verb",
+    "broken_english":"I will call my manager",
+    "natural_english":"I will call my manager."
+  },
+  {
+    "id":"HE-084",
+    "category":"Future",
+    "pattern":"will + base verb",
+    "broken_english":"I will check it later",
+    "natural_english":"I will check it later."
+  },
+  {
+    "id":"HE-085",
+    "category":"Future",
+    "pattern":"will + base verb",
+    "broken_english":"I will finish this work",
+    "natural_english":"I will finish this work."
+  },
+  {
+    "id":"HE-086",
+    "category":"Future",
+    "pattern":"will + base verb",
+    "broken_english":"I will send the report",
+    "natural_english":"I will send the report."
+  },
+  {
+    "id":"HE-087",
+    "category":"Future",
+    "pattern":"will + base verb",
+    "broken_english":"I will take the bus tomorrow",
+    "natural_english":"I will take the bus tomorrow."
+  },
+  {
+    "id":"HE-088",
+    "category":"Future",
+    "pattern":"will + base verb",
+    "broken_english":"I will reach by nine",
+    "natural_english":"I will reach by nine."
+  },
+  {
+    "id":"HE-089",
+    "category":"Future",
+    "pattern":"will + base verb",
+    "broken_english":"I will inform him",
+    "natural_english":"I will inform him."
+  },
+  {
+    "id":"HE-090",
+    "category":"Future",
+    "pattern":"will + base verb",
+    "broken_english":"I will ask my supervisor",
+    "natural_english":"I will ask my supervisor."
+  },
+  {
+    "id":"HE-091",
+    "category":"Future",
+    "pattern":"will + base verb",
+    "broken_english":"I will bring the documents",
+    "natural_english":"I will bring the documents."
+  },
+  {
+    "id":"HE-092",
+    "category":"Future",
+    "pattern":"will + base verb",
+    "broken_english":"I will check the stock tomorrow",
+    "natural_english":"I will check the stock tomorrow."
+  },
+  {
+    "id":"HE-093",
+    "category":"Future",
+    "pattern":"will + base verb",
+    "broken_english":"I will clean the area later",
+    "natural_english":"I will clean the area later."
+  },
+  {
+    "id":"HE-094",
+    "category":"Future",
+    "pattern":"will + base verb",
+    "broken_english":"I will meet the customer tomorrow",
+    "natural_english":"I will meet the customer tomorrow."
+  },
+  {
+    "id":"HE-095",
+    "category":"Future",
+    "pattern":"will + base verb",
+    "broken_english":"I will complete the task today",
+    "natural_english":"I will complete the task today."
+  },
+  {
+    "id":"HE-096",
+    "category":"Future",
+    "pattern":"will + base verb",
+    "broken_english":"I will be late today",
+    "natural_english":"I will be late today."
+  },
+  {
+    "id":"HE-097",
+    "category":"Future",
+    "pattern":"will + base verb",
+    "broken_english":"I will stuck in traffic",
+    "natural_english":"I will get stuck in traffic."
+  },
+  {
+    "id":"HE-098",
+    "category":"Future",
+    "pattern":"will + base verb",
+    "broken_english":"I will inform if I am late",
+    "natural_english":"I will inform you if I am late."
+  },
+  {
+    "id":"HE-099",
+    "category":"Future",
+    "pattern":"will + base verb",
+    "broken_english":"I will take care this",
+    "natural_english":"I will take care of this."
+  },
+  {
+    "id":"HE-100",
+    "category":"Future",
+    "pattern":"will + base verb",
+    "broken_english":"I will come after lunch",
+    "natural_english":"I will come after lunch."
+  },
+  {
+    "id":"HE-101",
+    "category":"Be verbs",
+    "pattern":"am\/is\/are",
+    "broken_english":"I is ready",
+    "natural_english":"I am ready."
+  },
+  {
+    "id":"HE-102",
+    "category":"Be verbs",
+    "pattern":"am\/is\/are",
+    "broken_english":"I am tired today",
+    "natural_english":"I am tired today."
+  },
+  {
+    "id":"HE-103",
+    "category":"Be verbs",
+    "pattern":"am\/is\/are",
+    "broken_english":"He are late",
+    "natural_english":"He is late."
+  },
+  {
+    "id":"HE-104",
+    "category":"Be verbs",
+    "pattern":"am\/is\/are",
+    "broken_english":"She are ready",
+    "natural_english":"She is ready."
+  },
+  {
+    "id":"HE-105",
+    "category":"Be verbs",
+    "pattern":"am\/is\/are",
+    "broken_english":"They is busy",
+    "natural_english":"They are busy."
+  },
+  {
+    "id":"HE-106",
+    "category":"Be verbs",
+    "pattern":"am\/is\/are",
+    "broken_english":"We is ready",
+    "natural_english":"We are ready."
+  },
+  {
+    "id":"HE-107",
+    "category":"Be verbs",
+    "pattern":"am\/is\/are",
+    "broken_english":"You is correct",
+    "natural_english":"You are correct."
+  },
+  {
+    "id":"HE-108",
+    "category":"Be verbs",
+    "pattern":"am\/is\/are",
+    "broken_english":"It are damaged",
+    "natural_english":"It is damaged."
+  },
+  {
+    "id":"HE-109",
+    "category":"Be verbs",
+    "pattern":"am\/is\/are",
+    "broken_english":"The items is ready",
+    "natural_english":"The items are ready."
+  },
+  {
+    "id":"HE-110",
+    "category":"Be verbs",
+    "pattern":"am\/is\/are",
+    "broken_english":"The truck are late",
+    "natural_english":"The truck is late."
+  },
+  {
+    "id":"HE-111",
+    "category":"Be verbs",
+    "pattern":"am\/is\/are",
+    "broken_english":"My manager are busy",
+    "natural_english":"My manager is busy."
+  },
+  {
+    "id":"HE-112",
+    "category":"Be verbs",
+    "pattern":"am\/is\/are",
+    "broken_english":"My friends is here",
+    "natural_english":"My friends are here."
+  },
+  {
+    "id":"HE-113",
+    "category":"Be verbs",
+    "pattern":"am\/is\/are",
+    "broken_english":"I am in office",
+    "natural_english":"I am in the office."
+  },
+  {
+    "id":"HE-114",
+    "category":"Be verbs",
+    "pattern":"am\/is\/are",
+    "broken_english":"He is in warehouse",
+    "natural_english":"He is in the warehouse."
+  },
+  {
+    "id":"HE-115",
+    "category":"Be verbs",
+    "pattern":"am\/is\/are",
+    "broken_english":"We are at home",
+    "natural_english":"We are at home."
+  },
+  {
+    "id":"HE-116",
+    "category":"Be verbs",
+    "pattern":"am\/is\/are",
+    "broken_english":"They are in traffic",
+    "natural_english":"They are in traffic."
+  },
+  {
+    "id":"HE-117",
+    "category":"Be verbs",
+    "pattern":"am\/is\/are",
+    "broken_english":"The customer is angry",
+    "natural_english":"The customer is angry."
+  },
+  {
+    "id":"HE-118",
+    "category":"Be verbs",
+    "pattern":"am\/is\/are",
+    "broken_english":"The boxes are heavy",
+    "natural_english":"The boxes are heavy."
+  },
+  {
+    "id":"HE-119",
+    "category":"Be verbs",
+    "pattern":"am\/is\/are",
+    "broken_english":"The machine is working",
+    "natural_english":"The machine is working."
+  },
+  {
+    "id":"HE-120",
+    "category":"Be verbs",
+    "pattern":"am\/is\/are",
+    "broken_english":"The doors are open",
+    "natural_english":"The doors are open."
+  },
+  {
+    "id":"HE-121",
+    "category":"Was\/were",
+    "pattern":"was\/were in past",
+    "broken_english":"I were late yesterday",
+    "natural_english":"I was late yesterday."
+  },
+  {
+    "id":"HE-122",
+    "category":"Was\/were",
+    "pattern":"was\/were in past",
+    "broken_english":"I was in office yesterday",
+    "natural_english":"I was in the office yesterday."
+  },
+  {
+    "id":"HE-123",
+    "category":"Was\/were",
+    "pattern":"was\/were in past",
+    "broken_english":"He were sick yesterday",
+    "natural_english":"He was sick yesterday."
+  },
+  {
+    "id":"HE-124",
+    "category":"Was\/were",
+    "pattern":"was\/were in past",
+    "broken_english":"She were at home",
+    "natural_english":"She was at home."
+  },
+  {
+    "id":"HE-125",
+    "category":"Was\/were",
+    "pattern":"was\/were in past",
+    "broken_english":"They was busy yesterday",
+    "natural_english":"They were busy yesterday."
+  },
+  {
+    "id":"HE-126",
+    "category":"Was\/were",
+    "pattern":"was\/were in past",
+    "broken_english":"We was in traffic",
+    "natural_english":"We were in traffic."
+  },
+  {
+    "id":"HE-127",
+    "category":"Was\/were",
+    "pattern":"was\/were in past",
+    "broken_english":"You was late",
+    "natural_english":"You were late."
+  },
+  {
+    "id":"HE-128",
+    "category":"Was\/were",
+    "pattern":"was\/were in past",
+    "broken_english":"The truck were late",
+    "natural_english":"The truck was late."
+  },
+  {
+    "id":"HE-129",
+    "category":"Was\/were",
+    "pattern":"was\/were in past",
+    "broken_english":"The items was damaged",
+    "natural_english":"The items were damaged."
+  },
+  {
+    "id":"HE-130",
+    "category":"Was\/were",
+    "pattern":"was\/were in past",
+    "broken_english":"The boxes was heavy",
+    "natural_english":"The boxes were heavy."
+  },
+  {
+    "id":"HE-131",
+    "category":"Was\/were",
+    "pattern":"was\/were in past",
+    "broken_english":"My manager were angry",
+    "natural_english":"My manager was angry."
+  },
+  {
+    "id":"HE-132",
+    "category":"Was\/were",
+    "pattern":"was\/were in past",
+    "broken_english":"My friends was there",
+    "natural_english":"My friends were there."
+  },
+  {
+    "id":"HE-133",
+    "category":"Was\/were",
+    "pattern":"was\/were in past",
+    "broken_english":"I was tired after work",
+    "natural_english":"I was tired after work."
+  },
+  {
+    "id":"HE-134",
+    "category":"Was\/were",
+    "pattern":"was\/were in past",
+    "broken_english":"He was in the warehouse",
+    "natural_english":"He was in the warehouse."
+  },
+  {
+    "id":"HE-135",
+    "category":"Was\/were",
+    "pattern":"was\/were in past",
+    "broken_english":"She was at the shop",
+    "natural_english":"She was at the shop."
+  },
+  {
+    "id":"HE-136",
+    "category":"Was\/were",
+    "pattern":"was\/were in past",
+    "broken_english":"They were at the gate",
+    "natural_english":"They were at the gate."
+  },
+  {
+    "id":"HE-137",
+    "category":"Was\/were",
+    "pattern":"was\/were in past",
+    "broken_english":"We were ready",
+    "natural_english":"We were ready."
+  },
+  {
+    "id":"HE-138",
+    "category":"Was\/were",
+    "pattern":"was\/were in past",
+    "broken_english":"The machine was not working",
+    "natural_english":"The machine was not working."
+  },
+  {
+    "id":"HE-139",
+    "category":"Was\/were",
+    "pattern":"was\/were in past",
+    "broken_english":"The doors were closed",
+    "natural_english":"The doors were closed."
+  },
+  {
+    "id":"HE-140",
+    "category":"Was\/were",
+    "pattern":"was\/were in past",
+    "broken_english":"The customer was waiting",
+    "natural_english":"The customer was waiting."
+  },
+  {
+    "id":"HE-141",
+    "category":"Have\/has",
+    "pattern":"have\/has agreement",
+    "broken_english":"I has a bike",
+    "natural_english":"I have a bike."
+  },
+  {
+    "id":"HE-142",
+    "category":"Have\/has",
+    "pattern":"have\/has agreement",
+    "broken_english":"He have a bike",
+    "natural_english":"He has a bike."
+  },
+  {
+    "id":"HE-143",
+    "category":"Have\/has",
+    "pattern":"have\/has agreement",
+    "broken_english":"She have a problem",
+    "natural_english":"She has a problem."
+  },
+  {
+    "id":"HE-144",
+    "category":"Have\/has",
+    "pattern":"have\/has agreement",
+    "broken_english":"They has a meeting",
+    "natural_english":"They have a meeting."
+  },
+  {
+    "id":"HE-145",
+    "category":"Have\/has",
+    "pattern":"have\/has agreement",
+    "broken_english":"We has work today",
+    "natural_english":"We have work today."
+  },
+  {
+    "id":"HE-146",
+    "category":"Have\/has",
+    "pattern":"have\/has agreement",
+    "broken_english":"My manager have the report",
+    "natural_english":"My manager has the report."
+  },
+  {
+    "id":"HE-147",
+    "category":"Have\/has",
+    "pattern":"have\/has agreement",
+    "broken_english":"The customer have a complaint",
+    "natural_english":"The customer has a complaint."
+  },
+  {
+    "id":"HE-148",
+    "category":"Have\/has",
+    "pattern":"have\/has agreement",
+    "broken_english":"I have two brother",
+    "natural_english":"I have two brothers."
+  },
+  {
+    "id":"HE-149",
+    "category":"Have\/has",
+    "pattern":"have\/has agreement",
+    "broken_english":"He has two phone",
+    "natural_english":"He has two phones."
+  },
+  {
+    "id":"HE-150",
+    "category":"Have\/has",
+    "pattern":"have\/has agreement",
+    "broken_english":"She have three children",
+    "natural_english":"She has three children."
+  },
+  {
+    "id":"HE-151",
+    "category":"Have\/has",
+    "pattern":"have\/has agreement",
+    "broken_english":"We have a problem",
+    "natural_english":"We have a problem."
+  },
+  {
+    "id":"HE-152",
+    "category":"Have\/has",
+    "pattern":"have\/has agreement",
+    "broken_english":"They have many orders",
+    "natural_english":"They have many orders."
+  },
+  {
+    "id":"HE-153",
+    "category":"Have\/has",
+    "pattern":"have\/has agreement",
+    "broken_english":"I have work tomorrow",
+    "natural_english":"I have work tomorrow."
+  },
+  {
+    "id":"HE-154",
+    "category":"Have\/has",
+    "pattern":"have\/has agreement",
+    "broken_english":"He has a question",
+    "natural_english":"He has a question."
+  },
+  {
+    "id":"HE-155",
+    "category":"Have\/has",
+    "pattern":"have\/has agreement",
+    "broken_english":"The machine has a problem",
+    "natural_english":"The machine has a problem."
+  },
+  {
+    "id":"HE-156",
+    "category":"Have\/has",
+    "pattern":"have\/has agreement",
+    "broken_english":"The truck has two boxes",
+    "natural_english":"The truck has two boxes."
+  },
+  {
+    "id":"HE-157",
+    "category":"Have\/has",
+    "pattern":"have\/has agreement",
+    "broken_english":"I have no money",
+    "natural_english":"I have no money."
+  },
+  {
+    "id":"HE-158",
+    "category":"Have\/has",
+    "pattern":"have\/has agreement",
+    "broken_english":"She has a meeting today",
+    "natural_english":"She has a meeting today."
+  },
+  {
+    "id":"HE-159",
+    "category":"Have\/has",
+    "pattern":"have\/has agreement",
+    "broken_english":"We have enough time",
+    "natural_english":"We have enough time."
+  },
+  {
+    "id":"HE-160",
+    "category":"Have\/has",
+    "pattern":"have\/has agreement",
+    "broken_english":"They have a new manager",
+    "natural_english":"They have a new manager."
+  },
+  {
+    "id":"HE-161",
+    "category":"Do\/did",
+    "pattern":"do\/did in questions",
+    "broken_english":"You go yesterday?",
+    "natural_english":"Did you go yesterday?"
+  },
+  {
+    "id":"HE-162",
+    "category":"Do\/did",
+    "pattern":"do\/did in questions",
+    "broken_english":"You call manager?",
+    "natural_english":"Did you call your manager?"
+  },
+  {
+    "id":"HE-163",
+    "category":"Do\/did",
+    "pattern":"do\/did in questions",
+    "broken_english":"You finish work?",
+    "natural_english":"Did you finish work?"
+  },
+  {
+    "id":"HE-164",
+    "category":"Do\/did",
+    "pattern":"do\/did in questions",
+    "broken_english":"You check stock?",
+    "natural_english":"Did you check the stock?"
+  },
+  {
+    "id":"HE-165",
+    "category":"Do\/did",
+    "pattern":"do\/did in questions",
+    "broken_english":"You eat breakfast?",
+    "natural_english":"Did you eat breakfast?"
+  },
+  {
+    "id":"HE-166",
+    "category":"Do\/did",
+    "pattern":"do\/did in questions",
+    "broken_english":"You reach home?",
+    "natural_english":"Did you reach home?"
+  },
+  {
+    "id":"HE-167",
+    "category":"Do\/did",
+    "pattern":"do\/did in questions",
+    "broken_english":"He come yesterday?",
+    "natural_english":"Did he come yesterday?"
+  },
+  {
+    "id":"HE-168",
+    "category":"Do\/did",
+    "pattern":"do\/did in questions",
+    "broken_english":"She call you?",
+    "natural_english":"Did she call you?"
+  },
+  {
+    "id":"HE-169",
+    "category":"Do\/did",
+    "pattern":"do\/did in questions",
+    "broken_english":"They receive truck?",
+    "natural_english":"Did they receive the truck?"
+  },
+  {
+    "id":"HE-170",
+    "category":"Do\/did",
+    "pattern":"do\/did in questions",
+    "broken_english":"We need to go?",
+    "natural_english":"Do we need to go?"
+  },
+  {
+    "id":"HE-171",
+    "category":"Do\/did",
+    "pattern":"do\/did in questions",
+    "broken_english":"You need help?",
+    "natural_english":"Do you need help?"
+  },
+  {
+    "id":"HE-172",
+    "category":"Do\/did",
+    "pattern":"do\/did in questions",
+    "broken_english":"You work here?",
+    "natural_english":"Do you work here?"
+  },
+  {
+    "id":"HE-173",
+    "category":"Do\/did",
+    "pattern":"do\/did in questions",
+    "broken_english":"He work here?",
+    "natural_english":"Does he work here?"
+  },
+  {
+    "id":"HE-174",
+    "category":"Do\/did",
+    "pattern":"do\/did in questions",
+    "broken_english":"She know this?",
+    "natural_english":"Does she know this?"
+  },
+  {
+    "id":"HE-175",
+    "category":"Do\/did",
+    "pattern":"do\/did in questions",
+    "broken_english":"They have stock?",
+    "natural_english":"Do they have stock?"
+  },
+  {
+    "id":"HE-176",
+    "category":"Do\/did",
+    "pattern":"do\/did in questions",
+    "broken_english":"Manager know?",
+    "natural_english":"Does the manager know?"
+  },
+  {
+    "id":"HE-177",
+    "category":"Do\/did",
+    "pattern":"do\/did in questions",
+    "broken_english":"You understand?",
+    "natural_english":"Do you understand?"
+  },
+  {
+    "id":"HE-178",
+    "category":"Do\/did",
+    "pattern":"do\/did in questions",
+    "broken_english":"He have the key?",
+    "natural_english":"Does he have the key?"
+  },
+  {
+    "id":"HE-179",
+    "category":"Do\/did",
+    "pattern":"do\/did in questions",
+    "broken_english":"She need this?",
+    "natural_english":"Does she need this?"
+  },
+  {
+    "id":"HE-180",
+    "category":"Do\/did",
+    "pattern":"do\/did in questions",
+    "broken_english":"They come every day?",
+    "natural_english":"Do they come every day?"
+  },
+  {
+    "id":"HE-181",
+    "category":"Can\/can't",
+    "pattern":"modal can + base verb",
+    "broken_english":"I can to do this",
+    "natural_english":"I can do this."
+  },
+  {
+    "id":"HE-182",
+    "category":"Can\/can't",
+    "pattern":"modal can + base verb",
+    "broken_english":"I can help you",
+    "natural_english":"I can help you."
+  },
+  {
+    "id":"HE-183",
+    "category":"Can\/can't",
+    "pattern":"modal can + base verb",
+    "broken_english":"I can come tomorrow",
+    "natural_english":"I can come tomorrow."
+  },
+  {
+    "id":"HE-184",
+    "category":"Can\/can't",
+    "pattern":"modal can + base verb",
+    "broken_english":"I can check the stock",
+    "natural_english":"I can check the stock."
+  },
+  {
+    "id":"HE-185",
+    "category":"Can\/can't",
+    "pattern":"modal can + base verb",
+    "broken_english":"I can speak little English",
+    "natural_english":"I can speak a little English."
+  },
+  {
+    "id":"HE-186",
+    "category":"Can\/can't",
+    "pattern":"modal can + base verb",
+    "broken_english":"I can understand you",
+    "natural_english":"I can understand you."
+  },
+  {
+    "id":"HE-187",
+    "category":"Can\/can't",
+    "pattern":"modal can + base verb",
+    "broken_english":"I can operate machine",
+    "natural_english":"I can operate the machine."
+  },
+  {
+    "id":"HE-188",
+    "category":"Can\/can't",
+    "pattern":"modal can + base verb",
+    "broken_english":"I can use scanner",
+    "natural_english":"I can use the scanner."
+  },
+  {
+    "id":"HE-189",
+    "category":"Can\/can't",
+    "pattern":"modal can + base verb",
+    "broken_english":"I can not come today",
+    "natural_english":"I can't come today."
+  },
+  {
+    "id":"HE-190",
+    "category":"Can\/can't",
+    "pattern":"modal can + base verb",
+    "broken_english":"I can't to come today",
+    "natural_english":"I can't come today."
+  },
+  {
+    "id":"HE-191",
+    "category":"Can\/can't",
+    "pattern":"modal can + base verb",
+    "broken_english":"He can helps me",
+    "natural_english":"He can help me."
+  },
+  {
+    "id":"HE-192",
+    "category":"Can\/can't",
+    "pattern":"modal can + base verb",
+    "broken_english":"She can speaks English",
+    "natural_english":"She can speak English."
+  },
+  {
+    "id":"HE-193",
+    "category":"Can\/can't",
+    "pattern":"modal can + base verb",
+    "broken_english":"They can finish it",
+    "natural_english":"They can finish it."
+  },
+  {
+    "id":"HE-194",
+    "category":"Can\/can't",
+    "pattern":"modal can + base verb",
+    "broken_english":"We can solve this",
+    "natural_english":"We can solve this."
+  },
+  {
+    "id":"HE-195",
+    "category":"Can\/can't",
+    "pattern":"modal can + base verb",
+    "broken_english":"Can you to help me?",
+    "natural_english":"Can you help me?"
+  },
+  {
+    "id":"HE-196",
+    "category":"Can\/can't",
+    "pattern":"modal can + base verb",
+    "broken_english":"Can I to go?",
+    "natural_english":"Can I go?"
+  },
+  {
+    "id":"HE-197",
+    "category":"Can\/can't",
+    "pattern":"modal can + base verb",
+    "broken_english":"Can I take leave?",
+    "natural_english":"Can I take leave?"
+  },
+  {
+    "id":"HE-198",
+    "category":"Can\/can't",
+    "pattern":"modal can + base verb",
+    "broken_english":"Can you explain me?",
+    "natural_english":"Can you explain it to me?"
+  },
+  {
+    "id":"HE-199",
+    "category":"Can\/can't",
+    "pattern":"modal can + base verb",
+    "broken_english":"Can he come with us?",
+    "natural_english":"Can he come with us?"
+  },
+  {
+    "id":"HE-200",
+    "category":"Can\/can't",
+    "pattern":"modal can + base verb",
+    "broken_english":"Can we start now?",
+    "natural_english":"Can we start now?"
+  },
+  {
+    "id":"HE-201",
+    "category":"Articles",
+    "pattern":"a\/an\/the",
+    "broken_english":"I have bike",
+    "natural_english":"I have a bike."
+  },
+  {
+    "id":"HE-202",
+    "category":"Articles",
+    "pattern":"a\/an\/the",
+    "broken_english":"I need pen",
+    "natural_english":"I need a pen."
+  },
+  {
+    "id":"HE-203",
+    "category":"Articles",
+    "pattern":"a\/an\/the",
+    "broken_english":"He is manager",
+    "natural_english":"He is a manager."
+  },
+  {
+    "id":"HE-204",
+    "category":"Articles",
+    "pattern":"a\/an\/the",
+    "broken_english":"She is nurse",
+    "natural_english":"She is a nurse."
+  },
+  {
+    "id":"HE-205",
+    "category":"Articles",
+    "pattern":"a\/an\/the",
+    "broken_english":"I saw accident",
+    "natural_english":"I saw an accident."
+  },
+  {
+    "id":"HE-206",
+    "category":"Articles",
+    "pattern":"a\/an\/the",
+    "broken_english":"I need umbrella",
+    "natural_english":"I need an umbrella."
+  },
+  {
+    "id":"HE-207",
+    "category":"Articles",
+    "pattern":"a\/an\/the",
+    "broken_english":"He has idea",
+    "natural_english":"He has an idea."
+  },
+  {
+    "id":"HE-208",
+    "category":"Articles",
+    "pattern":"a\/an\/the",
+    "broken_english":"I ate apple",
+    "natural_english":"I ate an apple."
+  },
+  {
+    "id":"HE-209",
+    "category":"Articles",
+    "pattern":"a\/an\/the",
+    "broken_english":"Give me box",
+    "natural_english":"Give me the box."
+  },
+  {
+    "id":"HE-210",
+    "category":"Articles",
+    "pattern":"a\/an\/the",
+    "broken_english":"Close door",
+    "natural_english":"Close the door."
+  },
+  {
+    "id":"HE-211",
+    "category":"Articles",
+    "pattern":"a\/an\/the",
+    "broken_english":"Open gate",
+    "natural_english":"Open the gate."
+  },
+  {
+    "id":"HE-212",
+    "category":"Articles",
+    "pattern":"a\/an\/the",
+    "broken_english":"Call manager",
+    "natural_english":"Call the manager."
+  },
+  {
+    "id":"HE-213",
+    "category":"Articles",
+    "pattern":"a\/an\/the",
+    "broken_english":"I went to market",
+    "natural_english":"I went to the market."
+  },
+  {
+    "id":"HE-214",
+    "category":"Articles",
+    "pattern":"a\/an\/the",
+    "broken_english":"I work in warehouse",
+    "natural_english":"I work in a warehouse."
+  },
+  {
+    "id":"HE-215",
+    "category":"Articles",
+    "pattern":"a\/an\/the",
+    "broken_english":"Truck is at gate",
+    "natural_english":"The truck is at the gate."
+  },
+  {
+    "id":"HE-216",
+    "category":"Articles",
+    "pattern":"a\/an\/the",
+    "broken_english":"Customer is waiting outside",
+    "natural_english":"The customer is waiting outside."
+  },
+  {
+    "id":"HE-217",
+    "category":"Articles",
+    "pattern":"a\/an\/the",
+    "broken_english":"I need information",
+    "natural_english":"I need the information."
+  },
+  {
+    "id":"HE-218",
+    "category":"Articles",
+    "pattern":"a\/an\/the",
+    "broken_english":"I have problem",
+    "natural_english":"I have a problem."
+  },
+  {
+    "id":"HE-219",
+    "category":"Articles",
+    "pattern":"a\/an\/the",
+    "broken_english":"There is issue",
+    "natural_english":"There is an issue."
+  },
+  {
+    "id":"HE-220",
+    "category":"Articles",
+    "pattern":"a\/an\/the",
+    "broken_english":"He is best worker",
+    "natural_english":"He is the best worker."
+  },
+  {
+    "id":"HE-221",
+    "category":"Prepositions",
+    "pattern":"common prepositions",
+    "broken_english":"I am in office",
+    "natural_english":"I am in the office."
+  },
+  {
+    "id":"HE-222",
+    "category":"Prepositions",
+    "pattern":"common prepositions",
+    "broken_english":"I am at office",
+    "natural_english":"I am at the office."
+  },
+  {
+    "id":"HE-223",
+    "category":"Prepositions",
+    "pattern":"common prepositions",
+    "broken_english":"I go in bus",
+    "natural_english":"I go by bus."
+  },
+  {
+    "id":"HE-224",
+    "category":"Prepositions",
+    "pattern":"common prepositions",
+    "broken_english":"I am coming by bike",
+    "natural_english":"I am coming by bike."
+  },
+  {
+    "id":"HE-225",
+    "category":"Prepositions",
+    "pattern":"common prepositions",
+    "broken_english":"I am waiting bus",
+    "natural_english":"I am waiting for the bus."
+  },
+  {
+    "id":"HE-226",
+    "category":"Prepositions",
+    "pattern":"common prepositions",
+    "broken_english":"I am talking my manager",
+    "natural_english":"I am talking to my manager."
+  },
+  {
+    "id":"HE-227",
+    "category":"Prepositions",
+    "pattern":"common prepositions",
+    "broken_english":"I reached at home",
+    "natural_english":"I reached home."
+  },
+  {
+    "id":"HE-228",
+    "category":"Prepositions",
+    "pattern":"common prepositions",
+    "broken_english":"I arrived to office",
+    "natural_english":"I arrived at the office."
+  },
+  {
+    "id":"HE-229",
+    "category":"Prepositions",
+    "pattern":"common prepositions",
+    "broken_english":"I am going in market",
+    "natural_english":"I am going to the market."
+  },
+  {
+    "id":"HE-230",
+    "category":"Prepositions",
+    "pattern":"common prepositions",
+    "broken_english":"The box is on table",
+    "natural_english":"The box is on the table."
+  },
+  {
+    "id":"HE-231",
+    "category":"Prepositions",
+    "pattern":"common prepositions",
+    "broken_english":"The item is in the box",
+    "natural_english":"The item is in the box."
+  },
+  {
+    "id":"HE-232",
+    "category":"Prepositions",
+    "pattern":"common prepositions",
+    "broken_english":"Keep it on location",
+    "natural_english":"Keep it at the location."
+  },
+  {
+    "id":"HE-233",
+    "category":"Prepositions",
+    "pattern":"common prepositions",
+    "broken_english":"He is standing in the gate",
+    "natural_english":"He is standing at the gate."
+  },
+  {
+    "id":"HE-234",
+    "category":"Prepositions",
+    "pattern":"common prepositions",
+    "broken_english":"I work from Monday",
+    "natural_english":"I work from Monday."
+  },
+  {
+    "id":"HE-235",
+    "category":"Prepositions",
+    "pattern":"common prepositions",
+    "broken_english":"I work since Monday",
+    "natural_english":"I have been working since Monday."
+  },
+  {
+    "id":"HE-236",
+    "category":"Prepositions",
+    "pattern":"common prepositions",
+    "broken_english":"I will come at 9",
+    "natural_english":"I will come at 9."
+  },
+  {
+    "id":"HE-237",
+    "category":"Prepositions",
+    "pattern":"common prepositions",
+    "broken_english":"I finished in 6 pm",
+    "natural_english":"I finished at 6 pm."
+  },
+  {
+    "id":"HE-238",
+    "category":"Prepositions",
+    "pattern":"common prepositions",
+    "broken_english":"I will reach on Monday",
+    "natural_english":"I will reach on Monday."
+  },
+  {
+    "id":"HE-239",
+    "category":"Prepositions",
+    "pattern":"common prepositions",
+    "broken_english":"I am late because traffic",
+    "natural_english":"I am late because of traffic."
+  },
+  {
+    "id":"HE-240",
+    "category":"Prepositions",
+    "pattern":"common prepositions",
+    "broken_english":"I was stuck in traffic",
+    "natural_english":"I was stuck in traffic."
+  },
+  {
+    "id":"HE-241",
+    "category":"Word order",
+    "pattern":"natural sentence order",
+    "broken_english":"I morning go office",
+    "natural_english":"I go to the office in the morning."
+  },
+  {
+    "id":"HE-242",
+    "category":"Word order",
+    "pattern":"natural sentence order",
+    "broken_english":"I yesterday market go",
+    "natural_english":"I went to the market yesterday."
+  },
+  {
+    "id":"HE-243",
+    "category":"Word order",
+    "pattern":"natural sentence order",
+    "broken_english":"My manager I call",
+    "natural_english":"I call my manager."
+  },
+  {
+    "id":"HE-244",
+    "category":"Word order",
+    "pattern":"natural sentence order",
+    "broken_english":"Medicine mother I give",
+    "natural_english":"I give medicine to my mother."
+  },
+  {
+    "id":"HE-245",
+    "category":"Word order",
+    "pattern":"natural sentence order",
+    "broken_english":"Customer I explain problem",
+    "natural_english":"I explain the problem to the customer."
+  },
+  {
+    "id":"HE-246",
+    "category":"Word order",
+    "pattern":"natural sentence order",
+    "broken_english":"Work after home I go",
+    "natural_english":"I go home after work."
+  },
+  {
+    "id":"HE-247",
+    "category":"Word order",
+    "pattern":"natural sentence order",
+    "broken_english":"At nine office I reach",
+    "natural_english":"I reach the office at nine."
+  },
+  {
+    "id":"HE-248",
+    "category":"Word order",
+    "pattern":"natural sentence order",
+    "broken_english":"Truck morning come",
+    "natural_english":"The truck came in the morning."
+  },
+  {
+    "id":"HE-249",
+    "category":"Word order",
+    "pattern":"natural sentence order",
+    "broken_english":"Two boxes I receive",
+    "natural_english":"I received two boxes."
+  },
+  {
+    "id":"HE-250",
+    "category":"Word order",
+    "pattern":"natural sentence order",
+    "broken_english":"Today work much I have",
+    "natural_english":"I have a lot of work today."
+  },
+  {
+    "id":"HE-251",
+    "category":"Word order",
+    "pattern":"natural sentence order",
+    "broken_english":"Manager me told wait",
+    "natural_english":"My manager told me to wait."
+  },
+  {
+    "id":"HE-252",
+    "category":"Word order",
+    "pattern":"natural sentence order",
+    "broken_english":"Customer me call yesterday",
+    "natural_english":"The customer called me yesterday."
+  },
+  {
+    "id":"HE-253",
+    "category":"Word order",
+    "pattern":"natural sentence order",
+    "broken_english":"I quickly work finish",
+    "natural_english":"I finished the work quickly."
+  },
+  {
+    "id":"HE-254",
+    "category":"Word order",
+    "pattern":"natural sentence order",
+    "broken_english":"I not understand this",
+    "natural_english":"I do not understand this."
+  },
+  {
+    "id":"HE-255",
+    "category":"Word order",
+    "pattern":"natural sentence order",
+    "broken_english":"I English little speak",
+    "natural_english":"I speak a little English."
+  },
+  {
+    "id":"HE-256",
+    "category":"Word order",
+    "pattern":"natural sentence order",
+    "broken_english":"He me help",
+    "natural_english":"He helps me."
+  },
+  {
+    "id":"HE-257",
+    "category":"Word order",
+    "pattern":"natural sentence order",
+    "broken_english":"I to manager report",
+    "natural_english":"I report it to my manager."
+  },
+  {
+    "id":"HE-258",
+    "category":"Word order",
+    "pattern":"natural sentence order",
+    "broken_english":"I home late reach",
+    "natural_english":"I reached home late."
+  },
+  {
+    "id":"HE-259",
+    "category":"Word order",
+    "pattern":"natural sentence order",
+    "broken_english":"Morning tea I drink",
+    "natural_english":"I drink tea in the morning."
+  },
+  {
+    "id":"HE-260",
+    "category":"Word order",
+    "pattern":"natural sentence order",
+    "broken_english":"After lunch work start",
+    "natural_english":"I start work after lunch."
+  },
+  {
+    "id":"HE-261",
+    "category":"Countable\/plural",
+    "pattern":"singular\/plural nouns",
+    "broken_english":"Two truck came",
+    "natural_english":"Two trucks came."
+  },
+  {
+    "id":"HE-262",
+    "category":"Countable\/plural",
+    "pattern":"singular\/plural nouns",
+    "broken_english":"Three box are ready",
+    "natural_english":"Three boxes are ready."
+  },
+  {
+    "id":"HE-263",
+    "category":"Countable\/plural",
+    "pattern":"singular\/plural nouns",
+    "broken_english":"Many customer waiting",
+    "natural_english":"Many customers are waiting."
+  },
+  {
+    "id":"HE-264",
+    "category":"Countable\/plural",
+    "pattern":"singular\/plural nouns",
+    "broken_english":"One items damaged",
+    "natural_english":"One item is damaged."
+  },
+  {
+    "id":"HE-265",
+    "category":"Countable\/plural",
+    "pattern":"singular\/plural nouns",
+    "broken_english":"Five employee absent",
+    "natural_english":"Five employees are absent."
+  },
+  {
+    "id":"HE-266",
+    "category":"Countable\/plural",
+    "pattern":"singular\/plural nouns",
+    "broken_english":"Two person came",
+    "natural_english":"Two people came."
+  },
+  {
+    "id":"HE-267",
+    "category":"Countable\/plural",
+    "pattern":"singular\/plural nouns",
+    "broken_english":"Many child are playing",
+    "natural_english":"Many children are playing."
+  },
+  {
+    "id":"HE-268",
+    "category":"Countable\/plural",
+    "pattern":"singular\/plural nouns",
+    "broken_english":"Two woman came",
+    "natural_english":"Two women came."
+  },
+  {
+    "id":"HE-269",
+    "category":"Countable\/plural",
+    "pattern":"singular\/plural nouns",
+    "broken_english":"Three man working",
+    "natural_english":"Three men are working."
+  },
+  {
+    "id":"HE-270",
+    "category":"Countable\/plural",
+    "pattern":"singular\/plural nouns",
+    "broken_english":"I have two brother",
+    "natural_english":"I have two brothers."
+  },
+  {
+    "id":"HE-271",
+    "category":"Countable\/plural",
+    "pattern":"singular\/plural nouns",
+    "broken_english":"I have one sister",
+    "natural_english":"I have one sister."
+  },
+  {
+    "id":"HE-272",
+    "category":"Countable\/plural",
+    "pattern":"singular\/plural nouns",
+    "broken_english":"There are many problem",
+    "natural_english":"There are many problems."
+  },
+  {
+    "id":"HE-273",
+    "category":"Countable\/plural",
+    "pattern":"singular\/plural nouns",
+    "broken_english":"There is two issues",
+    "natural_english":"There are two issues."
+  },
+  {
+    "id":"HE-274",
+    "category":"Countable\/plural",
+    "pattern":"singular\/plural nouns",
+    "broken_english":"There are one box",
+    "natural_english":"There is one box."
+  },
+  {
+    "id":"HE-275",
+    "category":"Countable\/plural",
+    "pattern":"singular\/plural nouns",
+    "broken_english":"This items are heavy",
+    "natural_english":"These items are heavy."
+  },
+  {
+    "id":"HE-276",
+    "category":"Countable\/plural",
+    "pattern":"singular\/plural nouns",
+    "broken_english":"These box is damaged",
+    "natural_english":"These boxes are damaged."
+  },
+  {
+    "id":"HE-277",
+    "category":"Countable\/plural",
+    "pattern":"singular\/plural nouns",
+    "broken_english":"That boxes are mine",
+    "natural_english":"Those boxes are mine."
+  },
+  {
+    "id":"HE-278",
+    "category":"Countable\/plural",
+    "pattern":"singular\/plural nouns",
+    "broken_english":"This two items",
+    "natural_english":"These two items."
+  },
+  {
+    "id":"HE-279",
+    "category":"Countable\/plural",
+    "pattern":"singular\/plural nouns",
+    "broken_english":"Much customers came",
+    "natural_english":"Many customers came."
+  },
+  {
+    "id":"HE-280",
+    "category":"Countable\/plural",
+    "pattern":"singular\/plural nouns",
+    "broken_english":"Many work today",
+    "natural_english":"A lot of work today."
+  },
+  {
+    "id":"HE-281",
+    "category":"Questions",
+    "pattern":"question formation",
+    "broken_english":"Where you are going?",
+    "natural_english":"Where are you going?"
+  },
+  {
+    "id":"HE-282",
+    "category":"Questions",
+    "pattern":"question formation",
+    "broken_english":"What you are doing?",
+    "natural_english":"What are you doing?"
+  },
+  {
+    "id":"HE-283",
+    "category":"Questions",
+    "pattern":"question formation",
+    "broken_english":"Why you are late?",
+    "natural_english":"Why are you late?"
+  },
+  {
+    "id":"HE-284",
+    "category":"Questions",
+    "pattern":"question formation",
+    "broken_english":"When you will come?",
+    "natural_english":"When will you come?"
+  },
+  {
+    "id":"HE-285",
+    "category":"Questions",
+    "pattern":"question formation",
+    "broken_english":"Where you went yesterday?",
+    "natural_english":"Where did you go yesterday?"
+  },
+  {
+    "id":"HE-286",
+    "category":"Questions",
+    "pattern":"question formation",
+    "broken_english":"What you did there?",
+    "natural_english":"What did you do there?"
+  },
+  {
+    "id":"HE-287",
+    "category":"Questions",
+    "pattern":"question formation",
+    "broken_english":"Why he is angry?",
+    "natural_english":"Why is he angry?"
+  },
+  {
+    "id":"HE-288",
+    "category":"Questions",
+    "pattern":"question formation",
+    "broken_english":"Where is manager going?",
+    "natural_english":"Where is the manager going?"
+  },
+  {
+    "id":"HE-289",
+    "category":"Questions",
+    "pattern":"question formation",
+    "broken_english":"How much time you need?",
+    "natural_english":"How much time do you need?"
+  },
+  {
+    "id":"HE-290",
+    "category":"Questions",
+    "pattern":"question formation",
+    "broken_english":"How many items you receive?",
+    "natural_english":"How many items did you receive?"
+  },
+  {
+    "id":"HE-291",
+    "category":"Questions",
+    "pattern":"question formation",
+    "broken_english":"What time you reach?",
+    "natural_english":"What time did you reach?"
+  },
+  {
+    "id":"HE-292",
+    "category":"Questions",
+    "pattern":"question formation",
+    "broken_english":"Who called you?",
+    "natural_english":"Who called you?"
+  },
+  {
+    "id":"HE-293",
+    "category":"Questions",
+    "pattern":"question formation",
+    "broken_english":"Who you called?",
+    "natural_english":"Who did you call?"
+  },
+  {
+    "id":"HE-294",
+    "category":"Questions",
+    "pattern":"question formation",
+    "broken_english":"Which item you need?",
+    "natural_english":"Which item do you need?"
+  },
+  {
+    "id":"HE-295",
+    "category":"Questions",
+    "pattern":"question formation",
+    "broken_english":"What is this called?",
+    "natural_english":"What is this called?"
+  },
+  {
+    "id":"HE-296",
+    "category":"Questions",
+    "pattern":"question formation",
+    "broken_english":"How I can help you?",
+    "natural_english":"How can I help you?"
+  },
+  {
+    "id":"HE-297",
+    "category":"Questions",
+    "pattern":"question formation",
+    "broken_english":"Can you tell me where is office?",
+    "natural_english":"Can you tell me where the office is?"
+  },
+  {
+    "id":"HE-298",
+    "category":"Questions",
+    "pattern":"question formation",
+    "broken_english":"You are coming today?",
+    "natural_english":"Are you coming today?"
+  },
+  {
+    "id":"HE-299",
+    "category":"Questions",
+    "pattern":"question formation",
+    "broken_english":"He is working today?",
+    "natural_english":"Is he working today?"
+  },
+  {
+    "id":"HE-300",
+    "category":"Questions",
+    "pattern":"question formation",
+    "broken_english":"We can start?",
+    "natural_english":"Can we start?"
+  },
+  {
+    "id":"HE-301",
+    "category":"Negatives",
+    "pattern":"negative forms",
+    "broken_english":"I not know",
+    "natural_english":"I do not know."
+  },
+  {
+    "id":"HE-302",
+    "category":"Negatives",
+    "pattern":"negative forms",
+    "broken_english":"I not understand",
+    "natural_english":"I do not understand."
+  },
+  {
+    "id":"HE-303",
+    "category":"Negatives",
+    "pattern":"negative forms",
+    "broken_english":"I not have money",
+    "natural_english":"I do not have money."
+  },
+  {
+    "id":"HE-304",
+    "category":"Negatives",
+    "pattern":"negative forms",
+    "broken_english":"I not go yesterday",
+    "natural_english":"I did not go yesterday."
+  },
+  {
+    "id":"HE-305",
+    "category":"Negatives",
+    "pattern":"negative forms",
+    "broken_english":"I didn't went",
+    "natural_english":"I didn't go."
+  },
+  {
+    "id":"HE-306",
+    "category":"Negatives",
+    "pattern":"negative forms",
+    "broken_english":"He don't know",
+    "natural_english":"He doesn't know."
+  },
+  {
+    "id":"HE-307",
+    "category":"Negatives",
+    "pattern":"negative forms",
+    "broken_english":"She don't work here",
+    "natural_english":"She doesn't work here."
+  },
+  {
+    "id":"HE-308",
+    "category":"Negatives",
+    "pattern":"negative forms",
+    "broken_english":"They doesn't understand",
+    "natural_english":"They don't understand."
+  },
+  {
+    "id":"HE-309",
+    "category":"Negatives",
+    "pattern":"negative forms",
+    "broken_english":"We doesn't have stock",
+    "natural_english":"We don't have stock."
+  },
+  {
+    "id":"HE-310",
+    "category":"Negatives",
+    "pattern":"negative forms",
+    "broken_english":"He not coming",
+    "natural_english":"He is not coming."
+  },
+  {
+    "id":"HE-311",
+    "category":"Negatives",
+    "pattern":"negative forms",
+    "broken_english":"She not ready",
+    "natural_english":"She is not ready."
+  },
+  {
+    "id":"HE-312",
+    "category":"Negatives",
+    "pattern":"negative forms",
+    "broken_english":"They not working",
+    "natural_english":"They are not working."
+  },
+  {
+    "id":"HE-313",
+    "category":"Negatives",
+    "pattern":"negative forms",
+    "broken_english":"I am not understand",
+    "natural_english":"I do not understand."
+  },
+  {
+    "id":"HE-314",
+    "category":"Negatives",
+    "pattern":"negative forms",
+    "broken_english":"I cannot to come",
+    "natural_english":"I cannot come."
+  },
+  {
+    "id":"HE-315",
+    "category":"Negatives",
+    "pattern":"negative forms",
+    "broken_english":"I will not going",
+    "natural_english":"I will not go."
+  },
+  {
+    "id":"HE-316",
+    "category":"Negatives",
+    "pattern":"negative forms",
+    "broken_english":"He will not comes",
+    "natural_english":"He will not come."
+  },
+  {
+    "id":"HE-317",
+    "category":"Negatives",
+    "pattern":"negative forms",
+    "broken_english":"I didn't called him",
+    "natural_english":"I didn't call him."
+  },
+  {
+    "id":"HE-318",
+    "category":"Negatives",
+    "pattern":"negative forms",
+    "broken_english":"She didn't went home",
+    "natural_english":"She didn't go home."
+  },
+  {
+    "id":"HE-319",
+    "category":"Negatives",
+    "pattern":"negative forms",
+    "broken_english":"We didn't received the item",
+    "natural_english":"We didn't receive the item."
+  },
+  {
+    "id":"HE-320",
+    "category":"Negatives",
+    "pattern":"negative forms",
+    "broken_english":"They didn't finished work",
+    "natural_english":"They didn't finish work."
+  },
+  {
+    "id":"HE-321",
+    "category":"Verb patterns",
+    "pattern":"verb + correct complement",
+    "broken_english":"I explain him the problem",
+    "natural_english":"I explain the problem to him."
+  },
+  {
+    "id":"HE-322",
+    "category":"Verb patterns",
+    "pattern":"verb + correct complement",
+    "broken_english":"I inform him about traffic",
+    "natural_english":"I inform him about the traffic."
+  },
+  {
+    "id":"HE-323",
+    "category":"Verb patterns",
+    "pattern":"verb + correct complement",
+    "broken_english":"I discuss about the issue",
+    "natural_english":"I discuss the issue."
+  },
+  {
+    "id":"HE-324",
+    "category":"Verb patterns",
+    "pattern":"verb + correct complement",
+    "broken_english":"I request for leave",
+    "natural_english":"I request leave."
+  },
+  {
+    "id":"HE-325",
+    "category":"Verb patterns",
+    "pattern":"verb + correct complement",
+    "broken_english":"I ask to my manager",
+    "natural_english":"I ask my manager."
+  },
+  {
+    "id":"HE-326",
+    "category":"Verb patterns",
+    "pattern":"verb + correct complement",
+    "broken_english":"I tell to my manager",
+    "natural_english":"I tell my manager."
+  },
+  {
+    "id":"HE-327",
+    "category":"Verb patterns",
+    "pattern":"verb + correct complement",
+    "broken_english":"I say my manager",
+    "natural_english":"I tell my manager."
+  },
+  {
+    "id":"HE-328",
+    "category":"Verb patterns",
+    "pattern":"verb + correct complement",
+    "broken_english":"I suggest him to go",
+    "natural_english":"I suggest that he go."
+  },
+  {
+    "id":"HE-329",
+    "category":"Verb patterns",
+    "pattern":"verb + correct complement",
+    "broken_english":"I prefer to go by bus",
+    "natural_english":"I prefer to go by bus."
+  },
+  {
+    "id":"HE-330",
+    "category":"Verb patterns",
+    "pattern":"verb + correct complement",
+    "broken_english":"I depend on manager",
+    "natural_english":"I depend on my manager."
+  },
+  {
+    "id":"HE-331",
+    "category":"Verb patterns",
+    "pattern":"verb + correct complement",
+    "broken_english":"I wait customer",
+    "natural_english":"I wait for the customer."
+  },
+  {
+    "id":"HE-332",
+    "category":"Verb patterns",
+    "pattern":"verb + correct complement",
+    "broken_english":"I listen music",
+    "natural_english":"I listen to music."
+  },
+  {
+    "id":"HE-333",
+    "category":"Verb patterns",
+    "pattern":"verb + correct complement",
+    "broken_english":"I look the screen",
+    "natural_english":"I look at the screen."
+  },
+  {
+    "id":"HE-334",
+    "category":"Verb patterns",
+    "pattern":"verb + correct complement",
+    "broken_english":"I enter in room",
+    "natural_english":"I enter the room."
+  },
+  {
+    "id":"HE-335",
+    "category":"Verb patterns",
+    "pattern":"verb + correct complement",
+    "broken_english":"I reach to office",
+    "natural_english":"I reach the office."
+  },
+  {
+    "id":"HE-336",
+    "category":"Verb patterns",
+    "pattern":"verb + correct complement",
+    "broken_english":"I attend in meeting",
+    "natural_english":"I attend the meeting."
+  },
+  {
+    "id":"HE-337",
+    "category":"Verb patterns",
+    "pattern":"verb + correct complement",
+    "broken_english":"I join to meeting",
+    "natural_english":"I join the meeting."
+  },
+  {
+    "id":"HE-338",
+    "category":"Verb patterns",
+    "pattern":"verb + correct complement",
+    "broken_english":"I reply him",
+    "natural_english":"I reply to him."
+  },
+  {
+    "id":"HE-339",
+    "category":"Verb patterns",
+    "pattern":"verb + correct complement",
+    "broken_english":"I contact with manager",
+    "natural_english":"I contact my manager."
+  },
+  {
+    "id":"HE-340",
+    "category":"Verb patterns",
+    "pattern":"verb + correct complement",
+    "broken_english":"I request him for help",
+    "natural_english":"I ask him for help."
+  },
+  {
+    "id":"HE-341",
+    "category":"Modal\/obligation",
+    "pattern":"should\/must\/need to",
+    "broken_english":"I should to go",
+    "natural_english":"I should go."
+  },
+  {
+    "id":"HE-342",
+    "category":"Modal\/obligation",
+    "pattern":"should\/must\/need to",
+    "broken_english":"You should to call him",
+    "natural_english":"You should call him."
+  },
+  {
+    "id":"HE-343",
+    "category":"Modal\/obligation",
+    "pattern":"should\/must\/need to",
+    "broken_english":"We must to finish",
+    "natural_english":"We must finish."
+  },
+  {
+    "id":"HE-344",
+    "category":"Modal\/obligation",
+    "pattern":"should\/must\/need to",
+    "broken_english":"He must to wear uniform",
+    "natural_english":"He must wear a uniform."
+  },
+  {
+    "id":"HE-345",
+    "category":"Modal\/obligation",
+    "pattern":"should\/must\/need to",
+    "broken_english":"I need go office",
+    "natural_english":"I need to go to the office."
+  },
+  {
+    "id":"HE-346",
+    "category":"Modal\/obligation",
+    "pattern":"should\/must\/need to",
+    "broken_english":"I need to call manager",
+    "natural_english":"I need to call my manager."
+  },
+  {
+    "id":"HE-347",
+    "category":"Modal\/obligation",
+    "pattern":"should\/must\/need to",
+    "broken_english":"You need check this",
+    "natural_english":"You need to check this."
+  },
+  {
+    "id":"HE-348",
+    "category":"Modal\/obligation",
+    "pattern":"should\/must\/need to",
+    "broken_english":"We need finish today",
+    "natural_english":"We need to finish today."
+  },
+  {
+    "id":"HE-349",
+    "category":"Modal\/obligation",
+    "pattern":"should\/must\/need to",
+    "broken_english":"He need to come",
+    "natural_english":"He needs to come."
+  },
+  {
+    "id":"HE-350",
+    "category":"Modal\/obligation",
+    "pattern":"should\/must\/need to",
+    "broken_english":"She need to report",
+    "natural_english":"She needs to report."
+  },
+  {
+    "id":"HE-351",
+    "category":"Modal\/obligation",
+    "pattern":"should\/must\/need to",
+    "broken_english":"I have go now",
+    "natural_english":"I have to go now."
+  },
+  {
+    "id":"HE-352",
+    "category":"Modal\/obligation",
+    "pattern":"should\/must\/need to",
+    "broken_english":"I have to inform him",
+    "natural_english":"I have to inform him."
+  },
+  {
+    "id":"HE-353",
+    "category":"Modal\/obligation",
+    "pattern":"should\/must\/need to",
+    "broken_english":"He have to work",
+    "natural_english":"He has to work."
+  },
+  {
+    "id":"HE-354",
+    "category":"Modal\/obligation",
+    "pattern":"should\/must\/need to",
+    "broken_english":"They has to wait",
+    "natural_english":"They have to wait."
+  },
+  {
+    "id":"HE-355",
+    "category":"Modal\/obligation",
+    "pattern":"should\/must\/need to",
+    "broken_english":"You don't need to come",
+    "natural_english":"You don't need to come."
+  },
+  {
+    "id":"HE-356",
+    "category":"Modal\/obligation",
+    "pattern":"should\/must\/need to",
+    "broken_english":"I should inform my manager",
+    "natural_english":"I should inform my manager."
+  },
+  {
+    "id":"HE-357",
+    "category":"Modal\/obligation",
+    "pattern":"should\/must\/need to",
+    "broken_english":"We should check again",
+    "natural_english":"We should check again."
+  },
+  {
+    "id":"HE-358",
+    "category":"Modal\/obligation",
+    "pattern":"should\/must\/need to",
+    "broken_english":"You must be careful",
+    "natural_english":"You must be careful."
+  },
+  {
+    "id":"HE-359",
+    "category":"Modal\/obligation",
+    "pattern":"should\/must\/need to",
+    "broken_english":"He must report the damage",
+    "natural_english":"He must report the damage."
+  },
+  {
+    "id":"HE-360",
+    "category":"Modal\/obligation",
+    "pattern":"should\/must\/need to",
+    "broken_english":"They need to follow the process",
+    "natural_english":"They need to follow the process."
+  },
+  {
+    "id":"HE-361",
+    "category":"Time expressions",
+    "pattern":"natural time phrases",
+    "broken_english":"Today morning I went",
+    "natural_english":"I went this morning."
+  },
+  {
+    "id":"HE-362",
+    "category":"Time expressions",
+    "pattern":"natural time phrases",
+    "broken_english":"Yesterday night I came",
+    "natural_english":"I came last night."
+  },
+  {
+    "id":"HE-363",
+    "category":"Time expressions",
+    "pattern":"natural time phrases",
+    "broken_english":"Tomorrow morning I go",
+    "natural_english":"I am going tomorrow morning."
+  },
+  {
+    "id":"HE-364",
+    "category":"Time expressions",
+    "pattern":"natural time phrases",
+    "broken_english":"In morning I work",
+    "natural_english":"I work in the morning."
+  },
+  {
+    "id":"HE-365",
+    "category":"Time expressions",
+    "pattern":"natural time phrases",
+    "broken_english":"In night I work",
+    "natural_english":"I work at night."
+  },
+  {
+    "id":"HE-366",
+    "category":"Time expressions",
+    "pattern":"natural time phrases",
+    "broken_english":"At morning I eat",
+    "natural_english":"I eat in the morning."
+  },
+  {
+    "id":"HE-367",
+    "category":"Time expressions",
+    "pattern":"natural time phrases",
+    "broken_english":"At evening I go",
+    "natural_english":"I go in the evening."
+  },
+  {
+    "id":"HE-368",
+    "category":"Time expressions",
+    "pattern":"natural time phrases",
+    "broken_english":"After two hour I come",
+    "natural_english":"I will come in two hours."
+  },
+  {
+    "id":"HE-369",
+    "category":"Time expressions",
+    "pattern":"natural time phrases",
+    "broken_english":"Before ten minute I called",
+    "natural_english":"I called ten minutes ago."
+  },
+  {
+    "id":"HE-370",
+    "category":"Time expressions",
+    "pattern":"natural time phrases",
+    "broken_english":"From two hours I wait",
+    "natural_english":"I have been waiting for two hours."
+  },
+  {
+    "id":"HE-371",
+    "category":"Time expressions",
+    "pattern":"natural time phrases",
+    "broken_english":"Since two hours I wait",
+    "natural_english":"I have been waiting for two hours."
+  },
+  {
+    "id":"HE-372",
+    "category":"Time expressions",
+    "pattern":"natural time phrases",
+    "broken_english":"For Monday I have work",
+    "natural_english":"I have work on Monday."
+  },
+  {
+    "id":"HE-373",
+    "category":"Time expressions",
+    "pattern":"natural time phrases",
+    "broken_english":"At tomorrow I come",
+    "natural_english":"I will come tomorrow."
+  },
+  {
+    "id":"HE-374",
+    "category":"Time expressions",
+    "pattern":"natural time phrases",
+    "broken_english":"On yesterday I went",
+    "natural_english":"I went yesterday."
+  },
+  {
+    "id":"HE-375",
+    "category":"Time expressions",
+    "pattern":"natural time phrases",
+    "broken_english":"In Monday I work",
+    "natural_english":"I work on Monday."
+  },
+  {
+    "id":"HE-376",
+    "category":"Time expressions",
+    "pattern":"natural time phrases",
+    "broken_english":"At 9 clock I reach",
+    "natural_english":"I reach at 9 o'clock."
+  },
+  {
+    "id":"HE-377",
+    "category":"Time expressions",
+    "pattern":"natural time phrases",
+    "broken_english":"I come 15 minutes late",
+    "natural_english":"I am 15 minutes late."
+  },
+  {
+    "id":"HE-378",
+    "category":"Time expressions",
+    "pattern":"natural time phrases",
+    "broken_english":"I late by 15 minutes",
+    "natural_english":"I am 15 minutes late."
+  },
+  {
+    "id":"HE-379",
+    "category":"Time expressions",
+    "pattern":"natural time phrases",
+    "broken_english":"I will reach after 10 minute",
+    "natural_english":"I will arrive in 10 minutes."
+  },
+  {
+    "id":"HE-380",
+    "category":"Time expressions",
+    "pattern":"natural time phrases",
+    "broken_english":"I came before 10 minutes",
+    "natural_english":"I came 10 minutes ago."
+  },
+  {
+    "id":"HE-381",
+    "category":"Workplace English",
+    "pattern":"common workplace phrasing",
+    "broken_english":"I am late because traffic",
+    "natural_english":"I am late because of traffic."
+  },
+  {
+    "id":"HE-382",
+    "category":"Workplace English",
+    "pattern":"common workplace phrasing",
+    "broken_english":"Traffic is too much",
+    "natural_english":"There is heavy traffic."
+  },
+  {
+    "id":"HE-383",
+    "category":"Workplace English",
+    "pattern":"common workplace phrasing",
+    "broken_english":"I got stuck in traffic",
+    "natural_english":"I got stuck in traffic."
+  },
+  {
+    "id":"HE-384",
+    "category":"Workplace English",
+    "pattern":"common workplace phrasing",
+    "broken_english":"Train fatak is closed",
+    "natural_english":"The railway crossing is closed."
+  },
+  {
+    "id":"HE-385",
+    "category":"Workplace English",
+    "pattern":"common workplace phrasing",
+    "broken_english":"I will inform my manager",
+    "natural_english":"I will inform my manager."
+  },
+  {
+    "id":"HE-386",
+    "category":"Workplace English",
+    "pattern":"common workplace phrasing",
+    "broken_english":"I am reaching late",
+    "natural_english":"I am arriving late."
+  },
+  {
+    "id":"HE-387",
+    "category":"Workplace English",
+    "pattern":"common workplace phrasing",
+    "broken_english":"I need leave today",
+    "natural_english":"I need leave today."
+  },
+  {
+    "id":"HE-388",
+    "category":"Workplace English",
+    "pattern":"common workplace phrasing",
+    "broken_english":"I want one leave",
+    "natural_english":"I need a day off."
+  },
+  {
+    "id":"HE-389",
+    "category":"Workplace English",
+    "pattern":"common workplace phrasing",
+    "broken_english":"My shift change",
+    "natural_english":"My shift has changed."
+  },
+  {
+    "id":"HE-390",
+    "category":"Workplace English",
+    "pattern":"common workplace phrasing",
+    "broken_english":"My shift is changed",
+    "natural_english":"My shift has been changed."
+  },
+  {
+    "id":"HE-391",
+    "category":"Workplace English",
+    "pattern":"common workplace phrasing",
+    "broken_english":"I have duty today",
+    "natural_english":"I am on duty today."
+  },
+  {
+    "id":"HE-392",
+    "category":"Workplace English",
+    "pattern":"common workplace phrasing",
+    "broken_english":"I am on duty today",
+    "natural_english":"I am on duty today."
+  },
+  {
+    "id":"HE-393",
+    "category":"Workplace English",
+    "pattern":"common workplace phrasing",
+    "broken_english":"Customer is not coming",
+    "natural_english":"The customer is not coming."
+  },
+  {
+    "id":"HE-394",
+    "category":"Workplace English",
+    "pattern":"common workplace phrasing",
+    "broken_english":"Customer did not came",
+    "natural_english":"The customer did not come."
+  },
+  {
+    "id":"HE-395",
+    "category":"Workplace English",
+    "pattern":"common workplace phrasing",
+    "broken_english":"Truck not come yet",
+    "natural_english":"The truck has not arrived yet."
+  },
+  {
+    "id":"HE-396",
+    "category":"Workplace English",
+    "pattern":"common workplace phrasing",
+    "broken_english":"Item is missing",
+    "natural_english":"The item is missing."
+  },
+  {
+    "id":"HE-397",
+    "category":"Workplace English",
+    "pattern":"common workplace phrasing",
+    "broken_english":"Item not found",
+    "natural_english":"The item was not found."
+  },
+  {
+    "id":"HE-398",
+    "category":"Workplace English",
+    "pattern":"common workplace phrasing",
+    "broken_english":"Machine is not working",
+    "natural_english":"The machine is not working."
+  },
+  {
+    "id":"HE-399",
+    "category":"Workplace English",
+    "pattern":"common workplace phrasing",
+    "broken_english":"I report this issue",
+    "natural_english":"I will report this issue."
+  },
+  {
+    "id":"HE-400",
+    "category":"Workplace English",
+    "pattern":"common workplace phrasing",
+    "broken_english":"Please tell to manager",
+    "natural_english":"Please tell the manager."
+  },
+  {
+    "id":"HE-401",
+    "category":"Daily life",
+    "pattern":"common daily-life rephrasing",
+    "broken_english":"I wake up six morning",
+    "natural_english":"I wake up at six in the morning."
+  },
+  {
+    "id":"HE-402",
+    "category":"Daily life",
+    "pattern":"common daily-life rephrasing",
+    "broken_english":"I brush and take bath",
+    "natural_english":"I brush my teeth and take a bath."
+  },
+  {
+    "id":"HE-403",
+    "category":"Daily life",
+    "pattern":"common daily-life rephrasing",
+    "broken_english":"I take breakfast",
+    "natural_english":"I have breakfast."
+  },
+  {
+    "id":"HE-404",
+    "category":"Daily life",
+    "pattern":"common daily-life rephrasing",
+    "broken_english":"I take lunch at one",
+    "natural_english":"I have lunch at one."
+  },
+  {
+    "id":"HE-405",
+    "category":"Daily life",
+    "pattern":"common daily-life rephrasing",
+    "broken_english":"I take dinner at night",
+    "natural_english":"I have dinner at night."
+  },
+  {
+    "id":"HE-406",
+    "category":"Daily life",
+    "pattern":"common daily-life rephrasing",
+    "broken_english":"I go toilet",
+    "natural_english":"I go to the toilet."
+  },
+  {
+    "id":"HE-407",
+    "category":"Daily life",
+    "pattern":"common daily-life rephrasing",
+    "broken_english":"I go outside for walk",
+    "natural_english":"I go outside for a walk."
+  },
+  {
+    "id":"HE-408",
+    "category":"Daily life",
+    "pattern":"common daily-life rephrasing",
+    "broken_english":"I talk with my family",
+    "natural_english":"I talk to my family."
+  },
+  {
+    "id":"HE-409",
+    "category":"Daily life",
+    "pattern":"common daily-life rephrasing",
+    "broken_english":"I spend time with children",
+    "natural_english":"I spend time with my children."
+  },
+  {
+    "id":"HE-410",
+    "category":"Daily life",
+    "pattern":"common daily-life rephrasing",
+    "broken_english":"My son go school",
+    "natural_english":"My son goes to school."
+  },
+  {
+    "id":"HE-411",
+    "category":"Daily life",
+    "pattern":"common daily-life rephrasing",
+    "broken_english":"My daughter go school",
+    "natural_english":"My daughter goes to school."
+  },
+  {
+    "id":"HE-412",
+    "category":"Daily life",
+    "pattern":"common daily-life rephrasing",
+    "broken_english":"My wife is making food",
+    "natural_english":"My wife is cooking."
+  },
+  {
+    "id":"HE-413",
+    "category":"Daily life",
+    "pattern":"common daily-life rephrasing",
+    "broken_english":"I make food morning",
+    "natural_english":"I cook in the morning."
+  },
+  {
+    "id":"HE-414",
+    "category":"Daily life",
+    "pattern":"common daily-life rephrasing",
+    "broken_english":"I purchase vegetables",
+    "natural_english":"I buy vegetables."
+  },
+  {
+    "id":"HE-415",
+    "category":"Daily life",
+    "pattern":"common daily-life rephrasing",
+    "broken_english":"I come back home",
+    "natural_english":"I come back home."
+  },
+  {
+    "id":"HE-416",
+    "category":"Daily life",
+    "pattern":"common daily-life rephrasing",
+    "broken_english":"I reached my home",
+    "natural_english":"I reached home."
+  },
+  {
+    "id":"HE-417",
+    "category":"Daily life",
+    "pattern":"common daily-life rephrasing",
+    "broken_english":"I sleep at eleven",
+    "natural_english":"I go to sleep at eleven."
+  },
+  {
+    "id":"HE-418",
+    "category":"Daily life",
+    "pattern":"common daily-life rephrasing",
+    "broken_english":"I was very tired so sleep",
+    "natural_english":"I was very tired, so I went to sleep."
+  },
+  {
+    "id":"HE-419",
+    "category":"Daily life",
+    "pattern":"common daily-life rephrasing",
+    "broken_english":"Today my day was good",
+    "natural_english":"My day was good today."
+  },
+  {
+    "id":"HE-420",
+    "category":"Daily life",
+    "pattern":"common daily-life rephrasing",
+    "broken_english":"Nothing special happen today",
+    "natural_english":"Nothing special happened today."
+  },
+  {
+    "id":"HE-421",
+    "category":"Common Indian-English patterns",
+    "pattern":"more natural workplace\/daily phrasing",
+    "broken_english":"I have a doubt",
+    "natural_english":"I have a question."
+  },
+  {
+    "id":"HE-422",
+    "category":"Common Indian-English patterns",
+    "pattern":"more natural workplace\/daily phrasing",
+    "broken_english":"Do one thing, call him",
+    "natural_english":"Please call him."
+  },
+  {
+    "id":"HE-423",
+    "category":"Common Indian-English patterns",
+    "pattern":"more natural workplace\/daily phrasing",
+    "broken_english":"I will do one thing",
+    "natural_english":"I will do this."
+  },
+  {
+    "id":"HE-424",
+    "category":"Common Indian-English patterns",
+    "pattern":"more natural workplace\/daily phrasing",
+    "broken_english":"I am having two brothers",
+    "natural_english":"I have two brothers."
+  },
+  {
+    "id":"HE-425",
+    "category":"Common Indian-English patterns",
+    "pattern":"more natural workplace\/daily phrasing",
+    "broken_english":"I am having work",
+    "natural_english":"I have work."
+  },
+  {
+    "id":"HE-426",
+    "category":"Common Indian-English patterns",
+    "pattern":"more natural workplace\/daily phrasing",
+    "broken_english":"I am knowing him",
+    "natural_english":"I know him."
+  },
+  {
+    "id":"HE-427",
+    "category":"Common Indian-English patterns",
+    "pattern":"more natural workplace\/daily phrasing",
+    "broken_english":"I am understanding",
+    "natural_english":"I understand."
+  },
+  {
+    "id":"HE-428",
+    "category":"Common Indian-English patterns",
+    "pattern":"more natural workplace\/daily phrasing",
+    "broken_english":"What is your good name?",
+    "natural_english":"What is your name?"
+  },
+  {
+    "id":"HE-429",
+    "category":"Common Indian-English patterns",
+    "pattern":"more natural workplace\/daily phrasing",
+    "broken_english":"Please revert me",
+    "natural_english":"Please reply to me."
+  },
+  {
+    "id":"HE-430",
+    "category":"Common Indian-English patterns",
+    "pattern":"more natural workplace\/daily phrasing",
+    "broken_english":"Please do the needful",
+    "natural_english":"Please take the necessary action."
+  },
+  {
+    "id":"HE-431",
+    "category":"Common Indian-English patterns",
+    "pattern":"more natural workplace\/daily phrasing",
+    "broken_english":"I will intimate you",
+    "natural_english":"I will inform you."
+  },
+  {
+    "id":"HE-432",
+    "category":"Common Indian-English patterns",
+    "pattern":"more natural workplace\/daily phrasing",
+    "broken_english":"I will discuss with him",
+    "natural_english":"I will discuss it with him."
+  },
+  {
+    "id":"HE-433",
+    "category":"Common Indian-English patterns",
+    "pattern":"more natural workplace\/daily phrasing",
+    "broken_english":"I am out of station",
+    "natural_english":"I am out of town."
+  },
+  {
+    "id":"HE-434",
+    "category":"Common Indian-English patterns",
+    "pattern":"more natural workplace\/daily phrasing",
+    "broken_english":"I am coming from home",
+    "natural_english":"I am coming from home."
+  },
+  {
+    "id":"HE-435",
+    "category":"Common Indian-English patterns",
+    "pattern":"more natural workplace\/daily phrasing",
+    "broken_english":"I am going to home",
+    "natural_english":"I am going home."
+  },
+  {
+    "id":"HE-436",
+    "category":"Common Indian-English patterns",
+    "pattern":"more natural workplace\/daily phrasing",
+    "broken_english":"I reached to Bangalore",
+    "natural_english":"I reached Bangalore."
+  },
+  {
+    "id":"HE-437",
+    "category":"Common Indian-English patterns",
+    "pattern":"more natural workplace\/daily phrasing",
+    "broken_english":"I am doing a mistake",
+    "natural_english":"I am making a mistake."
+  },
+  {
+    "id":"HE-438",
+    "category":"Common Indian-English patterns",
+    "pattern":"more natural workplace\/daily phrasing",
+    "broken_english":"I did one mistake",
+    "natural_english":"I made one mistake."
+  },
+  {
+    "id":"HE-439",
+    "category":"Common Indian-English patterns",
+    "pattern":"more natural workplace\/daily phrasing",
+    "broken_english":"He is my cousin brother",
+    "natural_english":"He is my cousin."
+  },
+  {
+    "id":"HE-440",
+    "category":"Common Indian-English patterns",
+    "pattern":"more natural workplace\/daily phrasing",
+    "broken_english":"Myself Rahul",
+    "natural_english":"My name is Rahul."
+  },
+  {
+    "id":"HE-441",
+    "category":"Requests\/politeness",
+    "pattern":"natural workplace requests",
+    "broken_english":"Give me one pen",
+    "natural_english":"Please give me a pen."
+  },
+  {
+    "id":"HE-442",
+    "category":"Requests\/politeness",
+    "pattern":"natural workplace requests",
+    "broken_english":"Give me your phone",
+    "natural_english":"Please give me your phone."
+  },
+  {
+    "id":"HE-443",
+    "category":"Requests\/politeness",
+    "pattern":"natural workplace requests",
+    "broken_english":"Tell me the way",
+    "natural_english":"Could you tell me the way?"
+  },
+  {
+    "id":"HE-444",
+    "category":"Requests\/politeness",
+    "pattern":"natural workplace requests",
+    "broken_english":"Explain me this",
+    "natural_english":"Please explain this to me."
+  },
+  {
+    "id":"HE-445",
+    "category":"Requests\/politeness",
+    "pattern":"natural workplace requests",
+    "broken_english":"Help me in this",
+    "natural_english":"Please help me with this."
+  },
+  {
+    "id":"HE-446",
+    "category":"Requests\/politeness",
+    "pattern":"natural workplace requests",
+    "broken_english":"Open the door please",
+    "natural_english":"Please open the door."
+  },
+  {
+    "id":"HE-447",
+    "category":"Requests\/politeness",
+    "pattern":"natural workplace requests",
+    "broken_english":"Close the door please",
+    "natural_english":"Please close the door."
+  },
+  {
+    "id":"HE-448",
+    "category":"Requests\/politeness",
+    "pattern":"natural workplace requests",
+    "broken_english":"Wait for me",
+    "natural_english":"Please wait for me."
+  },
+  {
+    "id":"HE-449",
+    "category":"Requests\/politeness",
+    "pattern":"natural workplace requests",
+    "broken_english":"Call me when you reach",
+    "natural_english":"Please call me when you arrive."
+  },
+  {
+    "id":"HE-450",
+    "category":"Requests\/politeness",
+    "pattern":"natural workplace requests",
+    "broken_english":"Inform me when truck come",
+    "natural_english":"Please inform me when the truck arrives."
+  },
+  {
+    "id":"HE-451",
+    "category":"Requests\/politeness",
+    "pattern":"natural workplace requests",
+    "broken_english":"Send me the report",
+    "natural_english":"Please send me the report."
+  },
+  {
+    "id":"HE-452",
+    "category":"Requests\/politeness",
+    "pattern":"natural workplace requests",
+    "broken_english":"Give me some time",
+    "natural_english":"Please give me some time."
+  },
+  {
+    "id":"HE-453",
+    "category":"Requests\/politeness",
+    "pattern":"natural workplace requests",
+    "broken_english":"I want leave",
+    "natural_english":"I would like to take leave."
+  },
+  {
+    "id":"HE-454",
+    "category":"Requests\/politeness",
+    "pattern":"natural workplace requests",
+    "broken_english":"I want to ask one thing",
+    "natural_english":"I would like to ask something."
+  },
+  {
+    "id":"HE-455",
+    "category":"Requests\/politeness",
+    "pattern":"natural workplace requests",
+    "broken_english":"Can you help me please?",
+    "natural_english":"Could you please help me?"
+  },
+  {
+    "id":"HE-456",
+    "category":"Requests\/politeness",
+    "pattern":"natural workplace requests",
+    "broken_english":"Can you repeat again?",
+    "natural_english":"Could you repeat that, please?"
+  },
+  {
+    "id":"HE-457",
+    "category":"Requests\/politeness",
+    "pattern":"natural workplace requests",
+    "broken_english":"Say again",
+    "natural_english":"Could you say that again?"
+  },
+  {
+    "id":"HE-458",
+    "category":"Requests\/politeness",
+    "pattern":"natural workplace requests",
+    "broken_english":"Wait little",
+    "natural_english":"Please wait a moment."
+  },
+  {
+    "id":"HE-459",
+    "category":"Requests\/politeness",
+    "pattern":"natural workplace requests",
+    "broken_english":"Come here once",
+    "natural_english":"Please come here for a moment."
+  },
+  {
+    "id":"HE-460",
+    "category":"Requests\/politeness",
+    "pattern":"natural workplace requests",
+    "broken_english":"Check once",
+    "natural_english":"Please check it."
+  },
+  {
+    "id":"HE-461",
+    "category":"Common verb-form errors",
+    "pattern":"wrong verb form after auxiliary",
+    "broken_english":"He did not went",
+    "natural_english":"He did not go."
+  },
+  {
+    "id":"HE-462",
+    "category":"Common verb-form errors",
+    "pattern":"wrong verb form after auxiliary",
+    "broken_english":"She did not came",
+    "natural_english":"She did not come."
+  },
+  {
+    "id":"HE-463",
+    "category":"Common verb-form errors",
+    "pattern":"wrong verb form after auxiliary",
+    "broken_english":"I did not understood",
+    "natural_english":"I did not understand."
+  },
+  {
+    "id":"HE-464",
+    "category":"Common verb-form errors",
+    "pattern":"wrong verb form after auxiliary",
+    "broken_english":"We did not received",
+    "natural_english":"We did not receive it."
+  },
+  {
+    "id":"HE-465",
+    "category":"Common verb-form errors",
+    "pattern":"wrong verb form after auxiliary",
+    "broken_english":"He can works",
+    "natural_english":"He can work."
+  },
+  {
+    "id":"HE-466",
+    "category":"Common verb-form errors",
+    "pattern":"wrong verb form after auxiliary",
+    "broken_english":"She will comes",
+    "natural_english":"She will come."
+  },
+  {
+    "id":"HE-467",
+    "category":"Common verb-form errors",
+    "pattern":"wrong verb form after auxiliary",
+    "broken_english":"I will goes",
+    "natural_english":"I will go."
+  },
+  {
+    "id":"HE-468",
+    "category":"Common verb-form errors",
+    "pattern":"wrong verb form after auxiliary",
+    "broken_english":"They will finished",
+    "natural_english":"They will finish."
+  },
+  {
+    "id":"HE-469",
+    "category":"Common verb-form errors",
+    "pattern":"wrong verb form after auxiliary",
+    "broken_english":"He should goes",
+    "natural_english":"He should go."
+  },
+  {
+    "id":"HE-470",
+    "category":"Common verb-form errors",
+    "pattern":"wrong verb form after auxiliary",
+    "broken_english":"We must finished",
+    "natural_english":"We must finish."
+  },
+  {
+    "id":"HE-471",
+    "category":"Common verb-form errors",
+    "pattern":"wrong verb form after auxiliary",
+    "broken_english":"I have went",
+    "natural_english":"I have gone."
+  },
+  {
+    "id":"HE-472",
+    "category":"Common verb-form errors",
+    "pattern":"wrong verb form after auxiliary",
+    "broken_english":"He has went",
+    "natural_english":"He has gone."
+  },
+  {
+    "id":"HE-473",
+    "category":"Common verb-form errors",
+    "pattern":"wrong verb form after auxiliary",
+    "broken_english":"I have ate",
+    "natural_english":"I have eaten."
+  },
+  {
+    "id":"HE-474",
+    "category":"Common verb-form errors",
+    "pattern":"wrong verb form after auxiliary",
+    "broken_english":"She has ate",
+    "natural_english":"She has eaten."
+  },
+  {
+    "id":"HE-475",
+    "category":"Common verb-form errors",
+    "pattern":"wrong verb form after auxiliary",
+    "broken_english":"I have saw",
+    "natural_english":"I have seen."
+  },
+  {
+    "id":"HE-476",
+    "category":"Common verb-form errors",
+    "pattern":"wrong verb form after auxiliary",
+    "broken_english":"He has did it",
+    "natural_english":"He has done it."
+  },
+  {
+    "id":"HE-477",
+    "category":"Common verb-form errors",
+    "pattern":"wrong verb form after auxiliary",
+    "broken_english":"I am go",
+    "natural_english":"I am going."
+  },
+  {
+    "id":"HE-478",
+    "category":"Common verb-form errors",
+    "pattern":"wrong verb form after auxiliary",
+    "broken_english":"He is work",
+    "natural_english":"He is working."
+  },
+  {
+    "id":"HE-479",
+    "category":"Common verb-form errors",
+    "pattern":"wrong verb form after auxiliary",
+    "broken_english":"They are come",
+    "natural_english":"They are coming."
+  },
+  {
+    "id":"HE-480",
+    "category":"Common verb-form errors",
+    "pattern":"wrong verb form after auxiliary",
+    "broken_english":"We are prepare",
+    "natural_english":"We are preparing."
+  },
+  {
+    "id":"HE-481",
+    "category":"There is\/are",
+    "pattern":"there is\/are",
+    "broken_english":"There is two trucks",
+    "natural_english":"There are two trucks."
+  },
+  {
+    "id":"HE-482",
+    "category":"There is\/are",
+    "pattern":"there is\/are",
+    "broken_english":"There are one problem",
+    "natural_english":"There is one problem."
+  },
+  {
+    "id":"HE-483",
+    "category":"There is\/are",
+    "pattern":"there is\/are",
+    "broken_english":"There is many people",
+    "natural_english":"There are many people."
+  },
+  {
+    "id":"HE-484",
+    "category":"There is\/are",
+    "pattern":"there is\/are",
+    "broken_english":"There are a customer",
+    "natural_english":"There is a customer."
+  },
+  {
+    "id":"HE-485",
+    "category":"There is\/are",
+    "pattern":"there is\/are",
+    "broken_english":"There is five boxes",
+    "natural_english":"There are five boxes."
+  },
+  {
+    "id":"HE-486",
+    "category":"There is\/are",
+    "pattern":"there is\/are",
+    "broken_english":"There are one item missing",
+    "natural_english":"There is one item missing."
+  },
+  {
+    "id":"HE-487",
+    "category":"There is\/are",
+    "pattern":"there is\/are",
+    "broken_english":"There is some workers outside",
+    "natural_english":"There are some workers outside."
+  },
+  {
+    "id":"HE-488",
+    "category":"There is\/are",
+    "pattern":"there is\/are",
+    "broken_english":"There are a machine here",
+    "natural_english":"There is a machine here."
+  },
+  {
+    "id":"HE-489",
+    "category":"There is\/are",
+    "pattern":"there is\/are",
+    "broken_english":"There is no customers",
+    "natural_english":"There are no customers."
+  },
+  {
+    "id":"HE-490",
+    "category":"There is\/are",
+    "pattern":"there is\/are",
+    "broken_english":"There are no stock",
+    "natural_english":"There is no stock."
+  },
+  {
+    "id":"HE-491",
+    "category":"There is\/are",
+    "pattern":"there is\/are",
+    "broken_english":"There is many work",
+    "natural_english":"There is a lot of work."
+  },
+  {
+    "id":"HE-492",
+    "category":"There is\/are",
+    "pattern":"there is\/are",
+    "broken_english":"There are a lot of traffic",
+    "natural_english":"There is a lot of traffic."
+  },
+  {
+    "id":"HE-493",
+    "category":"There is\/are",
+    "pattern":"there is\/are",
+    "broken_english":"There is heavy traffic today",
+    "natural_english":"There is heavy traffic today."
+  },
+  {
+    "id":"HE-494",
+    "category":"There is\/are",
+    "pattern":"there is\/are",
+    "broken_english":"There are heavy traffic",
+    "natural_english":"There is heavy traffic."
+  },
+  {
+    "id":"HE-495",
+    "category":"There is\/are",
+    "pattern":"there is\/are",
+    "broken_english":"There is some people waiting",
+    "natural_english":"There are some people waiting."
+  },
+  {
+    "id":"HE-496",
+    "category":"There is\/are",
+    "pattern":"there is\/are",
+    "broken_english":"There are somebody outside",
+    "natural_english":"There is somebody outside."
+  },
+  {
+    "id":"HE-497",
+    "category":"There is\/are",
+    "pattern":"there is\/are",
+    "broken_english":"There is nobody inside",
+    "natural_english":"There is nobody inside."
+  },
+  {
+    "id":"HE-498",
+    "category":"There is\/are",
+    "pattern":"there is\/are",
+    "broken_english":"There are something wrong",
+    "natural_english":"There is something wrong."
+  },
+  {
+    "id":"HE-499",
+    "category":"There is\/are",
+    "pattern":"there is\/are",
+    "broken_english":"There is two issues",
+    "natural_english":"There are two issues."
+  },
+  {
+    "id":"HE-500",
+    "category":"There is\/are",
+    "pattern":"there is\/are",
+    "broken_english":"There are one reason",
+    "natural_english":"There is one reason."
+  }
+];
