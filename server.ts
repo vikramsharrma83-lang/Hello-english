@@ -3,6 +3,7 @@ import path from "path";
 import { createServer as createViteServer } from "vite";
 import { GoogleGenAI, Type } from "@google/genai";
 import dotenv from "dotenv";
+import { findMatchingPatterns } from "./src/data/patternEngine";
 
 dotenv.config();
 
@@ -35,7 +36,17 @@ function getFallbackAnalysis(transcript: string, question: string) {
   let hindi = "मैं इसे अच्छे तरीके से समझाऊंगा।";
   let vocab = [{ wordOrPhrase: "on my way", hindiMeaning: "रास्ते में" }];
 
-  if (lower.includes("bike") || lower.includes("road") || lower.includes("traffic") || lower.includes("late")) {
+  // Reference the English patterns library for matching broken English patterns
+  const matchingPatterns = findMatchingPatterns(transcript, 3);
+  const topPattern = matchingPatterns.length > 0 ? matchingPatterns[0] : null;
+
+  if (topPattern && topPattern.score >= 3.0) {
+    natural = topPattern.pattern.natural_english;
+    hindi = "मैं इसे स्पष्ट और स्वाभाविक अंग्रेजी में कह रहा हूँ।";
+    vocab = [
+      { wordOrPhrase: topPattern.pattern.pattern, hindiMeaning: topPattern.pattern.category }
+    ];
+  } else if (lower.includes("bike") || lower.includes("road") || lower.includes("traffic") || lower.includes("late")) {
     natural = "I will call my supervisor while I am on my way to work.";
     hindi = "मैं काम पर जाते समय अपने सुपरवाइजर को सूचित कर दूंगा।";
     vocab = [
@@ -106,16 +117,37 @@ app.post("/api/understand", async (req, res) => {
       return res.json(fallback);
     }
 
+    // Retrieve relevant reference patterns from englishPatterns.json library
+    const matchingPatterns = findMatchingPatterns(transcript, 6);
+    const patternReferenceText = matchingPatterns.length > 0
+      ? matchingPatterns
+          .map(
+            (m) =>
+              `- [${m.pattern.id}] (${m.pattern.category} | ${m.pattern.pattern}): Broken: "${m.pattern.broken_english}" -> Natural: "${m.pattern.natural_english}"`
+          )
+          .join("\n")
+      : "No direct pattern match; use standard simple conversational English principles.";
+
     const systemPrompt = `You are Coach Neha, a friendly, warm, and empowering AI English coach designed for Indian blue-collar and entry-level learners (warehouse staff, delivery drivers, QSR & retail workers, supervisors, technicians).
-    
-PRODUCT PHILOSOPHY:
+
+PRODUCT PHILOSOPHY & PATTERN LIBRARY ENGINE:
 - "Understand first. Improve second."
 - NEVER make the learner feel that they failed.
 - NEVER use words like "Wrong", "Incorrect", "Grammar Error", "Mistake", or "Failed".
 - The learner may speak imperfect English, literal Hindi-to-English translations (e.g., "bike running", "order making", "traffic stucking", "sir please tell again"), or broken phrases.
+
+REFERENCE LIBRARY RULES (from src/data/englishPatterns.json):
+1. Understand the learner's intended meaning first.
+2. Detect whether their sentence matches or resembles an English pattern in the library.
+3. Use the matching pattern to help produce a simple, correct natural rephrase.
+4. Never force a library sentence if it changes the learner's intended meaning.
+5. Never invent facts that the learner did not say.
+6. Keep the existing My Day behaviour: natural rephrase first, then one relevant leading question to continue the conversation when in conversational dialogue.
+
+OUTPUT REQUIREMENTS:
 - Step 1: Detect their true intended meaning with total empathy.
 - Step 2: Formulate the exact natural, clear, workplace-appropriate English sentence that expresses what they want to say. Do NOT make it overly complex, formal, or academic. Keep it practical, polite, and natural.
-- Step 3: Provide a simple Hindi translation of the natural English sentence.
+- Step 3: Provide a simple Hindi translation of the natural English sentence in Devanagari script.
 - Step 4: Write a warm, encouraging one-sentence coaching remark from Coach Neha.
 - Step 5: Highlight 1 or 2 high-utility vocabulary or phrases with their Hindi meanings.`;
 
@@ -123,7 +155,10 @@ PRODUCT PHILOSOPHY:
 Category: ${category || 'workplace'}
 What the learner said: "${transcript}"
 
-Analyze this input and respond strictly in JSON matching the schema.`;
+REFERENCE PATTERNS FROM LIBRARY:
+${patternReferenceText}
+
+Analyze the learner's speech according to the 6 engine rules and respond strictly in JSON matching the schema.`;
 
     const response = await ai.models.generateContent({
       model: "gemini-3.7-flash",
