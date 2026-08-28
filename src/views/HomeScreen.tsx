@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import type { Swiper as SwiperType } from 'swiper';
-import { EffectCoverflow, Mousewheel, Autoplay } from 'swiper/modules';
+import { EffectCoverflow, Mousewheel } from 'swiper/modules';
 
 // Swiper CSS
 import 'swiper/css';
@@ -12,26 +12,20 @@ import {
   Briefcase,
   Coffee,
   Users,
-  ArrowRight,
-  Sparkles,
-  Flame,
-  CheckCircle2,
   Dices,
   Zap,
   Play,
   HelpCircle,
   AlertTriangle,
   X,
-  ChevronRight,
-  Compass,
+  Info,
+  Layers,
 } from 'lucide-react';
 import englishCard1 from '../Pics/english card 1.png';
 import englishCard2 from '../Pics/English card 2.png';
 import englishCard3 from '../Pics/English card 3.png';
-import { CoachNehaAvatar } from '../components/CoachNehaAvatar';
-import { Header } from '../components/Header';
 import { Question } from '../types';
-import { CATEGORIES, PRACTICE_QUESTIONS } from '../data/questions';
+import { PRACTICE_QUESTIONS } from '../data/questions';
 
 interface HomeScreenProps {
   streakDays: number;
@@ -41,31 +35,54 @@ interface HomeScreenProps {
   onNavigateTab: (tab: 'home' | 'practice' | 'progress' | 'profile') => void;
 }
 
-type PracticeCategoryType = 'workplace' | 'daily_routine' | 'friends';
+export type PracticeCategoryType = 'workplace' | 'daily_routine' | 'friends';
 
-const CAROUSEL_BANNERS = [
+interface CarouselItem {
+  id: PracticeCategoryType;
+  title: string;
+  subtitle: string;
+  tagline: string;
+  badge: string;
+  image: string;
+  alt: string;
+  accentColor: string;
+}
+
+const CAROUSEL_BANNERS: CarouselItem[] = [
   {
-    id: 'workplace' as PracticeCategoryType,
+    id: 'workplace',
     title: 'Workplace English',
-    badge: 'Office & Warehouse',
+    subtitle: 'Master shift handovers, manager updates, warehouse operations & team chats.',
+    tagline: 'Office & Logistics Track',
+    badge: '🏢 Workplace',
     image: englishCard1,
     alt: 'Workplace English Practice Banner',
+    accentColor: '#A855F7',
   },
   {
-    id: 'daily_routine' as PracticeCategoryType,
+    id: 'daily_routine',
     title: 'Daily Routine English',
-    badge: 'Travel & Daily Life',
+    subtitle: 'Communicate smoothly during daily travel, commute, shopping & doctor visits.',
+    tagline: 'Commute & Daily Life Track',
+    badge: '☕ Daily Life',
     image: englishCard2,
     alt: 'Daily Routine English Practice Banner',
+    accentColor: '#F43F5E',
   },
   {
-    id: 'friends' as PracticeCategoryType,
+    id: 'friends',
     title: 'Friends Conversation',
-    badge: 'Friendly & Casual',
+    subtitle: 'Build natural, friendly English for weekend catch-ups, advice & social circles.',
+    tagline: 'Casual & Social Track',
+    badge: '👥 Friends',
     image: englishCard3,
     alt: 'Friends Conversation English Practice Banner',
+    accentColor: '#14B8A6',
   },
 ];
+
+// Duplicate items to ensure a seamless 360-degree infinite continuous loop in Swiper
+const LOOP_CAROUSEL_ITEMS = [...CAROUSEL_BANNERS, ...CAROUSEL_BANNERS];
 
 export const HomeScreen: React.FC<HomeScreenProps> = ({
   streakDays,
@@ -77,6 +94,8 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   const [selectedCategoryModal, setSelectedCategoryModal] = useState<PracticeCategoryType | null>(null);
   const [activeSlideIndex, setActiveSlideIndex] = useState(0);
   const swiperRef = useRef<SwiperType | null>(null);
+
+  const currentBanner = CAROUSEL_BANNERS[activeSlideIndex] || CAROUSEL_BANNERS[0];
 
   // Helper to start practice for a specific category and level
   const handleStartCategoryLevel = (category: PracticeCategoryType, level: 'Level 1' | 'Level 2' | 'Level 3') => {
@@ -107,38 +126,26 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
       case 'workplace':
         return {
           title: 'Workplace English',
-          hindiTitle: 'कार्यस्थल की बातचीत',
           subtitle: 'Warehouse, shift duties, manager updates & logistics',
-          icon: <Briefcase className="w-5 h-5 text-[#7E22CE]" />,
-          badgeColor: 'bg-[#F3E8FF] text-[#6B21A8] border-[#D8B4FE]',
-          accentColor: '#7C3AED',
-          level1Examples: '“What is the time?”, “Where is the parcel?”, “Is packing done?”',
-          level2Examples: '“Where were you yesterday?”, “Why late for shift?”, “Shift handover duties”',
-          level3Examples: '“What will you do if parcel is torn?”, “Two supervisors give urgent tasks?”',
+          icon: <Briefcase className="w-5 h-5 text-purple-400" />,
+          badgeColor: 'bg-purple-950/80 text-purple-300 border-purple-800',
+          accentColor: '#A855F7',
         };
       case 'daily_routine':
         return {
           title: 'Daily Routine English',
-          hindiTitle: 'दैनिक जीवन और यात्रा',
           subtitle: 'Commute, bus timing, tea stalls, doctor & delivery orders',
-          icon: <Coffee className="w-5 h-5 text-[#BE123C]" />,
-          badgeColor: 'bg-[#FFE4E6] text-[#9F1239] border-[#FDA4AF]',
-          accentColor: '#E11D48',
-          level1Examples: '“Are you coming today?”, “Where are you going?”, “How much for tea?”',
-          level2Examples: '“Send exact delivery address”, “How much total bill?”, “Doctor appointment”',
-          level3Examples: '“Angry delayed customer in rain”, “Wrong medicine delivered”, “Lost wallet in metro”',
+          icon: <Coffee className="w-5 h-5 text-rose-400" />,
+          badgeColor: 'bg-rose-950/80 text-rose-300 border-rose-800',
+          accentColor: '#F43F5E',
         };
       case 'friends':
         return {
           title: 'Friends Conversation',
-          hindiTitle: 'दोस्तों से दोस्ताना बातचीत',
           subtitle: 'Weekend cricket, tea catch-up, advice & real social situations',
-          icon: <Users className="w-5 h-5 text-[#0F766E]" />,
-          badgeColor: 'bg-[#CCFBF1] text-[#115E59] border-[#5EEAD4]',
-          accentColor: '#0D9488',
-          level1Examples: '“How are you doing?”, “What is your name?”, “Did you have lunch?”',
-          level2Examples: '“Weekend cricket match plans”, “Movie recommendation”, “Smartphone advice”',
-          level3Examples: '“Friend asking for money loan”, “Missed wedding apology”, “Risky business offer”',
+          icon: <Users className="w-5 h-5 text-teal-400" />,
+          badgeColor: 'bg-teal-950/80 text-teal-300 border-teal-800',
+          accentColor: '#14B8A6',
         };
     }
   };
@@ -148,274 +155,161 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   const l2Count = selectedCategoryModal ? PRACTICE_QUESTIONS.filter((q) => q.category === selectedCategoryModal && q.level === 'Level 2').length : 0;
   const l3Count = selectedCategoryModal ? PRACTICE_QUESTIONS.filter((q) => q.category === selectedCategoryModal && q.level === 'Level 3').length : 0;
 
+  // Get dynamic greeting based on time of day
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return 'Good Morning';
+    if (hour < 17) return 'Good Afternoon';
+    return 'Good Evening';
+  };
+
   return (
-    <div className="w-full min-h-screen bg-gradient-to-b from-[#FDF4FF] via-[#F8F7FF] to-[#FFF1F5] text-slate-900 pb-28 pt-2 px-4 sm:px-5">
-      {/* Top Header */}
-      <Header streakDays={streakDays} onOpenProfile={() => onNavigateTab('profile')} />
+    <div className="w-full min-h-screen bg-black text-white pb-24 pt-6 px-4 sm:px-6 flex flex-col justify-between select-none">
+      <div>
+        {/* 1. HERO AREA: CONTINUOUS 360-DEGREE LOOP COVER-FLOW CAROUSEL (NOT STACKED) */}
+        <div className="coverflow-carousel-container">
+          <Swiper
+            modules={[EffectCoverflow, Mousewheel]}
+            effect="coverflow"
+            grabCursor={true}
+            centeredSlides={true}
+            loop={true}
+            slidesPerView="auto"
+            initialSlide={0}
+            speed={420}
+            coverflowEffect={{
+              rotate: 0,
+              stretch: 6,
+              depth: 70,
+              modifier: 1,
+              slideShadows: false,
+              scale: 0.88,
+            }}
+            mousewheel={{ forceToAxis: true }}
+            onSwiper={(swiper) => {
+              swiperRef.current = swiper;
+            }}
+            onSlideChange={(swiper) => {
+              const realIndex = swiper.realIndex % CAROUSEL_BANNERS.length;
+              setActiveSlideIndex(realIndex);
+            }}
+            className="w-full"
+          >
+            {LOOP_CAROUSEL_ITEMS.map((banner, index) => {
+              const baseIndex = index % CAROUSEL_BANNERS.length;
+              const isCenterActive = activeSlideIndex === baseIndex;
+              return (
+                <SwiperSlide
+                  key={`${banner.id}-${index}`}
+                  className="swiper-slide cursor-pointer active:scale-[0.98] transition-transform"
+                  onClick={() => {
+                    if (isCenterActive) {
+                      setSelectedCategoryModal(banner.id);
+                    } else {
+                      swiperRef.current?.slideToLoop(baseIndex);
+                    }
+                  }}
+                >
+                  <div className="w-full relative overflow-hidden group">
+                    <img
+                      src={banner.image}
+                      alt={banner.alt}
+                      draggable={false}
+                      className="w-full h-auto object-cover block select-none pointer-events-none"
+                    />
 
-      {/* MAIN HERO CARD: Coach Neha */}
-      <motion.div
-        whileHover={{ scale: 1.01 }}
-        whileTap={{ scale: 0.99 }}
-        className="mt-2 relative rounded-2xl p-4 bg-gradient-to-br from-[#FFFBEB] via-[#FFF1F2] to-[#FDF2F8] border border-[#FED7AA] pastel-card-shadow overflow-hidden"
-      >
-        <div className="absolute top-0 right-0 w-44 h-44 bg-gradient-to-bl from-[#EC4899]/20 via-[#8B5CF6]/20 to-transparent rounded-full blur-2xl pointer-events-none" />
-        <div className="absolute -bottom-10 -left-10 w-36 h-36 bg-[#F59E0B]/20 rounded-full blur-xl pointer-events-none" />
+                    {/* Subtle Overlay Hint on Active Slide */}
+                    {isCenterActive && (
+                      <div className="absolute top-1.5 right-1.5 px-1.5 py-0.5 rounded-full bg-black/80 backdrop-blur-md text-white text-[8px] font-black uppercase tracking-wider flex items-center gap-0.5 shadow-sm">
+                        <Layers className="w-2.5 h-2.5" />
+                        <span>3 Lvls</span>
+                      </div>
+                    )}
+                  </div>
+                </SwiperSlide>
+              );
+            })}
+          </Swiper>
 
-        <div className="relative z-10 flex flex-col justify-between">
-          <div className="flex items-center justify-between gap-3">
-            <div className="flex-1">
-              <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">
-                Coach Neha
-              </h2>
-            </div>
-
-            <div className="relative">
-              <CoachNehaAvatar size="md" showBadge />
-            </div>
+          {/* Minimal Pagination Dots */}
+          <div className="flex items-center justify-center gap-1.5 mt-2.5">
+            {CAROUSEL_BANNERS.map((banner, index) => {
+              const isActive = activeSlideIndex === index;
+              return (
+                <button
+                  key={banner.id}
+                  onClick={() => swiperRef.current?.slideToLoop(index)}
+                  aria-label={`Go to slide ${index + 1}`}
+                  className={`transition-all duration-300 rounded-full cursor-pointer ${
+                    isActive
+                      ? 'w-5 h-1 bg-white shadow-xs'
+                      : 'w-1 h-1 bg-zinc-700 hover:bg-zinc-500'
+                  }`}
+                />
+              );
+            })}
           </div>
+        </div>
 
-          <p className="text-xs sm:text-[13px] font-medium text-[#7C2D12] mt-1.5 leading-relaxed max-w-[92%]">
-            Speak without fear. Coach Neha understands your intent and helps you speak fluent workplace English.
+        {/* 2. GOOD MORNING & DESCRIPTION (REDUCED BY 20%) UNDER CAROUSEL BANNER */}
+        <div className="mt-6 px-3 text-center flex flex-col items-center">
+          <h1 className="text-2xl sm:text-[26px] font-bold text-white tracking-tight leading-tight">
+            {getGreeting()}
+          </h1>
+
+          <p className="text-xs sm:text-[13px] font-normal text-zinc-400 mt-1.5 max-w-[85%] leading-relaxed">
+            If you want to speak fluent English, you can start your practice with Coach Neha here.
           </p>
 
-          {/* Large Rounded CTA Button (Picks a random question) */}
+          {/* Learn More / Choose Level Link (Apple Orange/Gold Style Link) */}
           <button
-            onClick={handleAnyRandomPractice}
-            className="mt-3 w-full py-2.5 px-5 rounded-xl bg-gradient-to-r from-[#F97316] via-[#EC4899] to-[#8B5CF6] text-white font-extrabold text-sm sm:text-base flex items-center justify-center gap-2 shadow-md shadow-[#EC4899]/30 hover:opacity-95 active:scale-[0.98] transition-all cursor-pointer"
+            onClick={() => setSelectedCategoryModal(currentBanner.id)}
+            className="mt-3 inline-flex items-center gap-1.5 text-xs sm:text-[13px] font-medium text-[#F59E0B] hover:text-[#FBBF24] transition-colors cursor-pointer group"
           >
-            <Dices className="w-4 h-4 stroke-[2.5]" />
-            <span>Start Practice (Random Question)</span>
-            <ArrowRight className="w-4 h-4 stroke-[2.5]" />
-          </button>
-        </div>
-      </motion.div>
-
-      {/* 3D COVERFLOW CAROUSEL (Swiper.js with dynamic scaling depth & capsule side cards) */}
-      <div className="coverflow-carousel-container mt-5">
-        <div className="flex items-center justify-between mb-1.5 px-1">
-          <div className="flex items-center gap-1.5">
-            <span className="text-[11px] font-extrabold uppercase tracking-wider text-slate-500">
-              Practice Topics
-            </span>
-            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#F3E8FF] text-[#7C3AED]">
-              {activeSlideIndex + 1} of {CAROUSEL_BANNERS.length}
-            </span>
-          </div>
-          <span className="text-[10px] font-bold text-[#7C3AED]">
-            Tap Active Card for 3 Levels
-          </span>
-        </div>
-
-        {/* Swiper 3D Coverflow Container with Auto-Rotation every 2 seconds */}
-        <Swiper
-          modules={[EffectCoverflow, Mousewheel, Autoplay]}
-          effect="coverflow"
-          grabCursor={true}
-          centeredSlides={true}
-          slidesPerView="auto"
-          initialSlide={0}
-          loop={true}
-          autoplay={{
-            delay: 2000,
-            disableOnInteraction: false,
-            pauseOnMouseEnter: true,
-          }}
-          speed={600}
-          coverflowEffect={{
-            rotate: 0,
-            stretch: -14,
-            depth: 160,
-            modifier: 1.3,
-            slideShadows: false,
-            scale: 0.84,
-          }}
-          mousewheel={{ forceToAxis: true }}
-          onSwiper={(swiper) => {
-            swiperRef.current = swiper;
-          }}
-          onSlideChange={(swiper) => {
-            setActiveSlideIndex(swiper.realIndex);
-          }}
-          className="w-full"
-        >
-          {CAROUSEL_BANNERS.map((banner, index) => {
-            const isCenterActive = activeSlideIndex === index;
-            return (
-              <SwiperSlide
-                key={banner.id}
-                className="swiper-slide cursor-grab active:cursor-grabbing"
-                onClick={() => {
-                  if (isCenterActive) {
-                    setSelectedCategoryModal(banner.id);
-                  } else {
-                    swiperRef.current?.slideToLoop(index);
-                  }
-                }}
-              >
-                <div className="w-full relative overflow-hidden">
-                  <img
-                    src={banner.image}
-                    alt={banner.alt}
-                    draggable={false}
-                    className="w-full h-auto object-cover block select-none pointer-events-none"
-                  />
-                </div>
-              </SwiperSlide>
-            );
-          })}
-        </Swiper>
-
-        {/* Clean Custom Navigation Buttons beneath the carousel */}
-        <div className="flex items-center justify-center gap-2 mt-2.5">
-          {CAROUSEL_BANNERS.map((banner, index) => {
-            const isActive = activeSlideIndex === index;
-            return (
-              <button
-                key={banner.id}
-                onClick={() => {
-                  swiperRef.current?.slideTo(index);
-                }}
-                aria-label={`Go to slide ${index + 1} - ${banner.title}`}
-                className={`transition-all duration-300 rounded-full cursor-pointer flex items-center gap-1.5 ${
-                  isActive
-                    ? 'bg-gradient-to-r from-[#7C3AED] to-[#9333EA] text-white px-3.5 py-1 text-[11px] font-extrabold shadow-sm shadow-[#7C3AED]/30 scale-105'
-                    : 'bg-white hover:bg-slate-50 text-slate-600 border border-slate-200/90 px-2.5 py-1 text-[10px] font-bold shadow-2xs'
-                }`}
-              >
-                {isActive && <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />}
-                <span>{banner.title.split(' ')[0]}</span>
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* Daily Practice Target Bar */}
-      <div className="mt-5 rounded-2xl bg-white/95 border border-[#E9D5FF] p-3.5 pastel-card-shadow flex items-center justify-between gap-3">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#FFF1F2] to-[#FFEDD5] flex items-center justify-center text-[#EA580C] border border-[#FDBA74]">
-            <Flame className="w-5 h-5 fill-[#EA580C]" />
-          </div>
-          <div>
-            <div className="flex items-center gap-1.5">
-              <span className="text-xs font-extrabold text-slate-900">
-                Today's Goal: {completedToday}/{dailyGoal} questions
-              </span>
-              {completedToday >= dailyGoal && (
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 fill-emerald-100" />
-              )}
+            <div className="w-4 h-4 rounded-full bg-[#F59E0B] text-black flex items-center justify-center font-bold text-[10px] group-hover:scale-105 transition-transform">
+              <Info className="w-3 h-3 stroke-[2.5]" />
             </div>
-            <p className="text-[10px] font-medium text-slate-500">
-              Practice 3 mins daily to build natural English confidence
-            </p>
-          </div>
+            <span>Learn more about {currentBanner.title} Levels</span>
+          </button>
         </div>
 
-        <div className="w-12 text-right">
-          <span className="text-xs font-black text-[#7C3AED]">
-            {Math.round((completedToday / dailyGoal) * 100)}%
-          </span>
-        </div>
-      </div>
-
-      {/* EXPLORE ALL SCENARIOS PREVIEW LIST */}
-      <div className="mt-6">
-        <div className="flex items-center justify-between mb-3 px-1">
-          <div className="flex items-center gap-2">
-            <Compass className="w-4 h-4 text-[#7C3AED]" />
-            <h2 className="text-sm font-extrabold text-slate-900 tracking-tight uppercase">
-              Featured Practice Prompts
-            </h2>
-          </div>
-          <span className="text-[11px] font-bold text-[#7C3AED]">
-            {PRACTICE_QUESTIONS.length} Questions
-          </span>
-        </div>
-
-        <div className="space-y-2.5">
-          {PRACTICE_QUESTIONS.slice(0, 4).map((item) => (
-            <motion.div
-              key={item.id}
-              whileTap={{ scale: 0.99 }}
-              onClick={() => onStartPractice(item)}
-              className="w-full rounded-2xl p-3.5 bg-white border border-[#E9D5FF] pastel-card-shadow hover:border-[#C084FC] hover:shadow-xs transition-all cursor-pointer flex items-center justify-between gap-3 group"
-            >
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="text-[9px] font-extrabold px-2 py-0.5 rounded-full bg-[#F3E8FF] text-[#7E22CE]">
-                    {item.categoryLabel}
-                  </span>
-                  <span className="text-[9px] font-bold text-slate-400">
-                    {item.level}
-                  </span>
-                </div>
-                <p className="text-xs sm:text-[13px] font-bold text-slate-900 truncate">
-                  {item.questionEn}
-                </p>
-                <p className="text-[11px] font-medium text-slate-500 truncate mt-0.5">
-                  {item.questionHi}
-                </p>
-              </div>
-
-              <div className="w-7 h-7 rounded-full bg-[#FAF5FF] group-hover:bg-[#7C3AED] group-hover:text-white text-[#7C3AED] flex items-center justify-center transition-colors shrink-0">
-                <ChevronRight className="w-4 h-4 stroke-[2.5]" />
-              </div>
-            </motion.div>
-          ))}
-        </div>
-      </div>
-
-      {/* QUICK SURPRISE PRACTICE BANNER */}
-      <div className="mt-5 rounded-3xl p-5 bg-gradient-to-r from-[#7C3AED] via-[#DB2777] to-[#EA580C] text-white shadow-xl shadow-[#DB2777]/25 relative overflow-hidden">
-        <div className="flex items-center justify-between gap-3">
-          <div>
-            <span className="text-[10px] font-extrabold uppercase tracking-widest text-amber-200">
-              🎲 SURPRISE QUESTION CHALLENGE
-            </span>
-            <h3 className="text-base sm:text-lg font-black tracking-tight mt-0.5">
-              Ready for a Random Question?
-            </h3>
-            <p className="text-xs text-white/90 font-medium mt-1">
-              Coach Neha will give you a surprise question across any category and level.
-            </p>
-          </div>
-
+        {/* 3. ONLY "START" TAB BUTTON (REDUCED BY 30%) */}
+        <div className="mt-7 px-4 flex justify-center">
           <button
-            onClick={handleAnyRandomPractice}
-            className="w-12 h-12 rounded-2xl bg-white text-[#7C3AED] flex items-center justify-center shadow-lg hover:scale-105 active:scale-95 transition-transform shrink-0 cursor-pointer"
-            title="Start Random Question"
+            onClick={() => handleRandomInCategory(currentBanner.id)}
+            className="w-full max-w-[240px] py-2.5 px-6 rounded-full bg-[#2C2C2E] hover:bg-[#3A3A3C] active:bg-[#1C1C1E] text-white font-semibold text-sm sm:text-[15px] flex items-center justify-center gap-1.5 shadow-md shadow-black/60 active:scale-[0.98] transition-all cursor-pointer border border-zinc-700/50"
           >
-            <Play className="w-6 h-6 fill-[#7C3AED]" />
+            <Play className="w-3.5 h-3.5 fill-white stroke-none" />
+            <span>Start</span>
           </button>
         </div>
       </div>
 
-      {/* MODAL / BOTTOM SHEET: 3 LEVELS INSIDE THE SELECTED CATEGORY CARD */}
+      {/* MODAL / BOTTOM SHEET: 3 LEVELS INSIDE THE SELECTED CATEGORY CARD (PURE BLACK THEME) */}
       <AnimatePresence>
         {selectedCategoryModal && activeCategoryMeta && (
-          <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-slate-900/60 backdrop-blur-xs">
+          <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-md">
             <motion.div
               initial={{ opacity: 0, y: 120 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 120 }}
               transition={{ type: 'spring', damping: 26, stiffness: 320 }}
-              className="w-full max-w-[440px] max-h-[90vh] overflow-y-auto bg-white rounded-t-3xl sm:rounded-3xl p-5 shadow-2xl border border-slate-200 flex flex-col"
+              className="w-full max-w-[440px] max-h-[90vh] overflow-y-auto bg-[#18181B] rounded-t-3xl sm:rounded-3xl p-5 shadow-2xl border border-zinc-800 flex flex-col text-white"
             >
               {/* Modal Header */}
-              <div className="flex items-start justify-between gap-3 pb-3 border-b border-slate-100">
+              <div className="flex items-start justify-between gap-3 pb-3 border-b border-zinc-800">
                 <div className="flex items-center gap-3">
-                  <div className="w-11 h-11 rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-center shrink-0 shadow-2xs">
+                  <div className="w-11 h-11 rounded-2xl bg-zinc-900 border border-zinc-700/60 flex items-center justify-center shrink-0 shadow-2xs">
                     {activeCategoryMeta.icon}
                   </div>
                   <div>
                     <span className={`text-[10px] font-extrabold px-2 py-0.5 rounded-full border ${activeCategoryMeta.badgeColor}`}>
                       {activeCategoryMeta.title}
                     </span>
-                    <h3 className="text-lg font-black text-slate-900 tracking-tight mt-0.5">
+                    <h3 className="text-lg font-black text-white tracking-tight mt-0.5">
                       Choose Practice Level
                     </h3>
-                    <p className="text-xs text-slate-500 font-medium">
+                    <p className="text-xs text-zinc-400 font-medium">
                       {activeCategoryMeta.subtitle}
                     </p>
                   </div>
@@ -423,7 +317,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
 
                 <button
                   onClick={() => setSelectedCategoryModal(null)}
-                  className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition-colors cursor-pointer shrink-0"
+                  className="w-8 h-8 rounded-full bg-zinc-800 hover:bg-zinc-700 text-zinc-300 flex items-center justify-center transition-colors cursor-pointer shrink-0"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -440,8 +334,8 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                       onClick={() => setSelectedCategoryModal(catKey)}
                       className={`px-3 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
                         isCur
-                          ? 'bg-slate-900 text-white shadow-xs'
-                          : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                          ? 'bg-white text-black shadow-xs'
+                          : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700'
                       }`}
                     >
                       {catLabel}
@@ -457,7 +351,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                   whileHover={{ scale: 1.01 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={() => handleStartCategoryLevel(selectedCategoryModal, 'Level 1')}
-                  className="w-full rounded-2xl p-4 bg-gradient-to-br from-[#F0FDF4] via-[#DCFCE7] to-[#BBF7D0] border-2 border-[#86EFAC] cursor-pointer shadow-xs hover:shadow-md transition-all relative overflow-hidden"
+                  className="w-full rounded-2xl p-4 bg-zinc-900/90 border border-emerald-900/80 hover:border-emerald-500/80 cursor-pointer shadow-xs transition-all relative overflow-hidden"
                 >
                   <div className="flex items-center justify-between gap-3">
                     <div className="flex-1">
@@ -465,21 +359,21 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                         <span className="px-2 py-0.5 rounded-full bg-emerald-600 text-white text-[9px] font-black uppercase">
                           Level 1 • Easy
                         </span>
-                        <span className="text-[10px] font-bold text-emerald-800">
+                        <span className="text-[10px] font-bold text-emerald-400">
                           {l1Count} Questions Available
                         </span>
                       </div>
-                      <h4 className="text-sm font-extrabold text-emerald-950">
+                      <h4 className="text-sm font-extrabold text-white">
                         Short Words Questions (2–4 Words)
                       </h4>
                     </div>
 
                     <div className="flex items-center gap-2 shrink-0">
-                      <div className="w-8 h-8 rounded-xl bg-white text-emerald-800 shadow-2xs border border-emerald-300 flex items-center justify-center">
-                        <Play className="w-3.5 h-3.5 fill-emerald-700 text-emerald-700" />
+                      <div className="w-8 h-8 rounded-xl bg-emerald-950 border border-emerald-700 text-emerald-300 shadow-2xs flex items-center justify-center">
+                        <Play className="w-3.5 h-3.5 fill-emerald-400 text-emerald-400" />
                       </div>
-                      <div className="w-8 h-8 rounded-xl bg-white/95 border border-emerald-300 flex items-center justify-center text-emerald-700">
-                        <Zap className="w-4 h-4 fill-emerald-600" />
+                      <div className="w-8 h-8 rounded-xl bg-zinc-800 border border-zinc-700 flex items-center justify-center text-emerald-400">
+                        <Zap className="w-4 h-4 fill-emerald-500" />
                       </div>
                     </div>
                   </div>
@@ -490,7 +384,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                   whileHover={{ scale: 1.01 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={() => handleStartCategoryLevel(selectedCategoryModal, 'Level 2')}
-                  className="w-full rounded-2xl p-4 bg-gradient-to-br from-[#EFF6FF] via-[#DBEAFE] to-[#BFDBFE] border-2 border-[#93C5FD] cursor-pointer shadow-xs hover:shadow-md transition-all relative overflow-hidden"
+                  className="w-full rounded-2xl p-4 bg-zinc-900/90 border border-blue-900/80 hover:border-blue-500/80 cursor-pointer shadow-xs transition-all relative overflow-hidden"
                 >
                   <div className="flex items-center justify-between gap-3">
                     <div className="flex-1">
@@ -498,21 +392,21 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                         <span className="px-2 py-0.5 rounded-full bg-blue-600 text-white text-[9px] font-black uppercase">
                           Level 2 • Medium
                         </span>
-                        <span className="text-[10px] font-bold text-blue-800">
+                        <span className="text-[10px] font-bold text-blue-400">
                           {l2Count} Questions Available
                         </span>
                       </div>
-                      <h4 className="text-sm font-extrabold text-blue-950">
+                      <h4 className="text-sm font-extrabold text-white">
                         Sentence Building (More Words)
                       </h4>
                     </div>
 
                     <div className="flex items-center gap-2 shrink-0">
-                      <div className="w-8 h-8 rounded-xl bg-white text-blue-800 shadow-2xs border border-blue-300 flex items-center justify-center">
-                        <Play className="w-3.5 h-3.5 fill-blue-700 text-blue-700" />
+                      <div className="w-8 h-8 rounded-xl bg-blue-950 border border-blue-700 text-blue-300 shadow-2xs flex items-center justify-center">
+                        <Play className="w-3.5 h-3.5 fill-blue-400 text-blue-400" />
                       </div>
-                      <div className="w-8 h-8 rounded-xl bg-white/95 border border-blue-300 flex items-center justify-center text-blue-700">
-                        <HelpCircle className="w-4 h-4 text-blue-600" />
+                      <div className="w-8 h-8 rounded-xl bg-zinc-800 border border-zinc-700 flex items-center justify-center text-blue-400">
+                        <HelpCircle className="w-4 h-4 text-blue-400" />
                       </div>
                     </div>
                   </div>
@@ -523,7 +417,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                   whileHover={{ scale: 1.01 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={() => handleStartCategoryLevel(selectedCategoryModal, 'Level 3')}
-                  className="w-full rounded-2xl p-4 bg-gradient-to-br from-[#FFF1F2] via-[#FFE4E6] to-[#FECDD3] border-2 border-[#FDA4AF] cursor-pointer shadow-xs hover:shadow-md transition-all relative overflow-hidden"
+                  className="w-full rounded-2xl p-4 bg-zinc-900/90 border border-rose-900/80 hover:border-rose-500/80 cursor-pointer shadow-xs transition-all relative overflow-hidden"
                 >
                   <div className="flex items-center justify-between gap-3">
                     <div className="flex-1">
@@ -531,21 +425,21 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                         <span className="px-2 py-0.5 rounded-full bg-rose-600 text-white text-[9px] font-black uppercase">
                           Level 3 • Hard
                         </span>
-                        <span className="text-[10px] font-bold text-rose-800">
+                        <span className="text-[10px] font-bold text-rose-400">
                           {l3Count} Scenarios Available
                         </span>
                       </div>
-                      <h4 className="text-sm font-extrabold text-rose-950">
+                      <h4 className="text-sm font-extrabold text-white">
                         Hard • Real Scenarios & Decisions
                       </h4>
                     </div>
 
                     <div className="flex items-center gap-2 shrink-0">
-                      <div className="w-8 h-8 rounded-xl bg-white text-rose-800 shadow-2xs border border-rose-300 flex items-center justify-center">
-                        <Play className="w-3.5 h-3.5 fill-rose-700 text-rose-700" />
+                      <div className="w-8 h-8 rounded-xl bg-rose-950 border border-rose-700 text-rose-300 shadow-2xs flex items-center justify-center">
+                        <Play className="w-3.5 h-3.5 fill-rose-400 text-rose-400" />
                       </div>
-                      <div className="w-8 h-8 rounded-xl bg-white/95 border border-rose-300 flex items-center justify-center text-rose-700">
-                        <AlertTriangle className="w-4 h-4 text-rose-600" />
+                      <div className="w-8 h-8 rounded-xl bg-zinc-800 border border-zinc-700 flex items-center justify-center text-rose-400">
+                        <AlertTriangle className="w-4 h-4 text-rose-400" />
                       </div>
                     </div>
                   </div>
@@ -553,10 +447,10 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
               </div>
 
               {/* Quick Random for this Category button */}
-              <div className="mt-4 pt-3 border-t border-slate-100">
+              <div className="mt-4 pt-3 border-t border-zinc-800">
                 <button
                   onClick={() => handleRandomInCategory(selectedCategoryModal)}
-                  className="w-full py-3 px-4 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold flex items-center justify-center gap-2 cursor-pointer transition-all shadow-md"
+                  className="w-full py-3 px-4 rounded-2xl bg-zinc-800 hover:bg-zinc-700 text-white text-xs font-bold flex items-center justify-center gap-2 cursor-pointer transition-all border border-zinc-700"
                 >
                   <Dices className="w-4 h-4 text-amber-400" />
                   <span>Surprise Question in {activeCategoryMeta.title}</span>
@@ -569,5 +463,3 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
     </div>
   );
 };
-
-

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
+import { SplashScreen } from './components/SplashScreen';
 import { HomeScreen } from './views/HomeScreen';
 import { QuestionScreen } from './views/QuestionScreen';
 import { SpeakScreen } from './views/SpeakScreen';
@@ -13,6 +14,9 @@ import { PRACTICE_QUESTIONS } from './data/questions';
 type PracticeStep = 'question' | 'speak' | 'result';
 
 export default function App() {
+  // Splash Screen State
+  const [showSplash, setShowSplash] = useState<boolean>(true);
+
   // Navigation State
   const [activeTab, setActiveTab] = useState<NavTab>('home');
   const [practiceStep, setPracticeStep] = useState<PracticeStep>('question');
@@ -191,9 +195,19 @@ export default function App() {
     : false;
 
   return (
-    <main className="w-full min-h-screen bg-gradient-to-br from-[#FDF4FF] via-[#F5F3FF] to-[#FFF1F2] flex justify-center selection:bg-[#F3E8FF] selection:text-[#7E22CE]">
+    <main className="w-full min-h-screen bg-black flex justify-center selection:bg-amber-500/30 selection:text-amber-200">
+      {/* Splash Screen */}
+      <AnimatePresence>
+        {showSplash && (
+          <SplashScreen
+            onFinish={() => setShowSplash(false)}
+            durationMs={3000}
+          />
+        )}
+      </AnimatePresence>
+
       {/* Mobile Frame Container (Constrained on Desktop as requested) */}
-      <div className="w-full max-w-[440px] min-h-screen bg-gradient-to-b from-[#FDF4FF] via-[#FAFAFE] to-[#FFF1F5] shadow-2xl relative flex flex-col justify-between overflow-x-hidden border-x border-[#F3E8FF]">
+      <div className="w-full max-w-[440px] min-h-screen bg-black shadow-2xl relative flex flex-col justify-between overflow-x-hidden border-x border-zinc-900">
         
         {/* VIEW ROUTING */}
         <AnimatePresence mode="wait">
