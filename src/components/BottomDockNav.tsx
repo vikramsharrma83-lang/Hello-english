@@ -1,7 +1,7 @@
 import React from 'react';
-import { Home, Mic, TrendingUp, User } from 'lucide-react';
+import { Home, Sun, Mic, TrendingUp, User } from 'lucide-react';
 
-export type NavTab = 'home' | 'practice' | 'progress' | 'profile';
+export type NavTab = 'home' | 'myday' | 'practice' | 'progress' | 'profile';
 
 interface BottomDockNavProps {
   activeTab: NavTab;
@@ -17,6 +17,11 @@ export const BottomDockNav: React.FC<BottomDockNavProps> = ({
       id: 'home',
       label: 'Home',
       icon: <Home className="w-4 h-4 stroke-[2.2]" />,
+    },
+    {
+      id: 'myday',
+      label: 'My Day',
+      icon: <Sun className="w-4 h-4 stroke-[2.2]" />,
     },
     {
       id: 'practice',
@@ -36,10 +41,10 @@ export const BottomDockNav: React.FC<BottomDockNavProps> = ({
   ];
 
   return (
-    <div className="fixed bottom-4 left-0 right-0 z-40 flex justify-center px-4 pointer-events-none">
+    <div className="fixed bottom-4 left-0 right-0 z-40 flex justify-center px-3 pointer-events-none">
       <nav
         aria-label="Main Navigation"
-        className="pointer-events-auto bg-[#1C1C1E]/95 backdrop-blur-xl rounded-full px-2 py-1.5 border border-zinc-800 flex items-center justify-between gap-1 max-w-[340px] w-full transition-all duration-300 shadow-2xl shadow-black/80"
+        className="pointer-events-auto bg-[#1C1C1E]/95 backdrop-blur-xl rounded-full px-2 py-1.5 border border-zinc-800 flex items-center justify-between gap-1 max-w-[390px] w-full transition-all duration-300 shadow-2xl shadow-black/80"
       >
         {navItems.map((item) => {
           const isActive = activeTab === item.id;
@@ -47,7 +52,7 @@ export const BottomDockNav: React.FC<BottomDockNavProps> = ({
             <button
               key={item.id}
               onClick={() => onSelectTab(item.id)}
-              className={`relative flex-1 flex flex-col items-center justify-center py-1.5 px-2 rounded-full transition-all duration-300 cursor-pointer ${
+              className={`relative flex-1 flex flex-col items-center justify-center py-1.5 px-1 sm:px-2 rounded-full transition-all duration-300 cursor-pointer ${
                 isActive
                   ? 'text-[#F59E0B]'
                   : 'text-zinc-400 hover:text-white hover:bg-zinc-800/60'
@@ -60,7 +65,7 @@ export const BottomDockNav: React.FC<BottomDockNavProps> = ({
 
               <span className="relative z-10">{item.icon}</span>
               <span
-                className={`relative z-10 text-[10px] font-extrabold tracking-tight mt-0.5 ${
+                className={`relative z-10 text-[9.5px] font-extrabold tracking-tight mt-0.5 whitespace-nowrap ${
                   isActive ? 'text-[#F59E0B]' : 'text-zinc-400'
                 }`}
               >

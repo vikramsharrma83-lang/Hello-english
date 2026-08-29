@@ -7,6 +7,7 @@ import { SpeakScreen } from './views/SpeakScreen';
 import { ResultScreen } from './views/ResultScreen';
 import { ProgressView } from './views/ProgressView';
 import { ProfileView } from './views/ProfileView';
+import { MyDayView } from './views/MyDayView';
 import { BottomDockNav, NavTab } from './components/BottomDockNav';
 import { AnalysisResult, Question, SavedPhrase, UserProgress } from './types';
 import { PRACTICE_QUESTIONS } from './data/questions';
@@ -38,11 +39,12 @@ export default function App() {
       } catch (e) {}
     }
     return {
+      userName: 'Vikram',
       streakDays: 5,
       totalPracticed: 18,
       totalMinutes: 24,
       targetRole: 'Warehouse & Logistics Staff',
-      dailyGoal: 3,
+      dailyGoal: 4,
       completedToday: 2,
       savedPhrases: [
         {
@@ -63,6 +65,7 @@ export default function App() {
         }
       ],
       history: [],
+      myDayCompletedTasks: ['share_day', 'conversation'],
     };
   });
 
@@ -72,6 +75,37 @@ export default function App() {
   useEffect(() => {
     localStorage.setItem('hello_english_progress', JSON.stringify(progress));
   }, [progress]);
+
+  // My Day Task Toggle
+  const handleToggleMyDayTask = (taskId: string) => {
+    const currentCompleted = progress.myDayCompletedTasks || ['share_day', 'conversation'];
+    const isAlreadyDone = currentCompleted.includes(taskId);
+    const updated = isAlreadyDone
+      ? currentCompleted.filter((id) => id !== taskId)
+      : [...currentCompleted, taskId];
+
+    setProgress((prev) => ({
+      ...prev,
+      myDayCompletedTasks: updated,
+      completedToday: updated.length,
+      streakDays: updated.length === 4 && currentCompleted.length < 4 ? prev.streakDays + 1 : prev.streakDays,
+    }));
+  };
+
+  const handleResetMyDayTasks = () => {
+    setProgress((prev) => ({
+      ...prev,
+      myDayCompletedTasks: [],
+      completedToday: 0,
+    }));
+  };
+
+  const handleUpdateUserName = (newName: string) => {
+    setProgress((prev) => ({
+      ...prev,
+      userName: newName,
+    }));
+  };
 
   // Start Practice from Home
   const handleStartPractice = (question?: Question) => {
@@ -218,6 +252,34 @@ export default function App() {
                 streakDays={progress.streakDays}
                 completedToday={progress.completedToday}
                 dailyGoal={progress.dailyGoal}
+                onStartPractice={handleStartPractice}
+                onNavigateTab={(tab) => {
+                  if (tab === 'practice') {
+                    handleStartPractice();
+                  } else {
+                    setActiveTab(tab);
+                  }
+                }}
+              />
+            </motion.div>
+          )}
+
+          {activeTab === 'myday' && (
+            <motion.div
+              key="myday"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.18 }}
+              className="w-full"
+            >
+              <MyDayView
+                userName={progress.userName || 'Vikram'}
+                onUpdateUserName={handleUpdateUserName}
+                streakDays={progress.streakDays}
+                completedTaskIds={progress.myDayCompletedTasks || ['share_day', 'conversation']}
+                onToggleTaskCompleted={handleToggleMyDayTask}
+                onResetTasks={handleResetMyDayTasks}
                 onStartPractice={handleStartPractice}
                 onNavigateTab={(tab) => {
                   if (tab === 'practice') {

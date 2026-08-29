@@ -48,6 +48,19 @@ export interface SavedPhrase {
   savedAt: number;
 }
 
+export interface MyDayTask {
+  id: 'share_day' | 'conversation' | 'score' | 'quick_check';
+  icon: string;
+  tag: string;
+  title: string;
+  subtitle: string;
+  detail: string;
+  hindiDetail?: string;
+  completed: boolean;
+  timeEstimate: string;
+  accentColor: string;
+}
+
 export interface PracticeHistoryItem {
   id: string;
   question: Question;
@@ -57,6 +70,7 @@ export interface PracticeHistoryItem {
 }
 
 export interface UserProgress {
+  userName?: string;
   streakDays: number;
   totalPracticed: number;
   totalMinutes: number;
@@ -65,4 +79,5 @@ export interface UserProgress {
   completedToday: number;
   savedPhrases: SavedPhrase[];
   history: PracticeHistoryItem[];
+  myDayCompletedTasks?: string[];
 }
