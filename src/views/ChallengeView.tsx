@@ -1,29 +1,30 @@
-import React from 'react';
-import { motion } from 'motion/react';
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
 import {
   ArrowLeft,
-  Flame,
   CheckCircle2,
   Lock,
-  Sparkles,
   BookOpen,
   Mic,
-  Award,
-  ChevronRight,
+  Calendar,
   Clock,
   Target,
+  ChevronRight,
   Play,
-  Calendar,
-  Zap,
+  RotateCcw,
+  Sparkles,
+  Award,
+  ListChecks,
 } from 'lucide-react';
-import { UserProgress, Question } from '../types';
-import { getOrCreateChallenge } from '../utils/challengeManager';
+import { UserProgress, Question, ChallengeDayProgress } from '../types';
+import { getOrCreateChallenge, startNewChallenge } from '../utils/challengeManager';
 
 interface ChallengeViewProps {
   progress: UserProgress;
   onBack: () => void;
   onStartMyDay: () => void;
   onStartPracticeQuestion: (question?: Question) => void;
+  onUpdateProgress?: (updater: (prev: UserProgress) => UserProgress) => void;
 }
 
 export const ChallengeView: React.FC<ChallengeViewProps> = ({
@@ -31,8 +32,13 @@ export const ChallengeView: React.FC<ChallengeViewProps> = ({
   onBack,
   onStartMyDay,
   onStartPracticeQuestion,
+  onUpdateProgress,
 }) => {
   const challenge = getOrCreateChallenge(progress);
+  const isStarted = challenge.isStarted ?? true;
+
+  // Selected day for viewing completed activities modal / detail drawer
+  const [selectedDayDetail, setSelectedDayDetail] = useState<ChallengeDayProgress | null>(null);
 
   const totalActivitiesTarget = challenge.myDayTarget + challenge.coachQuestionsTarget; // 105
   const totalActivitiesDone = challenge.myDayCompletedCount + challenge.coachQuestionsCompletedCount;
@@ -42,10 +48,24 @@ export const ChallengeView: React.FC<ChallengeViewProps> = ({
   const myDayPercentage = Math.min(100, Math.round((challenge.myDayCompletedCount / challenge.myDayTarget) * 100));
   const questionsPercentage = Math.min(100, Math.round((challenge.coachQuestionsCompletedCount / challenge.coachQuestionsTarget) * 100));
 
+  const handleStartOrResume = () => {
+    if (!isStarted) {
+      if (onUpdateProgress) {
+        onUpdateProgress((prev) => startNewChallenge(prev));
+      }
+    }
+    // Direct user into practice or my day
+    if (challenge.myDayCompletedCount < challenge.currentDay) {
+      onStartMyDay();
+    } else {
+      onStartPracticeQuestion();
+    }
+  };
+
   return (
-    <div className="w-full min-h-screen bg-black text-white pb-28 pt-3 px-3.5 sm:px-5 flex flex-col select-none">
-      {/* Top Bar with Back Button */}
-      <div className="flex items-center justify-between gap-3 mb-4">
+    <div className="w-full min-h-screen bg-[#0E1015] text-zinc-100 pb-28 pt-3 px-3.5 sm:px-5 flex flex-col select-none">
+      {/* Top Header Bar with Back Button */}
+      <div className="flex items-center justify-between gap-3 mb-3.5">
         <button
           onClick={onBack}
           className="w-9 h-9 rounded-full bg-[#181A22] hover:bg-[#222530] border border-white/10 text-zinc-300 hover:text-white flex items-center justify-center transition-all cursor-pointer shadow-sm active:scale-95"
@@ -54,339 +74,340 @@ export const ChallengeView: React.FC<ChallengeViewProps> = ({
           <ArrowLeft className="w-4 h-4" />
         </button>
 
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-black tracking-wider uppercase shadow-[0_0_12px_rgba(245,158,11,0.15)]">
-          <Flame className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
-          <span>5-DAY FLUENCY CHALLENGE</span>
-        </div>
+        <span className="text-xs font-bold uppercase tracking-widest text-zinc-400">
+          5-Day Fluency Challenge
+        </span>
 
         <div className="w-9 h-9 opacity-0" />
       </div>
 
-      {/* Hero Header */}
-      <div className="mb-4 text-center">
-        <h1 className="text-2xl sm:text-[26px] font-black tracking-tight text-white flex items-center justify-center gap-2">
-          <span>5-Day Speaking Challenge</span>
-          <Sparkles className="w-5 h-5 text-amber-400" />
+      {/* Hero Title */}
+      <div className="mb-3.5 text-center">
+        <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-white">
+          5-Day Fluency Challenge
         </h1>
-        <p className="text-xs sm:text-[13px] text-zinc-400 mt-1 max-w-[90%] mx-auto">
-          5 दिनों में इंग्लिश बोलने का डर खत्म करें। डेली एक्टिविटी और सवाल पूरे करें।
+        <p className="text-xs text-zinc-400 mt-1 max-w-[92%] mx-auto leading-relaxed">
+          Daily micro-habits to build fluent workplace English in 5 days.
         </p>
       </div>
 
-      {/* SECTION 2: PROGRESS CARD */}
-      <div className="w-full bg-[#13151D] rounded-3xl p-4 sm:p-5 border border-white/10 shadow-xl relative overflow-hidden mb-5">
-        {/* Subtle decorative background glow */}
-        <div className="absolute top-0 right-0 w-36 h-36 bg-amber-500/10 rounded-full blur-3xl pointer-events-none -z-0" />
-        <div className="absolute bottom-0 left-0 w-36 h-36 bg-purple-500/10 rounded-full blur-3xl pointer-events-none -z-0" />
+      {/* 
+        MAIN 5-DAYS CHALLENGE CARD (ONLY THIS CARD ON SCREEN)
+        Color tone:
+        - If challenge is already ongoing/started: Elegant matte emerald/slate background with "Ongoing" badge and "Resume Challenge"
+        - If not yet started: Slate/zinc subtle card with "Not Started" badge and "Start Challenge"
+        No neon/glowing gradients — pure, refined matte cohesive palette.
+      */}
+      <div
+        className={`w-full rounded-2xl p-4 sm:p-5 border transition-all shadow-md ${
+          isStarted
+            ? 'bg-[#121915] border-emerald-900/60 text-zinc-100'
+            : 'bg-[#14171F] border-zinc-800 text-zinc-200'
+        }`}
+      >
+        {/* Header of the Card: Status Badge & Day Indicator */}
+        <div className="flex items-center justify-between gap-2 pb-3 border-b border-white/5">
+          <div className="flex items-center gap-2">
+            <div
+              className={`w-2.5 h-2.5 rounded-full ${
+                isStarted ? 'bg-emerald-500' : 'bg-zinc-500'
+              }`}
+            />
+            <span
+              className={`text-xs font-bold uppercase tracking-wider ${
+                isStarted ? 'text-emerald-400' : 'text-zinc-400'
+              }`}
+            >
+              {isStarted ? 'Ongoing Challenge' : 'Ready to Start'}
+            </span>
+          </div>
 
-        {/* Card Header: Stats Metrics Breakdown (Activities Completion, Pending, Days Remaining) */}
-        <div className="relative z-10 grid grid-cols-3 gap-2 pb-4 border-b border-white/10 text-center">
-          <div className="p-2.5 rounded-2xl bg-white/[0.03] border border-white/5">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-400 block mb-0.5">
+          <span className="text-xs font-semibold text-zinc-400">
+            Day {challenge.currentDay} of {challenge.totalDays}
+          </span>
+        </div>
+
+        {/* Compact Key Stats Metrics (Completed, Pending, Days Left) */}
+        <div className="grid grid-cols-3 gap-2 py-3 border-b border-white/5 text-center">
+          <div className="p-2 rounded-xl bg-black/25 border border-white/5">
+            <span className="text-[10px] font-semibold uppercase tracking-wider text-emerald-400 block">
               Completed
             </span>
-            <span className="text-xl sm:text-2xl font-black text-white">
+            <span className="text-lg sm:text-xl font-bold text-white mt-0.5 block">
               {totalActivitiesDone}
             </span>
-            <span className="text-[10px] text-zinc-400 block mt-0.5">Activities</span>
+            <span className="text-[10px] text-zinc-400 block">Activities</span>
           </div>
 
-          <div className="p-2.5 rounded-2xl bg-white/[0.03] border border-white/5">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-amber-400 block mb-0.5">
+          <div className="p-2 rounded-xl bg-black/25 border border-white/5">
+            <span className="text-[10px] font-semibold uppercase tracking-wider text-zinc-300 block">
               Pending
             </span>
-            <span className="text-xl sm:text-2xl font-black text-amber-300">
+            <span className="text-lg sm:text-xl font-bold text-zinc-200 mt-0.5 block">
               {activitiesPending}
             </span>
-            <span className="text-[10px] text-zinc-400 block mt-0.5">Activities</span>
+            <span className="text-[10px] text-zinc-400 block">Activities</span>
           </div>
 
-          <div className="p-2.5 rounded-2xl bg-white/[0.03] border border-white/5">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-sky-400 block mb-0.5">
+          <div className="p-2 rounded-xl bg-black/25 border border-white/5">
+            <span className="text-[10px] font-semibold uppercase tracking-wider text-zinc-400 block">
               Time Left
             </span>
-            <span className="text-xl sm:text-2xl font-black text-sky-300">
+            <span className="text-lg sm:text-xl font-bold text-white mt-0.5 block">
               {challenge.daysRemaining}
             </span>
-            <span className="text-[10px] text-zinc-400 block mt-0.5">Days Left</span>
+            <span className="text-[10px] text-zinc-400 block">Days Left</span>
           </div>
         </div>
 
-        {/* Overall Challenge Progress Bar */}
-        <div className="relative z-10 mt-3.5 mb-4">
-          <div className="flex items-center justify-between text-xs font-bold mb-1.5">
-            <span className="text-zinc-300 flex items-center gap-1.5">
-              <Target className="w-3.5 h-3.5 text-amber-400" />
-              <span>Overall 5-Day Challenge Goal</span>
-            </span>
-            <span className="text-amber-400 font-extrabold">{overallPercentage}% Done</span>
+        {/* Overall Completion Bar */}
+        <div className="py-3 border-b border-white/5">
+          <div className="flex items-center justify-between text-xs font-medium mb-1.5">
+            <span className="text-zinc-300">Total Completion</span>
+            <span className="text-emerald-400 font-bold">{overallPercentage}%</span>
           </div>
-          <div className="w-full h-2.5 bg-black/60 rounded-full overflow-hidden p-0.5 border border-white/10">
-            <motion.div
-              initial={{ width: 0 }}
-              animate={{ width: `${overallPercentage}%` }}
-              transition={{ duration: 0.8, ease: 'easeOut' }}
-              className="h-full bg-gradient-to-r from-amber-500 via-yellow-400 to-emerald-400 rounded-full shadow-[0_0_10px_rgba(245,158,11,0.5)]"
+          <div className="w-full h-2 bg-black/40 rounded-full overflow-hidden p-0.5 border border-white/5">
+            <div
+              className={`h-full rounded-full transition-all duration-500 ${
+                isStarted ? 'bg-emerald-500' : 'bg-zinc-600'
+              }`}
+              style={{ width: `${overallPercentage}%` }}
             />
           </div>
         </div>
 
-        {/* SECTION 2.a: PROGRESS BAR OF EACH DAY (5-DAY TIMELINE TRACKER) */}
-        <div className="relative z-10 mt-4 pt-3 border-t border-white/10">
+        {/* 
+          VERTICAL 5 BARS IN A COMPACT 5-COLUMN GRID
+          Clickable bars that open day-specific completed activities drawer
+        */}
+        <div className="pt-3.5 pb-2">
           <div className="flex items-center justify-between mb-2.5">
-            <span className="text-[11px] font-extrabold uppercase tracking-wider text-zinc-400 flex items-center gap-1.5">
-              <Calendar className="w-3.5 h-3.5 text-zinc-400" />
-              <span>Daily Progress Breakdown (5 Days)</span>
+            <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400">
+              5-Day Progress (Click a day to view activities)
             </span>
-            <span className="text-[11px] font-bold text-zinc-500">Day {challenge.currentDay} of 5</span>
           </div>
 
-          <div className="space-y-2">
+          {/* 5-Column Grid with Vertical Bars */}
+          <div className="grid grid-cols-5 gap-2">
             {challenge.dailyProgress.map((dayItem) => {
-              const isDayDone = dayItem.isCompleted;
-              const isDayCurrent = dayItem.isCurrent;
-              const dayScore = isDayDone ? 100 : isDayCurrent ? Math.min(90, Math.max(30, Math.round(((challenge.coachQuestionsCompletedCount % 20) / 20) * 100) || 45)) : 0;
+              const isDone = dayItem.isCompleted;
+              const isCurrent = dayItem.isCurrent;
+              const hasActivities = (dayItem.completedActivities && dayItem.completedActivities.length > 0) || isDone;
+
+              // Vertical progress height calculation
+              const fillHeight = isDone
+                ? 100
+                : isCurrent
+                ? Math.min(95, Math.max(25, Math.round((dayItem.questionsCompleted / dayItem.questionsTarget) * 80) + (dayItem.myDayCompleted ? 20 : 0)))
+                : 0;
 
               return (
-                <div
+                <button
                   key={dayItem.day}
-                  className={`p-2.5 rounded-2xl border transition-all ${
-                    isDayCurrent
-                      ? 'bg-amber-500/[0.08] border-amber-500/40 shadow-[0_0_16px_rgba(245,158,11,0.1)]'
-                      : isDayDone
-                      ? 'bg-emerald-500/[0.05] border-emerald-500/20'
-                      : 'bg-black/30 border-white/5 opacity-70'
+                  type="button"
+                  onClick={() => setSelectedDayDetail(dayItem)}
+                  className={`flex flex-col items-center p-2 rounded-xl border transition-all cursor-pointer active:scale-95 group text-center relative ${
+                    isCurrent
+                      ? 'bg-emerald-950/40 border-emerald-500/50 shadow-sm'
+                      : isDone
+                      ? 'bg-emerald-950/20 border-emerald-800/40 hover:bg-emerald-950/40'
+                      : 'bg-black/20 border-white/5 hover:bg-black/40 text-zinc-500'
                   }`}
                 >
-                  <div className="flex items-center justify-between mb-1.5">
-                    <div className="flex items-center gap-2">
-                      {isDayDone ? (
-                        <div className="w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold">
-                          <CheckCircle2 className="w-3.5 h-3.5" />
-                        </div>
-                      ) : isDayCurrent ? (
-                        <div className="w-5 h-5 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold animate-pulse">
-                          <Zap className="w-3.5 h-3.5 fill-amber-400" />
-                        </div>
-                      ) : (
-                        <div className="w-5 h-5 rounded-full bg-zinc-800 text-zinc-500 flex items-center justify-center font-bold">
-                          <Lock className="w-3 h-3" />
-                        </div>
-                      )}
-
-                      <span className={`text-xs font-black ${isDayCurrent ? 'text-amber-300' : isDayDone ? 'text-emerald-300' : 'text-zinc-400'}`}>
-                        {dayItem.dayLabel}
-                      </span>
-                    </div>
-
-                    <div className="flex items-center gap-1.5">
-                      {isDayDone && (
-                        <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
-                          Completed
-                        </span>
-                      )}
-                      {isDayCurrent && (
-                        <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 animate-pulse">
-                          Active Today
-                        </span>
-                      )}
-                      {!isDayDone && !isDayCurrent && (
-                        <span className="text-[10px] font-medium text-zinc-500">
-                          Locked
-                        </span>
-                      )}
-                      <span className="text-[11px] font-bold text-zinc-400 w-8 text-right">
-                        {dayScore}%
-                      </span>
-                    </div>
+                  {/* Status Indicator Icon / Dot */}
+                  <div className="mb-1.5 flex items-center justify-center">
+                    {isDone ? (
+                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                    ) : isCurrent ? (
+                      <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                    ) : (
+                      <Lock className="w-3 h-3 text-zinc-600" />
+                    )}
                   </div>
 
-                  {/* Day Specific Progress Bar */}
-                  <div className="w-full h-1.5 bg-zinc-900 rounded-full overflow-hidden">
+                  {/* Vertical Bar Track */}
+                  <div className="w-3.5 h-16 bg-black/50 rounded-full overflow-hidden p-0.5 border border-white/5 flex flex-col justify-end">
                     <div
-                      className={`h-full rounded-full transition-all duration-500 ${
-                        isDayDone
+                      className={`w-full rounded-full transition-all duration-500 ${
+                        isDone
+                          ? 'bg-emerald-500'
+                          : isCurrent
                           ? 'bg-emerald-400'
-                          : isDayCurrent
-                          ? 'bg-gradient-to-r from-amber-500 to-yellow-400'
-                          : 'bg-zinc-800'
+                          : 'bg-zinc-700'
                       }`}
-                      style={{ width: `${dayScore}%` }}
+                      style={{ height: `${fillHeight}%` }}
                     />
                   </div>
-                </div>
+
+                  {/* Day Label */}
+                  <span
+                    className={`text-[11px] font-bold mt-2 ${
+                      isCurrent
+                        ? 'text-emerald-300'
+                        : isDone
+                        ? 'text-zinc-200'
+                        : 'text-zinc-500'
+                    }`}
+                  >
+                    D{dayItem.day}
+                  </span>
+
+                  {/* Micro subtext */}
+                  <span className="text-[9px] text-zinc-400 block mt-0.5">
+                    {isDone ? '100%' : isCurrent ? `${fillHeight}%` : '0%'}
+                  </span>
+                </button>
               );
             })}
           </div>
         </div>
-      </div>
 
-      {/* SECTION a: THE 2 PRIMARY 5-DAY CHALLENGE TASKS */}
-      <div className="space-y-3.5 mb-5">
-        <h2 className="text-xs font-black uppercase tracking-wider text-zinc-400 px-1">
-          Challenge Requirements (2 Core Tasks)
-        </h2>
-
-        {/* Task a.1: Complete 5 "My Day" Activity */}
-        <div className="bg-[#14161E] rounded-3xl p-4 sm:p-5 border border-amber-500/30 shadow-lg relative overflow-hidden group">
-          <div className="flex items-start justify-between gap-3 mb-3">
-            <div className="flex items-center gap-3">
-              <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-amber-500/20 to-orange-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400 shrink-0 shadow-[0_0_16px_rgba(245,158,11,0.2)]">
-                <BookOpen className="w-5 h-5" />
-              </div>
-              <div>
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 uppercase tracking-wide">
-                  Task a.1 • Daily Stories
-                </span>
-                <h3 className="text-base font-extrabold text-white mt-1">
-                  Complete 5 "My Day" Activities
-                </h3>
-                <p className="text-xs text-zinc-400 mt-0.5">
-                  हर दिन अपनी दिनचर्या और काम की बातें शेयर करें
-                </p>
-              </div>
+        {/* Two Core Target Summaries (Compact) */}
+        <div className="mt-3 pt-3 border-t border-white/5 space-y-2">
+          {/* Target 1: My Day Activities */}
+          <div className="flex items-center justify-between text-xs p-2 rounded-xl bg-black/20 border border-white/5">
+            <div className="flex items-center gap-2">
+              <BookOpen className="w-3.5 h-3.5 text-emerald-400" />
+              <span className="text-zinc-300 font-medium">5 "My Day" Stories</span>
             </div>
-
-            <div className="text-right shrink-0">
-              <span className="text-sm font-black text-amber-400">
-                {challenge.myDayCompletedCount} / {challenge.myDayTarget}
+            <div className="flex items-center gap-2">
+              <span className="font-bold text-white">
+                {challenge.myDayCompletedCount} / 5
               </span>
-              <span className="block text-[10px] text-zinc-500">Completed</span>
+              <span className="text-[10px] text-zinc-400">Done</span>
             </div>
           </div>
 
-          {/* Task a.1 Progress Bar */}
-          <div className="w-full h-2 bg-zinc-900 rounded-full overflow-hidden mb-3.5 border border-white/5">
-            <div
-              className="h-full bg-gradient-to-r from-amber-500 to-yellow-400 rounded-full transition-all duration-500"
-              style={{ width: `${myDayPercentage}%` }}
-            />
+          {/* Target 2: Coach Neha Questions */}
+          <div className="flex items-center justify-between text-xs p-2 rounded-xl bg-black/20 border border-white/5">
+            <div className="flex items-center gap-2">
+              <Mic className="w-3.5 h-3.5 text-emerald-400" />
+              <span className="text-zinc-300 font-medium">100 Coach Questions</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="font-bold text-white">
+                {challenge.coachQuestionsCompletedCount} / 100
+              </span>
+              <span className="text-[10px] text-zinc-400">Done</span>
+            </div>
           </div>
-
-          {/* 5 Day Activity Story Pills */}
-          <div className="grid grid-cols-5 gap-1.5 mb-3.5">
-            {[1, 2, 3, 4, 5].map((dayNum) => {
-              const isDone = dayNum <= challenge.myDayCompletedCount;
-              const isCurrent = dayNum === challenge.myDayCompletedCount + 1;
-              return (
-                <div
-                  key={dayNum}
-                  className={`py-1.5 px-1 rounded-xl text-center border text-[10px] font-bold ${
-                    isDone
-                      ? 'bg-emerald-500/15 border-emerald-500/30 text-emerald-400'
-                      : isCurrent
-                      ? 'bg-amber-500/20 border-amber-500/40 text-amber-300 animate-pulse'
-                      : 'bg-zinc-900 border-white/5 text-zinc-600'
-                  }`}
-                >
-                  <span>Day {dayNum}</span>
-                  <span className="block mt-0.5">{isDone ? '✓ Done' : isCurrent ? 'Next' : 'Pending'}</span>
-                </div>
-              );
-            })}
-          </div>
-
-          {/* Start My Day CTA Button */}
-          <button
-            onClick={onStartMyDay}
-            className="w-full py-3 px-4 rounded-2xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black font-extrabold text-sm flex items-center justify-center gap-2 shadow-lg shadow-amber-500/25 active:scale-[0.98] transition-all cursor-pointer"
-          >
-            <BookOpen className="w-4 h-4 text-black stroke-[2.5]" />
-            <span>Start My Day Activity</span>
-            <ChevronRight className="w-4 h-4 stroke-[3]" />
-          </button>
         </div>
 
-        {/* Task a.2: Complete 100 Questions of Coach Neha */}
-        <div className="bg-[#14161E] rounded-3xl p-4 sm:p-5 border border-purple-500/30 shadow-lg relative overflow-hidden group">
-          <div className="flex items-start justify-between gap-3 mb-3">
-            <div className="flex items-center gap-3">
-              <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-purple-500/20 to-indigo-500/20 border border-purple-500/40 flex items-center justify-center text-purple-400 shrink-0 shadow-[0_0_16px_rgba(168,85,247,0.2)]">
-                <Mic className="w-5 h-5" />
-              </div>
-              <div>
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/30 uppercase tracking-wide">
-                  Task a.2 • Coach Neha
-                </span>
-                <h3 className="text-base font-extrabold text-white mt-1">
-                  Complete 100 Questions of Coach Neha
-                </h3>
-                <p className="text-xs text-zinc-400 mt-0.5">
-                  वर्कप्लेस, सोशल और डेली रूटीन के 100 सवालों का बोलकर अभ्यास
-                </p>
-              </div>
-            </div>
-
-            <div className="text-right shrink-0">
-              <span className="text-sm font-black text-purple-400">
-                {challenge.coachQuestionsCompletedCount} / {challenge.coachQuestionsTarget}
-              </span>
-              <span className="block text-[10px] text-zinc-500">Questions</span>
-            </div>
-          </div>
-
-          {/* Task a.2 Progress Bar */}
-          <div className="w-full h-2 bg-zinc-900 rounded-full overflow-hidden mb-3.5 border border-white/5">
-            <div
-              className="h-full bg-gradient-to-r from-purple-500 to-indigo-400 rounded-full transition-all duration-500"
-              style={{ width: `${questionsPercentage}%` }}
-            />
-          </div>
-
-          {/* 4 Milestones Checklist */}
-          <div className="grid grid-cols-4 gap-1.5 mb-3.5 text-center">
-            {[
-              { q: 25, label: '25Q' },
-              { q: 50, label: '50Q' },
-              { q: 75, label: '75Q' },
-              { q: 100, label: '100Q 🏆' },
-            ].map((milestone) => {
-              const reached = challenge.coachQuestionsCompletedCount >= milestone.q;
-              return (
-                <div
-                  key={milestone.q}
-                  className={`py-1.5 px-1 rounded-xl border text-[10px] font-bold ${
-                    reached
-                      ? 'bg-purple-500/20 border-purple-500/40 text-purple-300'
-                      : 'bg-zinc-900 border-white/5 text-zinc-600'
-                  }`}
-                >
-                  <span>{milestone.label}</span>
-                  <span className="block mt-0.5">{reached ? '✓ Reached' : 'Locked'}</span>
-                </div>
-              );
-            })}
-          </div>
-
-          {/* Start Coach Neha Questions CTA Button */}
+        {/* ACTION BUTTON (Resume Challenge if ongoing, Start Challenge if not) */}
+        <div className="mt-4 pt-2">
           <button
-            onClick={() => onStartPracticeQuestion()}
-            className="w-full py-3 px-4 rounded-2xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-extrabold text-sm flex items-center justify-center gap-2 shadow-lg shadow-purple-600/25 active:scale-[0.98] transition-all cursor-pointer"
+            onClick={handleStartOrResume}
+            className={`w-full py-3 px-5 rounded-xl font-bold text-sm flex items-center justify-center gap-2 shadow-sm transition-all cursor-pointer active:scale-[0.98] ${
+              isStarted
+                ? 'bg-emerald-600 hover:bg-emerald-500 text-white'
+                : 'bg-zinc-100 hover:bg-white text-zinc-900'
+            }`}
           >
-            <Mic className="w-4 h-4 stroke-[2.5]" />
-            <span>Practice Coach Neha Questions</span>
-            <ChevronRight className="w-4 h-4 stroke-[3]" />
+            <Play className="w-4 h-4 fill-current stroke-none" />
+            <span>{isStarted ? 'Resume Challenge' : 'Start Challenge'}</span>
+            <ChevronRight className="w-4 h-4" />
           </button>
         </div>
       </div>
 
-      {/* Completion Reward Preview Card */}
-      <div className="w-full p-4 rounded-3xl bg-gradient-to-br from-amber-950/30 via-[#161720] to-purple-950/30 border border-amber-500/20 flex items-center gap-3.5 mb-2">
-        <div className="w-11 h-11 rounded-2xl bg-amber-500/20 border border-amber-500/30 text-amber-400 flex items-center justify-center shrink-0 shadow-[0_0_16px_rgba(245,158,11,0.2)]">
-          <Award className="w-6 h-6" />
-        </div>
-        <div>
-          <span className="text-[10px] font-black text-amber-400 uppercase tracking-widest block">
-            CHALLENGE REWARD
-          </span>
-          <h4 className="text-xs sm:text-sm font-extrabold text-white">
-            5-Day Fluency Certificate & Badge
-          </h4>
-          <p className="text-[11px] text-zinc-400 mt-0.5">
-            5 My Day एक्टिविटी + 100 सवाल पूरे करके अपना सर्टिफ़िकेट अनलॉक करें।
-          </p>
-        </div>
-      </div>
+      {/* ACTIVITIES LOG MODAL (SHOWN WHEN CLICKING ON ANY DAY BAR) */}
+      <AnimatePresence>
+        {selectedDayDetail && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-xs">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 10 }}
+              className="w-full max-w-sm bg-[#151821] border border-zinc-700/60 rounded-2xl p-5 shadow-2xl text-left"
+            >
+              {/* Header */}
+              <div className="flex items-center justify-between pb-3 border-b border-white/10">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-bold text-white">
+                      {selectedDayDetail.dayLabel} Activities
+                    </span>
+                    {selectedDayDetail.isCompleted ? (
+                      <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-950 text-emerald-400 border border-emerald-800/60">
+                        Completed
+                      </span>
+                    ) : selectedDayDetail.isCurrent ? (
+                      <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-900/40 text-emerald-300 border border-emerald-700/50">
+                        Active Today
+                      </span>
+                    ) : (
+                      <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-400">
+                        Upcoming
+                      </span>
+                    )}
+                  </div>
+                  <span className="text-xs text-zinc-400 block mt-0.5">
+                    Target: 1 My Day Activity + 20 Speaking Questions
+                  </span>
+                </div>
+                <button
+                  onClick={() => setSelectedDayDetail(null)}
+                  className="w-7 h-7 rounded-full bg-white/10 hover:bg-white/20 text-zinc-300 flex items-center justify-center text-xs font-bold"
+                >
+                  ✕
+                </button>
+              </div>
+
+              {/* Body: List of activities done or pending */}
+              <div className="py-4 space-y-2.5">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400 flex items-center gap-1.5">
+                  <ListChecks className="w-3.5 h-3.5 text-zinc-400" />
+                  <span>Completed Tasks on {selectedDayDetail.dayLabel}</span>
+                </span>
+
+                {selectedDayDetail.completedActivities && selectedDayDetail.completedActivities.length > 0 ? (
+                  <div className="space-y-2 max-h-52 overflow-y-auto pr-1">
+                    {selectedDayDetail.completedActivities.map((act, idx) => (
+                      <div
+                        key={idx}
+                        className="p-2.5 rounded-xl bg-black/30 border border-white/5 flex items-start gap-2 text-xs text-zinc-200"
+                      >
+                        <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                        <span>{act}</span>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="p-4 rounded-xl bg-black/25 border border-white/5 text-center text-xs text-zinc-400">
+                    {selectedDayDetail.isCompleted
+                      ? 'All required activities for this day are marked completed.'
+                      : selectedDayDetail.isCurrent
+                      ? 'You are currently practicing for today. Complete 1 My Day Story and Coach Neha questions to mark this day complete.'
+                      : 'This day will unlock once previous days are completed.'}
+                  </div>
+                )}
+              </div>
+
+              {/* Action Button inside modal */}
+              <div className="pt-2 flex gap-2">
+                <button
+                  onClick={() => setSelectedDayDetail(null)}
+                  className="flex-1 py-2.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-xs font-bold transition-all"
+                >
+                  Close
+                </button>
+                {selectedDayDetail.isCurrent && (
+                  <button
+                    onClick={() => {
+                      setSelectedDayDetail(null);
+                      handleStartOrResume();
+                    }}
+                    className="flex-1 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-all flex items-center justify-center gap-1.5"
+                  >
+                    <Play className="w-3 h-3 fill-current" />
+                    <span>Practice Now</span>
+                  </button>
+                )}
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

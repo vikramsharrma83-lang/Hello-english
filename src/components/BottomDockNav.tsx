@@ -29,12 +29,7 @@ export const BottomDockNav: React.FC<BottomDockNavProps> = ({
       label: 'My Day',
       icon: <BookOpen className="w-4 h-4 stroke-[2.2]" />,
       isFeatured: true,
-      badge: 'STORY',
-    },
-    {
-      id: 'practice',
-      label: 'Practice',
-      icon: <Mic className="w-4 h-4 stroke-[2.2]" />,
+      badge: 'STORY & PATTERNS',
     },
     {
       id: 'progress',

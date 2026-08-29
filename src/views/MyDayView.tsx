@@ -9,6 +9,7 @@ import { TopicCompletionCard } from '../components/myday/TopicCompletionCard';
 import { SessionSummary } from '../components/myday/SessionSummary';
 import { EngineInspectorDrawer } from '../components/myday/EngineInspectorDrawer';
 import { PatternLibraryModal } from '../components/myday/PatternLibraryModal';
+import { MyDayPatternsHub } from '../components/myday/MyDayPatternsHub';
 import { DayMap, ActiveTopic, ConversationTurn, DeepAnalysis, Question } from '../types';
 
 interface MyDayViewProps {
@@ -19,7 +20,8 @@ interface MyDayViewProps {
   onToggleTaskCompleted?: (taskId: string) => void;
   onResetTasks?: () => void;
   onStartPractice?: (question?: Question) => void;
-  onNavigateTab?: (tab: 'home' | 'practice' | 'progress' | 'profile') => void;
+  onNavigateTab?: (tab: 'home' | 'myday' | 'practice' | 'progress' | 'profile' | 'challenge') => void;
+  initialMode?: 'story' | 'patterns';
 }
 
 export const MyDayView: React.FC<MyDayViewProps> = ({
@@ -30,11 +32,12 @@ export const MyDayView: React.FC<MyDayViewProps> = ({
   onResetTasks,
   onStartPractice,
   onNavigateTab,
+  initialMode = 'story',
 }) => {
-  // Navigation State Machine matching the requested 4 primary pages + summary
+  // Navigation State Machine matching story workflow + patterns hub
   const [step, setStep] = useState<
-    '1_HOME' | '2_CHAT_INPUT' | '3_SYSTEM_SUMMARIZATION' | '4_CHATBOT_CONVERSATION' | '5_TOPIC_COMPLETE' | '6_SESSION_SUMMARY'
-  >('1_HOME');
+    '1_HOME' | '2_CHAT_INPUT' | '3_SYSTEM_SUMMARIZATION' | '4_CHATBOT_CONVERSATION' | '5_TOPIC_COMPLETE' | '6_SESSION_SUMMARY' | 'PATTERNS_HUB'
+  >(initialMode === 'patterns' ? 'PATTERNS_HUB' : '1_HOME');
 
   const [dayMap, setDayMap] = useState<DayMap>({
     activities: [],
@@ -365,7 +368,7 @@ export const MyDayView: React.FC<MyDayViewProps> = ({
         {step === '1_HOME' && (
           <HomePage
             onStart={() => setStep('2_CHAT_INPUT')}
-            onOpenPatternLibrary={() => setPatternLibraryOpen(true)}
+            onOpenPatternLibrary={() => setStep('PATTERNS_HUB')}
             onOpenInspector={() => setInspectorOpen(true)}
             onClose={() => {
               if (onNavigateTab) {
@@ -375,7 +378,26 @@ export const MyDayView: React.FC<MyDayViewProps> = ({
             onSelectSample={(sampleText) => {
               handleSubmitInitialStatement(sampleText);
             }}
+            turns={turns}
+            dayMap={dayMap}
           />
+        )}
+
+        {/* PATTERNS & PRACTICE HUB (Apple Watch Discover & Categories / Levels) */}
+        {step === 'PATTERNS_HUB' && (
+          <div className="w-full flex-1 flex flex-col">
+            <MyDayPatternsHub
+              onStartPracticeQuestion={(q) => {
+                if (onStartPractice) {
+                  onStartPractice(q);
+                }
+              }}
+              onUsePatternForStory={(pat) => {
+                handleSubmitInitialStatement(pat);
+              }}
+              onBackToBuddy={() => setStep('1_HOME')}
+            />
+          </div>
         )}
 
         {/* PAGE 2: Chat Input Page (Type and Speak, with back button to Page 1) */}
@@ -385,7 +407,7 @@ export const MyDayView: React.FC<MyDayViewProps> = ({
             onGoBack={() => setStep('1_HOME')}
             isLoading={isLoading}
             initialText={dayMap.rawStatement}
-            onOpenPatternLibrary={() => setPatternLibraryOpen(true)}
+            onOpenPatternLibrary={() => setStep('PATTERNS_HUB')}
             onOpenInspector={() => setInspectorOpen(true)}
             voiceEnabled={voiceEnabled}
             onToggleVoice={() => setVoiceEnabled((prev) => !prev)}
@@ -403,7 +425,7 @@ export const MyDayView: React.FC<MyDayViewProps> = ({
             onGoBack={() => setStep('2_CHAT_INPUT')}
             completedTopics={completedTopics}
             isWholeStorySelected={isWholeStoryMode}
-            onOpenPatternLibrary={() => setPatternLibraryOpen(true)}
+            onOpenPatternLibrary={() => setStep('PATTERNS_HUB')}
             onOpenInspector={() => setInspectorOpen(true)}
             voiceEnabled={voiceEnabled}
             onToggleVoice={() => setVoiceEnabled((prev) => !prev)}
@@ -427,7 +449,7 @@ export const MyDayView: React.FC<MyDayViewProps> = ({
             onEndSession={() => setStep('6_SESSION_SUMMARY')}
             voiceEnabled={voiceEnabled}
             isWholeStoryMode={isWholeStoryMode}
-            onOpenPatternLibrary={() => setPatternLibraryOpen(true)}
+            onOpenPatternLibrary={() => setStep('PATTERNS_HUB')}
             onOpenInspector={() => setInspectorOpen(true)}
             onToggleVoice={() => setVoiceEnabled((prev) => !prev)}
           />

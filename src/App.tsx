@@ -23,6 +23,7 @@ export default function App() {
 
   // Navigation State
   const [activeTab, setActiveTab] = useState<NavTab>('home');
+  const [returnTab, setReturnTab] = useState<NavTab>('myday');
   const [practiceStep, setPracticeStep] = useState<PracticeStep>('question');
   
   // Current active question
@@ -117,9 +118,14 @@ export default function App() {
     }));
   };
 
-  // Start Practice from Home
-  const handleStartPractice = (question?: Question) => {
+  // Start Practice from Home or My Day Patterns
+  const handleStartPractice = (question?: Question, fromTab?: NavTab) => {
     const targetQ = question || currentQuestion || PRACTICE_QUESTIONS[0];
+    if (fromTab) {
+      setReturnTab(fromTab);
+    } else if (activeTab !== 'practice') {
+      setReturnTab(activeTab);
+    }
     setCurrentQuestion(targetQ);
     setPracticeStep('question');
     setActiveTab('practice');
@@ -302,6 +308,7 @@ export default function App() {
                 onBack={() => setActiveTab('home')}
                 onStartMyDay={() => setActiveTab('myday')}
                 onStartPracticeQuestion={(q) => handleStartPractice(q)}
+                onUpdateProgress={setProgress}
               />
             </motion.div>
           )}
@@ -346,7 +353,7 @@ export default function App() {
               {practiceStep === 'question' && (
                 <QuestionScreen
                   question={currentQuestion}
-                  onBack={() => setActiveTab('home')}
+                  onBack={() => setActiveTab(returnTab || 'myday')}
                   onContinue={() => setPracticeStep('speak')}
                   onShuffleQuestion={handleShuffleQuestion}
                 />

@@ -131,12 +131,15 @@ export interface ChallengeDayProgress {
   dayLabel: string;
   isCompleted: boolean;
   isCurrent: boolean;
+  isStarted?: boolean;
   myDayCompleted: boolean;
   questionsCompleted: number;
   questionsTarget: number;
+  completedActivities?: string[];
 }
 
 export interface FiveDayChallenge {
+  isStarted: boolean;
   startDate: number;
   totalDays: number;
   daysRemaining: number;
