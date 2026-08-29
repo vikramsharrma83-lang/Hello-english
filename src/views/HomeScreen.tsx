@@ -287,19 +287,19 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
               return (
                 <SwiperSlide
                   key={`${item.id}-${index}`}
-                  className="swiper-slide w-[260px] sm:w-[280px] cursor-pointer"
+                  className="swiper-slide w-[350px] sm:w-[390px] cursor-pointer"
                   onClick={() => {
                     swiperRef.current?.slideToLoop(baseIndex);
                   }}
                 >
-                  <div className={`w-full rounded-2xl p-5 bg-gradient-to-br from-[#1c1c20] via-[#0d0d10] to-black border-0 transition-all duration-300 flex flex-col justify-center items-center text-center ${isCenterActive ? 'scale-[1.22] shadow-[0_25px_60px_rgba(0,0,0,0.9)] z-20 opacity-100' : 'scale-90 opacity-45'}`}>
+                  <div className={`w-full rounded-2xl p-7 sm:p-8 min-h-[240px] sm:min-h-[260px] bg-gradient-to-br from-[#1c1c20] via-[#0d0d10] to-black border-0 transition-all duration-300 flex flex-col justify-center items-center text-center ${isCenterActive ? 'scale-[1.22] shadow-[0_25px_60px_rgba(0,0,0,0.9)] z-20 opacity-100' : 'scale-90 opacity-45'}`}>
                     <div className="py-2 mb-2">
                       <h3 className="text-3xl sm:text-4xl font-black text-zinc-400 tracking-tight">
                         {item.englishWord}
                       </h3>
                     </div>
 
-                    <div className="w-full mt-2 pt-3 border-t border-zinc-800/40 space-y-1.5 text-xs">
+                    <div className="w-full mt-3 pt-3 border-t border-zinc-800/40 space-y-2 text-xs">
                       <div className="text-zinc-400 font-bold tracking-wide">{item.hindi}</div>
                       <div className="text-zinc-500 font-medium">{item.kannada}</div>
                       <div className="text-zinc-500 font-medium">{item.tamil}</div>
@@ -333,8 +333,8 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
         </div>
       </div>
 
-      {/* CONFIDENCE & ENGLISH LEVEL CARD (UNDER THE BANNER) - Reduced size by 40% */}
-      <div className="w-full my-1.5 bg-[#14161F] rounded-xl p-2.5 border border-white/10 shadow-md relative overflow-hidden scale-[0.95] origin-top">
+      {/* CONFIDENCE & ENGLISH LEVEL CARD (UNDER THE BANNER) - Moved a little up */}
+      <div className="w-full -mt-2 mb-1.5 bg-[#14161F] rounded-xl p-2.5 border border-white/10 shadow-md relative overflow-hidden scale-[0.95] origin-top">
         {/* Glow accent */}
         <div
           className={`absolute -top-10 -right-10 w-20 h-20 rounded-full blur-xl pointer-events-none opacity-30 ${

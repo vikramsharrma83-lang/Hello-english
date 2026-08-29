@@ -1,22 +1,18 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   ArrowLeft,
   ChevronLeft,
   ChevronRight,
   Play,
-  Flame,
   CheckCircle2,
   Lock,
   BookOpen,
   Mic,
-  Clock,
-  Sparkles,
   Target,
   X,
   ListChecks,
-  Compass,
-  Zap,
+  Sparkles,
 } from 'lucide-react';
 import { UserProgress, Question, ChallengeDayProgress } from '../types';
 import {
@@ -34,6 +30,8 @@ interface ChallengeViewProps {
   onUpdateProgress?: (updater: (prev: UserProgress) => UserProgress) => void;
 }
 
+type ChallengeSubView = 'carousel' | 'dashboard' | 'training_options';
+
 export const ChallengeView: React.FC<ChallengeViewProps> = ({
   progress,
   onBack,
@@ -44,13 +42,12 @@ export const ChallengeView: React.FC<ChallengeViewProps> = ({
   const activeChallenge = getOrCreateChallenge(progress);
   const activeDays = activeChallenge.totalDays || 5;
 
-  // Find initial plan index based on user's active challenge duration
   const initialIndex = Math.max(
     0,
     CHALLENGE_PLANS.findIndex((p) => p.days === activeDays)
   );
   const [activeIndex, setActiveIndex] = useState(initialIndex >= 0 ? initialIndex : 1);
-  const [showRoadmap, setShowRoadmap] = useState(false);
+  const [subView, setSubView] = useState<ChallengeSubView>('carousel');
   const [selectedDayDetail, setSelectedDayDetail] = useState<ChallengeDayProgress | null>(null);
 
   const selectedPlan: ChallengePlanOption = CHALLENGE_PLANS[activeIndex] || CHALLENGE_PLANS[1];
@@ -88,42 +85,35 @@ export const ChallengeView: React.FC<ChallengeViewProps> = ({
     }
   };
 
-  // Keyboard navigation
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'ArrowLeft') handlePrev();
-      if (e.key === 'ArrowRight') handleNext();
+      if (subView === 'carousel') {
+        if (e.key === 'ArrowLeft') handlePrev();
+        if (e.key === 'ArrowRight') handleNext();
+      }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
+  }, [subView]);
 
-  const handleSelectPlanAndStart = () => {
-    if (!isSelectedPlanActive) {
+  const handleCardClick = (plan: ChallengePlanOption, index: number) => {
+    setActiveIndex(index);
+    if (!isSelectedPlanActive || activeChallenge.totalDays !== plan.days) {
       if (onUpdateProgress) {
-        onUpdateProgress((prev) => startNewChallenge(prev, selectedPlan.days));
+        onUpdateProgress((prev) => startNewChallenge(prev, plan.days));
       }
     }
-    // Route user into practice
-    if (activeChallenge.myDayCompletedCount < (activeChallenge.currentDay || 1)) {
-      onStartMyDay();
-    } else {
-      onStartPracticeQuestion();
-    }
+    setSubView('dashboard');
   };
 
-  // Stats for the active or selected plan
   const totalTargetActivities = selectedPlan.storyTarget + selectedPlan.questionTarget;
   const currentDoneActivities = isSelectedPlanActive
     ? activeChallenge.myDayCompletedCount + activeChallenge.coachQuestionsCompletedCount
     : 0;
-  const overallPercentage = isSelectedPlanActive
-    ? Math.min(100, Math.round((currentDoneActivities / totalTargetActivities) * 100))
-    : 0;
 
   return (
     <div className="w-full min-h-screen bg-gradient-to-b from-[#141622] via-[#0d0e15] to-[#07080b] text-white flex flex-col justify-between overflow-x-hidden select-none font-sans relative pb-24">
-      {/* Background Star-dust / Ambient Atmosphere */}
+      {/* Background Atmosphere */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-35">
         <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-sky-900/15 rounded-full blur-[120px]" />
         <div className="absolute bottom-1/3 left-1/2 -translate-x-1/2 w-[400px] h-[400px] bg-purple-900/10 rounded-full blur-[100px]" />
@@ -132,7 +122,15 @@ export const ChallengeView: React.FC<ChallengeViewProps> = ({
       {/* Top Header Bar */}
       <header className="relative z-30 w-full max-w-lg mx-auto px-4 sm:px-6 pt-3 pb-2 flex items-center justify-between">
         <button
-          onClick={onBack}
+          onClick={() => {
+            if (subView === 'training_options') {
+              setSubView('dashboard');
+            } else if (subView === 'dashboard') {
+              setSubView('carousel');
+            } else {
+              onBack();
+            }
+          }}
           className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-zinc-900/80 hover:bg-zinc-800 border border-zinc-800 text-zinc-200 hover:text-white transition-all cursor-pointer text-xs font-semibold active:scale-95 shadow-sm"
           aria-label="Back"
         >
@@ -140,35 +138,24 @@ export const ChallengeView: React.FC<ChallengeViewProps> = ({
           <span>Back</span>
         </button>
 
-        <div className="flex items-center gap-1.5 text-[11px] font-bold text-zinc-300 bg-zinc-900/80 px-3 py-1 rounded-full border border-zinc-800/80">
-          <Target className="w-3.5 h-3.5 text-emerald-400" />
-          <span>Challenge Duration</span>
+        <div className="flex items-center gap-1.5 text-xs font-black text-white bg-zinc-900/90 px-3.5 py-1 rounded-full border border-zinc-800 tracking-tight">
+          <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
+          <span>{subView === 'carousel' ? 'Challenges' : `${selectedPlan.days} Days`}</span>
         </div>
 
-        <button
-          onClick={() => setShowRoadmap((prev) => !prev)}
-          className={`text-xs font-bold px-3 py-1.5 rounded-xl border transition-all cursor-pointer ${
-            showRoadmap
-              ? 'bg-sky-500 text-black border-sky-400'
-              : 'bg-zinc-900/80 text-zinc-300 hover:text-white border-zinc-800'
-          }`}
-        >
-          {showRoadmap ? 'Carousel' : 'Roadmap'}
-        </button>
+        <div className="w-12" /> {/* spacer for alignment */}
       </header>
 
-      {/* VIEW A: BIG SUBMERGED NUMBER COVER FLOW CAROUSEL */}
-      {!showRoadmap ? (
+      {/* VIEW 1: CAROUSEL */}
+      {subView === 'carousel' && (
         <main className="relative z-20 w-full max-w-lg mx-auto flex-1 flex flex-col justify-between py-2 px-3 sm:px-4">
-          {/* Cover Flow Carousel Container */}
           <div
             onTouchStart={onTouchStart}
             onTouchMove={onTouchMove}
             onTouchEnd={onTouchEnd}
-            className="relative w-full h-[36vh] min-h-[220px] max-h-[300px] flex items-center justify-center my-auto"
+            className="relative w-full h-[40vh] min-h-[260px] max-h-[340px] flex items-center justify-center my-auto"
             style={{ perspective: 1100 }}
           >
-            {/* Left & Right Chevron Controls */}
             <button
               onClick={handlePrev}
               className="absolute left-0 sm:left-2 top-1/2 -translate-y-1/2 z-40 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-zinc-900/80 hover:bg-zinc-800 border border-zinc-700/60 text-zinc-300 hover:text-white flex items-center justify-center cursor-pointer shadow-xl transition-all active:scale-95"
@@ -185,15 +172,13 @@ export const ChallengeView: React.FC<ChallengeViewProps> = ({
               <ChevronRight className="w-5 h-5 stroke-[2.5]" />
             </button>
 
-            {/* Submerged Cover Flow Numbers */}
             <div className="relative w-full h-full flex items-center justify-center">
               {CHALLENGE_PLANS.map((plan, index) => {
                 const offset = index - activeIndex;
                 const isCenter = offset === 0;
 
-                // 3D Spatial Calculation
-                const xTranslate = offset * 62; // percentage horizontal translation
-                const rotateY = offset * -25; // 3D rotation
+                const xTranslate = offset * 62;
+                const rotateY = offset * -25;
                 const scale = isCenter ? 1.05 : Math.max(0.65, 1 - Math.abs(offset) * 0.2);
                 const zIndex = 30 - Math.abs(offset) * 10;
                 const opacity = isCenter ? 1 : Math.max(0, 0.45 - Math.abs(offset) * 0.15);
@@ -202,7 +187,7 @@ export const ChallengeView: React.FC<ChallengeViewProps> = ({
                 return (
                   <motion.div
                     key={plan.days}
-                    onClick={() => setActiveIndex(index)}
+                    onClick={() => handleCardClick(plan, index)}
                     initial={false}
                     animate={{
                       x: `${xTranslate}%`,
@@ -223,7 +208,6 @@ export const ChallengeView: React.FC<ChallengeViewProps> = ({
                         : 'bg-zinc-950/40 border border-zinc-900/60 shadow-black'
                     }`}
                   >
-                    {/* Submerged Giant Number (covers ~35% visual weight) */}
                     <div className="relative flex items-center justify-center">
                       <span
                         className={`text-[96px] sm:text-[118px] font-black tracking-tighter leading-none transition-all duration-300 font-mono ${
@@ -243,7 +227,6 @@ export const ChallengeView: React.FC<ChallengeViewProps> = ({
                       </span>
                     </div>
 
-                    {/* Minimal indicator underneath number in the card */}
                     <div className="flex items-center gap-1.5 mt-1">
                       <span
                         className={`text-[11px] font-black uppercase tracking-widest px-2.5 py-0.5 rounded-full ${
@@ -261,28 +244,11 @@ export const ChallengeView: React.FC<ChallengeViewProps> = ({
             </div>
           </div>
 
-          {/* Clean, Minimalist Text Section Below Big Number */}
+          {/* Minimal targets: 15 mins per day, 5 day stories, 100 coach questions */}
           <div className="w-full flex flex-col items-center text-center mt-3 mb-2 space-y-3">
-            {/* Badge */}
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-zinc-900/90 border border-zinc-800 text-zinc-300 text-xs font-bold tracking-wide">
-              <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-              <span>{selectedPlan.badge}</span>
-            </div>
-
-            {/* Title & Hindi Translation */}
-            <div>
-              <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
-                {selectedPlan.title}
-              </h2>
-              <p className="text-xs sm:text-sm font-semibold text-zinc-400 mt-0.5">
-                {selectedPlan.hindiTitle}
-              </p>
-            </div>
-
-            {/* Minimal Target Badges */}
             <div className="flex flex-wrap items-center justify-center gap-2 pt-1">
               <span className="text-[11px] font-bold px-3 py-1 rounded-full bg-black/50 border border-zinc-800 text-zinc-300">
-                📖 {selectedPlan.storyTarget} My Day Stories
+                📖 {selectedPlan.storyTarget} Day Stories
               </span>
               <span className="text-[11px] font-bold px-3 py-1 rounded-full bg-black/50 border border-zinc-800 text-zinc-300">
                 🎙️ {selectedPlan.questionTarget} Coach Questions
@@ -291,47 +257,30 @@ export const ChallengeView: React.FC<ChallengeViewProps> = ({
                 ⏱️ {selectedPlan.dailyTime}
               </span>
             </div>
-
-            {/* Short Minimalist Description */}
-            <p className="text-xs text-zinc-400 max-w-sm mx-auto leading-relaxed px-2">
-              {selectedPlan.description}
-            </p>
-
-            {/* Action Buttons */}
-            <div className="w-full max-w-sm pt-2 space-y-2.5">
-              <motion.button
-                whileTap={{ scale: 0.98 }}
-                onClick={handleSelectPlanAndStart}
-                className="w-full py-4 px-6 rounded-full bg-white hover:bg-zinc-100 text-black font-black text-sm sm:text-base flex items-center justify-center gap-2 shadow-xl shadow-black/80 transition-all cursor-pointer"
-              >
-                <Play className="w-4 h-4 fill-black stroke-none" />
-                <span>
-                  {isSelectedPlanActive
-                    ? `Continue ${selectedPlan.days}-Day Challenge (Day ${activeChallenge.currentDay})`
-                    : `Start ${selectedPlan.days}-Day Challenge`}
-                </span>
-                <ChevronRight className="w-4 h-4 text-black stroke-[2.5]" />
-              </motion.button>
-
-              <button
-                onClick={() => setShowRoadmap(true)}
-                className="text-xs text-zinc-400 hover:text-zinc-200 font-semibold py-1.5 transition-colors cursor-pointer"
-              >
-                View Day-by-Day Roadmap & Completed Drills →
-              </button>
-            </div>
           </div>
         </main>
-      ) : (
-        /* VIEW B: DAY-BY-DAY ROADMAP & VERTICAL METRICS TRACKER */
-        <main className="relative z-20 w-full max-w-lg mx-auto flex-1 flex flex-col py-2 px-4 space-y-4">
+      )}
+
+      {/* VIEW 2: ROADMAP DASHBOARD (APPLE WATCH STYLE) */}
+      {subView === 'dashboard' && (
+        <main className="relative z-20 w-full max-w-lg mx-auto flex-1 flex flex-col py-2 px-4 space-y-5">
+          {/* Header Title replacement matching Apple Watch Discover reference */}
+          <div className="px-1 pt-1">
+            <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight">
+              {selectedPlan.days} Days
+            </h1>
+            <p className="text-xs font-semibold text-zinc-400 mt-1">
+              Get Started • Challenge Roadmap & Tracker
+            </p>
+          </div>
+
           {/* Active Challenge Card Summary */}
-          <div className="bg-[#12131a] border border-zinc-800 rounded-3xl p-4 sm:p-5 shadow-xl">
+          <div className="bg-[#12131a] border border-zinc-800/80 rounded-3xl p-4 sm:p-5 shadow-xl">
             <div className="flex items-center justify-between pb-3 border-b border-zinc-800">
               <div className="flex items-center gap-2">
                 <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-[0_0_8px_#34d399]" />
                 <span className="text-xs font-black uppercase tracking-wider text-emerald-400">
-                  {selectedPlan.days}-Day Plan
+                  {selectedPlan.days}-Day Plan Active
                 </span>
               </div>
               <span className="text-xs font-bold text-zinc-300 bg-zinc-900 px-2.5 py-0.5 rounded-full border border-zinc-800">
@@ -440,18 +389,94 @@ export const ChallengeView: React.FC<ChallengeViewProps> = ({
                 })}
               </div>
             </div>
+          </div>
 
-            {/* Practice Button */}
-            <div className="mt-4 pt-2">
-              <motion.button
-                whileTap={{ scale: 0.98 }}
-                onClick={handleSelectPlanAndStart}
-                className="w-full py-3.5 px-5 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-extrabold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg shadow-emerald-950/50 cursor-pointer"
-              >
-                <Play className="w-4 h-4 fill-white" />
-                <span>Practice Today's Story & Drills</span>
-              </motion.button>
-            </div>
+          {/* Get More From Your Challenge Section: Practice Action Card */}
+          <div className="space-y-3 pt-1">
+            <h2 className="text-lg font-black text-white tracking-tight px-1">
+              Get More From Your Challenge
+            </h2>
+
+            <motion.button
+              whileTap={{ scale: 0.98 }}
+              onClick={() => setSubView('training_options')}
+              className="w-full bg-[#12131a] hover:bg-[#1a1b24] border border-zinc-800/80 rounded-3xl p-4 sm:p-5 flex items-center justify-between transition-all cursor-pointer shadow-xl group"
+            >
+              <div className="flex items-center gap-4 text-left">
+                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-950/80 to-teal-950/80 border border-emerald-500/40 flex items-center justify-center shrink-0 shadow-[0_0_16px_rgba(16,185,129,0.2)]">
+                  <Play className="w-6 h-6 text-emerald-400 fill-emerald-400 ml-0.5" />
+                </div>
+                <div>
+                  <h3 className="text-base font-black text-white tracking-tight group-hover:text-emerald-300 transition-colors">
+                    Practice Today's Story & Drills
+                  </h3>
+                  <p className="text-xs text-zinc-400 mt-0.5">
+                    Choose between Day Stories and Coach Questions
+                  </p>
+                </div>
+              </div>
+              <ChevronRight className="w-5 h-5 text-zinc-500 group-hover:text-white transition-colors" />
+            </motion.button>
+          </div>
+        </main>
+      )}
+
+      {/* VIEW 3: EXACT REFERENCE TWO-CARD TRAINING OPTIONS PAGE */}
+      {subView === 'training_options' && (
+        <main className="relative z-20 w-full max-w-lg mx-auto flex-1 flex flex-col py-4 px-4 space-y-5">
+          <div className="px-1 pt-1">
+            <h1 className="text-3xl font-black text-white tracking-tight">
+              Training Options
+            </h1>
+            <p className="text-xs font-semibold text-zinc-400 mt-1">
+              Select your practice format for Day {activeChallenge.currentDay || 1}
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 gap-4 pt-2">
+            {/* Card 1: Stories */}
+            <motion.button
+              whileTap={{ scale: 0.98 }}
+              onClick={onStartMyDay}
+              className="w-full bg-[#12131a] hover:bg-[#181a24] border border-zinc-800/80 rounded-3xl p-5 sm:p-6 flex items-center justify-between transition-all cursor-pointer shadow-xl group text-left"
+            >
+              <div className="flex items-center gap-4">
+                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-950/80 to-indigo-950/80 border border-purple-500/40 flex items-center justify-center shrink-0 shadow-[0_0_16px_rgba(168,85,247,0.25)]">
+                  <BookOpen className="w-6 h-6 text-purple-400" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-black text-white tracking-tight group-hover:text-purple-300 transition-colors">
+                    Day Stories
+                  </h3>
+                  <p className="text-xs text-zinc-400 mt-0.5">
+                    Read and record immersive workplace narratives
+                  </p>
+                </div>
+              </div>
+              <ChevronRight className="w-5 h-5 text-zinc-500 group-hover:text-white transition-colors" />
+            </motion.button>
+
+            {/* Card 2: Coach Questions */}
+            <motion.button
+              whileTap={{ scale: 0.98 }}
+              onClick={() => onStartPracticeQuestion()}
+              className="w-full bg-[#12131a] hover:bg-[#181a24] border border-zinc-800/80 rounded-3xl p-5 sm:p-6 flex items-center justify-between transition-all cursor-pointer shadow-xl group text-left"
+            >
+              <div className="flex items-center gap-4">
+                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-sky-950/80 to-cyan-950/80 border border-sky-500/40 flex items-center justify-center shrink-0 shadow-[0_0_16px_rgba(14,165,233,0.25)]">
+                  <Mic className="w-6 h-6 text-sky-400" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-black text-white tracking-tight group-hover:text-sky-300 transition-colors">
+                    Coach Questions
+                  </h3>
+                  <p className="text-xs text-zinc-400 mt-0.5">
+                    Real-time AI fluency coach and feedback drills
+                  </p>
+                </div>
+              </div>
+              <ChevronRight className="w-5 h-5 text-zinc-500 group-hover:text-white transition-colors" />
+            </motion.button>
           </div>
         </main>
       )}
@@ -538,7 +563,7 @@ export const ChallengeView: React.FC<ChallengeViewProps> = ({
                   <button
                     onClick={() => {
                       setSelectedDayDetail(null);
-                      handleSelectPlanAndStart();
+                      setSubView('training_options');
                     }}
                     className="flex-1 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-sm"
                   >
