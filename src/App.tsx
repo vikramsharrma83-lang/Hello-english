@@ -330,6 +330,8 @@ export default function App() {
                 onToggleTaskCompleted={handleToggleMyDayTask}
                 onResetTasks={handleResetMyDayTasks}
                 onStartPractice={handleStartPractice}
+                progress={progress}
+                onUpdateProgress={setProgress}
                 onNavigateTab={(tab) => {
                   if (tab === 'practice') {
                     handleStartPractice();
@@ -381,23 +383,7 @@ export default function App() {
             </motion.div>
           )}
 
-          {activeTab === 'progress' && (
-            <motion.div
-              key="progress"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.18 }}
-              className="w-full"
-            >
-              <ProgressView
-                progress={progress}
-                onSelectSavedPhrase={handleSelectSavedPhrase}
-                onRemoveSavedPhrase={handleRemoveSavedPhrase}
-                onStartPractice={() => handleStartPractice()}
-              />
-            </motion.div>
-          )}
+
 
           {activeTab === 'profile' && (
             <motion.div

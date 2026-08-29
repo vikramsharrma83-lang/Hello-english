@@ -10,7 +10,8 @@ import { SessionSummary } from '../components/myday/SessionSummary';
 import { EngineInspectorDrawer } from '../components/myday/EngineInspectorDrawer';
 import { PatternLibraryModal } from '../components/myday/PatternLibraryModal';
 import { MyDayPatternsHub } from '../components/myday/MyDayPatternsHub';
-import { DayMap, ActiveTopic, ConversationTurn, DeepAnalysis, Question } from '../types';
+import { ChallengeView } from './ChallengeView';
+import { DayMap, ActiveTopic, ConversationTurn, DeepAnalysis, Question, UserProgress } from '../types';
 
 interface MyDayViewProps {
   userName?: string;
@@ -21,7 +22,9 @@ interface MyDayViewProps {
   onResetTasks?: () => void;
   onStartPractice?: (question?: Question) => void;
   onNavigateTab?: (tab: 'home' | 'myday' | 'practice' | 'progress' | 'profile' | 'challenge') => void;
-  initialMode?: 'story' | 'patterns';
+  initialMode?: 'story' | 'patterns' | 'challenge';
+  progress?: UserProgress;
+  onUpdateProgress?: (updater: (prev: UserProgress) => UserProgress) => void;
 }
 
 export const MyDayView: React.FC<MyDayViewProps> = ({
@@ -33,11 +36,13 @@ export const MyDayView: React.FC<MyDayViewProps> = ({
   onStartPractice,
   onNavigateTab,
   initialMode = 'story',
+  progress,
+  onUpdateProgress,
 }) => {
-  // Navigation State Machine matching story workflow + patterns hub
+  // Navigation State Machine matching story workflow + patterns hub + challenge view
   const [step, setStep] = useState<
-    '1_HOME' | '2_CHAT_INPUT' | '3_SYSTEM_SUMMARIZATION' | '4_CHATBOT_CONVERSATION' | '5_TOPIC_COMPLETE' | '6_SESSION_SUMMARY' | 'PATTERNS_HUB'
-  >(initialMode === 'patterns' ? 'PATTERNS_HUB' : '1_HOME');
+    '1_HOME' | '2_CHAT_INPUT' | '3_SYSTEM_SUMMARIZATION' | '4_CHATBOT_CONVERSATION' | '5_TOPIC_COMPLETE' | '6_SESSION_SUMMARY' | 'PATTERNS_HUB' | 'CHALLENGE'
+  >(initialMode === 'patterns' ? 'PATTERNS_HUB' : initialMode === 'challenge' ? 'CHALLENGE' : '1_HOME');
 
   const [dayMap, setDayMap] = useState<DayMap>({
     activities: [],
@@ -369,6 +374,7 @@ export const MyDayView: React.FC<MyDayViewProps> = ({
           <HomePage
             onStart={() => setStep('2_CHAT_INPUT')}
             onOpenPatternLibrary={() => setStep('PATTERNS_HUB')}
+            onOpenChallenge={() => setStep('CHALLENGE')}
             onOpenInspector={() => setInspectorOpen(true)}
             onClose={() => {
               if (onNavigateTab) {
@@ -380,7 +386,111 @@ export const MyDayView: React.FC<MyDayViewProps> = ({
             }}
             turns={turns}
             dayMap={dayMap}
+            progress={progress}
           />
+        )}
+
+        {/* 5-DAY FLUENCY CHALLENGE VIEW */}
+        {step === 'CHALLENGE' && (
+          <div className="w-full flex-1 flex flex-col">
+            <ChallengeView
+              progress={
+                progress || {
+                  userName: userName,
+                  streakDays: streakDays,
+                  completedToday: 3,
+                  dailyGoal: 5,
+                  totalPracticed: 18,
+                  weakAreas: ['Grammar Accuracy'],
+                  strongAreas: ['Communication Clarity'],
+                  challenge: {
+                    isStarted: true,
+                    startDate: Date.now() - 2 * 86400000,
+                    totalDays: 5,
+                    daysRemaining: 3,
+                    currentDay: 3,
+                    myDayTarget: 5,
+                    myDayCompletedCount: 2,
+                    coachQuestionsTarget: 100,
+                    coachQuestionsCompletedCount: 18,
+                    dailyProgress: [
+                      {
+                        day: 1,
+                        dayLabel: 'Day 1',
+                        isCompleted: true,
+                        isCurrent: false,
+                        isStarted: true,
+                        myDayCompleted: true,
+                        questionsCompleted: 20,
+                        questionsTarget: 20,
+                        completedActivities: [
+                          'Morning Routine & Work Greeting Story',
+                          '20 Workplace Speaking Drills (Coach Neha)',
+                        ],
+                      },
+                      {
+                        day: 2,
+                        dayLabel: 'Day 2',
+                        isCompleted: true,
+                        isCurrent: false,
+                        isStarted: true,
+                        myDayCompleted: true,
+                        questionsCompleted: 20,
+                        questionsTarget: 20,
+                        completedActivities: [
+                          'Inventory & Parcel Damage Reporting Story',
+                          '20 Logistics & Warehouse Questions (Coach Neha)',
+                        ],
+                      },
+                      {
+                        day: 3,
+                        dayLabel: 'Day 3',
+                        isCompleted: false,
+                        isCurrent: true,
+                        isStarted: true,
+                        myDayCompleted: false,
+                        questionsCompleted: 8,
+                        questionsTarget: 20,
+                        completedActivities: [
+                          '8 Workplace Speaking Drills completed today',
+                        ],
+                      },
+                      {
+                        day: 4,
+                        dayLabel: 'Day 4',
+                        isCompleted: false,
+                        isCurrent: false,
+                        isStarted: false,
+                        myDayCompleted: false,
+                        questionsCompleted: 0,
+                        questionsTarget: 20,
+                        completedActivities: [],
+                      },
+                      {
+                        day: 5,
+                        dayLabel: 'Day 5',
+                        isCompleted: false,
+                        isCurrent: false,
+                        isStarted: false,
+                        myDayCompleted: false,
+                        questionsCompleted: 0,
+                        questionsTarget: 20,
+                        completedActivities: [],
+                      },
+                    ],
+                  },
+                }
+              }
+              onBack={() => setStep('1_HOME')}
+              onStartMyDay={() => setStep('2_CHAT_INPUT')}
+              onStartPracticeQuestion={(q) => {
+                if (onStartPractice) {
+                  onStartPractice(q);
+                }
+              }}
+              onUpdateProgress={onUpdateProgress}
+            />
+          </div>
         )}
 
         {/* PATTERNS & PRACTICE HUB (Apple Watch Discover & Categories / Levels) */}

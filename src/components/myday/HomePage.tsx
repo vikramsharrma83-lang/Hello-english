@@ -11,30 +11,36 @@ import {
   X,
   TrendingUp,
   ChevronRight,
+  CheckCircle2,
+  Zap,
 } from 'lucide-react';
 import { EnglishProgressScreen } from './EnglishProgressScreen';
 import { calculateEnglishConfidence } from '../../utils/confidenceMetrics';
-import { ConversationTurn, PracticeHistoryItem, DayMap } from '../../types';
+import { ConversationTurn, PracticeHistoryItem, DayMap, UserProgress } from '../../types';
 
 interface HomePageProps {
   onStart: () => void;
   onOpenPatternLibrary: () => void;
   onOpenInspector: () => void;
+  onOpenChallenge?: () => void;
   onSelectSample?: (sampleText: string) => void;
   onClose?: () => void;
   turns?: ConversationTurn[];
   practiceHistory?: PracticeHistoryItem[];
   dayMap?: DayMap;
+  progress?: UserProgress;
 }
 
 export const HomePage: React.FC<HomePageProps> = ({
   onStart,
   onOpenPatternLibrary,
   onOpenInspector,
+  onOpenChallenge,
   onClose,
   turns = [],
   practiceHistory = [],
   dayMap,
+  progress,
 }) => {
   const [timeString, setTimeString] = useState('3:23');
   const [greeting, setGreeting] = useState('Good Afternoon');
@@ -210,6 +216,8 @@ export const HomePage: React.FC<HomePageProps> = ({
         </div>
       </div>
 
+
+
       {/* Middle Greeting & CTA */}
       <div className="w-full flex flex-col items-center text-center mt-2 mb-6">
         {/* Buddy Pill Badge */}
@@ -241,11 +249,39 @@ export const HomePage: React.FC<HomePageProps> = ({
           <span>आज की स्टोरी शुरू करें</span>
           <ArrowRight className="w-4 h-4 text-sky-400 stroke-[2.5]" />
         </motion.button>
+
+        {/* 5-Day Fluency Challenge Card (Under Hindi Story CTA) */}
+        {onOpenChallenge && (
+          <motion.button
+            whileHover={{ scale: 1.01 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={onOpenChallenge}
+            className="w-full max-w-sm mt-3 p-3.5 rounded-2xl bg-[#14151b] hover:bg-[#1a1c24] border border-zinc-800 hover:border-zinc-700 text-left transition-all cursor-pointer shadow-lg flex items-center justify-between group"
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-zinc-900 border border-zinc-800 flex items-center justify-center shrink-0">
+                <Target className="w-5 h-5 text-emerald-400" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs sm:text-sm font-black text-white tracking-tight">Fluency Challenge</span>
+                  <span className="text-[10px] font-extrabold px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-mono">
+                    {progress?.challenge?.totalDays || 5} Days • Day {progress?.challenge?.currentDay || 3}
+                  </span>
+                </div>
+                <span className="text-[11px] text-zinc-400 block mt-0.5">
+                  3, 5, 7 or 10 Days • Daily Speaking & Story Habits
+                </span>
+              </div>
+            </div>
+            <ChevronRight className="w-4 h-4 text-zinc-500 group-hover:text-white transition-colors" />
+          </motion.button>
+        )}
       </div>
 
       {/* Bottom Minimal Navigation Dock */}
       <div className="w-full flex items-center justify-center mt-auto pt-2">
-        <div className="bg-[#15161b] border border-zinc-800 rounded-full px-5 py-2.5 flex items-center gap-7 shadow-2xl">
+        <div className="bg-[#15161b] border border-zinc-800 rounded-full px-6 py-2.5 flex items-center gap-8 shadow-2xl">
           {/* Buddy Tab (Active) */}
           <button
             onClick={onStart}
@@ -284,6 +320,11 @@ export const HomePage: React.FC<HomePageProps> = ({
         turns={turns}
         practiceHistory={practiceHistory}
         dayMap={dayMap}
+        progress={progress}
+        onStartPractice={() => {
+          setIsProgressOpen(false);
+          onStart();
+        }}
       />
     </div>
   );

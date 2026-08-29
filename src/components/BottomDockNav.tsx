@@ -1,7 +1,7 @@
 import React from 'react';
 import { Home, BookOpen, Mic, TrendingUp, User, Sparkles } from 'lucide-react';
 
-export type NavTab = 'home' | 'myday' | 'practice' | 'progress' | 'profile' | 'challenge';
+export type NavTab = 'home' | 'myday' | 'practice' | 'profile';
 
 interface BottomDockNavProps {
   activeTab: NavTab;
@@ -30,11 +30,6 @@ export const BottomDockNav: React.FC<BottomDockNavProps> = ({
       icon: <BookOpen className="w-4 h-4 stroke-[2.2]" />,
       isFeatured: true,
       badge: 'STORY & PATTERNS',
-    },
-    {
-      id: 'progress',
-      label: 'Progress',
-      icon: <TrendingUp className="w-4 h-4 stroke-[2.2]" />,
     },
     {
       id: 'profile',

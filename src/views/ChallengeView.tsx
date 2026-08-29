@@ -1,23 +1,30 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   ArrowLeft,
+  ChevronLeft,
+  ChevronRight,
+  Play,
+  Flame,
   CheckCircle2,
   Lock,
   BookOpen,
   Mic,
-  Calendar,
   Clock,
-  Target,
-  ChevronRight,
-  Play,
-  RotateCcw,
   Sparkles,
-  Award,
+  Target,
+  X,
   ListChecks,
+  Compass,
+  Zap,
 } from 'lucide-react';
 import { UserProgress, Question, ChallengeDayProgress } from '../types';
-import { getOrCreateChallenge, startNewChallenge } from '../utils/challengeManager';
+import {
+  CHALLENGE_PLANS,
+  ChallengePlanOption,
+  getOrCreateChallenge,
+  startNewChallenge,
+} from '../utils/challengeManager';
 
 interface ChallengeViewProps {
   progress: UserProgress;
@@ -34,297 +41,435 @@ export const ChallengeView: React.FC<ChallengeViewProps> = ({
   onStartPracticeQuestion,
   onUpdateProgress,
 }) => {
-  const challenge = getOrCreateChallenge(progress);
-  const isStarted = challenge.isStarted ?? true;
+  const activeChallenge = getOrCreateChallenge(progress);
+  const activeDays = activeChallenge.totalDays || 5;
 
-  // Selected day for viewing completed activities modal / detail drawer
+  // Find initial plan index based on user's active challenge duration
+  const initialIndex = Math.max(
+    0,
+    CHALLENGE_PLANS.findIndex((p) => p.days === activeDays)
+  );
+  const [activeIndex, setActiveIndex] = useState(initialIndex >= 0 ? initialIndex : 1);
+  const [showRoadmap, setShowRoadmap] = useState(false);
   const [selectedDayDetail, setSelectedDayDetail] = useState<ChallengeDayProgress | null>(null);
 
-  const totalActivitiesTarget = challenge.myDayTarget + challenge.coachQuestionsTarget; // 105
-  const totalActivitiesDone = challenge.myDayCompletedCount + challenge.coachQuestionsCompletedCount;
-  const activitiesPending = Math.max(0, totalActivitiesTarget - totalActivitiesDone);
-  const overallPercentage = Math.min(100, Math.round((totalActivitiesDone / totalActivitiesTarget) * 100));
+  const selectedPlan: ChallengePlanOption = CHALLENGE_PLANS[activeIndex] || CHALLENGE_PLANS[1];
+  const isSelectedPlanActive = activeChallenge.isStarted && activeChallenge.totalDays === selectedPlan.days;
 
-  const myDayPercentage = Math.min(100, Math.round((challenge.myDayCompletedCount / challenge.myDayTarget) * 100));
-  const questionsPercentage = Math.min(100, Math.round((challenge.coachQuestionsCompletedCount / challenge.coachQuestionsTarget) * 100));
+  // Touch Swipe Gesture Handling
+  const [touchStart, setTouchStart] = useState<number | null>(null);
+  const [touchEnd, setTouchEnd] = useState<number | null>(null);
+  const minSwipeDistance = 40;
 
-  const handleStartOrResume = () => {
-    if (!isStarted) {
+  const handlePrev = () => {
+    setActiveIndex((prev) => (prev > 0 ? prev - 1 : CHALLENGE_PLANS.length - 1));
+  };
+
+  const handleNext = () => {
+    setActiveIndex((prev) => (prev < CHALLENGE_PLANS.length - 1 ? prev + 1 : 0));
+  };
+
+  const onTouchStart = (e: React.TouchEvent) => {
+    setTouchEnd(null);
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const onTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const onTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    const distance = touchStart - touchEnd;
+    if (distance > minSwipeDistance) {
+      handleNext();
+    } else if (distance < -minSwipeDistance) {
+      handlePrev();
+    }
+  };
+
+  // Keyboard navigation
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowLeft') handlePrev();
+      if (e.key === 'ArrowRight') handleNext();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
+  const handleSelectPlanAndStart = () => {
+    if (!isSelectedPlanActive) {
       if (onUpdateProgress) {
-        onUpdateProgress((prev) => startNewChallenge(prev));
+        onUpdateProgress((prev) => startNewChallenge(prev, selectedPlan.days));
       }
     }
-    // Direct user into practice or my day
-    if (challenge.myDayCompletedCount < challenge.currentDay) {
+    // Route user into practice
+    if (activeChallenge.myDayCompletedCount < (activeChallenge.currentDay || 1)) {
       onStartMyDay();
     } else {
       onStartPracticeQuestion();
     }
   };
 
+  // Stats for the active or selected plan
+  const totalTargetActivities = selectedPlan.storyTarget + selectedPlan.questionTarget;
+  const currentDoneActivities = isSelectedPlanActive
+    ? activeChallenge.myDayCompletedCount + activeChallenge.coachQuestionsCompletedCount
+    : 0;
+  const overallPercentage = isSelectedPlanActive
+    ? Math.min(100, Math.round((currentDoneActivities / totalTargetActivities) * 100))
+    : 0;
+
   return (
-    <div className="w-full min-h-screen bg-[#0E1015] text-zinc-100 pb-28 pt-3 px-3.5 sm:px-5 flex flex-col select-none">
-      {/* Top Header Bar with Back Button */}
-      <div className="flex items-center justify-between gap-3 mb-3.5">
+    <div className="w-full min-h-screen bg-gradient-to-b from-[#141622] via-[#0d0e15] to-[#07080b] text-white flex flex-col justify-between overflow-x-hidden select-none font-sans relative pb-24">
+      {/* Background Star-dust / Ambient Atmosphere */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-35">
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-sky-900/15 rounded-full blur-[120px]" />
+        <div className="absolute bottom-1/3 left-1/2 -translate-x-1/2 w-[400px] h-[400px] bg-purple-900/10 rounded-full blur-[100px]" />
+      </div>
+
+      {/* Top Header Bar */}
+      <header className="relative z-30 w-full max-w-lg mx-auto px-4 sm:px-6 pt-3 pb-2 flex items-center justify-between">
         <button
           onClick={onBack}
-          className="w-9 h-9 rounded-full bg-[#181A22] hover:bg-[#222530] border border-white/10 text-zinc-300 hover:text-white flex items-center justify-center transition-all cursor-pointer shadow-sm active:scale-95"
-          aria-label="Back to Home"
+          className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-zinc-900/80 hover:bg-zinc-800 border border-zinc-800 text-zinc-200 hover:text-white transition-all cursor-pointer text-xs font-semibold active:scale-95 shadow-sm"
+          aria-label="Back"
         >
-          <ArrowLeft className="w-4 h-4" />
+          <ArrowLeft className="w-4 h-4 text-sky-400" />
+          <span>Back</span>
         </button>
 
-        <span className="text-xs font-bold uppercase tracking-widest text-zinc-400">
-          5-Day Fluency Challenge
-        </span>
+        <div className="flex items-center gap-1.5 text-[11px] font-bold text-zinc-300 bg-zinc-900/80 px-3 py-1 rounded-full border border-zinc-800/80">
+          <Target className="w-3.5 h-3.5 text-emerald-400" />
+          <span>Challenge Duration</span>
+        </div>
 
-        <div className="w-9 h-9 opacity-0" />
-      </div>
+        <button
+          onClick={() => setShowRoadmap((prev) => !prev)}
+          className={`text-xs font-bold px-3 py-1.5 rounded-xl border transition-all cursor-pointer ${
+            showRoadmap
+              ? 'bg-sky-500 text-black border-sky-400'
+              : 'bg-zinc-900/80 text-zinc-300 hover:text-white border-zinc-800'
+          }`}
+        >
+          {showRoadmap ? 'Carousel' : 'Roadmap'}
+        </button>
+      </header>
 
-      {/* Hero Title */}
-      <div className="mb-3.5 text-center">
-        <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-white">
-          5-Day Fluency Challenge
-        </h1>
-        <p className="text-xs text-zinc-400 mt-1 max-w-[92%] mx-auto leading-relaxed">
-          Daily micro-habits to build fluent workplace English in 5 days.
-        </p>
-      </div>
-
-      {/* 
-        MAIN 5-DAYS CHALLENGE CARD (ONLY THIS CARD ON SCREEN)
-        Color tone:
-        - If challenge is already ongoing/started: Elegant matte emerald/slate background with "Ongoing" badge and "Resume Challenge"
-        - If not yet started: Slate/zinc subtle card with "Not Started" badge and "Start Challenge"
-        No neon/glowing gradients — pure, refined matte cohesive palette.
-      */}
-      <div
-        className={`w-full rounded-2xl p-4 sm:p-5 border transition-all shadow-md ${
-          isStarted
-            ? 'bg-[#121915] border-emerald-900/60 text-zinc-100'
-            : 'bg-[#14171F] border-zinc-800 text-zinc-200'
-        }`}
-      >
-        {/* Header of the Card: Status Badge & Day Indicator */}
-        <div className="flex items-center justify-between gap-2 pb-3 border-b border-white/5">
-          <div className="flex items-center gap-2">
-            <div
-              className={`w-2.5 h-2.5 rounded-full ${
-                isStarted ? 'bg-emerald-500' : 'bg-zinc-500'
-              }`}
-            />
-            <span
-              className={`text-xs font-bold uppercase tracking-wider ${
-                isStarted ? 'text-emerald-400' : 'text-zinc-400'
-              }`}
+      {/* VIEW A: BIG SUBMERGED NUMBER COVER FLOW CAROUSEL */}
+      {!showRoadmap ? (
+        <main className="relative z-20 w-full max-w-lg mx-auto flex-1 flex flex-col justify-between py-2 px-3 sm:px-4">
+          {/* Cover Flow Carousel Container */}
+          <div
+            onTouchStart={onTouchStart}
+            onTouchMove={onTouchMove}
+            onTouchEnd={onTouchEnd}
+            className="relative w-full h-[36vh] min-h-[220px] max-h-[300px] flex items-center justify-center my-auto"
+            style={{ perspective: 1100 }}
+          >
+            {/* Left & Right Chevron Controls */}
+            <button
+              onClick={handlePrev}
+              className="absolute left-0 sm:left-2 top-1/2 -translate-y-1/2 z-40 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-zinc-900/80 hover:bg-zinc-800 border border-zinc-700/60 text-zinc-300 hover:text-white flex items-center justify-center cursor-pointer shadow-xl transition-all active:scale-95"
+              aria-label="Previous Challenge Duration"
             >
-              {isStarted ? 'Ongoing Challenge' : 'Ready to Start'}
-            </span>
-          </div>
+              <ChevronLeft className="w-5 h-5 stroke-[2.5]" />
+            </button>
 
-          <span className="text-xs font-semibold text-zinc-400">
-            Day {challenge.currentDay} of {challenge.totalDays}
-          </span>
-        </div>
+            <button
+              onClick={handleNext}
+              className="absolute right-0 sm:right-2 top-1/2 -translate-y-1/2 z-40 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-zinc-900/80 hover:bg-zinc-800 border border-zinc-700/60 text-zinc-300 hover:text-white flex items-center justify-center cursor-pointer shadow-xl transition-all active:scale-95"
+              aria-label="Next Challenge Duration"
+            >
+              <ChevronRight className="w-5 h-5 stroke-[2.5]" />
+            </button>
 
-        {/* Compact Key Stats Metrics (Completed, Pending, Days Left) */}
-        <div className="grid grid-cols-3 gap-2 py-3 border-b border-white/5 text-center">
-          <div className="p-2 rounded-xl bg-black/25 border border-white/5">
-            <span className="text-[10px] font-semibold uppercase tracking-wider text-emerald-400 block">
-              Completed
-            </span>
-            <span className="text-lg sm:text-xl font-bold text-white mt-0.5 block">
-              {totalActivitiesDone}
-            </span>
-            <span className="text-[10px] text-zinc-400 block">Activities</span>
-          </div>
+            {/* Submerged Cover Flow Numbers */}
+            <div className="relative w-full h-full flex items-center justify-center">
+              {CHALLENGE_PLANS.map((plan, index) => {
+                const offset = index - activeIndex;
+                const isCenter = offset === 0;
 
-          <div className="p-2 rounded-xl bg-black/25 border border-white/5">
-            <span className="text-[10px] font-semibold uppercase tracking-wider text-zinc-300 block">
-              Pending
-            </span>
-            <span className="text-lg sm:text-xl font-bold text-zinc-200 mt-0.5 block">
-              {activitiesPending}
-            </span>
-            <span className="text-[10px] text-zinc-400 block">Activities</span>
-          </div>
+                // 3D Spatial Calculation
+                const xTranslate = offset * 62; // percentage horizontal translation
+                const rotateY = offset * -25; // 3D rotation
+                const scale = isCenter ? 1.05 : Math.max(0.65, 1 - Math.abs(offset) * 0.2);
+                const zIndex = 30 - Math.abs(offset) * 10;
+                const opacity = isCenter ? 1 : Math.max(0, 0.45 - Math.abs(offset) * 0.15);
+                const blurAmount = isCenter ? 'blur(0px)' : 'blur(4px)';
 
-          <div className="p-2 rounded-xl bg-black/25 border border-white/5">
-            <span className="text-[10px] font-semibold uppercase tracking-wider text-zinc-400 block">
-              Time Left
-            </span>
-            <span className="text-lg sm:text-xl font-bold text-white mt-0.5 block">
-              {challenge.daysRemaining}
-            </span>
-            <span className="text-[10px] text-zinc-400 block">Days Left</span>
-          </div>
-        </div>
-
-        {/* Overall Completion Bar */}
-        <div className="py-3 border-b border-white/5">
-          <div className="flex items-center justify-between text-xs font-medium mb-1.5">
-            <span className="text-zinc-300">Total Completion</span>
-            <span className="text-emerald-400 font-bold">{overallPercentage}%</span>
-          </div>
-          <div className="w-full h-2 bg-black/40 rounded-full overflow-hidden p-0.5 border border-white/5">
-            <div
-              className={`h-full rounded-full transition-all duration-500 ${
-                isStarted ? 'bg-emerald-500' : 'bg-zinc-600'
-              }`}
-              style={{ width: `${overallPercentage}%` }}
-            />
-          </div>
-        </div>
-
-        {/* 
-          VERTICAL 5 BARS IN A COMPACT 5-COLUMN GRID
-          Clickable bars that open day-specific completed activities drawer
-        */}
-        <div className="pt-3.5 pb-2">
-          <div className="flex items-center justify-between mb-2.5">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400">
-              5-Day Progress (Click a day to view activities)
-            </span>
-          </div>
-
-          {/* 5-Column Grid with Vertical Bars */}
-          <div className="grid grid-cols-5 gap-2">
-            {challenge.dailyProgress.map((dayItem) => {
-              const isDone = dayItem.isCompleted;
-              const isCurrent = dayItem.isCurrent;
-              const hasActivities = (dayItem.completedActivities && dayItem.completedActivities.length > 0) || isDone;
-
-              // Vertical progress height calculation
-              const fillHeight = isDone
-                ? 100
-                : isCurrent
-                ? Math.min(95, Math.max(25, Math.round((dayItem.questionsCompleted / dayItem.questionsTarget) * 80) + (dayItem.myDayCompleted ? 20 : 0)))
-                : 0;
-
-              return (
-                <button
-                  key={dayItem.day}
-                  type="button"
-                  onClick={() => setSelectedDayDetail(dayItem)}
-                  className={`flex flex-col items-center p-2 rounded-xl border transition-all cursor-pointer active:scale-95 group text-center relative ${
-                    isCurrent
-                      ? 'bg-emerald-950/40 border-emerald-500/50 shadow-sm'
-                      : isDone
-                      ? 'bg-emerald-950/20 border-emerald-800/40 hover:bg-emerald-950/40'
-                      : 'bg-black/20 border-white/5 hover:bg-black/40 text-zinc-500'
-                  }`}
-                >
-                  {/* Status Indicator Icon / Dot */}
-                  <div className="mb-1.5 flex items-center justify-center">
-                    {isDone ? (
-                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-                    ) : isCurrent ? (
-                      <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                    ) : (
-                      <Lock className="w-3 h-3 text-zinc-600" />
-                    )}
-                  </div>
-
-                  {/* Vertical Bar Track */}
-                  <div className="w-3.5 h-16 bg-black/50 rounded-full overflow-hidden p-0.5 border border-white/5 flex flex-col justify-end">
-                    <div
-                      className={`w-full rounded-full transition-all duration-500 ${
-                        isDone
-                          ? 'bg-emerald-500'
-                          : isCurrent
-                          ? 'bg-emerald-400'
-                          : 'bg-zinc-700'
-                      }`}
-                      style={{ height: `${fillHeight}%` }}
-                    />
-                  </div>
-
-                  {/* Day Label */}
-                  <span
-                    className={`text-[11px] font-bold mt-2 ${
-                      isCurrent
-                        ? 'text-emerald-300'
-                        : isDone
-                        ? 'text-zinc-200'
-                        : 'text-zinc-500'
+                return (
+                  <motion.div
+                    key={plan.days}
+                    onClick={() => setActiveIndex(index)}
+                    initial={false}
+                    animate={{
+                      x: `${xTranslate}%`,
+                      scale: scale,
+                      rotateY: rotateY,
+                      opacity: opacity,
+                      zIndex: zIndex,
+                      filter: blurAmount,
+                    }}
+                    transition={{
+                      type: 'spring',
+                      stiffness: 260,
+                      damping: 24,
+                    }}
+                    className={`absolute top-0 bottom-0 my-auto w-56 sm:w-64 h-[92%] rounded-[36px] flex flex-col items-center justify-center cursor-pointer select-none transition-all ${
+                      isCenter
+                        ? 'bg-gradient-to-b from-zinc-800/40 via-zinc-900/60 to-black/80 border border-zinc-700/60 shadow-[0_25px_60px_rgba(0,0,0,0.9)] backdrop-blur-md'
+                        : 'bg-zinc-950/40 border border-zinc-900/60 shadow-black'
                     }`}
                   >
-                    D{dayItem.day}
-                  </span>
+                    {/* Submerged Giant Number (covers ~35% visual weight) */}
+                    <div className="relative flex items-center justify-center">
+                      <span
+                        className={`text-[96px] sm:text-[118px] font-black tracking-tighter leading-none transition-all duration-300 font-mono ${
+                          isCenter
+                            ? 'text-transparent bg-clip-text bg-gradient-to-b from-white via-zinc-200 to-zinc-500 drop-shadow-[0_10px_20px_rgba(255,255,255,0.12)]'
+                            : 'text-zinc-600/80'
+                        }`}
+                      >
+                        {plan.days}
+                      </span>
+                      <span
+                        className={`text-2xl sm:text-3xl font-black uppercase tracking-tight -ml-1 sm:-ml-2 self-start mt-3 font-mono ${
+                          isCenter ? 'text-zinc-400' : 'text-zinc-700'
+                        }`}
+                      >
+                        D
+                      </span>
+                    </div>
 
-                  {/* Micro subtext */}
-                  <span className="text-[9px] text-zinc-400 block mt-0.5">
-                    {isDone ? '100%' : isCurrent ? `${fillHeight}%` : '0%'}
-                  </span>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Two Core Target Summaries (Compact) */}
-        <div className="mt-3 pt-3 border-t border-white/5 space-y-2">
-          {/* Target 1: My Day Activities */}
-          <div className="flex items-center justify-between text-xs p-2 rounded-xl bg-black/20 border border-white/5">
-            <div className="flex items-center gap-2">
-              <BookOpen className="w-3.5 h-3.5 text-emerald-400" />
-              <span className="text-zinc-300 font-medium">5 "My Day" Stories</span>
+                    {/* Minimal indicator underneath number in the card */}
+                    <div className="flex items-center gap-1.5 mt-1">
+                      <span
+                        className={`text-[11px] font-black uppercase tracking-widest px-2.5 py-0.5 rounded-full ${
+                          isCenter
+                            ? 'bg-zinc-800/90 text-zinc-300 border border-zinc-700/60'
+                            : 'text-zinc-600 bg-black/40'
+                        }`}
+                      >
+                        {plan.days} Days Sprint
+                      </span>
+                    </div>
+                  </motion.div>
+                );
+              })}
             </div>
-            <div className="flex items-center gap-2">
-              <span className="font-bold text-white">
-                {challenge.myDayCompletedCount} / 5
+          </div>
+
+          {/* Clean, Minimalist Text Section Below Big Number */}
+          <div className="w-full flex flex-col items-center text-center mt-3 mb-2 space-y-3">
+            {/* Badge */}
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-zinc-900/90 border border-zinc-800 text-zinc-300 text-xs font-bold tracking-wide">
+              <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+              <span>{selectedPlan.badge}</span>
+            </div>
+
+            {/* Title & Hindi Translation */}
+            <div>
+              <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+                {selectedPlan.title}
+              </h2>
+              <p className="text-xs sm:text-sm font-semibold text-zinc-400 mt-0.5">
+                {selectedPlan.hindiTitle}
+              </p>
+            </div>
+
+            {/* Minimal Target Badges */}
+            <div className="flex flex-wrap items-center justify-center gap-2 pt-1">
+              <span className="text-[11px] font-bold px-3 py-1 rounded-full bg-black/50 border border-zinc-800 text-zinc-300">
+                📖 {selectedPlan.storyTarget} My Day Stories
               </span>
-              <span className="text-[10px] text-zinc-400">Done</span>
-            </div>
-          </div>
-
-          {/* Target 2: Coach Neha Questions */}
-          <div className="flex items-center justify-between text-xs p-2 rounded-xl bg-black/20 border border-white/5">
-            <div className="flex items-center gap-2">
-              <Mic className="w-3.5 h-3.5 text-emerald-400" />
-              <span className="text-zinc-300 font-medium">100 Coach Questions</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="font-bold text-white">
-                {challenge.coachQuestionsCompletedCount} / 100
+              <span className="text-[11px] font-bold px-3 py-1 rounded-full bg-black/50 border border-zinc-800 text-zinc-300">
+                🎙️ {selectedPlan.questionTarget} Coach Questions
               </span>
-              <span className="text-[10px] text-zinc-400">Done</span>
+              <span className="text-[11px] font-bold px-3 py-1 rounded-full bg-black/50 border border-zinc-800 text-emerald-400">
+                ⏱️ {selectedPlan.dailyTime}
+              </span>
+            </div>
+
+            {/* Short Minimalist Description */}
+            <p className="text-xs text-zinc-400 max-w-sm mx-auto leading-relaxed px-2">
+              {selectedPlan.description}
+            </p>
+
+            {/* Action Buttons */}
+            <div className="w-full max-w-sm pt-2 space-y-2.5">
+              <motion.button
+                whileTap={{ scale: 0.98 }}
+                onClick={handleSelectPlanAndStart}
+                className="w-full py-4 px-6 rounded-full bg-white hover:bg-zinc-100 text-black font-black text-sm sm:text-base flex items-center justify-center gap-2 shadow-xl shadow-black/80 transition-all cursor-pointer"
+              >
+                <Play className="w-4 h-4 fill-black stroke-none" />
+                <span>
+                  {isSelectedPlanActive
+                    ? `Continue ${selectedPlan.days}-Day Challenge (Day ${activeChallenge.currentDay})`
+                    : `Start ${selectedPlan.days}-Day Challenge`}
+                </span>
+                <ChevronRight className="w-4 h-4 text-black stroke-[2.5]" />
+              </motion.button>
+
+              <button
+                onClick={() => setShowRoadmap(true)}
+                className="text-xs text-zinc-400 hover:text-zinc-200 font-semibold py-1.5 transition-colors cursor-pointer"
+              >
+                View Day-by-Day Roadmap & Completed Drills →
+              </button>
             </div>
           </div>
-        </div>
+        </main>
+      ) : (
+        /* VIEW B: DAY-BY-DAY ROADMAP & VERTICAL METRICS TRACKER */
+        <main className="relative z-20 w-full max-w-lg mx-auto flex-1 flex flex-col py-2 px-4 space-y-4">
+          {/* Active Challenge Card Summary */}
+          <div className="bg-[#12131a] border border-zinc-800 rounded-3xl p-4 sm:p-5 shadow-xl">
+            <div className="flex items-center justify-between pb-3 border-b border-zinc-800">
+              <div className="flex items-center gap-2">
+                <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-[0_0_8px_#34d399]" />
+                <span className="text-xs font-black uppercase tracking-wider text-emerald-400">
+                  {selectedPlan.days}-Day Plan
+                </span>
+              </div>
+              <span className="text-xs font-bold text-zinc-300 bg-zinc-900 px-2.5 py-0.5 rounded-full border border-zinc-800">
+                Day {activeChallenge.currentDay || 1} of {selectedPlan.days}
+              </span>
+            </div>
 
-        {/* ACTION BUTTON (Resume Challenge if ongoing, Start Challenge if not) */}
-        <div className="mt-4 pt-2">
-          <button
-            onClick={handleStartOrResume}
-            className={`w-full py-3 px-5 rounded-xl font-bold text-sm flex items-center justify-center gap-2 shadow-sm transition-all cursor-pointer active:scale-[0.98] ${
-              isStarted
-                ? 'bg-emerald-600 hover:bg-emerald-500 text-white'
-                : 'bg-zinc-100 hover:bg-white text-zinc-900'
-            }`}
-          >
-            <Play className="w-4 h-4 fill-current stroke-none" />
-            <span>{isStarted ? 'Resume Challenge' : 'Start Challenge'}</span>
-            <ChevronRight className="w-4 h-4" />
-          </button>
-        </div>
-      </div>
+            {/* 3 Quick Metric Boxes */}
+            <div className="grid grid-cols-3 gap-2 py-3 border-b border-zinc-800 text-center">
+              <div className="p-2.5 rounded-2xl bg-black/40 border border-zinc-800/80">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-400 block">
+                  Completed
+                </span>
+                <span className="text-lg sm:text-xl font-black text-white mt-0.5 block">
+                  {currentDoneActivities}
+                </span>
+                <span className="text-[10px] text-zinc-400 block">Activities</span>
+              </div>
 
-      {/* ACTIVITIES LOG MODAL (SHOWN WHEN CLICKING ON ANY DAY BAR) */}
+              <div className="p-2.5 rounded-2xl bg-black/40 border border-zinc-800/80">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-amber-400 block">
+                  Target
+                </span>
+                <span className="text-lg sm:text-xl font-black text-zinc-200 mt-0.5 block">
+                  {totalTargetActivities}
+                </span>
+                <span className="text-[10px] text-zinc-400 block">Activities</span>
+              </div>
+
+              <div className="p-2.5 rounded-2xl bg-black/40 border border-zinc-800/80">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-sky-400 block">
+                  Time Left
+                </span>
+                <span className="text-lg sm:text-xl font-black text-white mt-0.5 block">
+                  {Math.max(1, selectedPlan.days - (activeChallenge.currentDay || 1) + 1)}
+                </span>
+                <span className="text-[10px] text-zinc-400 block">Days Left</span>
+              </div>
+            </div>
+
+            {/* Vertical Bars for Each Day */}
+            <div className="pt-3 pb-1">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-[11px] font-extrabold uppercase tracking-wider text-zinc-400">
+                  Daily Progress Roadmap
+                </span>
+                <span className="text-[10px] text-zinc-500">Tap a day to view log</span>
+              </div>
+
+              <div
+                className="grid gap-2"
+                style={{
+                  gridTemplateColumns: `repeat(${selectedPlan.days}, minmax(0, 1fr))`,
+                }}
+              >
+                {activeChallenge.dailyProgress.slice(0, selectedPlan.days).map((dayItem) => {
+                  const isDone = dayItem.isCompleted;
+                  const isCurrent = dayItem.isCurrent;
+                  const fillHeight = isDone ? 100 : isCurrent ? 55 : 0;
+
+                  return (
+                    <button
+                      key={dayItem.day}
+                      type="button"
+                      onClick={() => setSelectedDayDetail(dayItem)}
+                      className={`flex flex-col items-center p-2 rounded-2xl border transition-all cursor-pointer active:scale-95 text-center ${
+                        isCurrent
+                          ? 'bg-emerald-950/40 border-emerald-500/60 shadow-lg shadow-emerald-500/10'
+                          : isDone
+                          ? 'bg-zinc-900/80 border-emerald-900/40'
+                          : 'bg-black/30 border-zinc-800/60 text-zinc-500'
+                      }`}
+                    >
+                      <div className="mb-1.5 flex items-center justify-center">
+                        {isDone ? (
+                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                        ) : isCurrent ? (
+                          <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_6px_#34d399]" />
+                        ) : (
+                          <Lock className="w-3 h-3 text-zinc-600" />
+                        )}
+                      </div>
+
+                      <div className="w-3.5 h-14 bg-black/60 rounded-full overflow-hidden p-0.5 border border-zinc-800 flex flex-col justify-end">
+                        <div
+                          className={`w-full rounded-full transition-all duration-500 ${
+                            isDone
+                              ? 'bg-emerald-500'
+                              : isCurrent
+                              ? 'bg-gradient-to-t from-emerald-500 to-emerald-400'
+                              : 'bg-zinc-700'
+                          }`}
+                          style={{ height: `${fillHeight}%` }}
+                        />
+                      </div>
+
+                      <span
+                        className={`text-[10px] font-extrabold mt-1.5 ${
+                          isCurrent ? 'text-emerald-300' : isDone ? 'text-zinc-200' : 'text-zinc-500'
+                        }`}
+                      >
+                        D{dayItem.day}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Practice Button */}
+            <div className="mt-4 pt-2">
+              <motion.button
+                whileTap={{ scale: 0.98 }}
+                onClick={handleSelectPlanAndStart}
+                className="w-full py-3.5 px-5 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-extrabold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg shadow-emerald-950/50 cursor-pointer"
+              >
+                <Play className="w-4 h-4 fill-white" />
+                <span>Practice Today's Story & Drills</span>
+              </motion.button>
+            </div>
+          </div>
+        </main>
+      )}
+
+      {/* ACTIVITIES LOG MODAL (WHEN TAPPING ANY DAY BAR) */}
       <AnimatePresence>
         {selectedDayDetail && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-xs">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 10 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 10 }}
-              className="w-full max-w-sm bg-[#151821] border border-zinc-700/60 rounded-2xl p-5 shadow-2xl text-left"
+              className="w-full max-w-sm bg-[#12141c] border border-zinc-700/80 rounded-3xl p-5 shadow-2xl text-left"
             >
-              {/* Header */}
-              <div className="flex items-center justify-between pb-3 border-b border-white/10">
+              <div className="flex items-center justify-between pb-3 border-b border-zinc-800">
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="text-sm font-bold text-white">
+                    <span className="text-sm font-extrabold text-white">
                       {selectedDayDetail.dayLabel} Activities
                     </span>
                     {selectedDayDetail.isCompleted ? (
@@ -342,22 +487,21 @@ export const ChallengeView: React.FC<ChallengeViewProps> = ({
                     )}
                   </div>
                   <span className="text-xs text-zinc-400 block mt-0.5">
-                    Target: 1 My Day Activity + 20 Speaking Questions
+                    Target: 1 My Day Story + 20 Speaking Drills
                   </span>
                 </div>
                 <button
                   onClick={() => setSelectedDayDetail(null)}
-                  className="w-7 h-7 rounded-full bg-white/10 hover:bg-white/20 text-zinc-300 flex items-center justify-center text-xs font-bold"
+                  className="w-8 h-8 rounded-full bg-zinc-800 hover:bg-zinc-700 text-zinc-300 flex items-center justify-center cursor-pointer transition-colors"
                 >
-                  ✕
+                  <X className="w-4 h-4" />
                 </button>
               </div>
 
-              {/* Body: List of activities done or pending */}
               <div className="py-4 space-y-2.5">
                 <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400 flex items-center gap-1.5">
                   <ListChecks className="w-3.5 h-3.5 text-zinc-400" />
-                  <span>Completed Tasks on {selectedDayDetail.dayLabel}</span>
+                  <span>Tasks on {selectedDayDetail.dayLabel}</span>
                 </span>
 
                 {selectedDayDetail.completedActivities && selectedDayDetail.completedActivities.length > 0 ? (
@@ -365,7 +509,7 @@ export const ChallengeView: React.FC<ChallengeViewProps> = ({
                     {selectedDayDetail.completedActivities.map((act, idx) => (
                       <div
                         key={idx}
-                        className="p-2.5 rounded-xl bg-black/30 border border-white/5 flex items-start gap-2 text-xs text-zinc-200"
+                        className="p-2.5 rounded-xl bg-black/40 border border-zinc-800/70 flex items-start gap-2 text-xs text-zinc-200"
                       >
                         <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
                         <span>{act}</span>
@@ -373,7 +517,7 @@ export const ChallengeView: React.FC<ChallengeViewProps> = ({
                     ))}
                   </div>
                 ) : (
-                  <div className="p-4 rounded-xl bg-black/25 border border-white/5 text-center text-xs text-zinc-400">
+                  <div className="p-4 rounded-2xl bg-black/30 border border-zinc-800/70 text-center text-xs text-zinc-400">
                     {selectedDayDetail.isCompleted
                       ? 'All required activities for this day are marked completed.'
                       : selectedDayDetail.isCurrent
@@ -383,11 +527,10 @@ export const ChallengeView: React.FC<ChallengeViewProps> = ({
                 )}
               </div>
 
-              {/* Action Button inside modal */}
               <div className="pt-2 flex gap-2">
                 <button
                   onClick={() => setSelectedDayDetail(null)}
-                  className="flex-1 py-2.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-xs font-bold transition-all"
+                  className="flex-1 py-2.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-xs font-bold transition-all cursor-pointer"
                 >
                   Close
                 </button>
@@ -395,9 +538,9 @@ export const ChallengeView: React.FC<ChallengeViewProps> = ({
                   <button
                     onClick={() => {
                       setSelectedDayDetail(null);
-                      handleStartOrResume();
+                      handleSelectPlanAndStart();
                     }}
-                    className="flex-1 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-all flex items-center justify-center gap-1.5"
+                    className="flex-1 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-sm"
                   >
                     <Play className="w-3 h-3 fill-current" />
                     <span>Practice Now</span>
