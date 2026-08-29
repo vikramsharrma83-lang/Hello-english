@@ -481,7 +481,7 @@ export const MyDayPatternsHub: React.FC<MyDayPatternsHubProps> = ({
         </button>
       </div>
 
-      {/* Screen Title: Only Main Category Title & Description */}
+      {/* Screen Title: Only Main Category Title */}
       <div className="mb-6">
         <div className="flex items-center gap-2 mb-1">
           <span
@@ -494,16 +494,10 @@ export const MyDayPatternsHub: React.FC<MyDayPatternsHubProps> = ({
           >
             {selectedCategory.numBadge}
           </span>
-          <span className="text-xs text-zinc-400 font-bold">
-            {selectedCategory.subtitle}
-          </span>
         </div>
         <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
           {selectedCategory.title}
         </h1>
-        <p className="text-xs sm:text-sm text-[#8E8E93] mt-1 leading-relaxed">
-          {selectedCategory.description}
-        </p>
       </div>
 
       {/* 
@@ -514,18 +508,10 @@ export const MyDayPatternsHub: React.FC<MyDayPatternsHubProps> = ({
           <h2 className="text-xs font-bold uppercase tracking-wider text-[#8E8E93]">
             Choose Level to Practice
           </h2>
-          <span className="text-[11px] text-blue-400 font-medium flex items-center gap-1">
-            <Zap className="w-3 h-3" />
-            <span>Random Question Drill</span>
-          </span>
         </div>
 
         <div className="space-y-3">
           {LEVELS.map((lvl) => {
-            const count = PRACTICE_QUESTIONS.filter(
-              (q) => q.category === selectedCategory.id && q.level === lvl.id
-            ).length;
-
             return (
               <button
                 key={lvl.id}
@@ -540,25 +526,12 @@ export const MyDayPatternsHub: React.FC<MyDayPatternsHubProps> = ({
                   </div>
                 </div>
 
-                {/* Level Title, Subtitle & Description */}
+                {/* Level Title */}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between gap-2">
                     <h3 className="text-base sm:text-lg font-bold text-white group-hover:text-blue-400 transition-colors">
-                      {lvl.title}: {lvl.subtitle}
+                      {lvl.levelNumber === 1 ? 'Level 1: Words & Phrase' : `${lvl.title}: ${lvl.subtitle}`}
                     </h3>
-                  </div>
-
-                  <p className="text-xs text-[#8E8E93] mt-1 leading-snug">
-                    {lvl.description}
-                  </p>
-
-                  <div className="flex items-center gap-2 mt-2">
-                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-950/90 text-blue-300 border border-blue-800/80">
-                      {count} Drills
-                    </span>
-                    <span className="text-[10px] text-[#636366]">
-                      • Tap to Start Random Drill
-                    </span>
                   </div>
                 </div>
 
@@ -569,17 +542,6 @@ export const MyDayPatternsHub: React.FC<MyDayPatternsHubProps> = ({
               </button>
             );
           })}
-        </div>
-
-        {/* Info banner explaining random drill generation */}
-        <div className="mt-6 p-4 rounded-2xl bg-[#121214] border border-white/5 text-xs text-[#8E8E93] leading-relaxed flex items-start gap-2.5">
-          <Sparkles className="w-4 h-4 text-blue-400 shrink-0 mt-0.5" />
-          <div>
-            <span className="text-white font-semibold block mb-0.5">
-              Automated Random Question Engine
-            </span>
-            Selecting a level instantly loads a randomized speaking scenario suited for your chosen difficulty. Coach Neha will listen to your spoken response and give live feedback.
-          </div>
         </div>
       </div>
 

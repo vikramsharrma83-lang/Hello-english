@@ -465,9 +465,6 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                   <h3 className="text-xl sm:text-2xl font-bold text-white tracking-tight leading-tight">
                     Choose Practice Level
                   </h3>
-                  <p className="text-xs text-zinc-400 font-normal mt-1 leading-snug">
-                    {activeCategoryMeta.subtitle}
-                  </p>
                 </div>
               </div>
 
@@ -496,7 +493,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
 
               {/* 3 HIGH-TECH LEVEL CARDS */}
               <div className="space-y-3">
-                {/* LEVEL 1: Words (Easy) - Emerald Theme */}
+                {/* LEVEL 1: Words & Phrases - Emerald Theme */}
                 <motion.div
                   whileHover={{ scale: 1.01 }}
                   whileTap={{ scale: 0.98 }}
@@ -526,11 +523,8 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                         LEVEL 1
                       </span>
                       <h4 className="text-base sm:text-lg font-bold text-white leading-tight">
-                        Words
+                        Words & Phrases
                       </h4>
-                      <p className="text-xs text-zinc-400 font-medium mt-0.5">
-                        Easy
-                      </p>
                     </div>
 
                     {/* Right Actions */}
@@ -545,7 +539,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                   </div>
                 </motion.div>
 
-                {/* LEVEL 2: Sentence (Medium) - Electric Blue Theme */}
+                {/* LEVEL 2: Sentence - Electric Blue Theme */}
                 <motion.div
                   whileHover={{ scale: 1.01 }}
                   whileTap={{ scale: 0.98 }}
@@ -575,9 +569,6 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                       <h4 className="text-base sm:text-lg font-bold text-white leading-tight">
                         Sentence
                       </h4>
-                      <p className="text-xs text-zinc-400 font-medium mt-0.5">
-                        Medium
-                      </p>
                     </div>
 
                     {/* Right Actions */}
@@ -592,7 +583,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                   </div>
                 </motion.div>
 
-                {/* LEVEL 3: Scenarios (Hard) - Ruby / Red Theme */}
+                {/* LEVEL 3: Scenarios - Ruby / Red Theme */}
                 <motion.div
                   whileHover={{ scale: 1.01 }}
                   whileTap={{ scale: 0.98 }}
@@ -629,9 +620,6 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                       <h4 className="text-base sm:text-lg font-bold text-white leading-tight">
                         Scenarios
                       </h4>
-                      <p className="text-xs text-zinc-400 font-medium mt-0.5">
-                        Hard
-                      </p>
                     </div>
 
                     {/* Right Actions */}
