@@ -1,7 +1,7 @@
 import React from 'react';
 import { Home, BookOpen, Mic, TrendingUp, User, Sparkles } from 'lucide-react';
 
-export type NavTab = 'home' | 'myday' | 'practice' | 'progress' | 'profile';
+export type NavTab = 'home' | 'myday' | 'practice' | 'progress' | 'profile' | 'challenge';
 
 interface BottomDockNavProps {
   activeTab: NavTab;

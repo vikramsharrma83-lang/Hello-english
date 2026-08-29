@@ -126,6 +126,28 @@ export interface ConversationTurn {
   audioData?: string;
 }
 
+export interface ChallengeDayProgress {
+  day: number;
+  dayLabel: string;
+  isCompleted: boolean;
+  isCurrent: boolean;
+  myDayCompleted: boolean;
+  questionsCompleted: number;
+  questionsTarget: number;
+}
+
+export interface FiveDayChallenge {
+  startDate: number;
+  totalDays: number;
+  daysRemaining: number;
+  currentDay: number;
+  dailyProgress: ChallengeDayProgress[];
+  myDayTarget: number;
+  myDayCompletedCount: number;
+  coachQuestionsTarget: number;
+  coachQuestionsCompletedCount: number;
+}
+
 export interface UserProgress {
   userName?: string;
   streakDays: number;
@@ -137,4 +159,6 @@ export interface UserProgress {
   savedPhrases: SavedPhrase[];
   history: PracticeHistoryItem[];
   myDayCompletedTasks?: string[];
+  challenge?: FiveDayChallenge;
 }
+

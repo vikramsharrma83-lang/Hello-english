@@ -8,10 +8,12 @@ import { ResultScreen } from './views/ResultScreen';
 import { ProgressView } from './views/ProgressView';
 import { ProfileView } from './views/ProfileView';
 import { MyDayView } from './views/MyDayView';
+import { ChallengeView } from './views/ChallengeView';
 import { BottomDockNav, NavTab } from './components/BottomDockNav';
 import { AnalysisResult, Question, SavedPhrase, UserProgress } from './types';
 import { PRACTICE_QUESTIONS } from './data/questions';
 import { generateLocalAnalysis } from './data/patternEngine';
+import { recordChallengePractice } from './utils/challengeManager';
 
 type PracticeStep = 'question' | 'speak' | 'result';
 
@@ -84,12 +86,20 @@ export default function App() {
       ? currentCompleted.filter((id) => id !== taskId)
       : [...currentCompleted, taskId];
 
-    setProgress((prev) => ({
-      ...prev,
-      myDayCompletedTasks: updated,
-      completedToday: updated.length,
-      streakDays: updated.length === 4 && currentCompleted.length < 4 ? prev.streakDays + 1 : prev.streakDays,
-    }));
+    setProgress((prev) => {
+      let nextState = {
+        ...prev,
+        myDayCompletedTasks: updated,
+        completedToday: updated.length,
+        streakDays: updated.length === 4 && currentCompleted.length < 4 ? prev.streakDays + 1 : prev.streakDays,
+      };
+
+      if (!isAlreadyDone) {
+        nextState = recordChallengePractice(nextState, 'my_day_activity');
+      }
+
+      return nextState;
+    });
   };
 
   const handleResetMyDayTasks = () => {
@@ -143,13 +153,16 @@ export default function App() {
       const data: AnalysisResult = await res.json();
       setAnalysisResult(data);
 
-      // Update progress
-      setProgress((prev) => ({
-        ...prev,
-        totalPracticed: prev.totalPracticed + 1,
-        completedToday: Math.min(prev.dailyGoal, prev.completedToday + 1),
-        totalMinutes: prev.totalMinutes + 1,
-      }));
+      // Update progress and challenge
+      setProgress((prev) => {
+        const base = {
+          ...prev,
+          totalPracticed: prev.totalPracticed + 1,
+          completedToday: Math.min(prev.dailyGoal, prev.completedToday + 1),
+          totalMinutes: prev.totalMinutes + 1,
+        };
+        return recordChallengePractice(base, 'coach_question');
+      });
 
       setPracticeStep('result');
     } catch (err) {
@@ -160,6 +173,15 @@ export default function App() {
         currentQuestion.category
       );
       setAnalysisResult(fallbackResult);
+      setProgress((prev) => {
+        const base = {
+          ...prev,
+          totalPracticed: prev.totalPracticed + 1,
+          completedToday: Math.min(prev.dailyGoal, prev.completedToday + 1),
+          totalMinutes: prev.totalMinutes + 1,
+        };
+        return recordChallengePractice(base, 'coach_question');
+      });
       setPracticeStep('result');
     } finally {
       setIsAnalyzing(false);
@@ -249,10 +271,12 @@ export default function App() {
               className="w-full"
             >
               <HomeScreen
+                progress={progress}
                 streakDays={progress.streakDays}
                 completedToday={progress.completedToday}
                 dailyGoal={progress.dailyGoal}
                 onStartPractice={handleStartPractice}
+                onOpenChallenge={() => setActiveTab('challenge')}
                 onNavigateTab={(tab) => {
                   if (tab === 'practice') {
                     handleStartPractice();
@@ -260,6 +284,24 @@ export default function App() {
                     setActiveTab(tab);
                   }
                 }}
+              />
+            </motion.div>
+          )}
+
+          {activeTab === 'challenge' && (
+            <motion.div
+              key="challenge"
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -15 }}
+              transition={{ duration: 0.22 }}
+              className="w-full"
+            >
+              <ChallengeView
+                progress={progress}
+                onBack={() => setActiveTab('home')}
+                onStartMyDay={() => setActiveTab('myday')}
+                onStartPracticeQuestion={(q) => handleStartPractice(q)}
               />
             </motion.div>
           )}
@@ -372,7 +414,7 @@ export default function App() {
         </AnimatePresence>
 
         {/* FLOATING BOTTOM DOCK NAVIGATION (Only on main exploration tabs: Home, Progress, Profile) */}
-        {activeTab !== 'practice' && activeTab !== 'myday' && (
+        {activeTab !== 'practice' && activeTab !== 'myday' && activeTab !== 'challenge' && (
           <BottomDockNav
             activeTab={activeTab}
             onSelectTab={(tab) => {

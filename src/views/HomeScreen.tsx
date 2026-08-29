@@ -22,20 +22,28 @@ import {
   Layers,
   Gift,
   Sparkles,
+  TrendingUp,
+  Award,
+  CheckCircle2,
+  ChevronRight,
+  Flame,
 } from 'lucide-react';
 import englishCard1 from '../Pics/english card 1.png';
 import englishCard2 from '../Pics/English card 2.png';
 import englishCard3 from '../Pics/English card 3.png';
 import { SheekoCardGraphic } from '../components/SheekoCardGraphic';
-import { Question } from '../types';
+import { Question, UserProgress } from '../types';
 import { PRACTICE_QUESTIONS } from '../data/questions';
+import { calculateEnglishConfidence } from '../utils/confidenceEngine';
 
 interface HomeScreenProps {
+  progress?: UserProgress;
   streakDays: number;
   completedToday: number;
   dailyGoal: number;
   onStartPractice: (question?: Question) => void;
-  onNavigateTab: (tab: 'home' | 'myday' | 'practice' | 'progress' | 'profile') => void;
+  onNavigateTab: (tab: 'home' | 'myday' | 'practice' | 'progress' | 'profile' | 'challenge') => void;
+  onOpenChallenge: () => void;
 }
 
 export type PracticeCategoryType = 'workplace' | 'daily_routine' | 'friends' | 'sheeko';
@@ -97,17 +105,32 @@ const CAROUSEL_BANNERS: CarouselItem[] = [
 const LOOP_CAROUSEL_ITEMS = [...CAROUSEL_BANNERS, ...CAROUSEL_BANNERS];
 
 export const HomeScreen: React.FC<HomeScreenProps> = ({
+  progress,
   streakDays,
   completedToday,
   dailyGoal,
   onStartPractice,
   onNavigateTab,
+  onOpenChallenge,
 }) => {
   const [selectedCategoryModal, setSelectedCategoryModal] = useState<PracticeCategoryType | null>(null);
   const [activeSlideIndex, setActiveSlideIndex] = useState(0);
   const swiperRef = useRef<SwiperType | null>(null);
 
   const currentBanner = CAROUSEL_BANNERS[activeSlideIndex] || CAROUSEL_BANNERS[0];
+
+  // Calculate live English confidence & level
+  const userProg = progress || {
+    streakDays,
+    completedToday,
+    dailyGoal,
+    totalPracticed: 18,
+    totalMinutes: 24,
+    targetRole: 'Staff',
+    savedPhrases: [],
+    history: [],
+  };
+  const confidenceAssessment = calculateEnglishConfidence(userProg);
 
   // Helper to start practice for a specific category and level
   const handleStartCategoryLevel = (category: PracticeCategoryType, level: 'Level 1' | 'Level 2' | 'Level 3') => {
@@ -181,29 +204,9 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   };
 
   return (
-    <div className="w-full min-h-screen bg-black text-white pb-24 pt-2.5 px-3.5 sm:px-6 flex flex-col justify-between select-none">
-      {/* Category Tabs Pill Bar directly on Home Screen */}
-      <div className="w-full flex items-center justify-between gap-1 p-1 bg-[#14151B] rounded-2xl border border-white/5 shadow-inner mb-2">
-        {CAROUSEL_BANNERS.map((banner, index) => {
-          const isActive = activeSlideIndex === index;
-          return (
-            <button
-              key={banner.id}
-              onClick={() => swiperRef.current?.slideToLoop(index)}
-              className={`flex-1 py-1.5 px-2 rounded-xl text-[11px] font-extrabold flex items-center justify-center gap-1 transition-all cursor-pointer whitespace-nowrap ${
-                isActive
-                  ? 'bg-[#2E3342] text-amber-300 shadow-md border border-amber-500/40'
-                  : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/5'
-              }`}
-            >
-              <span>{banner.badge}</span>
-            </button>
-          );
-        })}
-      </div>
-
-      {/* Top Section: 30% Enlarged Continuous 360 Loop Coverflow Banner */}
-      <div className="w-full flex-1 flex flex-col justify-center my-auto">
+    <div className="w-full min-h-screen bg-black text-white pb-24 pt-1 px-3.5 sm:px-6 flex flex-col justify-between select-none">
+      {/* Top Section: Continuous 360 Loop Coverflow Banner at the Very Top */}
+      <div className="w-full flex-shrink-0 pt-1">
         <div className="coverflow-carousel-container">
           <Swiper
             modules={[EffectCoverflow, Mousewheel]}
@@ -273,7 +276,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
           </Swiper>
 
           {/* Minimal Pagination Dots */}
-          <div className="flex items-center justify-center gap-1.5 mt-2.5">
+          <div className="flex items-center justify-center gap-1.5 mt-2">
             {CAROUSEL_BANNERS.map((banner, index) => {
               const isActive = activeSlideIndex === index;
               return (
@@ -293,16 +296,100 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
         </div>
       </div>
 
-      {/* Extreme Bottom Section: Good Morning Text + Start Tab Just Above Bottom Bar Menu */}
-      <div className="mt-auto pt-2 flex flex-col items-center text-center">
-        <h1 className="text-2xl sm:text-[26px] font-bold text-white tracking-tight leading-tight">
+      {/* CONFIDENCE & ENGLISH LEVEL CARD (UNDER THE BANNER) */}
+      <div className="w-full my-2.5 bg-[#14161F] rounded-2xl p-3.5 border border-white/10 shadow-lg relative overflow-hidden">
+        {/* Glow accent */}
+        <div
+          className={`absolute -top-10 -right-10 w-28 h-28 rounded-full blur-2xl pointer-events-none opacity-40 ${
+            confidenceAssessment.statusColor === 'green'
+              ? 'bg-emerald-500'
+              : confidenceAssessment.statusColor === 'amber'
+              ? 'bg-amber-500'
+              : 'bg-rose-500'
+          }`}
+        />
+
+        {/* Top Header of Card: Level & Score */}
+        <div className="relative z-10 flex items-center justify-between gap-2 mb-2.5">
+          <div className="flex items-center gap-2">
+            <div className={`w-8 h-8 rounded-xl flex items-center justify-center ${confidenceAssessment.colorClasses.bg} ${confidenceAssessment.colorClasses.border} border`}>
+              <TrendingUp className={`w-4 h-4 ${confidenceAssessment.colorClasses.text}`} />
+            </div>
+            <div>
+              <div className="flex items-center gap-1.5">
+                <span className="text-xs font-black text-white tracking-tight">
+                  English Level
+                </span>
+                <span className={`text-[10px] font-black px-1.5 py-0.2 rounded-md ${confidenceAssessment.colorClasses.bg} ${confidenceAssessment.colorClasses.text} border ${confidenceAssessment.colorClasses.border}`}>
+                  {confidenceAssessment.cefrLevel}
+                </span>
+              </div>
+              <span className="text-[11px] font-bold text-zinc-300 block">
+                {confidenceAssessment.levelTitle}
+              </span>
+            </div>
+          </div>
+
+          <div className="text-right">
+            <div className="flex items-center justify-end gap-1.5">
+              <div className={`w-2 h-2 rounded-full ${confidenceAssessment.colorClasses.dot} animate-pulse`} />
+              <span className={`text-base font-black ${confidenceAssessment.colorClasses.text}`}>
+                {confidenceAssessment.overallScore}%
+              </span>
+            </div>
+            <span className="text-[9.5px] font-bold uppercase tracking-wider text-zinc-400">
+              Confidence
+            </span>
+          </div>
+        </div>
+
+        {/* Composite Progress Bar */}
+        <div className="relative z-10 w-full h-2 bg-black/60 rounded-full overflow-hidden mb-2.5 p-0.5 border border-white/5">
+          <motion.div
+            initial={{ width: 0 }}
+            animate={{ width: `${confidenceAssessment.overallScore}%` }}
+            transition={{ duration: 0.7, ease: 'easeOut' }}
+            className={`h-full rounded-full ${confidenceAssessment.colorClasses.progress}`}
+          />
+        </div>
+
+        {/* 4 Micro Metrics (Activities, Spoken Accuracy, Answers, Effort) */}
+        <div className="relative z-10 grid grid-cols-4 gap-1.5 pt-1 text-center">
+          <div className="p-1.5 rounded-xl bg-white/[0.03] border border-white/5">
+            <span className="text-[8.5px] font-bold uppercase text-zinc-400 block">Activities</span>
+            <span className="text-[11px] font-black text-white">{confidenceAssessment.metrics.activitiesScore}%</span>
+          </div>
+          <div className="p-1.5 rounded-xl bg-white/[0.03] border border-white/5">
+            <span className="text-[8.5px] font-bold uppercase text-zinc-400 block">Spoken</span>
+            <span className="text-[11px] font-black text-white">{confidenceAssessment.metrics.spokenAccuracy}%</span>
+          </div>
+          <div className="p-1.5 rounded-xl bg-white/[0.03] border border-white/5">
+            <span className="text-[8.5px] font-bold uppercase text-zinc-400 block">Answers</span>
+            <span className="text-[11px] font-black text-white">{confidenceAssessment.metrics.answersAccuracy}%</span>
+          </div>
+          <div className="p-1.5 rounded-xl bg-white/[0.03] border border-white/5">
+            <span className="text-[8.5px] font-bold uppercase text-zinc-400 block">Effort</span>
+            <span className="text-[11px] font-black text-white">{confidenceAssessment.metrics.effortScore}%</span>
+          </div>
+        </div>
+
+        {/* Spoken Hindi Feedback Tip */}
+        <div className="relative z-10 mt-2 pt-2 border-t border-white/5 flex items-center gap-1.5 text-[11px] text-zinc-300">
+          <Sparkles className={`w-3.5 h-3.5 shrink-0 ${confidenceAssessment.colorClasses.text}`} />
+          <span className="truncate">{confidenceAssessment.hindiInsight}</span>
+        </div>
+      </div>
+
+      {/* Bottom Section: Greeting + Levels Link + START Button */}
+      <div className="mt-auto pt-1 flex flex-col items-center text-center">
+        <h1 className="text-xl sm:text-[23px] font-bold text-white tracking-tight leading-tight">
           {getGreeting()}
         </h1>
 
         {/* Learn More / Choose Level Link */}
         <button
           onClick={() => setSelectedCategoryModal(currentBanner.id)}
-          className="mt-2.5 inline-flex items-center gap-1.5 text-xs sm:text-[13px] font-medium text-[#F59E0B] hover:text-[#FBBF24] transition-colors cursor-pointer group"
+          className="mt-1.5 inline-flex items-center gap-1.5 text-xs font-medium text-[#F59E0B] hover:text-[#FBBF24] transition-colors cursor-pointer group"
         >
           <div className="w-4 h-4 rounded-full bg-[#F59E0B] text-black flex items-center justify-center font-bold text-[10px] group-hover:scale-105 transition-transform">
             <Info className="w-3 h-3 stroke-[2.5]" />
@@ -310,20 +397,14 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
           <span>{currentBanner.title} लेवल्स के बारे में जानें</span>
         </button>
 
-        {/* Start Tab Button at extreme bottom */}
-        <div className="w-full mt-3.5 flex justify-center">
+        {/* START Button (Opens Challenge Page) */}
+        <div className="w-full mt-3 flex justify-center">
           <button
-            onClick={() => {
-              if (currentBanner.id === 'sheeko') {
-                onNavigateTab('myday');
-              } else {
-                handleRandomInCategory(currentBanner.id);
-              }
-            }}
-            className="w-full max-w-[250px] py-2.5 px-6 rounded-full bg-[#2C2C2E] hover:bg-[#3A3A3C] active:bg-[#1C1C1E] text-white font-semibold text-sm sm:text-[15px] flex items-center justify-center gap-1.5 shadow-md shadow-black/60 active:scale-[0.98] transition-all cursor-pointer border border-zinc-700/50"
+            onClick={onOpenChallenge}
+            className="w-full max-w-[260px] py-3 px-8 rounded-full bg-gradient-to-r from-amber-500 via-amber-400 to-yellow-400 hover:from-amber-400 hover:to-yellow-300 active:from-amber-600 active:to-yellow-500 text-black font-black text-base sm:text-[17px] tracking-wider flex items-center justify-center gap-2 shadow-xl shadow-amber-500/25 active:scale-[0.98] transition-all cursor-pointer border border-amber-300/40"
           >
-            <Play className="w-3.5 h-3.5 fill-white stroke-none" />
-            <span>Start {currentBanner.id === 'sheeko' ? 'My Day' : 'Practice'}</span>
+            <Play className="w-4 h-4 fill-black stroke-none" />
+            <span>START</span>
           </button>
         </div>
       </div>
