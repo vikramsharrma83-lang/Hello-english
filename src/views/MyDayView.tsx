@@ -376,6 +376,11 @@ export const MyDayView: React.FC<MyDayViewProps> = ({
             onOpenPatternLibrary={() => setStep('PATTERNS_HUB')}
             onOpenChallenge={() => setStep('CHALLENGE')}
             onOpenInspector={() => setInspectorOpen(true)}
+            onOpenProfile={() => {
+              if (onNavigateTab) {
+                onNavigateTab('profile');
+              }
+            }}
             onClose={() => {
               if (onNavigateTab) {
                 onNavigateTab('home');

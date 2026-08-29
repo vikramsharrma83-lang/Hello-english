@@ -401,6 +401,15 @@ export default function App() {
                 onChangeDailyGoal={(goal) => setProgress((p) => ({ ...p, dailyGoal: goal }))}
                 voiceSpeed={voiceSpeed}
                 onChangeVoiceSpeed={setVoiceSpeed}
+                progress={progress}
+                onSelectSavedPhrase={(phrase) => handleStartPractice(undefined, 'profile')}
+                onRemoveSavedPhrase={(id) => {
+                  setProgress((p) => ({
+                    ...p,
+                    savedPhrases: p.savedPhrases.filter((s) => s.id !== id),
+                  }));
+                }}
+                onStartPractice={() => handleStartPractice()}
               />
             </motion.div>
           )}

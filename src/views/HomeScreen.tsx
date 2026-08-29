@@ -2,11 +2,12 @@ import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import type { Swiper as SwiperType } from 'swiper';
-import { EffectCoverflow, Mousewheel } from 'swiper/modules';
+import { EffectCoverflow, Mousewheel, Autoplay } from 'swiper/modules';
 
 // Swiper CSS
 import 'swiper/css';
 import 'swiper/css/effect-coverflow';
+import 'swiper/css/autoplay';
 
 import {
   Briefcase,
@@ -48,61 +49,102 @@ interface HomeScreenProps {
 
 export type PracticeCategoryType = 'workplace' | 'daily_routine' | 'friends' | 'sheeko';
 
-interface CarouselItem {
-  id: PracticeCategoryType;
-  title: string;
-  subtitle: string;
-  tagline: string;
-  badge: string;
-  image?: string;
-  alt: string;
-  accentColor: string;
+interface WordCardItem {
+  id: string;
+  englishWord: string;
+  hindi: string;
+  kannada: string;
+  tamil: string;
+  bengali: string;
+  telugu: string;
+  category: string;
 }
 
-const CAROUSEL_BANNERS: CarouselItem[] = [
+const MULTI_LANG_WORDS: WordCardItem[] = [
   {
-    id: 'workplace',
-    title: 'Workplace English',
-    subtitle: 'Master shift handovers, manager updates, warehouse operations & team chats.',
-    tagline: 'Office & Logistics Track',
-    badge: '🏢 Workplace',
-    image: englishCard1,
-    alt: 'Workplace English Practice Banner',
-    accentColor: '#A855F7',
+    id: 'w1',
+    englishWord: 'Shift',
+    hindi: 'शिफ्ट (पाली)',
+    kannada: 'ಶಿಫ್ಟ್',
+    tamil: 'ஷிப்ட்',
+    bengali: 'শিফট',
+    telugu: 'షిఫ్ట్',
+    category: 'Workplace',
   },
   {
-    id: 'daily_routine',
-    title: 'Daily Routine English',
-    subtitle: 'Communicate smoothly during daily travel, commute, shopping & doctor visits.',
-    tagline: 'Commute & Daily Life Track',
-    badge: '☕ Daily Life',
-    image: englishCard2,
-    alt: 'Daily Routine English Practice Banner',
-    accentColor: '#F43F5E',
+    id: 'w2',
+    englishWord: 'Overtime',
+    hindi: 'ओवरटाइम (अतिरिक्त समय)',
+    kannada: 'ಓವರ್‌ಟೈಮ್',
+    tamil: 'ஓவர்டைம்',
+    bengali: 'ওভারটাইম',
+    telugu: 'ఓవర్‌టైమ్',
+    category: 'Workplace',
   },
   {
-    id: 'friends',
-    title: 'Friends Conversation',
-    subtitle: 'Build natural, friendly English for weekend catch-ups, advice & social circles.',
-    tagline: 'Casual & Social Track',
-    badge: '👥 Friends',
-    image: englishCard3,
-    alt: 'Friends Conversation English Practice Banner',
-    accentColor: '#14B8A6',
+    id: 'w3',
+    englishWord: 'Supervisor',
+    hindi: 'सुपरवाइज़र (प्रभारी)',
+    kannada: 'ಮೇಲ್ವಿಚಾರಕ',
+    tamil: 'மேற்பார்வையாளர்',
+    bengali: 'সুপারভাইজার',
+    telugu: 'సూపర్‌వైజర్',
+    category: 'Management',
   },
   {
-    id: 'sheeko',
-    title: 'My Day (Stories)',
-    subtitle: 'Share your daily events, work shifts, experiences, anecdotes & memories.',
-    tagline: 'My Day Storytelling & Daily Practice Track',
-    badge: '📖 My Day',
-    alt: 'My Day Daily Storytelling English Practice Banner',
-    accentColor: '#F59E0B',
+    id: 'w4',
+    englishWord: 'Inventory',
+    hindi: 'माल सूची (स्टॉक)',
+    kannada: 'ದಾಸ್ತಾನು',
+    tamil: 'சரக்கு பட்டியல்',
+    bengali: 'ইনভেন্টরি',
+    telugu: 'జాబితా',
+    category: 'Operations',
+  },
+  {
+    id: 'w5',
+    englishWord: 'Delivery',
+    hindi: 'डिलीवरी (पहुंचाना)',
+    kannada: 'ವಿತರಣೆ',
+    tamil: 'டெலிவரி',
+    bengali: 'ডেলিভারি',
+    telugu: 'డెలివరీ',
+    category: 'Logistics',
+  },
+  {
+    id: 'w6',
+    englishWord: 'Receipt',
+    hindi: 'रसीद (बिल)',
+    kannada: 'ರಶೀದಿ',
+    tamil: 'ரசீது',
+    bengali: 'রসিদ',
+    telugu: 'రశీదు',
+    category: 'Billing',
+  },
+  {
+    id: 'w7',
+    englishWord: 'Schedule',
+    hindi: 'समय-सारणी (सूची)',
+    kannada: 'ವೇಳಾಪಟ್ಟಿ',
+    tamil: 'அட்டவணை',
+    bengali: 'সময়সূচী',
+    telugu: 'షెడ్యూల్',
+    category: 'Planning',
+  },
+  {
+    id: 'w8',
+    englishWord: 'Break Time',
+    hindi: 'आराम का समय (ब्रेक)',
+    kannada: 'ವಿರಾಮ ಸಮಯ',
+    tamil: 'ஓய்வு நேரம்',
+    bengali: 'বিরতির সময়',
+    telugu: 'విరామ సమయం',
+    category: 'Daily Life',
   },
 ];
 
 // Duplicate items to ensure a seamless 360-degree infinite continuous loop in Swiper
-const LOOP_CAROUSEL_ITEMS = [...CAROUSEL_BANNERS, ...CAROUSEL_BANNERS];
+const LOOP_WORD_ITEMS = [...MULTI_LANG_WORDS, ...MULTI_LANG_WORDS];
 
 export const HomeScreen: React.FC<HomeScreenProps> = ({
   progress,
@@ -117,7 +159,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   const [activeSlideIndex, setActiveSlideIndex] = useState(0);
   const swiperRef = useRef<SwiperType | null>(null);
 
-  const currentBanner = CAROUSEL_BANNERS[activeSlideIndex] || CAROUSEL_BANNERS[0];
+  const currentWord = MULTI_LANG_WORDS[activeSlideIndex] || MULTI_LANG_WORDS[0];
 
   // Calculate live English confidence & level
   const userProg = progress || {
@@ -205,70 +247,65 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
 
   return (
     <div className="w-full min-h-screen bg-black text-white pb-24 pt-1 px-3.5 sm:px-6 flex flex-col justify-between select-none">
-      {/* Top Section: Continuous 360 Loop Coverflow Banner at the Very Top */}
+      {/* Top Section: 360-degree coverflow carousel of English words with Hindi, Kannada, Tamil, Bengali, Telugu in black & grey shades */}
       <div className="w-full flex-shrink-0 pt-1">
         <div className="coverflow-carousel-container">
           <Swiper
-            modules={[EffectCoverflow, Mousewheel]}
+            modules={[EffectCoverflow, Mousewheel, Autoplay]}
             effect="coverflow"
             grabCursor={true}
             centeredSlides={true}
             loop={true}
             slidesPerView="auto"
             initialSlide={0}
-            speed={420}
+            speed={400}
+            autoplay={{
+              delay: 2500,
+              disableOnInteraction: false,
+            }}
             coverflowEffect={{
               rotate: 0,
-              stretch: 8,
-              depth: 75,
+              stretch: 16,
+              depth: 95,
               modifier: 1,
               slideShadows: false,
-              scale: 0.88,
+              scale: 0.85,
             }}
             mousewheel={{ forceToAxis: true }}
             onSwiper={(swiper) => {
               swiperRef.current = swiper;
             }}
             onSlideChange={(swiper) => {
-              const realIndex = swiper.realIndex % CAROUSEL_BANNERS.length;
+              const realIndex = swiper.realIndex % MULTI_LANG_WORDS.length;
               setActiveSlideIndex(realIndex);
             }}
-            className="w-full"
+            className="w-full py-4"
           >
-            {LOOP_CAROUSEL_ITEMS.map((banner, index) => {
-              const baseIndex = index % CAROUSEL_BANNERS.length;
+            {LOOP_WORD_ITEMS.map((item, index) => {
+              const baseIndex = index % MULTI_LANG_WORDS.length;
               const isCenterActive = activeSlideIndex === baseIndex;
               return (
                 <SwiperSlide
-                  key={`${banner.id}-${index}`}
-                  className="swiper-slide cursor-pointer active:scale-[0.98] transition-transform"
+                  key={`${item.id}-${index}`}
+                  className="swiper-slide w-[260px] sm:w-[280px] cursor-pointer"
                   onClick={() => {
-                    if (isCenterActive) {
-                      setSelectedCategoryModal(banner.id);
-                    } else {
-                      swiperRef.current?.slideToLoop(baseIndex);
-                    }
+                    swiperRef.current?.slideToLoop(baseIndex);
                   }}
                 >
-                  <div className="w-full relative overflow-hidden group">
-                    {banner.image ? (
-                      <img
-                        src={banner.image}
-                        alt={banner.alt}
-                        draggable={false}
-                        className="w-full h-auto object-cover block select-none pointer-events-none"
-                      />
-                    ) : (
-                      <SheekoCardGraphic />
-                    )}
+                  <div className={`w-full rounded-2xl p-5 bg-gradient-to-br from-[#1c1c20] via-[#0d0d10] to-black border-0 transition-all duration-300 flex flex-col justify-center items-center text-center ${isCenterActive ? 'scale-[1.22] shadow-[0_25px_60px_rgba(0,0,0,0.9)] z-20 opacity-100' : 'scale-90 opacity-45'}`}>
+                    <div className="py-2 mb-2">
+                      <h3 className="text-3xl sm:text-4xl font-black text-zinc-400 tracking-tight">
+                        {item.englishWord}
+                      </h3>
+                    </div>
 
-                    {/* Subtle Overlay Hint on Active Slide */}
-                    {isCenterActive && (
-                      <div className="absolute top-2 right-2 px-1.5 py-0.5 rounded-full bg-black/80 backdrop-blur-md text-white text-[8px] font-black uppercase tracking-wider flex items-center gap-0.5 shadow-sm">
-                        <Layers className="w-2.5 h-2.5" />
-                        <span>3 Lvls</span>
-                      </div>
-                    )}
+                    <div className="w-full mt-2 pt-3 border-t border-zinc-800/40 space-y-1.5 text-xs">
+                      <div className="text-zinc-400 font-bold tracking-wide">{item.hindi}</div>
+                      <div className="text-zinc-500 font-medium">{item.kannada}</div>
+                      <div className="text-zinc-500 font-medium">{item.tamil}</div>
+                      <div className="text-zinc-500 font-medium">{item.bengali}</div>
+                      <div className="text-zinc-500 font-medium">{item.telugu}</div>
+                    </div>
                   </div>
                 </SwiperSlide>
               );
@@ -277,16 +314,16 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
 
           {/* Minimal Pagination Dots */}
           <div className="flex items-center justify-center gap-1.5 mt-2">
-            {CAROUSEL_BANNERS.map((banner, index) => {
+            {MULTI_LANG_WORDS.map((item, index) => {
               const isActive = activeSlideIndex === index;
               return (
                 <button
-                  key={banner.id}
+                  key={item.id}
                   onClick={() => swiperRef.current?.slideToLoop(index)}
                   aria-label={`Go to slide ${index + 1}`}
                   className={`transition-all duration-300 rounded-full cursor-pointer ${
                     isActive
-                      ? 'w-5 h-1 bg-white shadow-xs'
+                      ? 'w-5 h-1 bg-zinc-300 shadow-xs'
                       : 'w-1 h-1 bg-zinc-700 hover:bg-zinc-500'
                   }`}
                 />
@@ -296,11 +333,11 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
         </div>
       </div>
 
-      {/* CONFIDENCE & ENGLISH LEVEL CARD (UNDER THE BANNER) */}
-      <div className="w-full my-2.5 bg-[#14161F] rounded-2xl p-3.5 border border-white/10 shadow-lg relative overflow-hidden">
+      {/* CONFIDENCE & ENGLISH LEVEL CARD (UNDER THE BANNER) - Reduced size by 40% */}
+      <div className="w-full my-1.5 bg-[#14161F] rounded-xl p-2.5 border border-white/10 shadow-md relative overflow-hidden scale-[0.95] origin-top">
         {/* Glow accent */}
         <div
-          className={`absolute -top-10 -right-10 w-28 h-28 rounded-full blur-2xl pointer-events-none opacity-40 ${
+          className={`absolute -top-10 -right-10 w-20 h-20 rounded-full blur-xl pointer-events-none opacity-30 ${
             confidenceAssessment.statusColor === 'green'
               ? 'bg-emerald-500'
               : confidenceAssessment.statusColor === 'amber'
@@ -310,41 +347,41 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
         />
 
         {/* Top Header of Card: Level & Score */}
-        <div className="relative z-10 flex items-center justify-between gap-2 mb-2.5">
-          <div className="flex items-center gap-2">
-            <div className={`w-8 h-8 rounded-xl flex items-center justify-center ${confidenceAssessment.colorClasses.bg} ${confidenceAssessment.colorClasses.border} border`}>
-              <TrendingUp className={`w-4 h-4 ${confidenceAssessment.colorClasses.text}`} />
+        <div className="relative z-10 flex items-center justify-between gap-1.5 mb-1.5">
+          <div className="flex items-center gap-1.5">
+            <div className={`w-6 h-6 rounded-lg flex items-center justify-center ${confidenceAssessment.colorClasses.bg} ${confidenceAssessment.colorClasses.border} border`}>
+              <TrendingUp className={`w-3 h-3 ${confidenceAssessment.colorClasses.text}`} />
             </div>
             <div>
-              <div className="flex items-center gap-1.5">
-                <span className="text-xs font-black text-white tracking-tight">
+              <div className="flex items-center gap-1">
+                <span className="text-[11px] font-black text-white tracking-tight">
                   English Level
                 </span>
-                <span className={`text-[10px] font-black px-1.5 py-0.2 rounded-md ${confidenceAssessment.colorClasses.bg} ${confidenceAssessment.colorClasses.text} border ${confidenceAssessment.colorClasses.border}`}>
+                <span className={`text-[9px] font-black px-1 py-0.1 rounded ${confidenceAssessment.colorClasses.bg} ${confidenceAssessment.colorClasses.text} border ${confidenceAssessment.colorClasses.border}`}>
                   {confidenceAssessment.cefrLevel}
                 </span>
               </div>
-              <span className="text-[11px] font-bold text-zinc-300 block">
+              <span className="text-[10px] font-bold text-zinc-300 block leading-none mt-0.5">
                 {confidenceAssessment.levelTitle}
               </span>
             </div>
           </div>
 
           <div className="text-right">
-            <div className="flex items-center justify-end gap-1.5">
-              <div className={`w-2 h-2 rounded-full ${confidenceAssessment.colorClasses.dot} animate-pulse`} />
-              <span className={`text-base font-black ${confidenceAssessment.colorClasses.text}`}>
+            <div className="flex items-center justify-end gap-1">
+              <div className={`w-1.5 h-1.5 rounded-full ${confidenceAssessment.colorClasses.dot} animate-pulse`} />
+              <span className={`text-sm font-black ${confidenceAssessment.colorClasses.text}`}>
                 {confidenceAssessment.overallScore}%
               </span>
             </div>
-            <span className="text-[9.5px] font-bold uppercase tracking-wider text-zinc-400">
+            <span className="text-[8.5px] font-bold uppercase tracking-wider text-zinc-400">
               Confidence
             </span>
           </div>
         </div>
 
         {/* Composite Progress Bar */}
-        <div className="relative z-10 w-full h-2 bg-black/60 rounded-full overflow-hidden mb-2.5 p-0.5 border border-white/5">
+        <div className="relative z-10 w-full h-1.5 bg-black/60 rounded-full overflow-hidden mb-1.5 p-0.5 border border-white/5">
           <motion.div
             initial={{ width: 0 }}
             animate={{ width: `${confidenceAssessment.overallScore}%` }}
@@ -354,60 +391,33 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
         </div>
 
         {/* 4 Micro Metrics (Activities, Spoken Accuracy, Answers, Effort) */}
-        <div className="relative z-10 grid grid-cols-4 gap-1.5 pt-1 text-center">
-          <div className="p-1.5 rounded-xl bg-white/[0.03] border border-white/5">
-            <span className="text-[8.5px] font-bold uppercase text-zinc-400 block">Activities</span>
-            <span className="text-[11px] font-black text-white">{confidenceAssessment.metrics.activitiesScore}%</span>
+        <div className="relative z-10 grid grid-cols-4 gap-1 pt-0.5 text-center">
+          <div className="p-1 rounded-lg bg-white/[0.03] border border-white/5">
+            <span className="text-[7.5px] font-bold uppercase text-zinc-400 block">Activities</span>
+            <span className="text-[10px] font-black text-white">{confidenceAssessment.metrics.activitiesScore}%</span>
           </div>
-          <div className="p-1.5 rounded-xl bg-white/[0.03] border border-white/5">
-            <span className="text-[8.5px] font-bold uppercase text-zinc-400 block">Spoken</span>
-            <span className="text-[11px] font-black text-white">{confidenceAssessment.metrics.spokenAccuracy}%</span>
+          <div className="p-1 rounded-lg bg-white/[0.03] border border-white/5">
+            <span className="text-[7.5px] font-bold uppercase text-zinc-400 block">Spoken</span>
+            <span className="text-[10px] font-black text-white">{confidenceAssessment.metrics.spokenAccuracy}%</span>
           </div>
-          <div className="p-1.5 rounded-xl bg-white/[0.03] border border-white/5">
-            <span className="text-[8.5px] font-bold uppercase text-zinc-400 block">Answers</span>
-            <span className="text-[11px] font-black text-white">{confidenceAssessment.metrics.answersAccuracy}%</span>
+          <div className="p-1 rounded-lg bg-white/[0.03] border border-white/5">
+            <span className="text-[7.5px] font-bold uppercase text-zinc-400 block">Answers</span>
+            <span className="text-[10px] font-black text-white">{confidenceAssessment.metrics.answersAccuracy}%</span>
           </div>
-          <div className="p-1.5 rounded-xl bg-white/[0.03] border border-white/5">
-            <span className="text-[8.5px] font-bold uppercase text-zinc-400 block">Effort</span>
-            <span className="text-[11px] font-black text-white">{confidenceAssessment.metrics.effortScore}%</span>
+          <div className="p-1 rounded-lg bg-white/[0.03] border border-white/5">
+            <span className="text-[7.5px] font-bold uppercase text-zinc-400 block">Effort</span>
+            <span className="text-[10px] font-black text-white">{confidenceAssessment.metrics.effortScore}%</span>
           </div>
         </div>
 
         {/* Spoken Hindi Feedback Tip */}
-        <div className="relative z-10 mt-2 pt-2 border-t border-white/5 flex items-center gap-1.5 text-[11px] text-zinc-300">
-          <Sparkles className={`w-3.5 h-3.5 shrink-0 ${confidenceAssessment.colorClasses.text}`} />
+        <div className="relative z-10 mt-1.5 pt-1.5 border-t border-white/5 flex items-center gap-1 text-[10px] text-zinc-300">
+          <Sparkles className={`w-3 h-3 shrink-0 ${confidenceAssessment.colorClasses.text}`} />
           <span className="truncate">{confidenceAssessment.hindiInsight}</span>
         </div>
       </div>
 
-      {/* Bottom Section: Greeting + Levels Link + START Button */}
-      <div className="mt-auto pt-1 flex flex-col items-center text-center">
-        <h1 className="text-xl sm:text-[23px] font-bold text-white tracking-tight leading-tight">
-          {getGreeting()}
-        </h1>
 
-        {/* Learn More / Choose Level Link */}
-        <button
-          onClick={() => setSelectedCategoryModal(currentBanner.id)}
-          className="mt-1.5 inline-flex items-center gap-1.5 text-xs font-medium text-[#F59E0B] hover:text-[#FBBF24] transition-colors cursor-pointer group"
-        >
-          <div className="w-4 h-4 rounded-full bg-[#F59E0B] text-black flex items-center justify-center font-bold text-[10px] group-hover:scale-105 transition-transform">
-            <Info className="w-3 h-3 stroke-[2.5]" />
-          </div>
-          <span>{currentBanner.title} लेवल्स के बारे में जानें</span>
-        </button>
-
-        {/* START Button (Opens Challenge Page) */}
-        <div className="w-full mt-3 flex justify-center">
-          <button
-            onClick={onOpenChallenge}
-            className="w-full max-w-[260px] py-3 px-8 rounded-full bg-gradient-to-r from-amber-500 via-amber-400 to-yellow-400 hover:from-amber-400 hover:to-yellow-300 active:from-amber-600 active:to-yellow-500 text-black font-black text-base sm:text-[17px] tracking-wider flex items-center justify-center gap-2 shadow-xl shadow-amber-500/25 active:scale-[0.98] transition-all cursor-pointer border border-amber-300/40"
-          >
-            <Play className="w-4 h-4 fill-black stroke-none" />
-            <span>START</span>
-          </button>
-        </div>
-      </div>
 
       {/* MODAL / BOTTOM SHEET: 3 LEVELS INSIDE THE SELECTED CATEGORY CARD */}
       <AnimatePresence>
