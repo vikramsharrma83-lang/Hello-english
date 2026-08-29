@@ -2,7 +2,6 @@ import meaningIntentData from './sheeko/skillgo_my_day_meaning_intent_library (1
 import timeSequenceData from './sheeko/skillgo_my_day_time_sequence_library (1).json';
 import vocabGrammarData from './sheeko/skillgo_my_day_vocabulary_grammar_library (1).json';
 import rephraseTemplatesData from './sheeko/skillgo_my_day_10000_rephrase_templates (1).json';
-import curatedRefPatternsData from './sheeko/skillgo_my_day_curated_reference_patterns.json';
 
 export interface MeaningIntentRecord {
   id: string;
@@ -199,7 +198,68 @@ export const meaningIntentRecords: MeaningIntentRecord[] = (meaningIntentData as
 export const timeSequenceRecords: TimeSequenceRecord[] = (timeSequenceData as any).records || [];
 export const vocabGrammarRecords: VocabGrammarRecord[] = (vocabGrammarData as any).records || [];
 export const rephraseTemplateRecords: RephraseTemplateRecord[] = ((rephraseTemplatesData as any).records || []).slice(0, 1000);
-export const referencePatternRecords: ReferencePatternRecord[] = ((curatedRefPatternsData as any).records || []);
+export const referencePatternRecords: ReferencePatternRecord[] = [
+  {
+    id: 'MYDAY_00001',
+    sentence: 'morning i wake up early then i wash my face and finally make tea',
+    normalizedMeaning: 'I wake up early during the morning, then I wash my face, and later I make tea.',
+    category: 'DAILY',
+    activities: ['morning routine'],
+    people: [],
+    places: ['home'],
+    time: { value: 'morning', explicit: true },
+    sequenceMarkers: ['then', 'finally'],
+    intent: 'REPORT_DAY_ACTIVITY'
+  },
+  {
+    id: 'MYDAY_00002',
+    sentence: 'i make breakfast in morning after that i eat breakfast then wash the dishes',
+    normalizedMeaning: 'I make breakfast during the morning, then I eat breakfast, and later I wash the dishes.',
+    category: 'DAILY',
+    activities: ['breakfast'],
+    people: [],
+    places: ['home'],
+    time: { value: 'morning', explicit: true },
+    sequenceMarkers: ['then', 'after that'],
+    intent: 'REPORT_DAY_ACTIVITY'
+  },
+  {
+    id: 'MYDAY_07001',
+    sentence: 'morning i take the bus to work then i reach the warehouse and finally change into safety shoes',
+    normalizedMeaning: 'I take the bus to work during the morning, then I reach the warehouse, and later I change into safety shoes.',
+    category: 'WORK',
+    activities: ['commute'],
+    people: ['supervisor'],
+    places: ['warehouse'],
+    time: { value: 'morning', explicit: true },
+    sequenceMarkers: ['then', 'finally'],
+    intent: 'REPORT_WORK_ACTIVITY'
+  },
+  {
+    id: 'MYDAY_07003',
+    sentence: 'after i unload boxes i count the cartons and later i record the quantity',
+    normalizedMeaning: 'I unload boxes during the morning, then I count the cartons, and later I record the quantity.',
+    category: 'WORK',
+    activities: ['inbound count'],
+    people: ['team leader'],
+    places: ['warehouse'],
+    time: { value: 'morning', explicit: true },
+    sequenceMarkers: ['later'],
+    intent: 'REPORT_WORK_ACTIVITY'
+  },
+  {
+    id: 'MYDAY_09001',
+    sentence: 'evening i meet Ravi then i have tea and finally talk about work',
+    normalizedMeaning: 'I meet a friend during the evening, then I have tea, and later I talk about work.',
+    category: 'FRIENDS',
+    activities: ['meeting'],
+    people: ['Ravi'],
+    places: ['tea shop'],
+    time: { value: 'evening', explicit: true },
+    sequenceMarkers: ['then', 'finally'],
+    intent: 'REPORT_SOCIAL_ACTIVITY'
+  }
+];
 
 export function matchMeaningIntent(text: string): MeaningIntentRecord | null {
   const lower = (text || '').toLowerCase();
