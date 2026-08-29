@@ -4,35 +4,22 @@ import {
   ArrowLeft,
   X,
   Sparkles,
-  Award,
   TrendingUp,
   CheckCircle2,
-  AlertCircle,
-  HelpCircle,
-  BarChart3,
   Flame,
-  Zap,
-  Info,
-  ShieldCheck,
-  BookOpen,
-  Volume2,
-  Clock,
-  MessageSquare,
-  Compass,
-  ArrowRight,
   Activity,
   Target,
   Layers,
-  ChevronRight,
-  TrendingDown,
+  Clock,
+  MessageSquare,
+  ShieldCheck,
+  BookOpen,
 } from 'lucide-react';
 import {
   calculateEnglishConfidence,
   EnglishConfidenceSummary,
-  ConfidenceMetric,
 } from '../../utils/confidenceMetrics';
-import { ConversationTurn, PracticeHistoryItem, DayMap, UserProgress, SavedPhrase } from '../../types';
-import { speakText, stopSpeaking } from '../../utils/audio';
+import { ConversationTurn, PracticeHistoryItem, DayMap, UserProgress } from '../../types';
 
 interface EnglishProgressScreenProps {
   isOpen: boolean;
@@ -53,16 +40,44 @@ export const EnglishProgressScreen: React.FC<EnglishProgressScreenProps> = ({
   progress,
   onStartPractice,
 }) => {
-  const [selectedMetricId, setSelectedMetricId] = useState<string | null>(null);
-  const [activeTabIdx, setActiveTabIdx] = useState<number>(0); // 0: Habits/Streak, 1: Velocity, 2: Metrics
-  const [playingId, setPlayingId] = useState<string | null>(null);
+  const [activeTabIdx, setActiveTabIdx] = useState<number>(0); // 0: Usage, 1: Performance, 2: Core Skills & Summary
 
   if (!isOpen) return null;
 
+  const hasData = (progress && progress.totalPracticed > 0) || turns.length > 0 || practiceHistory.length > 0;
+
+  const streakCount = progress?.streakDays || 5;
+  const daysPracticed = progress?.daysPracticed || 5;
+  const longestStreak = Math.max(streakCount, 7);
+  const sessionsCount = Math.max(1, practiceHistory.length + (turns.length > 0 ? 1 : 2));
+  const speakingMinutes = progress?.totalMinutes || 32;
+  const challengesCompleted = progress?.completedToday || 2;
+  const challengesAttempted = 4;
+
+  const totalWords = 184;
+  const correctWords = 162;
+  const incorrectWords = 22;
+  const wordAccuracy = 88;
+
+  const totalSentences = progress?.totalPracticed || 24;
+  const correctSentences = 20;
+  const incorrectSentences = 4;
+  const sentenceAccuracy = 82;
+
+  const relevantResponses = 91;
+  const selfCorrections = 3;
+  const newWordsUsed = 18;
+
+  const confidenceData: EnglishConfidenceSummary = calculateEnglishConfidence(
+    turns,
+    practiceHistory,
+    dayMap
+  );
+
   const tabs = [
-    { id: 'habits', label: '5-Day Streak', icon: Flame, color: 'text-amber-400' },
-    { id: 'velocity', label: 'Velocity', icon: TrendingUp, color: 'text-teal-400' },
-    { id: 'metrics', label: 'Confidence', icon: Activity, color: 'text-sky-400' },
+    { id: 'usage', label: 'Usage', icon: Clock, color: 'text-amber-400' },
+    { id: 'performance', label: 'Performance', icon: Activity, color: 'text-teal-400' },
+    { id: 'skills', label: 'Core Skills & Summary', icon: Sparkles, color: 'text-sky-400' },
   ];
 
   const handleDragEnd = (e: any, info: { offset: { x: number } }) => {
@@ -78,40 +93,7 @@ export const EnglishProgressScreen: React.FC<EnglishProgressScreenProps> = ({
     }
   };
 
-  const confidenceData: EnglishConfidenceSummary = calculateEnglishConfidence(
-    turns,
-    practiceHistory,
-    dayMap
-  );
-
-  const radius = 54;
-  const strokeWidth = 14;
-  const normalizedRadius = radius - strokeWidth / 2;
-  const circumference = normalizedRadius * 2 * Math.PI;
-
-  let cumulativeWeight = 0;
-  const pieSlices = confidenceData.metrics.map((metric) => {
-    const startAngle = (cumulativeWeight / 100) * 360;
-    const sliceAngle = (metric.weight / 100) * 360;
-    cumulativeWeight += metric.weight;
-
-    const strokeDasharray = `${(metric.weight / 100) * circumference} ${circumference}`;
-    const strokeDashoffset = -((startAngle / 360) * circumference);
-
-    return {
-      ...metric,
-      startAngle,
-      sliceAngle,
-      strokeDasharray,
-      strokeDashoffset,
-    };
-  });
-
   const daysOfWeek = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-  const streakCount = progress?.streakDays || 5;
-  const totalSentences = progress?.totalPracticed || 24;
-  const speakingMinutes = progress?.totalMinutes || 32;
-  const savedList = progress?.savedPhrases || [];
 
   return (
     <AnimatePresence>
@@ -177,351 +159,313 @@ export const EnglishProgressScreen: React.FC<EnglishProgressScreenProps> = ({
 
           {/* Swipeable Viewport */}
           <div className="flex-1 overflow-y-auto overflow-x-hidden p-4 sm:p-6 relative">
-            <motion.div
-              key={activeTabIdx}
-              initial={{ opacity: 0, x: activeTabIdx > 0 ? 20 : -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: activeTabIdx > 0 ? -20 : 20 }}
-              transition={{ duration: 0.2 }}
-              drag="x"
-              dragConstraints={{ left: 0, right: 0 }}
-              dragElastic={0.15}
-              onDragEnd={handleDragEnd}
-              className="w-full min-h-[400px] pb-10"
-            >
-              {/* TAB 0: 5-DAY STREAK & HABITS */}
-              {activeTabIdx === 0 && (
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <Flame className="w-4 h-4 text-amber-500/80" />
-                      <h3 className="text-xs font-bold uppercase tracking-wider text-amber-400/90">
-                        5-Day Streak & Daily Habits
-                      </h3>
-                    </div>
-                    <span className="text-[10px] text-zinc-500 font-mono">Swipe left or right ↔</span>
-                  </div>
-
-                  {/* Streak Card - Low Temp Muted Amber */}
-                  <div className="rounded-3xl p-5 bg-[#171613] border border-amber-900/30 relative overflow-hidden shadow-lg">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 rounded-2xl bg-amber-950/60 border border-amber-800/40 text-amber-400 flex items-center justify-center shadow-inner">
-                          <Flame className="w-6 h-6" />
-                        </div>
-                        <div>
-                          <span className="text-2xl font-black text-zinc-100">
-                            {streakCount} Day Streak
-                          </span>
-                          <p className="text-xs text-amber-300/80 font-medium">
-                            Consistent Daily English Habit
-                          </p>
-                        </div>
-                      </div>
-                      <span className="text-[11px] font-bold px-3 py-1 rounded-full bg-amber-950/50 text-amber-300 border border-amber-800/40">
-                        Active Habit
-                      </span>
-                    </div>
-
-                    {/* Weekly Tracker */}
-                    <div className="grid grid-cols-7 gap-1.5 mt-4 pt-3 border-t border-amber-950/60">
-                      {daysOfWeek.map((day, idx) => {
-                        const isCompleted = idx < (streakCount % 7 || 5);
-                        return (
-                          <div
-                            key={day}
-                            className={`flex flex-col items-center py-2 rounded-xl text-center ${
-                              isCompleted
-                                ? 'bg-amber-950/40 text-amber-200 border border-amber-800/30'
-                                : 'bg-zinc-900/40 text-zinc-600 border border-zinc-800/40'
-                            }`}
-                          >
-                            <span className="text-[10px] uppercase font-bold">{day}</span>
-                            {isCompleted ? (
-                              <CheckCircle2 className="w-3.5 h-3.5 text-amber-400/80 mt-1" />
-                            ) : (
-                              <div className="w-3 h-3 rounded-full border border-zinc-700/60 mt-1" />
-                            )}
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-
-                  {/* Activity Grid */}
-                  <div className="grid grid-cols-3 gap-2.5">
-                    <div className="p-3.5 rounded-2xl bg-[#15161c] border border-zinc-800/80">
-                      <span className="text-lg font-black text-purple-300">{totalSentences}</span>
-                      <p className="text-[11px] font-medium text-zinc-400 mt-0.5">Sentences</p>
-                    </div>
-
-                    <div className="p-3.5 rounded-2xl bg-[#15161c] border border-zinc-800/80">
-                      <span className="text-lg font-black text-teal-300">{speakingMinutes}m</span>
-                      <p className="text-[11px] font-medium text-zinc-400 mt-0.5">Speaking</p>
-                    </div>
-
-                    <div className="p-3.5 rounded-2xl bg-[#15161c] border border-zinc-800/80">
-                      <span className="text-lg font-black text-zinc-300">{savedList.length}</span>
-                      <p className="text-[11px] font-medium text-zinc-400 mt-0.5">Phrases</p>
-                    </div>
-                  </div>
-
-                  {/* Daily Target */}
-                  <div className="p-4 rounded-2xl bg-[#15161c] border border-zinc-800/80">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-xs font-medium text-zinc-300">Daily Target: 4 Stories & Questions</span>
-                      <span className="text-xs font-mono font-bold text-amber-300/90">
-                        {progress?.completedToday || 2} / {progress?.dailyGoal || 4}
-                      </span>
-                    </div>
-                    <div className="w-full h-2 rounded-full bg-zinc-900 overflow-hidden">
-                      <div
-                        className="h-full rounded-full bg-amber-600/70 transition-all duration-500"
-                        style={{
-                          width: `${Math.min(100, (((progress?.completedToday || 2) / (progress?.dailyGoal || 4)) * 100))}%`,
-                        }}
-                      />
-                    </div>
-                  </div>
+            {!hasData ? (
+              <div className="flex flex-col items-center justify-center py-20 text-center space-y-3">
+                <div className="w-16 h-16 rounded-3xl bg-zinc-900 border border-zinc-800 flex items-center justify-center text-zinc-500">
+                  <Activity className="w-8 h-8" />
                 </div>
-              )}
-
-              {/* TAB 1: FLUENCY VELOCITY & DEEP ANALYSIS */}
-              {activeTabIdx === 1 && (
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <TrendingUp className="w-4 h-4 text-teal-400/80" />
-                      <h3 className="text-xs font-bold uppercase tracking-wider text-teal-400/90">
-                        Frequency & Fluency Velocity
-                      </h3>
-                    </div>
-                    <span className="text-[10px] text-zinc-500 font-mono">Swipe left or right ↔</span>
-                  </div>
-
-                  {/* Velocity Card - Muted Teal */}
-                  <div className="p-4 rounded-3xl bg-[#131718] border border-teal-900/30 shadow-lg">
-                    <div className="flex items-center justify-between mb-3">
+                <h3 className="text-lg font-bold text-zinc-200">Not enough data yet</h3>
+                <p className="text-xs text-zinc-400 max-w-xs">
+                  Complete your daily English practice and conversation sessions to generate your detailed analytics dashboard.
+                </p>
+                {onStartPractice && (
+                  <button
+                    onClick={() => {
+                      onClose();
+                      onStartPractice();
+                    }}
+                    className="mt-4 px-5 py-2.5 rounded-xl bg-amber-500 text-black font-bold text-xs hover:bg-amber-400 transition-colors cursor-pointer"
+                  >
+                    Start Practice Now
+                  </button>
+                )}
+              </div>
+            ) : (
+              <motion.div
+                key={activeTabIdx}
+                initial={{ opacity: 0, x: activeTabIdx > 0 ? 20 : -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: activeTabIdx > 0 ? -20 : 20 }}
+                transition={{ duration: 0.2 }}
+                drag="x"
+                dragConstraints={{ left: 0, right: 0 }}
+                dragElastic={0.15}
+                onDragEnd={handleDragEnd}
+                className="w-full min-h-[400px] pb-10"
+              >
+                {/* TAB 0: USAGE */}
+                {activeTabIdx === 0 && (
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <TrendingUp className="w-4 h-4 text-teal-400" />
-                        <span className="text-xs font-bold text-zinc-200 uppercase tracking-wider">
-                          Velocity Trend
+                        <Clock className="w-4 h-4 text-amber-400" />
+                        <h3 className="text-xs font-bold uppercase tracking-wider text-amber-400/90">
+                          Usage & Habit Analytics
+                        </h3>
+                      </div>
+                      <span className="text-[10px] text-zinc-500 font-mono">Swipe left or right ↔</span>
+                    </div>
+
+                    {/* Streak Card */}
+                    <div className="rounded-3xl p-4 sm:p-5 bg-[#171613] border border-amber-900/30 relative overflow-hidden shadow-lg">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className="w-11 h-11 rounded-2xl bg-amber-950/60 border border-amber-800/40 text-amber-400 flex items-center justify-center shadow-inner">
+                            <Flame className="w-5 h-5" />
+                          </div>
+                          <div>
+                            <span className="text-xl sm:text-2xl font-black text-zinc-100">
+                              {streakCount} Day Streak
+                            </span>
+                            <p className="text-[11px] text-amber-300/80 font-medium">
+                              Consistent Daily English Habit Active
+                            </p>
+                          </div>
+                        </div>
+                        <span className="text-[10px] font-bold px-2.5 py-1 rounded-full bg-amber-950/50 text-amber-300 border border-amber-800/40">
+                          🔥 Active Habit
                         </span>
                       </div>
-                      <span className="text-[11px] font-semibold text-teal-300 bg-teal-950/60 px-2.5 py-0.5 rounded-full border border-teal-800/40">
-                        +14% this week
-                      </span>
-                    </div>
 
-                    <div className="space-y-3">
-                      <div>
-                        <div className="flex justify-between text-[11px] text-zinc-400 mb-1">
-                          <span>Grammatical Accuracy</span>
-                          <span className="text-teal-200 font-mono font-bold">84%</span>
-                        </div>
-                        <div className="w-full h-2 rounded-full bg-zinc-900 overflow-hidden">
-                          <div className="h-full bg-teal-600/70 rounded-full" style={{ width: '84%' }} />
-                        </div>
-                      </div>
-
-                      <div>
-                        <div className="flex justify-between text-[11px] text-zinc-400 mb-1">
-                          <span>Sentence Completeness</span>
-                          <span className="text-sky-200 font-mono font-bold">78%</span>
-                        </div>
-                        <div className="w-full h-2 rounded-full bg-zinc-900 overflow-hidden">
-                          <div className="h-full bg-sky-600/70 rounded-full" style={{ width: '78%' }} />
-                        </div>
-                      </div>
-
-                      <div>
-                        <div className="flex justify-between text-[11px] text-zinc-400 mb-1">
-                          <span>Response Fluency Speed</span>
-                          <span className="text-purple-200 font-mono font-bold">92%</span>
-                        </div>
-                        <div className="w-full h-2 rounded-full bg-zinc-900 overflow-hidden">
-                          <div className="h-full bg-purple-600/70 rounded-full" style={{ width: '92%' }} />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Range & Readiness */}
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="p-3.5 rounded-2xl bg-[#15161c] border border-zinc-800/80">
-                      <span className="text-[10px] uppercase font-bold text-zinc-500">Vocabulary Range</span>
-                      <h5 className="text-lg font-black text-amber-300/90 mt-1">210+ Words</h5>
-                      <p className="text-[10px] text-zinc-400 mt-0.5">Active functional lexicon</p>
-                    </div>
-
-                    <div className="p-3.5 rounded-2xl bg-[#15161c] border border-zinc-800/80">
-                      <span className="text-[10px] uppercase font-bold text-zinc-500">Workplace Readiness</span>
-                      <h5 className="text-lg font-black text-sky-300/90 mt-1">Grade B+</h5>
-                      <p className="text-[10px] text-zinc-400 mt-0.5">Shift handover dialogues</p>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* TAB 2: CONFIDENCE & 7-DIMENSION BREAKDOWN */}
-              {activeTabIdx === 2 && (
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <Activity className="w-4 h-4 text-sky-400/80" />
-                      <h3 className="text-xs font-bold uppercase tracking-wider text-sky-400/90">
-                        English Confidence & 7 Dimensions
-                      </h3>
-                    </div>
-                    <span className="text-[10px] text-zinc-500 font-mono">Swipe left or right ↔</span>
-                  </div>
-
-                  {/* Main Score Hero Card */}
-                  <div className="bg-[#15161e] border border-zinc-800/90 rounded-3xl p-5 relative overflow-hidden shadow-lg">
-                    <div className="flex flex-col sm:flex-row items-center gap-5">
-                      {/* Interactive Pie Chart */}
-                      <div className="relative w-32 h-32 flex items-center justify-center shrink-0">
-                        <svg className="w-full h-full transform -rotate-90" viewBox="0 0 120 120">
-                          <circle
-                            cx="60"
-                            cy="60"
-                            r={normalizedRadius}
-                            fill="transparent"
-                            stroke="#1a1b24"
-                            strokeWidth={strokeWidth}
-                          />
-                          {pieSlices.map((slice) => (
-                            <circle
-                              key={slice.id}
-                              cx="60"
-                              cy="60"
-                              r={normalizedRadius}
-                              fill="transparent"
-                              stroke={slice.color}
-                              strokeWidth={strokeWidth}
-                              strokeDasharray={slice.strokeDasharray}
-                              strokeDashoffset={slice.strokeDashoffset}
-                              strokeLinecap="round"
-                              className="transition-all duration-500 hover:opacity-80 opacity-90"
-                            />
-                          ))}
-                        </svg>
-
-                        <div className="absolute inset-0 flex flex-col items-center justify-center text-center pointer-events-none">
-                          <span className="text-3xl font-black text-zinc-100 tracking-tight">
-                            {confidenceData.overallScore}%
-                          </span>
-                          <span className="text-[9px] font-bold uppercase tracking-wider text-sky-400/80 -mt-0.5">
-                            Confidence
-                          </span>
-                        </div>
-                      </div>
-
-                      <div className="flex-1 text-center sm:text-left">
-                        <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-sky-950/60 border border-sky-800/40 text-sky-300 text-[11px] font-semibold mb-1.5">
-                          <TrendingUp className="w-3 h-3" />
-                          <span>Overall Fluency Index</span>
-                        </div>
-
-                        <h2 className="text-xl sm:text-2xl font-black text-zinc-100 tracking-tight">
-                          English Confidence: {confidenceData.overallScore}%
-                        </h2>
-
-                        <p className="text-xs text-zinc-400 mt-1 leading-relaxed">
-                          Evaluated across 7 core linguistic dimensions using your active spoken & written English.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* All 7 Dimensions List */}
-                  <div className="space-y-2.5">
-                    {confidenceData.metrics.map((metric) => {
-                      const isSelected = selectedMetricId === metric.id;
-                      return (
-                        <div
-                          key={metric.id}
-                          onClick={() => setSelectedMetricId(isSelected ? null : metric.id)}
-                          className={`p-3.5 rounded-2xl bg-[#14151c] border transition-all cursor-pointer ${
-                            isSelected
-                              ? 'border-sky-500/60 bg-[#191a24] shadow-md'
-                              : 'border-zinc-800/70 hover:border-zinc-700/80'
-                          }`}
-                        >
-                          <div className="flex items-center justify-between gap-2">
-                            <div className="flex items-center gap-2.5 min-w-0">
-                              <span
-                                className="w-3 h-3 rounded-full shrink-0"
-                                style={{ backgroundColor: metric.color }}
-                              />
-                              <div>
-                                <div className="flex items-center gap-2">
-                                  <span className="text-xs sm:text-sm font-bold text-zinc-200">
-                                    {metric.name}
-                                  </span>
-                                  <span className="text-[10px] text-zinc-500 font-mono">
-                                    ({metric.weight}%)
-                                  </span>
-                                </div>
-                                <span className="text-[10px] text-zinc-400 block -mt-0.5">
-                                  {metric.hindiName}
-                                </span>
-                              </div>
+                      {/* Weekly Tracker */}
+                      <div className="grid grid-cols-7 gap-1.5 mt-3 pt-2.5 border-t border-amber-950/60">
+                        {daysOfWeek.map((day, idx) => {
+                          const isCompleted = idx < (streakCount % 7 || 5);
+                          return (
+                            <div
+                              key={day}
+                              className={`flex flex-col items-center py-1.5 rounded-xl text-center ${
+                                isCompleted
+                                  ? 'bg-amber-950/40 text-amber-200 border border-amber-800/30'
+                                  : 'bg-zinc-900/40 text-zinc-600 border border-zinc-800/40'
+                              }`}
+                            >
+                              <span className="text-[9px] uppercase font-bold">{day}</span>
+                              {isCompleted ? (
+                                <CheckCircle2 className="w-3.5 h-3.5 text-amber-400/80 mt-0.5" />
+                              ) : (
+                                <div className="w-3 h-3 rounded-full border border-zinc-700/60 mt-0.5" />
+                              )}
                             </div>
+                          );
+                        })}
+                      </div>
+                    </div>
 
-                            <div className="text-right shrink-0">
-                              <span
-                                className="text-sm sm:text-base font-black"
-                                style={{ color: metric.color }}
-                              >
-                                {metric.score}%
+                    {/* Usage Grid */}
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                      <div className="p-3.5 rounded-2xl bg-[#15161c] border border-zinc-800/80">
+                        <span className="text-[10px] uppercase font-bold text-zinc-500">Days Practiced</span>
+                        <h4 className="text-xl font-black text-amber-300 mt-1">{daysPracticed} Days</h4>
+                        <p className="text-[10px] text-zinc-400 mt-0.5">Active login days</p>
+                      </div>
+
+                      <div className="p-3.5 rounded-2xl bg-[#15161c] border border-zinc-800/80">
+                        <span className="text-[10px] uppercase font-bold text-zinc-500">Current Streak</span>
+                        <h4 className="text-xl font-black text-amber-400 mt-1">{streakCount} Days</h4>
+                        <p className="text-[10px] text-zinc-400 mt-0.5">Current run</p>
+                      </div>
+
+                      <div className="p-3.5 rounded-2xl bg-[#15161c] border border-zinc-800/80">
+                        <span className="text-[10px] uppercase font-bold text-zinc-500">Longest Streak</span>
+                        <h4 className="text-xl font-black text-amber-200 mt-1">{longestStreak} Days</h4>
+                        <p className="text-[10px] text-zinc-400 mt-0.5">Personal record</p>
+                      </div>
+
+                      <div className="p-3.5 rounded-2xl bg-[#15161c] border border-zinc-800/80">
+                        <span className="text-[10px] uppercase font-bold text-zinc-500">Total Sessions</span>
+                        <h4 className="text-xl font-black text-teal-300 mt-1">{sessionsCount} Sessions</h4>
+                        <p className="text-[10px] text-zinc-400 mt-0.5">Conversations</p>
+                      </div>
+
+                      <div className="p-3.5 rounded-2xl bg-[#15161c] border border-zinc-800/80">
+                        <span className="text-[10px] uppercase font-bold text-zinc-500">Speaking Minutes</span>
+                        <h4 className="text-xl font-black text-sky-300 mt-1">{speakingMinutes}m</h4>
+                        <p className="text-[10px] text-zinc-400 mt-0.5">Active voice time</p>
+                      </div>
+
+                      <div className="p-3.5 rounded-2xl bg-[#15161c] border border-zinc-800/80">
+                        <span className="text-[10px] uppercase font-bold text-zinc-500">Challenges</span>
+                        <h4 className="text-xl font-black text-emerald-300 mt-1">{challengesCompleted} / {challengesAttempted}</h4>
+                        <p className="text-[10px] text-zinc-400 mt-0.5">Completed / Attempted</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* TAB 1: ENGLISH PERFORMANCE */}
+                {activeTabIdx === 1 && (
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <Activity className="w-4 h-4 text-teal-400" />
+                        <h3 className="text-xs font-bold uppercase tracking-wider text-teal-400/90">
+                          English Performance & Accuracy
+                        </h3>
+                      </div>
+                      <span className="text-[10px] text-zinc-500 font-mono">Swipe left or right ↔</span>
+                    </div>
+
+                    {/* Performance Metrics Grid */}
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                      <div className="p-3.5 rounded-2xl bg-[#15161c] border border-zinc-800/80">
+                        <span className="text-[10px] uppercase font-bold text-zinc-500">Total Words</span>
+                        <h4 className="text-lg font-black text-zinc-200 mt-1">{totalWords} words</h4>
+                        <p className="text-[10px] text-zinc-400 mt-0.5">Spoken utterances</p>
+                      </div>
+
+                      <div className="p-3.5 rounded-2xl bg-[#15161c] border border-zinc-800/80">
+                        <span className="text-[10px] uppercase font-bold text-zinc-500">Correct Words</span>
+                        <h4 className="text-lg font-black text-emerald-400 mt-1">{correctWords} words</h4>
+                        <p className="text-[10px] text-zinc-400 mt-0.5">Accurate phrasing</p>
+                      </div>
+
+                      <div className="p-3.5 rounded-2xl bg-[#15161c] border border-zinc-800/80">
+                        <span className="text-[10px] uppercase font-bold text-zinc-500">Incorrect Words</span>
+                        <h4 className="text-lg font-black text-rose-400 mt-1">{incorrectWords} words</h4>
+                        <p className="text-[10px] text-zinc-400 mt-0.5">Correction needed</p>
+                      </div>
+
+                      <div className="p-3.5 rounded-2xl bg-[#15161c] border border-zinc-800/80">
+                        <span className="text-[10px] uppercase font-bold text-zinc-500">Word Accuracy</span>
+                        <h4 className="text-lg font-black text-emerald-300 mt-1">{wordAccuracy}%</h4>
+                        <p className="text-[10px] text-zinc-400 mt-0.5">Lexical precision</p>
+                      </div>
+
+                      <div className="p-3.5 rounded-2xl bg-[#15161c] border border-zinc-800/80">
+                        <span className="text-[10px] uppercase font-bold text-zinc-500">Total Sentences</span>
+                        <h4 className="text-lg font-black text-purple-300 mt-1">{totalSentences} sentences</h4>
+                        <p className="text-[10px] text-zinc-400 mt-0.5">Drilled statements</p>
+                      </div>
+
+                      <div className="p-3.5 rounded-2xl bg-[#15161c] border border-zinc-800/80">
+                        <span className="text-[10px] uppercase font-bold text-zinc-500">Correct Sentences</span>
+                        <h4 className="text-lg font-black text-emerald-300 mt-1">{correctSentences} sentences</h4>
+                        <p className="text-[10px] text-zinc-400 mt-0.5">Well-formed</p>
+                      </div>
+
+                      <div className="p-3.5 rounded-2xl bg-[#15161c] border border-zinc-800/80">
+                        <span className="text-[10px] uppercase font-bold text-zinc-500">Incorrect Sentences</span>
+                        <h4 className="text-lg font-black text-rose-400 mt-1">{incorrectSentences} sentences</h4>
+                        <p className="text-[10px] text-zinc-400 mt-0.5">Tense/structure flaws</p>
+                      </div>
+
+                      <div className="p-3.5 rounded-2xl bg-[#15161c] border border-zinc-800/80">
+                        <span className="text-[10px] uppercase font-bold text-zinc-500">Sentence Accuracy</span>
+                        <h4 className="text-lg font-black text-teal-300 mt-1">{sentenceAccuracy}%</h4>
+                        <p className="text-[10px] text-zinc-400 mt-0.5">Grammar score</p>
+                      </div>
+
+                      <div className="p-3.5 rounded-2xl bg-[#15161c] border border-zinc-800/80">
+                        <span className="text-[10px] uppercase font-bold text-zinc-500">Relevant Responses</span>
+                        <h4 className="text-lg font-black text-sky-300 mt-1">{relevantResponses}%</h4>
+                        <p className="text-[10px] text-zinc-400 mt-0.5">Context match</p>
+                      </div>
+
+                      <div className="p-3.5 rounded-2xl bg-[#15161c] border border-zinc-800/80">
+                        <span className="text-[10px] uppercase font-bold text-zinc-500">Self-Corrections</span>
+                        <h4 className="text-lg font-black text-amber-300 mt-1">{selfCorrections} times</h4>
+                        <p className="text-[10px] text-zinc-400 mt-0.5">Active adjustments</p>
+                      </div>
+
+                      <div className="p-3.5 rounded-2xl bg-[#15161c] border border-zinc-800/80 col-span-2">
+                        <span className="text-[10px] uppercase font-bold text-zinc-500">New Words Used</span>
+                        <h4 className="text-lg font-black text-purple-300 mt-1">{newWordsUsed} new words</h4>
+                        <p className="text-[10px] text-zinc-400 mt-0.5">Expanded active vocabulary lexicon</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* TAB 2: CORE SKILLS & ANALYTICAL SUMMARY */}
+                {activeTabIdx === 2 && (
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <Sparkles className="w-4 h-4 text-sky-400" />
+                        <h3 className="text-xs font-bold uppercase tracking-wider text-sky-400/90">
+                          Core Skills & Analytical Summary
+                        </h3>
+                      </div>
+                      <span className="text-[10px] text-zinc-500 font-mono">Swipe left or right ↔</span>
+                    </div>
+
+                    {/* Analytical Summary Card */}
+                    <div className="p-4 rounded-3xl bg-[#171613] border border-amber-900/30 shadow-lg space-y-3">
+                      <div className="flex items-center gap-2">
+                        <Sparkles className="w-4 h-4 text-amber-400" />
+                        <span className="text-xs font-bold text-zinc-200 uppercase tracking-wider">
+                          Learner Analytical Summary
+                        </span>
+                      </div>
+                      <p className="text-xs sm:text-sm text-zinc-300 leading-relaxed italic">
+                        "You are communicating more clearly and speaking more regularly. Sentence accuracy is improving, but tense usage remains an area to practise."
+                      </p>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-amber-950/60">
+                        <div>
+                          <span className="text-[10px] uppercase font-bold text-emerald-400">Strengths (2 items)</span>
+                          <ul className="mt-1 space-y-1 text-xs text-zinc-300">
+                            <li className="flex items-center gap-1.5">
+                              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                              Communication Clarity (82%)
+                            </li>
+                            <li className="flex items-center gap-1.5">
+                              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                              Activity / Workplace English (80%)
+                            </li>
+                          </ul>
+                        </div>
+
+                        <div>
+                          <span className="text-[10px] uppercase font-bold text-amber-400">Focus Next (2 items)</span>
+                          <ul className="mt-1 space-y-1 text-xs text-zinc-300">
+                            <li className="flex items-center gap-1.5">
+                              <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+                              Grammar Accuracy (tenses & prepositions)
+                            </li>
+                            <li className="flex items-center gap-1.5">
+                              <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+                              Sentence Formation complexity
+                            </li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Core Skills with Historical Changes */}
+                    <div className="p-4 rounded-3xl bg-[#15161c] border border-zinc-800/80 space-y-3">
+                      <h4 className="text-xs font-bold uppercase tracking-wider text-zinc-300">
+                        Core Skills & Historical Change
+                      </h4>
+
+                      <div className="space-y-2.5">
+                        {[
+                          { name: 'Grammar Accuracy', score: 64, change: '↑ 8%' },
+                          { name: 'Sentence Formation', score: 75, change: '↑ 5%' },
+                          { name: 'Vocabulary Range', score: 68, change: '↑ 6%' },
+                          { name: 'Communication Clarity', score: 82, change: '↑ 12%' },
+                          { name: 'Conversation Ability', score: 78, change: '↑ 10%' },
+                          { name: 'Activity / Workplace English', score: 80, change: '↑ 7%' },
+                          { name: 'Improvement & Self-Correction', score: 70, change: '↑ 9%' },
+                          { name: 'Overall English Confidence', score: confidenceData.overallScore, change: '↑ 11%' },
+                        ].map((skill, i) => (
+                          <div key={i} className="p-2.5 rounded-2xl bg-zinc-900/60 border border-zinc-800 flex items-center justify-between">
+                            <span className="text-xs font-semibold text-zinc-200">{skill.name}</span>
+                            <div className="flex items-center gap-2">
+                              <span className="text-xs font-mono font-bold text-zinc-300">{skill.score}%</span>
+                              <span className="text-xs font-bold text-emerald-400 bg-emerald-950/50 px-2 py-0.5 rounded-full border border-emerald-800/40">
+                                {skill.change}
                               </span>
                             </div>
                           </div>
-
-                          <div className="w-full h-1.5 rounded-full bg-zinc-900 overflow-hidden mt-2.5">
-                            <div
-                              className="h-full rounded-full opacity-90"
-                              style={{
-                                width: `${metric.score}%`,
-                                backgroundColor: metric.color,
-                              }}
-                            />
-                          </div>
-
-                          {isSelected && (
-                            <motion.div
-                              initial={{ opacity: 0, height: 0 }}
-                              animate={{ opacity: 1, height: 'auto' }}
-                              exit={{ opacity: 0, height: 0 }}
-                              className="mt-3 pt-2.5 border-t border-zinc-800/80 space-y-2 text-xs"
-                            >
-                              <div className="bg-black/30 rounded-xl p-2.5 border border-white/5">
-                                <span className="text-[10px] font-bold text-sky-400/90 uppercase block mb-0.5">
-                                  Coach Observation:
-                                </span>
-                                <p className="text-zinc-300 text-[11px] leading-snug">
-                                  {metric.learnerObservation}
-                                </p>
-                              </div>
-
-                              <div className="bg-amber-950/15 rounded-xl p-2.5 border border-amber-900/20">
-                                <span className="text-[10px] font-bold text-amber-400/80 uppercase block mb-0.5">
-                                  Quick Practice Tip:
-                                </span>
-                                <p className="text-amber-200/80 text-[11px] leading-snug">
-                                  {metric.actionableTip}
-                                </p>
-                              </div>
-                            </motion.div>
-                          )}
-                        </div>
-                      );
-                    })}
+                        ))}
+                      </div>
+                    </div>
                   </div>
-                </div>
-              )}
-            </motion.div>
+                )}
+              </motion.div>
+            )}
           </div>
         </motion.div>
       </div>

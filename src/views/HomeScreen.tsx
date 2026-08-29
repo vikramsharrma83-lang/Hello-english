@@ -265,11 +265,11 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
             }}
             coverflowEffect={{
               rotate: 0,
-              stretch: 16,
-              depth: 95,
+              stretch: 0,
+              depth: 100,
               modifier: 1,
               slideShadows: false,
-              scale: 0.85,
+              scale: 0.88,
             }}
             mousewheel={{ forceToAxis: true }}
             onSwiper={(swiper) => {
@@ -279,7 +279,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
               const realIndex = swiper.realIndex % MULTI_LANG_WORDS.length;
               setActiveSlideIndex(realIndex);
             }}
-            className="w-full py-4"
+            className="w-full py-4 overflow-visible"
           >
             {LOOP_WORD_ITEMS.map((item, index) => {
               const baseIndex = index % MULTI_LANG_WORDS.length;
@@ -287,24 +287,24 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
               return (
                 <SwiperSlide
                   key={`${item.id}-${index}`}
-                  className="swiper-slide w-[350px] sm:w-[390px] cursor-pointer"
+                  className="swiper-slide w-[92vw] sm:w-[760px] md:w-[840px] lg:w-[920px] max-w-[95vw] cursor-pointer"
                   onClick={() => {
                     swiperRef.current?.slideToLoop(baseIndex);
                   }}
                 >
-                  <div className={`w-full rounded-2xl p-7 sm:p-8 min-h-[240px] sm:min-h-[260px] bg-gradient-to-br from-[#1c1c20] via-[#0d0d10] to-black border-0 transition-all duration-300 flex flex-col justify-center items-center text-center ${isCenterActive ? 'scale-[1.22] shadow-[0_25px_60px_rgba(0,0,0,0.9)] z-20 opacity-100' : 'scale-90 opacity-45'}`}>
+                  <div className={`w-full rounded-3xl p-6 sm:p-8 min-h-[240px] sm:min-h-[280px] bg-gradient-to-br from-[#1c1c20] via-[#0d0d10] to-black border-0 transition-all duration-300 flex flex-col justify-center items-center text-center ${isCenterActive ? 'scale-[1.15] shadow-[0_25px_60px_rgba(0,0,0,0.9)] z-20 opacity-100' : 'scale-90 opacity-45'}`}>
                     <div className="py-2 mb-2">
-                      <h3 className="text-3xl sm:text-4xl font-black text-zinc-400 tracking-tight">
+                      <h3 className="text-3xl sm:text-4xl font-black text-zinc-300 tracking-tight">
                         {item.englishWord}
                       </h3>
                     </div>
 
-                    <div className="w-full mt-3 pt-3 border-t border-zinc-800/40 space-y-2 text-xs">
-                      <div className="text-zinc-400 font-bold tracking-wide">{item.hindi}</div>
-                      <div className="text-zinc-500 font-medium">{item.kannada}</div>
-                      <div className="text-zinc-500 font-medium">{item.tamil}</div>
-                      <div className="text-zinc-500 font-medium">{item.bengali}</div>
-                      <div className="text-zinc-500 font-medium">{item.telugu}</div>
+                    <div className="w-full mt-3 pt-3 border-t border-zinc-800/60 space-y-2 text-xs sm:text-sm">
+                      <div className="text-zinc-300 font-bold tracking-wide">{item.hindi}</div>
+                      <div className="text-zinc-400 font-medium">{item.kannada}</div>
+                      <div className="text-zinc-400 font-medium">{item.tamil}</div>
+                      <div className="text-zinc-400 font-medium">{item.bengali}</div>
+                      <div className="text-zinc-400 font-medium">{item.telugu}</div>
                     </div>
                   </div>
                 </SwiperSlide>

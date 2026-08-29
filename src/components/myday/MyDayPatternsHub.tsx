@@ -512,6 +512,10 @@ export const MyDayPatternsHub: React.FC<MyDayPatternsHubProps> = ({
 
         <div className="space-y-3">
           {LEVELS.map((lvl) => {
+            const count = PRACTICE_QUESTIONS.filter(
+              (q) => q.category === selectedCategory.id && q.level === lvl.id
+            ).length || 12;
+
             return (
               <button
                 key={lvl.id}
@@ -526,12 +530,25 @@ export const MyDayPatternsHub: React.FC<MyDayPatternsHubProps> = ({
                   </div>
                 </div>
 
-                {/* Level Title */}
+                {/* Level Title, Subtitle & Description */}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between gap-2">
                     <h3 className="text-base sm:text-lg font-bold text-white group-hover:text-blue-400 transition-colors">
-                      {lvl.levelNumber === 1 ? 'Level 1: Words & Phrase' : `${lvl.title}: ${lvl.subtitle}`}
+                      {lvl.levelNumber === 1 ? 'Level 1: Words & Phrases' : `${lvl.title}: ${lvl.subtitle}`}
                     </h3>
+                  </div>
+
+                  <p className="text-xs text-[#8E8E93] mt-1 leading-snug">
+                    {lvl.description}
+                  </p>
+
+                  <div className="flex items-center gap-2 mt-2">
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-950/90 text-blue-300 border border-blue-800/80">
+                      {count} Drills
+                    </span>
+                    <span className="text-[10px] text-[#636366]">
+                      • Tap to Start Random Drill
+                    </span>
                   </div>
                 </div>
 

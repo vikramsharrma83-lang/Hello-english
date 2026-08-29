@@ -140,16 +140,19 @@ export const HomePage: React.FC<HomePageProps> = ({
           onClick={() => setIsProgressOpen(true)}
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
-          className="relative z-10 w-52 sm:w-56 h-[260px] rounded-[36px] p-2 bg-[#14151a] border-[2px] border-zinc-800 hover:border-zinc-700 shadow-xl shadow-black flex flex-col cursor-pointer text-left transition-colors group focus:outline-none"
+          className="relative z-10 w-72 sm:w-[300px] h-[340px] rounded-[42px] p-2.5 bg-[#14151a] border-[2px] border-zinc-800 hover:border-zinc-700 shadow-2xl shadow-black flex flex-col cursor-pointer text-left transition-colors group focus:outline-none"
           title="Click to view detailed English Confidence Progress"
         >
           {/* Inner Screen Area */}
-          <div className="w-full h-full rounded-[28px] bg-black border border-zinc-900 p-3 sm:p-4 flex flex-col justify-between items-center relative overflow-hidden">
+          <div className="w-full h-full rounded-[34px] bg-black border border-zinc-900 p-4 sm:p-5 flex flex-col justify-between items-center relative overflow-hidden">
             {/* Top Status Header */}
-            <div className="flex items-center justify-end w-full pt-0.5">
-              <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-zinc-900 border border-zinc-800">
+            <div className="flex items-center justify-between w-full pt-1">
+              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-950/40 border border-amber-800/40 text-amber-300 text-[10px] font-bold">
+                <span>🔥 {progress?.streakDays || 5}d Streak</span>
+              </div>
+              <div className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-zinc-900 border border-zinc-800">
                 <span className="w-1.5 h-1.5 rounded-full bg-zinc-400 animate-pulse" />
-                <span className="text-[8.5px] font-extrabold tracking-wider text-zinc-400 uppercase">
+                <span className="text-[9px] font-extrabold tracking-wider text-zinc-400 uppercase">
                   PROGRESS
                 </span>
               </div>
@@ -158,32 +161,38 @@ export const HomePage: React.FC<HomePageProps> = ({
             {/* Center: Large English Confidence Pie Chart & Main Score */}
             <div className="flex flex-col items-center justify-center my-auto text-center w-full">
               {/* Large Pie Chart Ring */}
-              <div className="relative w-24 h-24 sm:w-28 sm:h-28 flex items-center justify-center my-1">
-                <svg className="w-full h-full transform -rotate-90" viewBox="0 0 106 106">
+              <div className="relative w-28 h-28 sm:w-32 sm:h-32 flex items-center justify-center my-1">
+                <svg className="w-full h-full transform -rotate-90" viewBox="0 0 126 126">
                   {/* Track */}
                   <circle
-                    cx="53"
-                    cy="53"
-                    r={normalizedRadius}
+                    cx="63"
+                    cy="63"
+                    r={50}
                     fill="transparent"
                     stroke="#18181b"
-                    strokeWidth={strokeWidth}
+                    strokeWidth={10}
                   />
 
                   {/* 7 Weighted Slices in Black & Grey shades */}
                   {watchSlices.map((slice, i) => {
                     const greyShades = ['#3f3f46', '#52525b', '#71717a', '#a1a1aa', '#d4d4d8', '#71717a', '#52525b'];
+                    const r = 50;
+                    const circ = r * 2 * Math.PI;
+                    const dashArray = `${(slice.weight / 100) * circ} ${circ}`;
+                    const startAng = (watchSlices.slice(0, i).reduce((acc, cur) => acc + cur.weight, 0) / 100) * 360;
+                    const dashOffset = -((startAng / 360) * circ);
+
                     return (
                       <circle
                         key={slice.id}
-                        cx="53"
-                        cy="53"
-                        r={normalizedRadius}
+                        cx="63"
+                        cy="63"
+                        r={r}
                         fill="transparent"
                         stroke={greyShades[i % greyShades.length]}
-                        strokeWidth={strokeWidth}
-                        strokeDasharray={slice.strokeDasharray}
-                        strokeDashoffset={slice.strokeDashoffset}
+                        strokeWidth={10}
+                        strokeDasharray={dashArray}
+                        strokeDashoffset={dashOffset}
                         strokeLinecap="round"
                       />
                     );
@@ -192,19 +201,19 @@ export const HomePage: React.FC<HomePageProps> = ({
 
                 {/* Center Score % in ring */}
                 <div className="absolute inset-0 flex flex-col items-center justify-center text-center pointer-events-none">
-                  <span className="text-2xl sm:text-3xl font-black text-white tracking-tight leading-none">
+                  <span className="text-3xl sm:text-4xl font-black text-white tracking-tight leading-none">
                     {confidenceData.overallScore}%
                   </span>
                 </div>
               </div>
 
               {/* Clean Minimal Main Label */}
-              <div className="text-xs sm:text-sm font-extrabold text-zinc-200 tracking-tight mt-1">
+              <div className="text-sm sm:text-base font-extrabold text-zinc-200 tracking-tight mt-1.5">
                 English Confidence: {confidenceData.overallScore}%
               </div>
 
               {/* 3 Small Indicators in Grey/Zinc shade */}
-              <div className="mt-2 px-2.5 py-0.5 rounded-full bg-zinc-900 border border-zinc-800 flex items-center justify-center gap-1.5 text-[9px] font-semibold tracking-tight text-zinc-400">
+              <div className="mt-2.5 px-3 py-1 rounded-full bg-zinc-900 border border-zinc-800 flex items-center justify-center gap-2 text-[10px] font-semibold tracking-tight text-zinc-400">
                 <span>Grammar {confidenceData.cardIndicators.grammar}%</span>
                 <span className="text-zinc-600 font-bold">|</span>
                 <span>Comm {confidenceData.cardIndicators.communication}%</span>
@@ -213,7 +222,9 @@ export const HomePage: React.FC<HomePageProps> = ({
               </div>
             </div>
 
-            <div className="w-full pb-0.5" />
+            <div className="w-full text-center pb-1">
+              <span className="text-[10px] text-zinc-500 font-medium tracking-tight">Tap for breakdown →</span>
+            </div>
           </div>
         </motion.button>
 
@@ -243,8 +254,10 @@ export const HomePage: React.FC<HomePageProps> = ({
             className="w-full max-w-[260px] mx-auto mt-3 py-2.5 px-4 rounded-full bg-[#14151b] hover:bg-[#1a1c24] border border-zinc-800 hover:border-zinc-700 text-left transition-all cursor-pointer shadow-lg flex items-center justify-between group"
           >
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-full bg-zinc-900 border border-zinc-800 flex items-center justify-center shrink-0">
-                <Target className="w-4 h-4 text-emerald-400" />
+              <div className="w-9 h-9 rounded-2xl bg-gradient-to-br from-emerald-400/30 via-teal-500/25 to-sky-500/30 border border-emerald-400/40 relative flex items-center justify-center shrink-0 shadow-[0_0_16px_rgba(16,185,129,0.3)] overflow-hidden">
+                <div className="absolute top-0 left-0 w-full h-1/2 bg-gradient-to-b from-white/50 to-transparent pointer-events-none" />
+                <div className="absolute inset-1 rounded-xl bg-radial from-emerald-300/20 via-transparent to-transparent pointer-events-none" />
+                <Target className="w-4.5 h-4.5 text-emerald-300 drop-shadow-[0_0_6px_rgba(16,185,129,0.8)] relative z-10" />
               </div>
               <span className="text-xs font-bold text-white tracking-wider">COURSE</span>
             </div>
