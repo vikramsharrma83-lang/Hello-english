@@ -372,7 +372,7 @@ export default function App() {
         </AnimatePresence>
 
         {/* FLOATING BOTTOM DOCK NAVIGATION (Only on main exploration tabs: Home, Progress, Profile) */}
-        {activeTab !== 'practice' && (
+        {activeTab !== 'practice' && activeTab !== 'myday' && (
           <BottomDockNav
             activeTab={activeTab}
             onSelectTab={(tab) => {

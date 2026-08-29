@@ -2,6 +2,7 @@ export type QuestionCategory =
   | 'workplace'
   | 'daily_routine'
   | 'friends'
+  | 'sheeko'
   | 'logistics'
   | 'qsr_retail'
   | 'supervisors'
@@ -67,6 +68,62 @@ export interface PracticeHistoryItem {
   learnerSpeech: string;
   improvedEnglish: string;
   timestamp: number;
+}
+
+export interface DayMap {
+  activities: string[];
+  emotions: string[];
+  environments: string[];
+  rawStatement: string;
+  knownFacts: string[];
+  naturalEnglishMeaning?: string;
+  pointsExtractedCount?: number;
+  capturedAt: number;
+}
+
+export interface ActiveTopic {
+  pointer: string;
+  category: 'ACTIVITY' | 'EMOTION' | 'ENVIRONMENT';
+  exploredAspects: Record<string, boolean>;
+  isCompleted: boolean;
+  turnCount: number;
+}
+
+export interface DeepAnalysis {
+  intent?: string;
+  sentiment?: string;
+  mainMeaning?: string;
+  newActivity?: string;
+  newPerson?: string;
+  newPlace?: string;
+  newObject?: string;
+  newTime?: string;
+  emotion?: string;
+  reason?: string;
+  problem?: string;
+  result?: string;
+  sequence?: string;
+  isOffTopic?: boolean;
+  unclearInfo?: string;
+  newFacts?: string[];
+  fluencyScore?: number;
+  clarityScore?: number;
+  detectedPatterns?: string[];
+  keyInsights?: string[];
+  recommendedPhrases?: string[];
+}
+
+export interface ConversationTurn {
+  id: string;
+  speaker: 'system' | 'learner';
+  text: string;
+  rawLearnerText?: string;
+  rephrase?: string;
+  probeQuestion?: string;
+  probeDirection?: 'WHO' | 'WHAT' | 'WHY' | 'HOW' | 'WHEN' | 'WHERE' | 'FEELING' | 'RESULT' | 'DETAIL';
+  deepAnalysis?: DeepAnalysis;
+  timestamp: number;
+  audioData?: string;
 }
 
 export interface UserProgress {

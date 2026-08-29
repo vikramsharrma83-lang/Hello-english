@@ -12,6 +12,7 @@ import {
   Briefcase,
   Coffee,
   Users,
+  BookOpen,
   Zap,
   Play,
   HelpCircle,
@@ -20,10 +21,12 @@ import {
   Info,
   Layers,
   Gift,
+  Sparkles,
 } from 'lucide-react';
 import englishCard1 from '../Pics/english card 1.png';
 import englishCard2 from '../Pics/English card 2.png';
 import englishCard3 from '../Pics/English card 3.png';
+import { SheekoCardGraphic } from '../components/SheekoCardGraphic';
 import { Question } from '../types';
 import { PRACTICE_QUESTIONS } from '../data/questions';
 
@@ -35,7 +38,7 @@ interface HomeScreenProps {
   onNavigateTab: (tab: 'home' | 'myday' | 'practice' | 'progress' | 'profile') => void;
 }
 
-export type PracticeCategoryType = 'workplace' | 'daily_routine' | 'friends';
+export type PracticeCategoryType = 'workplace' | 'daily_routine' | 'friends' | 'sheeko';
 
 interface CarouselItem {
   id: PracticeCategoryType;
@@ -43,7 +46,7 @@ interface CarouselItem {
   subtitle: string;
   tagline: string;
   badge: string;
-  image: string;
+  image?: string;
   alt: string;
   accentColor: string;
 }
@@ -78,6 +81,15 @@ const CAROUSEL_BANNERS: CarouselItem[] = [
     image: englishCard3,
     alt: 'Friends Conversation English Practice Banner',
     accentColor: '#14B8A6',
+  },
+  {
+    id: 'sheeko',
+    title: 'My Day (Stories)',
+    subtitle: 'Share your daily events, work shifts, experiences, anecdotes & memories.',
+    tagline: 'My Day Storytelling & Daily Practice Track',
+    badge: '📖 My Day',
+    alt: 'My Day Daily Storytelling English Practice Banner',
+    accentColor: '#F59E0B',
   },
 ];
 
@@ -147,6 +159,14 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
           badgeColor: 'bg-teal-950/80 text-teal-300 border-teal-800',
           accentColor: '#14B8A6',
         };
+      case 'sheeko':
+        return {
+          title: 'My Day (Stories)',
+          subtitle: 'Daily stories, life experiences, anecdotes & day events',
+          icon: <BookOpen className="w-5 h-5 text-amber-400" />,
+          badgeColor: 'bg-amber-950/80 text-amber-300 border-amber-800',
+          accentColor: '#F59E0B',
+        };
     }
   };
 
@@ -161,7 +181,27 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   };
 
   return (
-    <div className="w-full min-h-screen bg-black text-white pb-24 pt-3 px-4 sm:px-6 flex flex-col justify-between select-none">
+    <div className="w-full min-h-screen bg-black text-white pb-24 pt-2.5 px-3.5 sm:px-6 flex flex-col justify-between select-none">
+      {/* Category Tabs Pill Bar directly on Home Screen */}
+      <div className="w-full flex items-center justify-between gap-1 p-1 bg-[#14151B] rounded-2xl border border-white/5 shadow-inner mb-2">
+        {CAROUSEL_BANNERS.map((banner, index) => {
+          const isActive = activeSlideIndex === index;
+          return (
+            <button
+              key={banner.id}
+              onClick={() => swiperRef.current?.slideToLoop(index)}
+              className={`flex-1 py-1.5 px-2 rounded-xl text-[11px] font-extrabold flex items-center justify-center gap-1 transition-all cursor-pointer whitespace-nowrap ${
+                isActive
+                  ? 'bg-[#2E3342] text-amber-300 shadow-md border border-amber-500/40'
+                  : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/5'
+              }`}
+            >
+              <span>{banner.badge}</span>
+            </button>
+          );
+        })}
+      </div>
+
       {/* Top Section: 30% Enlarged Continuous 360 Loop Coverflow Banner */}
       <div className="w-full flex-1 flex flex-col justify-center my-auto">
         <div className="coverflow-carousel-container">
@@ -208,12 +248,16 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                   }}
                 >
                   <div className="w-full relative overflow-hidden group">
-                    <img
-                      src={banner.image}
-                      alt={banner.alt}
-                      draggable={false}
-                      className="w-full h-auto object-cover block select-none pointer-events-none"
-                    />
+                    {banner.image ? (
+                      <img
+                        src={banner.image}
+                        alt={banner.alt}
+                        draggable={false}
+                        className="w-full h-auto object-cover block select-none pointer-events-none"
+                      />
+                    ) : (
+                      <SheekoCardGraphic />
+                    )}
 
                     {/* Subtle Overlay Hint on Active Slide */}
                     {isCenterActive && (
@@ -255,10 +299,6 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
           {getGreeting()}
         </h1>
 
-        <p className="text-xs sm:text-[13px] font-normal text-zinc-400 mt-1 max-w-[88%] leading-relaxed">
-          If you want to speak fluent English, you can start your practice with Coach Neha here.
-        </p>
-
         {/* Learn More / Choose Level Link */}
         <button
           onClick={() => setSelectedCategoryModal(currentBanner.id)}
@@ -267,22 +307,28 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
           <div className="w-4 h-4 rounded-full bg-[#F59E0B] text-black flex items-center justify-center font-bold text-[10px] group-hover:scale-105 transition-transform">
             <Info className="w-3 h-3 stroke-[2.5]" />
           </div>
-          <span>Learn more about {currentBanner.title} Levels</span>
+          <span>{currentBanner.title} लेवल्स के बारे में जानें</span>
         </button>
 
         {/* Start Tab Button at extreme bottom */}
         <div className="w-full mt-3.5 flex justify-center">
           <button
-            onClick={() => handleRandomInCategory(currentBanner.id)}
+            onClick={() => {
+              if (currentBanner.id === 'sheeko') {
+                onNavigateTab('myday');
+              } else {
+                handleRandomInCategory(currentBanner.id);
+              }
+            }}
             className="w-full max-w-[250px] py-2.5 px-6 rounded-full bg-[#2C2C2E] hover:bg-[#3A3A3C] active:bg-[#1C1C1E] text-white font-semibold text-sm sm:text-[15px] flex items-center justify-center gap-1.5 shadow-md shadow-black/60 active:scale-[0.98] transition-all cursor-pointer border border-zinc-700/50"
           >
             <Play className="w-3.5 h-3.5 fill-white stroke-none" />
-            <span>Start</span>
+            <span>Start {currentBanner.id === 'sheeko' ? 'My Day' : 'Practice'}</span>
           </button>
         </div>
       </div>
 
-      {/* MODAL / BOTTOM SHEET: 3 LEVELS INSIDE THE SELECTED CATEGORY CARD (HIGH-TECH GLOWING NEON THEME MATCHING REFERENCE PIC) */}
+      {/* MODAL / BOTTOM SHEET: 3 LEVELS INSIDE THE SELECTED CATEGORY CARD */}
       <AnimatePresence>
         {selectedCategoryModal && activeCategoryMeta && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/85 backdrop-blur-lg">
@@ -312,11 +358,15 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
               <div className="flex items-start gap-3.5 mb-4">
                 <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-cyan-950/80 to-purple-950/80 border border-cyan-500/40 p-2.5 flex items-center justify-center shrink-0 shadow-[0_0_16px_rgba(6,182,212,0.25)] relative overflow-hidden">
                   <div className="relative w-full h-full flex items-center justify-center text-cyan-400">
-                    <svg viewBox="0 0 24 24" className="w-7 h-7 stroke-current fill-none stroke-[1.7]" strokeLinecap="round" strokeLinejoin="round">
-                      <circle cx="12" cy="12" r="9" className="stroke-cyan-400" />
-                      <path d="M12 3a14.5 14.5 0 0 0 0 18M12 3a14.5 14.5 0 0 1 0 18M3 12h18" className="stroke-purple-400" />
-                      <path d="M16 10h4v8h-4zM18 10V8a2 2 0 0 0-2-2h-1" className="stroke-cyan-300" />
-                    </svg>
+                    {selectedCategoryModal === 'sheeko' ? (
+                      <BookOpen className="w-7 h-7 text-amber-400" />
+                    ) : (
+                      <svg viewBox="0 0 24 24" className="w-7 h-7 stroke-current fill-none stroke-[1.7]" strokeLinecap="round" strokeLinejoin="round">
+                        <circle cx="12" cy="12" r="9" className="stroke-cyan-400" />
+                        <path d="M12 3a14.5 14.5 0 0 0 0 18M12 3a14.5 14.5 0 0 1 0 18M3 12h18" className="stroke-purple-400" />
+                        <path d="M16 10h4v8h-4zM18 10V8a2 2 0 0 0-2-2h-1" className="stroke-cyan-300" />
+                      </svg>
+                    )}
                   </div>
                 </div>
 
@@ -331,16 +381,16 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
               </div>
 
               {/* Category Switcher Tabs Container */}
-              <div className="flex items-center justify-between p-1 bg-[#1A1D26] rounded-2xl border border-white/5 mb-4.5">
-                {(['workplace', 'daily_routine', 'friends'] as PracticeCategoryType[]).map((catKey) => {
+              <div className="flex items-center justify-between p-1 bg-[#1A1D26] rounded-2xl border border-white/5 mb-4.5 gap-1 overflow-x-auto">
+                {(['workplace', 'daily_routine', 'friends', 'sheeko'] as PracticeCategoryType[]).map((catKey) => {
                   const isCur = selectedCategoryModal === catKey;
-                  const catLabel = catKey === 'workplace' ? 'Workplace' : catKey === 'daily_routine' ? 'Daily Routine' : 'Friends';
-                  const catIcon = catKey === 'workplace' ? <Briefcase className="w-3.5 h-3.5" /> : catKey === 'daily_routine' ? <Coffee className="w-3.5 h-3.5" /> : <Users className="w-3.5 h-3.5" />;
+                  const catLabel = catKey === 'workplace' ? 'Workplace' : catKey === 'daily_routine' ? 'Daily Routine' : catKey === 'friends' ? 'Friends' : 'My Day';
+                  const catIcon = catKey === 'workplace' ? <Briefcase className="w-3.5 h-3.5" /> : catKey === 'daily_routine' ? <Coffee className="w-3.5 h-3.5" /> : catKey === 'friends' ? <Users className="w-3.5 h-3.5" /> : <BookOpen className="w-3.5 h-3.5" />;
                   return (
                     <button
                       key={catKey}
                       onClick={() => setSelectedCategoryModal(catKey)}
-                      className={`flex-1 py-2 px-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer whitespace-nowrap ${
+                      className={`flex-1 py-2 px-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1 transition-all cursor-pointer whitespace-nowrap ${
                         isCur
                           ? 'bg-[#2E3342] text-white shadow-md border border-white/10'
                           : 'text-zinc-400 hover:text-white hover:bg-white/5'

@@ -653,6 +653,186 @@ export const PRACTICE_QUESTIONS: Question[] = [
     sampleLearnerSpoken: 'Your idea is good brother, but I have family loan so I cannot leave job right now.',
     cardColor: 'from-[#FEF3C7] to-[#FDE68A]',
     iconType: 'alert-triangle'
+  },
+
+  // =========================================================================
+  // 4. SHEEKO (Stories, Real Life Experiences, Anecdotes & Storytelling)
+  // =========================================================================
+  // Level 1: Story Words & Beginner Story Moments
+  {
+    id: 'sh-l1-favorite-childhood-memory',
+    category: 'sheeko',
+    categoryLabel: 'Sheeko Stories',
+    categoryHindi: 'कहानियां और यादें',
+    questionEn: 'Can you tell a short story about your favorite childhood game?',
+    questionHi: 'क्या आप अपने बचपन के पसंदीदा खेल की एक छोटी कहानी सुना सकते हैं?',
+    hintEn: 'Say: "When I was young, we played cricket every evening in the street with friends."',
+    hintHi: 'बताएं: "जब मैं छोटा था, हम रोज़ शाम को गली में दोस्तों के साथ क्रिकेट खेलते थे।"',
+    level: 'Level 1',
+    samplePhrases: [
+      'When I was small, we played hide and seek.',
+      'We played football in the village ground.',
+      'My favorite game was street cricket with friends.'
+    ],
+    sampleLearnerSpoken: 'When I was small child, we played cricket daily evening.',
+    cardColor: 'from-[#FEF3C7] to-[#FDE68A]',
+    iconType: 'book-open'
+  },
+  {
+    id: 'sh-l1-rainy-day-story',
+    category: 'sheeko',
+    categoryLabel: 'Sheeko Stories',
+    categoryHindi: 'कहानियां और यादें',
+    questionEn: 'What happened on a heavy rainy day when you were going outside?',
+    questionHi: 'एक भारी बारिश वाले दिन क्या हुआ जब आप बाहर जा रहे थे?',
+    hintEn: 'Say: "Suddenly heavy rain started, water filled the streets, and we took shelter under a shop."',
+    hintHi: 'बताएं: "अचानक भारी बारिश शुरू हुई और हमने एक दुकान के नीचे शरण ली।"',
+    level: 'Level 1',
+    samplePhrases: [
+      'Heavy rain started and my umbrella broke.',
+      'Water was everywhere so we drank hot tea at a stall.',
+      'We got totally wet but had great fun.'
+    ],
+    sampleLearnerSpoken: 'Suddenly big rain came and road full water.',
+    cardColor: 'from-[#E0F2FE] to-[#BAE6FD]',
+    iconType: 'cloud-rain'
+  },
+  {
+    id: 'sh-l1-funny-moment-lunch',
+    category: 'sheeko',
+    categoryLabel: 'Sheeko Stories',
+    categoryHindi: 'कहानियां और यादें',
+    questionEn: 'What was a funny thing that happened while having food with friends?',
+    questionHi: 'दोस्तों के साथ खाना खाते समय क्या मजेदार बात हुई थी?',
+    hintEn: 'Say: "My friend accidentally ate extra spicy chili and everyone started laughing."',
+    hintHi: 'बताएं: "मेरे दोस्त ने गलती से बहुत तीखी मिर्च खा ली और सब हंसने लगे।"',
+    level: 'Level 1',
+    samplePhrases: [
+      'My friend ate hot chili by mistake.',
+      'We shared one lunch box among four friends.',
+      'Everyone laughed so loudly in the canteen.'
+    ],
+    sampleLearnerSpoken: 'My friend ate red chili and drank one jug water.',
+    cardColor: 'from-[#FFF1DE] to-[#FFE3CB]',
+    iconType: 'smile'
+  },
+
+  // Level 2: Story Sentences & Event Narration
+  {
+    id: 'sh-l2-first-job-interview',
+    category: 'sheeko',
+    categoryLabel: 'Sheeko Stories',
+    categoryHindi: 'कहानियां और अनुभव',
+    questionEn: 'Tell the story of how you prepared for your first job interview and what you felt.',
+    questionHi: 'बताएं कि आपने अपने पहले जॉब इंटरव्यू की तैयारी कैसे की और आपको कैसा लगा था।',
+    hintEn: 'Describe your feeling: "I was nervous before the interview, but answered confidently and got selected."',
+    hintHi: 'बताएं: "मैं पहले थोड़ा घबराया हुआ था, लेकिन आत्मविश्वास से उत्तर दिया और चुना गया।"',
+    level: 'Level 2',
+    samplePhrases: [
+      'I was nervous in the morning, but the interviewer was very kind.',
+      'I practiced introducing myself ten times before entering the room.',
+      'When they said "You are hired", I felt extremely proud.'
+    ],
+    sampleLearnerSpoken: 'First time interview I was very nervous, but I spoke clearly and got job.',
+    cardColor: 'from-[#EDE9FE] to-[#DDD6FE]',
+    iconType: 'briefcase'
+  },
+  {
+    id: 'sh-l2-helpful-stranger',
+    category: 'sheeko',
+    categoryLabel: 'Sheeko Stories',
+    categoryHindi: 'कहानियां और अनुभव',
+    questionEn: 'Tell the story of a helpful stranger who assisted you when you were lost or stuck.',
+    questionHi: 'एक मददगार अजनबी की कहानी बताएं जिसने रास्ता भटकने या गाड़ी खराब होने पर आपकी मदद की।',
+    hintEn: 'Narrate: "My bike broke down at night, and a kind auto driver stopped and helped me find a mechanic."',
+    hintHi: 'सुनाएं: "रात में मेरी बाइक रुक गई, और एक दयालु ऑटो चालक ने मुझे मैकेनिक ढूंढने में मदद की।"',
+    level: 'Level 2',
+    samplePhrases: [
+      'My phone battery died, and a kind shopkeeper showed me the correct route.',
+      'When my bike broke down, a passerby helped me push it to the garage.',
+      'I was new to the city, and a college student guided me to the metro.'
+    ],
+    sampleLearnerSpoken: 'My bike stopped at night, one uncle helped me to fix tyre.',
+    cardColor: 'from-[#D1FAE5] to-[#A7F3D0]',
+    iconType: 'heart'
+  },
+  {
+    id: 'sh-l2-cooking-experience',
+    category: 'sheeko',
+    categoryLabel: 'Sheeko Stories',
+    categoryHindi: 'कहानियां और अनुभव',
+    questionEn: 'How would you narrate the story of the first time you tried cooking a special dish?',
+    questionHi: 'पहली बार जब आपने कोई खास डिश पकाने की कोशिश की थी, उसकी कहानी कैसे सुनाएंगे?',
+    hintEn: 'Share: "I tried making tea and omelette for my family; it burned slightly but everyone enjoyed it!"',
+    hintHi: 'बताएं: "मैंने पहली बार चाय और आमलेट बनाया; थोड़ा जल गया था लेकिन सबने खुशी से खाया!"',
+    level: 'Level 2',
+    samplePhrases: [
+      'I followed a YouTube recipe to make biryani for Sunday dinner.',
+      'The salt was a little high, but my mother praised my sincere effort.',
+      'It took two hours to prepare, and it smelled delicious.'
+    ],
+    sampleLearnerSpoken: 'First time I made chicken curry, little spicy but family liked it.',
+    cardColor: 'from-[#FEE2E2] to-[#FECACA]',
+    iconType: 'utensils'
+  },
+
+  // Level 3: Moral Stories, Life Lessons & Dramatic Narratives
+  {
+    id: 'sh-l3-hard-work-success-story',
+    category: 'sheeko',
+    categoryLabel: 'Sheeko Stories',
+    categoryHindi: 'प्रेरणादायक कहानियां',
+    questionEn: 'Tell the inspiring story of someone you know who overcame great difficulties through continuous hard work.',
+    questionHi: 'किसी ऐसे व्यक्ति की प्रेरणादायक कहानी सुनाएं जिसने कड़ी मेहनत से बड़ी मुश्किलों को पार किया।',
+    hintEn: 'Explain: Describe their starting hardship, their daily perseverance, and how their life transformed.',
+    hintHi: 'समझाएं: उनकी शुरुआती कठिनाइयों, रोज़ की मेहनत और जीवन में आई सफलता का वर्णन करें।',
+    level: 'Level 3',
+    samplePhrases: [
+      'My uncle started with a small tea stall and worked twelve hours daily to build a successful shop.',
+      'Despite financial struggles, my friend studied late at night and cleared his government exam.',
+      'Their dedication taught me that honesty and continuous effort always lead to success.'
+    ],
+    sampleLearnerSpoken: 'My brother worked day shift and studied night, now he is senior manager in company.',
+    cardColor: 'from-[#FEF3C7] to-[#FDE68A]',
+    iconType: 'award'
+  },
+  {
+    id: 'sh-l3-moral-story-kids',
+    category: 'sheeko',
+    categoryLabel: 'Sheeko Stories',
+    categoryHindi: 'प्रेरणादायक कहानियां',
+    questionEn: 'How would you tell a moral story about honesty and teamwork to a group of young children?',
+    questionHi: 'आप छोटे बच्चों को ईमानदारी और मिलजुल कर काम करने की एक नैतिक कहानी कैसे सुनाएंगे?',
+    hintEn: 'Story arc: Introduce two animal friends or village kids, a tempting choice, doing the right thing, and the valuable lesson.',
+    hintHi: 'सुनाएं: दो दोस्तों की कहानी, सही निर्णय और सच्चाई से मिलने वाले सुकून की सीख।',
+    level: 'Level 3',
+    samplePhrases: [
+      'Once in a forest, two birds found a bag of grain and decided to share it equally with all animals.',
+      'When the farmer lost his gold ring, a little boy returned it honestly and received blessings and a reward.',
+      'The moral of the story is that truthfulness gives peace of mind and builds lifelong trust.'
+    ],
+    sampleLearnerSpoken: 'Two friends found wallet in garden, they gave to police station honestly, everyone praised them.',
+    cardColor: 'from-[#EDE9FE] to-[#DDD6FE]',
+    iconType: 'book-open'
+  },
+  {
+    id: 'sh-l3-rollercoaster-day',
+    category: 'sheeko',
+    categoryLabel: 'Sheeko Stories',
+    categoryHindi: 'प्रेरणादायक कहानियां',
+    questionEn: 'Tell the story of a day when everything seemed to go wrong initially, but ended with an unexpected happy moment.',
+    questionHi: 'एक ऐसे दिन की कहानी सुनाएं जब शुरुआत में सब कुछ गलत हो रहा था, लेकिन अंत में एक सुखद सरप्राइज मिला।',
+    hintEn: 'Describe the stressful morning (delays, misses) and the turning point that made the whole day memorable.',
+    hintHi: 'वर्णन करें: सुबह की परेशानी और अंत में मिली राहत व खुशियों की कहानी।',
+    level: 'Level 3',
+    samplePhrases: [
+      'I missed my morning train and was very worried, but caught a special express and met an old school friend.',
+      'My bike broke down in the morning, but my colleagues supported me and we celebrated our team target victory.',
+      'It taught me that patience and a positive mindset can turn any stressful day into a great memory.'
+    ],
+    sampleLearnerSpoken: 'Morning my bike punctured and rain came, but evening company announced promotion for our team.',
+    cardColor: 'from-[#D1FAE5] to-[#A7F3D0]',
+    iconType: 'sparkles'
   }
 ];
 
@@ -661,6 +841,7 @@ export const CATEGORIES = [
   { id: 'workplace', label: 'Workplace', hindi: 'कार्यस्थल', icon: 'briefcase' },
   { id: 'daily_routine', label: 'Daily Routine', hindi: 'दैनिक जीवन', icon: 'coffee' },
   { id: 'friends', label: 'Friends Conversation', hindi: 'दोस्तों से बातचीत', icon: 'users' },
+  { id: 'sheeko', label: 'My Day (Stories)', hindi: 'दैनिक दिनचर्या और कहानियां', icon: 'book-open' },
 ];
 
 
