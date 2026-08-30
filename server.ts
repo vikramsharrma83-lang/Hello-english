@@ -2,87 +2,26 @@ import express from "express";
 import path from "path";
 import fs from "fs";
 import { createServer as createViteServer } from "vite";
-import { findMatchingPatterns, generateLocalAnalysis } from "./src/data/patternEngine.ts";
+import { findMatchingPatterns, generateLocalAnalysis, applyComprehensiveGrammarFixes } from "./src/data/patternEngine.ts";
+import { 
+  findSheekoReferenceMatch, 
+  findSheekoRephraseTemplate, 
+  applySheekoGrammarCorrections, 
+  getSheekoReferences,
+  parseLearnerStoryToMeaningRepresentation
+} from "./src/data/sheekoEngine.ts";
 
 const app = express();
 const PORT = 3000;
 
 app.use(express.json());
 
-// Load 10,000 Reference Patterns into Server Memory for Fast O(1) Sub-Millisecond Matching
-interface ReferencePattern {
-  id: string;
-  sentence: string;
-  normalizedMeaning: string;
-  category: 'DAILY' | 'WORK' | 'FRIENDS';
-  activities?: string[];
-  people?: string[];
-  places?: string[];
-  objects?: string[];
-  time?: {
-    value: string;
-    explicit: boolean;
-  };
-  sequenceMarkers?: string[];
-  sentenceBreakup?: Array<{ text: string; type: string; meaning?: string; activity?: string }>;
-  intent?: string;
-}
+const referencePatterns = getSheekoReferences();
+console.log(`[SHEEKO REFERENCE ENGINE] Active reference patterns count: ${referencePatterns.length}`);
 
-let referencePatterns: ReferencePattern[] = [];
-
-try {
-  const refPath = path.join(process.cwd(), "src/data/sheeko/skillgo_my_day_10000_reference_patterns.json");
-  if (fs.existsSync(refPath)) {
-    const raw = fs.readFileSync(refPath, "utf8");
-    const parsed = JSON.parse(raw);
-    referencePatterns = parsed.records || [];
-    console.log(`[SHEEKO REFERENCE ENGINE] Loaded ${referencePatterns.length} reference patterns into memory.`);
-  }
-} catch (e) {
-  console.warn("Could not load reference patterns from JSON:", e);
-}
-
-// Token-based inverted lookup function for 10,000 reference patterns (Sub-millisecond latency)
-function findBestReferenceMatch(text: string, category?: string): ReferencePattern | null {
-  if (!referencePatterns || referencePatterns.length === 0 || !text) return null;
-  const clean = text.toLowerCase().trim();
-  const tokens = clean.split(/\s+/).filter((t) => t.length > 2);
-
-  let bestMatch: ReferencePattern | null = null;
-  let bestScore = 0;
-
-  const pool = category && category !== 'All'
-    ? referencePatterns.filter((r) => r.category === category)
-    : referencePatterns;
-
-  for (let i = 0; i < pool.length; i++) {
-    const pat = pool[i];
-    let score = 0;
-    const sent = pat.sentence.toLowerCase();
-    const mean = pat.normalizedMeaning.toLowerCase();
-
-    if (clean === sent) {
-      return pat; // Exact match
-    }
-
-    for (const t of tokens) {
-      if (sent.includes(t)) score += 3;
-      if (mean.includes(t)) score += 2;
-    }
-
-    if (pat.activities) {
-      for (const act of pat.activities) {
-        if (clean.includes(act.toLowerCase())) score += 4;
-      }
-    }
-
-    if (score > bestScore) {
-      bestScore = score;
-      bestMatch = pat;
-    }
-  }
-
-  return bestMatch;
+// Token-based inverted lookup function leveraging sheekoEngine
+function findBestReferenceMatch(text: string, category?: string) {
+  return findSheekoReferenceMatch(text, category);
 }
 
 // Endpoint: Search 10,000 Reference Patterns with zero lag
@@ -167,7 +106,7 @@ app.get("/api/patterns/search", (req, res) => {
 
 // Endpoint: Get Pattern Categories
 app.get("/api/patterns/categories", async (_req, res) => {
-  const { englishPatterns } = await import("./src/data/englishPatterns.ts");
+  const { englishPatterns } = await import("./src/data/patternEngine.ts");
   const categories = Array.from(new Set(englishPatterns.map((p) => p.category)));
   const categoryCounts = categories.map((cat) => ({
     category: cat,
@@ -178,7 +117,7 @@ app.get("/api/patterns/categories", async (_req, res) => {
 
 // Endpoint: Get all patterns with optional category filter
 app.get("/api/patterns/all", async (req, res) => {
-  const { englishPatterns } = await import("./src/data/englishPatterns.ts");
+  const { englishPatterns } = await import("./src/data/patternEngine.ts");
   const category = req.query.category as string;
   const filtered = category
     ? englishPatterns.filter((p) => p.category.toLowerCase() === category.toLowerCase())
@@ -186,108 +125,56 @@ app.get("/api/patterns/all", async (req, res) => {
   res.json({ count: filtered.length, patterns: filtered });
 });
 
-// Grounded Day Map Generator using 10,000 Reference Patterns + Heuristic Rules
+// Grounded Day Map Generator fully integrated with Sheeko Clause Parser & Meaning Representation
 function buildLocalDayMap(text: string) {
   const cleanStatement = text.trim();
   const lower = cleanStatement.toLowerCase();
-  const activities: string[] = [];
+
+  // Parse learner input into multiple meaningful clauses and combine detected attributes
+  const meaningRep = parseLearnerStoryToMeaningRepresentation(cleanStatement);
+
+  const activities = meaningRep.activities.length > 0
+    ? meaningRep.activities
+    : [cleanStatement];
+
   const emotions: string[] = [];
   const environments: string[] = [];
   const knownFacts: string[] = [];
 
-  // Match against 10,000 Reference Patterns library
-  const refMatch = findBestReferenceMatch(cleanStatement);
-
-  // 1. Activity Extraction from Learner Input & Grounded Patterns
-  if (refMatch && refMatch.activities && refMatch.activities.length > 0) {
-    for (const act of refMatch.activities) {
-      if (act === 'commute' || lower.includes('bike') || lower.includes('office') || lower.includes('reach')) {
-        activities.push(lower.includes('bike') ? 'Went to office by bike' : 'Commuted to workplace for shift');
-      } else if (act === 'breakfast' || lower.includes('breakfast') || lower.includes('eat')) {
-        activities.push('Had breakfast before shift');
-      } else if (act === 'shopping' || act === 'groceries' || lower.includes('market') || lower.includes('buy')) {
-        activities.push('Bought groceries & vegetables at the market');
-      } else if (act === 'meeting' || lower.includes('ravi') || lower.includes('friend') || lower.includes('tea')) {
-        activities.push(lower.includes('ravi') ? 'Met Ravi in the evening' : 'Caught up with friends in the evening');
-      } else {
-        activities.push(act.charAt(0).toUpperCase() + act.slice(1));
-      }
-    }
+  // Dynamic Emotion & Mood Extraction based on meaning representation
+  if (lower.includes('happy') || lower.includes('good') || lower.includes('friend') || lower.includes('lunch')) {
+    emotions.push('Felt positive and energized connecting with friends');
   }
-
-  // Fallback / Specific Heuristic Enrichments
-  if (lower.includes('inbound') || lower.includes('mistake') || lower.includes('product') || lower.includes('vendor') || lower.includes('reject') || lower.includes('box')) {
-    activities.push('Handled inbound work & product verification');
+  if (lower.includes('tired') || lower.includes('rest') || lower.includes('shift') || lower.includes('work') || lower.includes('woke')) {
+    emotions.push('Felt accomplished, productive, and relaxed');
   }
-  if (lower.includes('dosa')) {
-    activities.push('Ate dosa at the market stall');
-  }
-  if (lower.includes('inventory') || lower.includes('stock') || lower.includes('warehouse')) {
-    activities.push('Completed warehouse inventory counting');
-  }
-  if (lower.includes('mother') || lower.includes('father') || lower.includes('medicine') || lower.includes('family')) {
-    activities.push('Assisted family with daily chores & medicines');
-  }
-
-  if (activities.length === 0) {
-    activities.push('Commuted to daily workplace', 'Handled scheduled tasks', 'Wrapped up evening routine');
-  }
-
-  // 2. Emotion Extraction
-  if (lower.includes('angry') || lower.includes('scold') || lower.includes('shout')) {
-    emotions.push('Felt worried about supervisor reaction');
-  }
-  if (lower.includes('tension') || lower.includes('worry') || lower.includes('mistake') || lower.includes('panic') || lower.includes('stress')) {
-    emotions.push('Felt tense about an inbound mistake');
-  }
-  if (lower.includes('happy') || lower.includes('good') || lower.includes('ravi') || lower.includes('enjoy') || lower.includes('fun')) {
-    emotions.push('Felt happy meeting friends / Ravi');
-  }
-  if (lower.includes('tired') || lower.includes('exhaust') || lower.includes('heavy') || lower.includes('late')) {
-    emotions.push('Felt tired after a busy shift');
+  if (lower.includes('stock') || lower.includes('supervisor') || lower.includes('check')) {
+    emotions.push('Felt focused and responsible during duties');
   }
   if (emotions.length === 0) {
-    emotions.push('Felt focused and engaged');
+    emotions.push('Felt focused, engaged, and productive');
   }
 
-  // 3. Environment Context
-  if (lower.includes('supervisor') || lower.includes('manager') || lower.includes('boss')) {
-    environments.push('Supervisor at the workplace');
+  // Dynamic Context & People Extraction
+  if (meaningRep.people.length > 0) {
+    environments.push(`With ${meaningRep.people.join(', ')}`);
   }
-  if (lower.includes('ravi') || lower.includes('friend')) {
-    environments.push('Ravi in the evening');
+  if (meaningRep.places.length > 0) {
+    environments.push(`At ${meaningRep.places.join(', ')}`);
   }
-  if (lower.includes('bike') || lower.includes('road') || lower.includes('traffic') || lower.includes('bus')) {
-    environments.push('Travelled by bike on the road');
-  }
-  if (lower.includes('office') || lower.includes('warehouse') || lower.includes('store') || lower.includes('hub')) {
-    environments.push('Workplace & operations floor');
-  }
-  if (lower.includes('market') || lower.includes('shop') || lower.includes('hotel')) {
-    environments.push('Local market & food stall');
-  }
-  if (lower.includes('home') || lower.includes('house')) {
-    environments.push('Home with family');
+  if (meaningRep.timeMarkers.length > 0) {
+    environments.push(`At time: ${meaningRep.timeMarkers.join(', ')}`);
   }
   if (environments.length === 0) {
-    environments.push('Daily workplace & local community');
+    environments.push('Workplace & daily routine environment');
   }
 
-  // 4. Known Facts (Memory Registration)
+  // Known Facts Registration
   knownFacts.push(`Learner shared: "${cleanStatement}"`);
-  if (lower.includes('bike')) knownFacts.push('Travelled by bike');
-  if (lower.includes('inbound')) knownFacts.push('Handled inbound inventory items');
-  if (lower.includes('supervisor')) knownFacts.push('Interacted with supervisor');
-  if (lower.includes('ravi')) knownFacts.push('Met Ravi');
-  if (lower.includes('market')) knownFacts.push('Visited market');
+  meaningRep.clauses.forEach(c => knownFacts.push(`Clause: ${c}`));
 
-  // 5. Natural English Narrative (using matched reference pattern normalizedMeaning if applicable)
-  let naturalEnglishMeaning = refMatch?.normalizedMeaning || `The learner shared: ${cleanStatement.replace(/^[iI]\s+/, 'they ')}`;
-  if (lower.includes('market') && (lower.includes('dosa') || lower.includes('vegetable'))) {
-    naturalEnglishMeaning = "The learner had a pleasant day, during which they visited the market, enjoyed some food, met with friends, and assisted family members at home.";
-  } else if (lower.includes('office') && (lower.includes('inbound') || lower.includes('supervisor') || lower.includes('bike'))) {
-    naturalEnglishMeaning = "The learner commuted to the office by bike, managed a challenging situation with an inbound delivery that required supervisor attention, and later met their friend Ravi in the evening.";
-  }
+  // Natural English Narrative from composite meaning representation
+  const naturalEnglishMeaning = meaningRep.normalizedSummary;
 
   return {
     activities: Array.from(new Set(activities)),
@@ -355,32 +242,34 @@ function buildLocalConversationStep(params: {
   const refContext = findBestReferenceMatch(topicPointer);
 
   if (isFirstTurnOfTopic) {
-    let firstProbe = `How did that part of your day begin, and what happened first?`;
-    let direction: 'WHAT' | 'HOW' | 'WHO' | 'WHERE' = 'WHAT';
+    const cleanTopic = topicPointer.replace(/^["']|["']$/g, '');
+    let firstProbe = `Can you tell me more about "${cleanTopic}" and how that experience went?`;
+    let direction: 'WHAT' | 'HOW' | 'WHO' | 'WHERE' | 'FEELING' = 'WHAT';
 
-    if (topicPointer.toLowerCase().includes('bike') || topicPointer.toLowerCase().includes('office') || refContext?.category === 'WORK') {
-      firstProbe = `What time did you start your journey on your bike, and how was the road?`;
-      direction = 'WHERE';
-    } else if (topicPointer.toLowerCase().includes('inbound') || topicPointer.toLowerCase().includes('mistake')) {
-      firstProbe = `What went wrong with the inbound items, and how did your supervisor react?`;
+    const tLower = cleanTopic.toLowerCase();
+    if (tLower.includes('work') || tLower.includes('office') || tLower.includes('job') || tLower.includes('supervisor')) {
+      firstProbe = `How did your work or tasks go, and what was the most important part?`;
       direction = 'WHAT';
-    } else if (topicPointer.toLowerCase().includes('ravi') || topicPointer.toLowerCase().includes('friend') || refContext?.category === 'FRIENDS') {
-      firstProbe = `Where did you and Ravi meet in the evening, and what did you talk about?`;
+    } else if (tLower.includes('bus') || tLower.includes('travel') || tLower.includes('reach') || tLower.includes('commute')) {
+      firstProbe = `How was your commute, and did you reach your destination on time?`;
       direction = 'WHERE';
-    } else if (topicPointer.toLowerCase().includes('market') || topicPointer.toLowerCase().includes('dosa') || refContext?.category === 'DAILY') {
-      firstProbe = `What items did you buy at the market, and how was the dosa?`;
-      direction = 'WHAT';
+    } else if (tLower.includes('friend') || tLower.includes('lunch') || tLower.includes('meet')) {
+      firstProbe = `Where did you meet, and what did you discuss during that time?`;
+      direction = 'WHERE';
+    } else if (tLower.includes('rest') || tLower.includes('home') || tLower.includes('finish')) {
+      firstProbe = `How did you feel after finishing your tasks and returning home?`;
+      direction = 'FEELING';
     }
 
     return {
-      rephrase: `You mentioned: "${topicPointer}".`,
+      rephrase: `You mentioned: "${cleanTopic}".`,
       probeQuestion: firstProbe,
       probeDirection: direction,
       topicIsCompleted: false,
       updatedDayMap: dayMap,
       deepAnalysis: {
-        mainMeaning: `Starting focus on ${topicPointer}`,
-        intent: refContext?.intent || 'Initial topic exploration',
+        mainMeaning: `Starting focus on ${cleanTopic}`,
+        intent: 'Initial topic exploration',
         sentiment: 'Engaged',
         fluencyScore: 85,
         clarityScore: 88,
@@ -391,27 +280,22 @@ function buildLocalConversationStep(params: {
     };
   }
 
-  // Turn 1+ : Generate natural "So, you..." rephrase (Rule 10)
+  // Turn 1+ : Generate natural professional English summary rephrase (Rule 10)
   let rephraseText = `So, you handled that situation.`;
   if (cleanAnswer) {
-    let converted = cleanAnswer
-      .replace(/^[iI]\s+am\s+go\b/i, 'went')
-      .replace(/^[iI]\s+go\b/i, 'went')
-      .replace(/^[iI]\s+see\b/i, 'saw')
-      .replace(/^[iI]\s+tell\b/i, 'told')
-      .replace(/^[iI]\s+call\b/i, 'called')
-      .replace(/^[iI]\s+take\b/i, 'took')
-      .replace(/^[iI]\s+eat\b/i, 'ate')
-      .replace(/^[iI]\s+reach\b/i, 'reached')
-      .replace(/^[iI]\s+help\b/i, 'helped')
-      .replace(/^[iI]\s+buy\b/i, 'bought')
-      .replace(/^[iI]\s+check\b/i, 'checked')
-      .replace(/^[iI]\s+feel\b/i, 'felt')
-      .replace(/^[iI]\s+work\b/i, 'worked')
-      .replace(/^[iI]\s+/i, '');
+    const fixed = applyComprehensiveGrammarFixes(cleanAnswer);
+    let stripped = fixed
+      .replace(/[.?!]+$/, '')
+      .replace(/^[iI]\s+/i, '')
+      .replace(/^[yY][oO][uU]\s+/i, '');
+    stripped = stripped.replace(/\b([iI])\s+\1\b/g, '$1');
 
-    converted = converted.replace(/[.?!]+$/, '');
-    rephraseText = `So, you ${converted}.`;
+    if (stripped) {
+      const formattedSummary = stripped.charAt(0).toLowerCase() + stripped.slice(1);
+      rephraseText = `So, you ${formattedSummary}.`;
+    } else {
+      rephraseText = `So, you ${cleanAnswer}.`;
+    }
   }
 
   // Determine intelligent probing direction & topic completion (Rule 11 & 19)

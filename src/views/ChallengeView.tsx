@@ -288,36 +288,36 @@ export const ChallengeView: React.FC<ChallengeViewProps> = ({
               </span>
             </div>
 
-            {/* 3 Quick Metric Boxes */}
-            <div className="grid grid-cols-3 gap-2 py-3 border-b border-zinc-800 text-center">
-              <div className="p-2.5 rounded-2xl bg-black/40 border border-zinc-800/80">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-400 block">
+            {/* 3 Quick Metric Boxes (Enlarged & Prominent) */}
+            <div className="grid grid-cols-3 gap-3 py-3.5 border-b border-zinc-800 text-center">
+              <div className="p-3.5 rounded-2xl bg-black/60 border border-emerald-500/20 shadow-inner">
+                <span className="text-[11px] font-extrabold uppercase tracking-wider text-emerald-400 block">
                   Completed
                 </span>
-                <span className="text-lg sm:text-xl font-black text-white mt-0.5 block">
+                <span className="text-xl sm:text-2xl font-black text-white mt-1 block">
                   {currentDoneActivities}
                 </span>
-                <span className="text-[10px] text-zinc-400 block">Activities</span>
+                <span className="text-[11px] text-zinc-400 block mt-0.5">Activities</span>
               </div>
 
-              <div className="p-2.5 rounded-2xl bg-black/40 border border-zinc-800/80">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-amber-400 block">
+              <div className="p-3.5 rounded-2xl bg-black/60 border border-amber-500/20 shadow-inner">
+                <span className="text-[11px] font-extrabold uppercase tracking-wider text-amber-400 block">
                   Target
                 </span>
-                <span className="text-lg sm:text-xl font-black text-zinc-200 mt-0.5 block">
+                <span className="text-xl sm:text-2xl font-black text-white mt-1 block">
                   {totalTargetActivities}
                 </span>
-                <span className="text-[10px] text-zinc-400 block">Activities</span>
+                <span className="text-[11px] text-zinc-400 block mt-0.5">Activities</span>
               </div>
 
-              <div className="p-2.5 rounded-2xl bg-black/40 border border-zinc-800/80">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-sky-400 block">
+              <div className="p-3.5 rounded-2xl bg-black/60 border border-sky-500/20 shadow-inner">
+                <span className="text-[11px] font-extrabold uppercase tracking-wider text-sky-400 block">
                   Time Left
                 </span>
-                <span className="text-lg sm:text-xl font-black text-white mt-0.5 block">
+                <span className="text-xl sm:text-2xl font-black text-white mt-1 block">
                   {Math.max(1, selectedPlan.days - (activeChallenge.currentDay || 1) + 1)}
                 </span>
-                <span className="text-[10px] text-zinc-400 block">Days Left</span>
+                <span className="text-[11px] text-zinc-400 block mt-0.5">Days Left</span>
               </div>
             </div>
 
@@ -398,24 +398,32 @@ export const ChallengeView: React.FC<ChallengeViewProps> = ({
             </h2>
 
             <motion.button
+              whileHover={{ scale: 1.01 }}
               whileTap={{ scale: 0.98 }}
               onClick={() => setSubView('training_options')}
-              className="w-full bg-[#12131a] hover:bg-[#1a1b24] border border-zinc-800/80 rounded-3xl p-4 sm:p-5 flex items-center justify-between transition-all cursor-pointer shadow-xl group"
+              className="w-full relative overflow-hidden rounded-[28px] p-5 bg-gradient-to-b from-zinc-900/90 via-[#13171f]/80 to-black/90 border border-zinc-700/60 hover:border-emerald-500/50 flex items-center justify-between transition-all cursor-pointer shadow-[0_15px_35px_rgba(0,0,0,0.6)] backdrop-blur-xl group"
             >
-              <div className="flex items-center gap-4 text-left">
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-950/80 to-teal-950/80 border border-emerald-500/40 flex items-center justify-center shrink-0 shadow-[0_0_16px_rgba(16,185,129,0.2)]">
-                  <Play className="w-6 h-6 text-emerald-400 fill-emerald-400 ml-0.5" />
+              {/* Apple Glass Loom Glow & Top Shine */}
+              <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-white/30 to-transparent pointer-events-none" />
+              <div className="absolute -right-12 -top-12 w-40 h-40 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none group-hover:bg-emerald-500/20 transition-all duration-500" />
+              
+              <div className="flex items-center gap-4 text-left relative z-10">
+                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-500/30 via-teal-500/20 to-emerald-900/40 border border-emerald-400/50 flex items-center justify-center shrink-0 shadow-[0_0_20px_rgba(16,185,129,0.35)] relative overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-t from-emerald-500/20 to-transparent pointer-events-none" />
+                  <Play className="w-6 h-6 text-emerald-300 fill-emerald-300 ml-0.5 drop-shadow-[0_0_8px_rgba(16,185,129,0.8)] relative z-10" />
                 </div>
                 <div>
                   <h3 className="text-base font-black text-white tracking-tight group-hover:text-emerald-300 transition-colors">
                     Practice Today's Story & Drills
                   </h3>
-                  <p className="text-xs text-zinc-400 mt-0.5">
+                  <p className="text-xs text-zinc-400 mt-0.5 font-medium">
                     Choose between Day Stories and Coach Questions
                   </p>
                 </div>
               </div>
-              <ChevronRight className="w-5 h-5 text-zinc-500 group-hover:text-white transition-colors" />
+              <div className="w-9 h-9 rounded-full bg-zinc-800/80 border border-zinc-700/80 flex items-center justify-center text-zinc-400 group-hover:text-white group-hover:bg-emerald-600/30 group-hover:border-emerald-500/50 transition-all relative z-10 shrink-0">
+                <ChevronRight className="w-4.5 h-4.5" />
+              </div>
             </motion.button>
           </div>
         </main>

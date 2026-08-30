@@ -1,3 +1,21 @@
+export interface ReferencePattern {
+  id: string;
+  sentence: string;
+  normalizedMeaning: string;
+  category: 'DAILY' | 'FRIENDS' | 'WORK';
+  activities: string[];
+  people: string[];
+  places: string[];
+  objects: string[];
+  time?: {
+    value: string;
+    explicit: boolean;
+  };
+  emotion?: string | null;
+  sequenceMarkers?: string[];
+  confidence: number;
+}
+
 export type QuestionCategory =
   | 'workplace'
   | 'daily_routine'

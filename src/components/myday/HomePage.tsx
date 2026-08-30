@@ -223,7 +223,7 @@ export const HomePage: React.FC<HomePageProps> = ({
             </div>
 
             <div className="w-full text-center pb-1">
-              <span className="text-[10px] text-zinc-500 font-medium tracking-tight">Tap for breakdown →</span>
+              <span className="text-[10px] text-zinc-500 font-medium tracking-tight">Tap for Detailed Analytics →</span>
             </div>
           </div>
         </motion.button>

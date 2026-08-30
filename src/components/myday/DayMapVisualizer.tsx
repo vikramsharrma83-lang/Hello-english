@@ -50,20 +50,20 @@ export const DayMapVisualizer: React.FC<DayMapVisualizerProps> = ({
 }) => {
   const activities = dayMap.activities && dayMap.activities.length > 0
     ? dayMap.activities
-    : ['Went to the market', 'Bought food', 'Ate dosa', 'Met a friend', 'Helped mother', 'Gave medicine to father'];
+    : (dayMap.rawStatement ? [dayMap.rawStatement] : ['Completed daily routine and duties']);
 
   const emotions = dayMap.emotions && dayMap.emotions.length > 0
     ? dayMap.emotions
-    : ['Felt happy and fulfilled'];
+    : ['Felt focused and engaged'];
 
   const environments = dayMap.environments && dayMap.environments.length > 0
     ? dayMap.environments
-    : ['At the local market', 'With a friend', 'At home with parents'];
+    : ['Workplace and daily environment'];
 
   const naturalEnglish = dayMap.naturalEnglishMeaning ||
     (dayMap.rawStatement
-      ? `The learner shared their daily events: ${dayMap.rawStatement}`
-      : 'The learner had a good day, during which they went to the market to buy food, enjoyed a dosa, caught up with a friend, and assisted their parents at home.');
+      ? dayMap.rawStatement
+      : 'The learner shared their daily experience.');
 
   const pointsCount = dayMap.pointsExtractedCount || (activities.length + emotions.length + environments.length);
 

@@ -1,7 +1,24 @@
-import { englishPatterns, EnglishPattern } from './englishPatterns';
+import { getSheekoReferences } from './sheekoEngine';
 
-export { englishPatterns };
-export type { EnglishPattern };
+export interface EnglishPattern {
+  id: string;
+  broken_english: string;
+  natural_english: string;
+  hindi_meaning?: string;
+  category: string;
+  explanation?: string;
+  key_vocabulary?: { wordOrPhrase: string; hindiMeaning: string }[];
+}
+
+export const englishPatterns: EnglishPattern[] = getSheekoReferences().map(r => ({
+  id: r.id,
+  broken_english: r.sentence,
+  natural_english: r.normalizedMeaning,
+  hindi_meaning: r.intent || 'दैनिक बातचीत',
+  category: r.category || 'DAILY',
+  explanation: `Context: ${(r.activities || []).join(', ')}`,
+  key_vocabulary: []
+}));
 
 export interface PatternMatchResult {
   pattern: EnglishPattern;
@@ -172,6 +189,25 @@ export function applyComprehensiveGrammarFixes(raw: string): string {
 
   // Common broken phrases & Indian English idioms to natural workplace English
   const phraseReplacements: [RegExp, string][] = [
+    [/\bready for work\b/gi, 'prepared for work'],
+    [/\bi take bus\b/gi, 'I take the bus'],
+    [/\btell me to check\b/gi, 'asked me to check'],
+    [/\bshift finish\b/gi, 'the shift finished'],
+    [/\btake rest\b/gi, 'took some rest'],
+    [/\bi wake up at (\d+) o['’]?clock and ready for work\b/gi, 'I woke up at $1 o’clock and got ready for work'],
+    [/\bi take bus and reach workplace at (\d+) o['’]?clock\b/gi, 'I took the bus and reached my workplace at $1 o’clock'],
+    [/\bmy supervisor tell me to check the stock\b/gi, 'my supervisor asked me to check the stock inventory'],
+    [/\bi finish my work and go for lunch with my friend\b/gi, 'I finished my tasks and went for lunch with my friend'],
+    [/\bafter shift finish,?\s*i go home and take rest\b/gi, 'After my shift finished, I returned home and took some rest'],
+    [/\b(i\s+)?wake up\b/gi, 'I woke up'],
+    [/\b(i\s+)?take bus\b/gi, 'I took the bus'],
+    [/\b(i\s+)?reach\b/gi, 'I reached'],
+    [/\b(i\s+)?finish\b/gi, 'I finished'],
+    [/\b(i\s+)?go for\b/gi, 'I went for'],
+    [/\b(i\s+)?go home\b/gi, 'I went home'],
+    [/\b(i\s+)?take rest\b/gi, 'I took some rest'],
+    [/\bmy supervisor tell\b/gi, 'my supervisor told'],
+    [/\bshift finish\b/gi, 'the shift finished'],
     [/\bi am having a doubt\b/gi, 'I have a question'],
     [/\bi have one doubt\b/gi, 'I have a question'],
     [/\bi am having doubt\b/gi, 'I have a question'],
@@ -286,11 +322,11 @@ export function generateLocalAnalysis(
     naturalEnglish = p.natural_english;
     intendedMeaning = `You wanted to clearly say: "${clean}".`;
     hindiMeaning = `इसे सही और स्वाभाविक अंग्रेजी में इस प्रकार बोलें।`;
-    encouragingNote = `Awesome! Coach Neha understood your message. Here is the natural ${p.pattern.toLowerCase()} pattern.`;
+    encouragingNote = `Awesome! Coach Neha understood your message. Here is the natural ${p.category.toLowerCase()} pattern.`;
     
     keyVocab = [
       {
-        wordOrPhrase: p.natural_english.split(' ').slice(0, 3).join(' ') || p.pattern,
+        wordOrPhrase: p.natural_english.split(' ').slice(0, 3).join(' ') || p.category,
         hindiMeaning: CATEGORY_HINDI_MAP[p.category] || 'महत्वपूर्ण बातचीत वाक्यांश',
       },
     ];

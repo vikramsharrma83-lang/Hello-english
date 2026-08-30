@@ -9,6 +9,8 @@ import { ProgressView } from './views/ProgressView';
 import { ProfileView } from './views/ProfileView';
 import { MyDayView } from './views/MyDayView';
 import { ChallengeView } from './views/ChallengeView';
+import { CourseView } from './views/CourseView';
+import { FitnessDashboardView } from './views/FitnessDashboardView';
 import { BottomDockNav, NavTab } from './components/BottomDockNav';
 import { AnalysisResult, Question, SavedPhrase, UserProgress } from './types';
 import { PRACTICE_QUESTIONS } from './data/questions';
@@ -22,7 +24,7 @@ export default function App() {
   const [showSplash, setShowSplash] = useState<boolean>(true);
 
   // Navigation State
-  const [activeTab, setActiveTab] = useState<NavTab>('home');
+  const [activeTab, setActiveTab] = useState<NavTab>('fitness');
   const [returnTab, setReturnTab] = useState<NavTab>('myday');
   const [practiceStep, setPracticeStep] = useState<PracticeStep>('question');
   
@@ -251,7 +253,7 @@ export default function App() {
     : false;
 
   return (
-    <main className="w-full min-h-screen bg-black flex justify-center selection:bg-amber-500/30 selection:text-amber-200">
+    <main className="w-full min-h-screen bg-[#090d16] text-slate-100 flex justify-center selection:bg-cyan-500/30 selection:text-cyan-200">
       {/* Splash Screen */}
       <AnimatePresence>
         {showSplash && (
@@ -263,7 +265,7 @@ export default function App() {
       </AnimatePresence>
 
       {/* Mobile Frame Container (Constrained on Desktop as requested) */}
-      <div className="w-full max-w-[440px] min-h-screen bg-black shadow-2xl relative flex flex-col justify-between overflow-x-hidden border-x border-zinc-900">
+      <div className="w-full max-w-[440px] min-h-screen bg-[#090d16] shadow-2xl relative flex flex-col justify-between overflow-x-hidden border-x border-slate-800/80">
         
         {/* VIEW ROUTING */}
         <AnimatePresence mode="wait">
@@ -384,6 +386,38 @@ export default function App() {
           )}
 
 
+
+          {activeTab === 'fitness' && (
+            <motion.div
+              key="fitness"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.18 }}
+              className="w-full"
+            >
+              <FitnessDashboardView
+                progress={progress}
+                onStartPractice={(q) => handleStartPractice(q, 'fitness')}
+                onOpenMyDay={() => setActiveTab('myday')}
+              />
+            </motion.div>
+          )}
+
+          {activeTab === 'course' && (
+            <motion.div
+              key="course"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.18 }}
+              className="w-full"
+            >
+              <CourseView
+                onStartPractice={(q) => handleStartPractice(q, 'course')}
+              />
+            </motion.div>
+          )}
 
           {activeTab === 'profile' && (
             <motion.div
