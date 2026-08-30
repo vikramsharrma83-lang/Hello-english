@@ -428,9 +428,101 @@ app.post("/api/generate-question", async (req, res) => {
   }
 });
 
-// Endpoint: TTS Fallback to Client SpeechSynthesis
-app.post("/api/tts", (_req, res) => {
-  return res.json({ fallback: true, message: "Use client-side Web Speech API." });
+// Endpoint: Sarvam AI Text-to-Speech (Bulbul model proxy)
+app.post("/api/sarvam/tts", async (req, res) => {
+  try {
+    const { text, target_language_code = "en-IN", speaker = "meera" } = req.body;
+    const apiKey = process.env.SARVAM_API_KEY;
+    if (!apiKey) {
+      return res.status(400).json({ error: "SARVAM_API_KEY not configured on server." });
+    }
+
+    const response = await fetch("https://api.sarvam.ai/text-to-speech", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "api-subscription-key": apiKey,
+      },
+      body: JSON.stringify({
+        inputs: [text],
+        target_language_code,
+        speaker,
+        model: "bulbul:v1",
+      }),
+    });
+
+    const data = await response.json();
+    if (!response.ok) {
+      return res.status(response.status).json(data);
+    }
+    return res.json(data);
+  } catch (err) {
+    console.error("Error in Sarvam TTS proxy:", err);
+    return res.status(500).json({ error: "Failed to generate Sarvam AI speech." });
+  }
+});
+
+// Endpoint: Sarvam AI Speech-to-Text (Saaras model proxy)
+app.post("/api/sarvam/stt", async (req, res) => {
+  try {
+    const apiKey = process.env.SARVAM_API_KEY;
+    if (!apiKey) {
+      return res.status(400).json({ error: "SARVAM_API_KEY not configured on server." });
+    }
+    // Expecting multipart or json audio data forwarding
+    const response = await fetch("https://api.sarvam.ai/speech-to-text", {
+      method: "POST",
+      headers: {
+        "api-subscription-key": apiKey,
+      },
+      body: req.body,
+    });
+
+    const data = await response.json();
+    return res.json(data);
+  } catch (err) {
+    console.error("Error in Sarvam STT proxy:", err);
+    return res.status(500).json({ error: "Failed to transcribe audio via Sarvam AI." });
+  }
+});
+
+// Endpoint: TTS with Sarvam AI integration when key is available
+app.post("/api/tts", async (req, res) => {
+  try {
+    const { text, lang = "en-IN" } = req.body;
+    const apiKey = process.env.SARVAM_API_KEY;
+    if (!apiKey || !text) {
+      return res.json({ fallback: true, message: "Use client-side Web Speech API." });
+    }
+
+    const target_language_code = lang.startsWith('hi') ? 'hi-IN' : 'en-IN';
+    const response = await fetch("https://api.sarvam.ai/text-to-speech", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "api-subscription-key": apiKey,
+      },
+      body: JSON.stringify({
+        inputs: [text],
+        target_language_code,
+        speaker: "meera",
+        model: "bulbul:v1",
+      }),
+    });
+
+    const data = await response.json();
+    if (response.ok && data.audios && data.audios[0]) {
+      return res.json({
+        success: true,
+        audioData: `data:audio/wav;base64,${data.audios[0]}`,
+      });
+    }
+
+    return res.json({ fallback: true, message: "Sarvam TTS fallback." });
+  } catch (err) {
+    console.error("Error in /api/tts Sarvam wrapper:", err);
+    return res.json({ fallback: true, message: "Use client-side Web Speech API." });
+  }
 });
 
 // Health check
