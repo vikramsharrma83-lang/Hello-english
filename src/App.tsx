@@ -27,6 +27,7 @@ export default function App() {
   const [returnTab, setReturnTab] = useState<NavTab>('myday');
   const [practiceStep, setPracticeStep] = useState<PracticeStep>('question');
   const [myDayStep, setMyDayStep] = useState<string>('1_HOME');
+  const [language, setLanguage] = useState<'en' | 'hi'>('en');
   
   // Current active question
   const [currentQuestion, setCurrentQuestion] = useState<Question>(PRACTICE_QUESTIONS[0]);
@@ -310,6 +311,8 @@ export default function App() {
                 progress={progress}
                 onUpdateProgress={setProgress}
                 onStepChange={setMyDayStep}
+                language={language}
+                onToggleLanguage={() => setLanguage((prev) => (prev === 'en' ? 'hi' : 'en'))}
                 onNavigateTab={(tab) => {
                   if (tab === 'practice') {
                     handleStartPractice();
@@ -397,6 +400,7 @@ export default function App() {
               <BuddyView
                 onStartPractice={() => handleStartPractice()}
                 onBack={() => setActiveTab('sheeko')}
+                language={language}
               />
             </motion.div>
           )}
@@ -417,9 +421,13 @@ export default function App() {
           )}
         </AnimatePresence>
 
-        {activeTab !== 'practice' && activeTab !== 'buddy' && (
+        {activeTab !== 'practice' &&
+         activeTab !== 'buddy' &&
+         activeTab !== 'course' &&
+         !((activeTab === 'sheeko' || activeTab === 'myday') && (myDayStep === '2_CHAT_INPUT' || myDayStep === '4_CHATBOT_CONVERSATION')) && (
           <BottomDockNav
             activeTab={activeTab}
+            language={language}
             onSelectTab={(tab) => {
               if (tab === 'practice') {
                 handleStartPractice();

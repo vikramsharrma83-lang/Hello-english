@@ -370,28 +370,159 @@ function buildLocalConversationStep(params: {
   };
 }
 
-// Endpoint: Conversational Multi-Turn Engine adhering to Rules 7-20 (Zero AI / Instant Local)
-app.post("/api/conversation-step", (req, res) => {
+// Sarvam AI LLM Helper for Conversational Understand -> Rephrase -> Respond
+async function callSarvamConversationLLM(params: {
+  dayMap: any;
+  selectedTopic: any;
+  conversationHistory: any[];
+  latestLearnerAnswer: string;
+  isFirstTurnOfTopic: boolean;
+}) {
+  const apiKey = process.env.SARVAM_API_KEY;
+  if (!apiKey) {
+    throw new Error("SARVAM_API_KEY not configured");
+  }
+
+  const { selectedTopic, conversationHistory, latestLearnerAnswer, isFirstTurnOfTopic } = params;
+
+  if (isFirstTurnOfTopic || !latestLearnerAnswer || !latestLearnerAnswer.trim()) {
+    return null;
+  }
+
+  const prompt = `Topic: ${selectedTopic?.pointer || "Daily Routine"}
+Learner's latest statement: "${latestLearnerAnswer.trim()}"
+Recent Conversation History: ${JSON.stringify((conversationHistory || []).slice(-4))}
+
+Analyze this statement, understand its true meaning, rephrase it into natural fluent professional Indian English, and provide a warm conversational response and probing follow-up question. Return ONLY valid JSON.`;
+
+  const response = await fetch("https://api.sarvam.ai/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "api-subscription-key": apiKey,
+    },
+    body: JSON.stringify({
+      model: "sarvam-105b-conversations",
+      messages: [
+        {
+          role: "system",
+          content: `You are an expert English speaking coach and dialogue partner for an Indian English learner (using Hindi-English or broken English).
+Your task is to process the learner's latest statement in a multi-turn conversation about their day.
+You must analyze the learner's input, understand its true meaning, rephrase it into natural, fluent, professional Indian English (WITHOUT repeating broken fragments, WITHOUT saying "You said...", preserving all facts, people, places, and events), provide a warm conversational response and a follow-up probing question to continue the conversation.
+
+Return ONLY a valid JSON object (no markdown fences, or strip them if present) matching this exact schema:
+{
+  "understoodMeaning": "string explaining the core meaning",
+  "naturalEnglish": "natural fluent English rephrasing of what the learner said",
+  "response": "conversational empathetic response acknowledging what they said",
+  "probeQuestion": "follow-up question to probe deeper (WHAT, HOW, WHY, WHO, RESULT, FEELS, DETAIL)",
+  "probeDirection": "WHAT|HOW|WHY|WHO|RESULT|FEELING|DETAIL",
+  "confidenceScore": 90,
+  "deepAnalysis": {
+    "mainMeaning": "string",
+    "intent": "string",
+    "sentiment": "string",
+    "fluencyScore": 88,
+    "clarityScore": 90,
+    "detectedPatterns": ["string"],
+    "keyInsights": ["string"],
+    "recommendedPhrases": ["string"]
+  },
+  "topicIsCompleted": false,
+  "completionSummary": null
+}
+
+CRITICAL RULES:
+1. Do NOT repeat the learner's broken sentence.
+2. Do NOT say "You said...".
+3. Do NOT invent facts or change people, places, or events.
+4. Preserve the exact meaning and sequence of events.
+5. Provide natural, professional English.
+6. Return ONLY valid JSON.`
+        },
+        {
+          role: "user",
+          content: prompt
+        }
+      ],
+      temperature: 0.3,
+      max_tokens: 1000
+    }),
+  });
+
+  if (!response.ok) {
+    const errText = await response.text();
+    throw new Error(`Sarvam API error: ${response.status} - ${errText}`);
+  }
+
+  const data = await response.json();
+  const content = data.choices?.[0]?.message?.content || "";
+  
+  let cleanContent = content.trim();
+  if (cleanContent.startsWith("```json")) {
+    cleanContent = cleanContent.replace(/^```json/, "").replace(/```$/, "").trim();
+  } else if (cleanContent.startsWith("```")) {
+    cleanContent = cleanContent.replace(/^```/, "").replace(/```$/, "").trim();
+  }
+
+  return JSON.parse(cleanContent);
+}
+
+// Endpoint: Conversational Multi-Turn Engine adhering to Rules 7-20 (Sarvam LLM with deterministic local fallback)
+app.post("/api/conversation-step", async (req, res) => {
   try {
+    const { latestLearnerAnswer, isFirstTurnOfTopic, dayMap, selectedTopic } = req.body;
+
+    if (!isFirstTurnOfTopic && latestLearnerAnswer && latestLearnerAnswer.trim()) {
+      try {
+        const sarvamResult = await callSarvamConversationLLM(req.body);
+        if (sarvamResult) {
+          let updatedDayMap = { ...dayMap };
+          const cleanAnswer = latestLearnerAnswer.trim();
+          if (cleanAnswer && !updatedDayMap.knownFacts?.includes(`Learner shared: "${cleanAnswer}"`)) {
+            updatedDayMap.knownFacts = [...(updatedDayMap.knownFacts || []), `Learner shared: "${cleanAnswer}"`];
+          }
+          if (sarvamResult.naturalEnglish && !updatedDayMap.activities?.includes(sarvamResult.naturalEnglish)) {
+            updatedDayMap.activities = [...(updatedDayMap.activities || []), sarvamResult.naturalEnglish];
+          }
+
+          const turnCount = selectedTopic?.turnCount || 0;
+          const isCompleted = sarvamResult.topicIsCompleted ?? (turnCount >= 2);
+
+          return res.json({
+            rephrase: sarvamResult.naturalEnglish || sarvamResult.response,
+            probeQuestion: sarvamResult.probeQuestion || "What happened after that?",
+            probeDirection: sarvamResult.probeDirection || "RESULT",
+            topicIsCompleted: isCompleted,
+            completionSummary: isCompleted ? (sarvamResult.completionSummary || `Great job exploring "${selectedTopic?.pointer}"!`) : undefined,
+            updatedDayMap,
+            deepAnalysis: sarvamResult.deepAnalysis || {
+              mainMeaning: sarvamResult.understoodMeaning || cleanAnswer,
+              intent: "Narrating daily events",
+              sentiment: "Engaged",
+              fluencyScore: sarvamResult.confidenceScore || 88,
+              clarityScore: 90,
+              detectedPatterns: ["Semantic understanding", "Natural rephrasing"],
+              keyInsights: [sarvamResult.understoodMeaning || "Clear communication"],
+              recommendedPhrases: ["After that", "As a result"],
+            },
+            understoodMeaning: sarvamResult.understoodMeaning,
+            response: sarvamResult.response,
+            conversationalResponse: sarvamResult.response,
+          });
+        }
+      } catch (sarvamErr) {
+        console.warn("Sarvam LLM conversation-step failed or quota exceeded, falling back to deterministic local engine:", sarvamErr);
+      }
+    }
+
+    // Fallback or first turn using deterministic engine
     const stepResult = buildLocalConversationStep(req.body);
     return res.json(stepResult);
   } catch (err) {
     console.error("Error in /api/conversation-step:", err);
-    return res.json({
-      rephrase: "So, you took care of that part of your day.",
-      probeQuestion: "What happened next, and how did you resolve that?",
-      probeDirection: "RESULT",
-      topicIsCompleted: false,
-      updatedDayMap: req.body?.dayMap || null,
-      deepAnalysis: {
-        mainMeaning: "Exploring daily events",
-        fluencyScore: 85,
-        clarityScore: 88,
-        detectedPatterns: ["Daily narrative flow"],
-        keyInsights: ["Effective communication effort"],
-        recommendedPhrases: ["Right after that", "Everything was sorted out"],
-      },
-    });
+    const stepResult = buildLocalConversationStep(req.body);
+    return res.json(stepResult);
   }
 });
 

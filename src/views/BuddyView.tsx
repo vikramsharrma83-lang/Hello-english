@@ -28,14 +28,17 @@ interface BuddyMessage {
 interface BuddyViewProps {
   onStartPractice?: () => void;
   onBack?: () => void;
+  language?: 'en' | 'hi';
 }
 
-export const BuddyView: React.FC<BuddyViewProps> = ({ onStartPractice, onBack }) => {
+export const BuddyView: React.FC<BuddyViewProps> = ({ onStartPractice, onBack, language = 'en' }) => {
   const [messages, setMessages] = useState<BuddyMessage[]>([
     {
       id: '1',
       sender: 'buddy',
-      text: "Hello! I'm your English Buddy. How was your day today? You can talk to me freely in English or Hindi-English, and I'll help you speak better!",
+      text: language === 'hi'
+        ? "नमस्ते! मैं आपका Buddy हूँ। आज आपका दिन कैसा रहा? आप मुझसे अंग्रेजी या हिंदी में खुलकर बात कर सकते हैं!"
+        : "Hello! I'm your English Buddy. How was your day today? You can talk to me freely in English or Hindi-English, and I'll help you speak better!",
       timestamp: Date.now()
     }
   ]);
@@ -201,12 +204,14 @@ export const BuddyView: React.FC<BuddyViewProps> = ({ onStartPractice, onBack })
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-lg font-black tracking-tight">Buddy Speaking Partner</h1>
+              <h1 className="text-lg font-black tracking-tight">{language === 'hi' ? 'बडी स्पीकिंग पार्टनर' : 'Buddy Speaking Partner'}</h1>
               <span className="px-2 py-0.5 rounded-full bg-sky-500/20 border border-sky-500/30 text-sky-400 text-[10px] font-bold">
                 LIVE AI
               </span>
             </div>
-            <p className="text-xs text-zinc-400">Talk freely • Buddy listens, understands & rephrases</p>
+            <p className="text-xs text-zinc-400">
+              {language === 'hi' ? 'खुलकर बात करें • Buddy सुनता है और सुधारता है' : 'Talk freely • Buddy listens, understands & rephrases'}
+            </p>
           </div>
         </div>
 
@@ -294,7 +299,7 @@ export const BuddyView: React.FC<BuddyViewProps> = ({ onStartPractice, onBack })
       </div>
 
       {/* Input Bar */}
-      <div className="sticky bottom-20 bg-zinc-950/90 backdrop-blur-md pt-2 pb-2">
+      <div className="sticky bottom-0 bg-zinc-950/95 backdrop-blur-md pt-3 pb-4 z-30 mt-auto">
         <div className="flex items-center gap-2 bg-zinc-900 border border-zinc-800 rounded-2xl p-2 shadow-2xl">
           <button
             onClick={toggleRecording}

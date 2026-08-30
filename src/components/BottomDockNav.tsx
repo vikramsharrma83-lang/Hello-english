@@ -1,16 +1,19 @@
 import React from 'react';
 import { Activity, Compass, Sparkles, Footprints } from 'lucide-react';
+import { getTranslation } from '../lib/translations';
 
 export type NavTab = 'sheeko' | 'dashboard' | 'buddy' | 'snippets' | 'myday' | 'fitness' | 'course' | 'profile' | 'challenge';
 
 interface BottomDockNavProps {
   activeTab: NavTab;
   onSelectTab: (tab: NavTab) => void;
+  language?: 'en' | 'hi';
 }
 
 export const BottomDockNav: React.FC<BottomDockNavProps> = ({
   activeTab,
   onSelectTab,
+  language = 'en',
 }) => {
   return (
     <div className="fixed bottom-6 left-0 right-0 z-40 flex justify-center px-3 pointer-events-none">
@@ -24,10 +27,10 @@ export const BottomDockNav: React.FC<BottomDockNavProps> = ({
           className={`flex flex-col items-center gap-1 transition-colors cursor-pointer ${
             activeTab === 'dashboard' || activeTab === 'fitness' ? 'text-rose-500' : 'text-zinc-400 hover:text-zinc-200'
           }`}
-          title="Summary"
+          title={getTranslation(language, 'summary')}
         >
           <Activity className="w-6 h-6 stroke-[2.2]" />
-          <span className="text-[10px] font-bold tracking-tight">Summary</span>
+          <span className="text-[10px] font-bold tracking-tight">{getTranslation(language, 'summary')}</span>
         </button>
 
         {/* 2. Bytes (Compass with red notification dot) */}
@@ -36,13 +39,13 @@ export const BottomDockNav: React.FC<BottomDockNavProps> = ({
           className={`flex flex-col items-center gap-1 transition-colors cursor-pointer relative ${
             activeTab === 'snippets' || activeTab === 'profile' || activeTab === 'course' ? 'text-zinc-200' : 'text-zinc-400 hover:text-zinc-200'
           }`}
-          title="Bytes"
+          title={getTranslation(language, 'bytes')}
         >
           <div className="relative">
             <Compass className="w-6 h-6 stroke-[2]" />
             <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-rose-500 shadow-md ring-2 ring-[#18191E]" />
           </div>
-          <span className="text-[10px] font-bold tracking-tight">Bytes</span>
+          <span className="text-[10px] font-bold tracking-tight">{getTranslation(language, 'bytes')}</span>
         </button>
 
         {/* 3. Sheeko (Glowing Yellow Sparkle) */}

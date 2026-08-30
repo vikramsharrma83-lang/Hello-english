@@ -26,6 +26,8 @@ interface MyDayViewProps {
   progress?: UserProgress;
   onUpdateProgress?: (updater: (prev: UserProgress) => UserProgress) => void;
   onStepChange?: (step: string) => void;
+  language?: 'en' | 'hi';
+  onToggleLanguage?: () => void;
 }
 
 export const MyDayView: React.FC<MyDayViewProps> = ({
@@ -40,6 +42,8 @@ export const MyDayView: React.FC<MyDayViewProps> = ({
   progress,
   onUpdateProgress,
   onStepChange,
+  language = 'en',
+  onToggleLanguage,
 }) => {
   // Navigation State Machine matching story workflow + patterns hub + challenge view
   const [step, setStep] = useState<
@@ -398,6 +402,8 @@ export const MyDayView: React.FC<MyDayViewProps> = ({
             turns={turns}
             dayMap={dayMap}
             progress={progress}
+            language={language}
+            onToggleLanguage={onToggleLanguage}
           />
         )}
 

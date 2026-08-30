@@ -8,7 +8,7 @@ import {
   Info,
   ArrowRight,
   Target,
-  X,
+  Languages,
   TrendingUp,
   ChevronRight,
   CheckCircle2,
@@ -32,9 +32,11 @@ interface HomePageProps {
   practiceHistory?: PracticeHistoryItem[];
   dayMap?: DayMap;
   progress?: UserProgress;
+  language?: 'en' | 'hi';
+  onToggleLanguage?: () => void;
 }
 
-const SlideToStartBar: React.FC<{ onUnlock: () => void }> = ({ onUnlock }) => {
+const SlideToStartBar: React.FC<{ onUnlock: () => void; language?: 'en' | 'hi' }> = ({ onUnlock, language = 'en' }) => {
   const [dragX, setDragX] = useState(0);
   const [isUnlocked, setIsUnlocked] = useState(false);
   const trackRef = useRef<HTMLDivElement>(null);
@@ -64,7 +66,7 @@ const SlideToStartBar: React.FC<{ onUnlock: () => void }> = ({ onUnlock }) => {
   return (
     <div
       ref={trackRef}
-      className="w-full max-w-sm mx-auto h-20 rounded-full bg-gradient-to-r from-[#e5e7eb] via-[#d1d5db] to-[#9ca3af] border border-zinc-400/60 p-2 relative overflow-hidden flex items-center select-none shadow-[inset_0_4px_8px_rgba(0,0,0,0.25),0_8px_20px_rgba(0,0,0,0.3)] cursor-pointer group"
+      className="w-full max-w-sm mx-auto h-20 rounded-full bg-gradient-to-r from-[#1c1d24] via-[#15161b] to-[#0e0f12] border border-zinc-700/80 p-2 relative overflow-hidden flex items-center select-none shadow-[inset_0_4px_12px_rgba(0,0,0,0.8),0_8px_24px_rgba(0,0,0,0.5)] cursor-pointer group"
       onClick={() => {
         if (!isUnlocked) {
           setIsUnlocked(true);
@@ -74,8 +76,8 @@ const SlideToStartBar: React.FC<{ onUnlock: () => void }> = ({ onUnlock }) => {
     >
       {/* Background track text */}
       <div className="absolute inset-0 flex items-center justify-center pl-8 pointer-events-none">
-        <span className="text-sm font-black tracking-widest text-zinc-600 uppercase drop-shadow-sm">
-          slide to start
+        <span className="text-sm font-black tracking-widest text-zinc-400 uppercase drop-shadow-sm">
+          {language === 'hi' ? 'स्लाइड करके शुरू करें' : 'slide to start'}
         </span>
       </div>
 
@@ -108,6 +110,8 @@ export const HomePage: React.FC<HomePageProps> = ({
   practiceHistory = [],
   dayMap,
   progress,
+  language = 'en',
+  onToggleLanguage,
 }) => {
   const [timeString, setTimeString] = useState('3:23');
   const [greeting, setGreeting] = useState('Good Afternoon');
@@ -163,17 +167,17 @@ export const HomePage: React.FC<HomePageProps> = ({
 
   return (
     <div className="w-full flex-1 flex flex-col items-center justify-between px-4 pt-2 pb-28 text-zinc-100 max-w-[440px] mx-auto min-h-screen select-none relative">
-      {/* Top Header with Close (X) button */}
+      {/* Top Header with Language Selection Button */}
       <div className="w-full flex items-center justify-end z-20 py-1">
-        {/* Right: Close (X) icon button to exit My Day back to main app */}
-        {onClose && (
+        {onToggleLanguage && (
           <button
-            onClick={onClose}
-            className="w-8 h-8 rounded-full bg-zinc-900/90 hover:bg-zinc-800 border border-zinc-800/80 hover:border-zinc-700 text-zinc-400 hover:text-white flex items-center justify-center transition-all cursor-pointer shadow-lg active:scale-95"
-            title="Exit My Day"
-            aria-label="Exit My Day"
+            onClick={onToggleLanguage}
+            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-zinc-900/90 hover:bg-zinc-800 border border-zinc-800 hover:border-zinc-700 text-zinc-200 hover:text-white transition-all cursor-pointer shadow-lg active:scale-95 text-xs font-semibold"
+            title="Toggle Language / भाषा बदलें"
+            aria-label="Toggle Language"
           >
-            <X className="w-4 h-4 stroke-[2.2]" />
+            <Languages className="w-4 h-4 text-amber-400" />
+            <span>{language === 'hi' ? 'हिंदी (EN)' : 'English (हिन्दी)'}</span>
           </button>
         )}
       </div>
@@ -192,7 +196,7 @@ export const HomePage: React.FC<HomePageProps> = ({
         {/* Top / Center: iPhone Slide to Start Bar */}
         <div className="w-full pt-1">
           {onOpenChallenge && (
-            <SlideToStartBar onUnlock={onOpenChallenge} />
+            <SlideToStartBar onUnlock={onOpenChallenge} language={language} />
           )}
         </div>
       </div>
