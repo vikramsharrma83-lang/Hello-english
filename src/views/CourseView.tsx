@@ -8,11 +8,9 @@ import {
   Play, 
   ChevronRight, 
   ArrowLeft,
-  MoreHorizontal,
   Volume2,
   Mic,
-  Check,
-  RotateCcw
+  Check
 } from 'lucide-react';
 import { Question } from '../types';
 import { PRACTICE_QUESTIONS } from '../data/questions';
@@ -31,7 +29,7 @@ interface SubModule {
 interface CourseModule {
   id: string;
   title: string;
-  category: 'Tenses' | 'Helping Verbs' | 'Office' | 'Daily' | 'Friends';
+  category: 'Tenses' | 'Helping Verbs' | 'Office' | 'Daily' | 'Friends' | 'Patterns';
   duration: string;
   instructor: string;
   badge: string;
@@ -59,39 +57,37 @@ export const CourseView: React.FC<CourseViewProps> = ({ onStartPractice }) => {
       id: 'c-1',
       title: 'Mastering Past, Present & Future Tenses',
       category: 'Tenses',
-      duration: '15 min • Fluency Masterclass',
+      duration: '15 min • Grammar Snippet',
       instructor: 'Coach Neha',
       badge: 'POPULAR',
-      image: 'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?auto=format&fit=crop&w=800&q=80',
-      description: 'Learn how to accurately state what happened yesterday, during past shifts, or last weekend using correct past verbs.',
+      image: 'https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?auto=format&fit=crop&w=800&q=80',
+      description: 'Master past actions (yesterday), present duties (today), and future plans (tomorrow) with correct verb forms.',
       subModules: [
         {
-          title: 'Day 1: Start Speaking & Self Introduction',
+          title: 'Snippet 1: Present State & Routine',
           duration: '3 min',
           sentences: [
-            { english: 'I am Rahul.', meaning: 'Your name / পরিচয়' },
-            { english: 'I am from Bangalore.', meaning: 'Where you live / घर या शहर' },
-            { english: 'I work in a warehouse.', meaning: 'Your job / काम' },
-            { english: 'I am ready.', meaning: 'Ready for duty / तैयार हूँ' }
+            { english: 'I work in the logistics warehouse.', meaning: 'मैं लॉजिस्टिक्स वेयरहाउस में काम करता हूँ।' },
+            { english: 'She checks the parcel inventory daily.', meaning: 'वह रोज़ पार्सल इन्वेंट्री चेक करती है।' },
+            { english: 'We start our shift at 9 AM.', meaning: 'हम सुबह 9 बजे अपनी शिफ्ट शुरू करते हैं।' }
           ],
           question: PRACTICE_QUESTIONS[0]
         },
         {
-          title: 'Day 2: Yesterday & Past Actions',
+          title: 'Snippet 2: Past Actions & Yesterday',
           duration: '4 min',
           sentences: [
-            { english: 'Yesterday I went to work.', meaning: 'कल काम पर गया' },
-            { english: 'I checked the stock.', meaning: 'मैंने सामान चेक किया' },
-            { english: 'I finished my shift.', meaning: 'शिफ्ट खत्म किया' }
+            { english: 'Yesterday I finished 50 orders.', meaning: 'कल मैंने 50 ऑर्डर पूरे किए।' },
+            { english: 'He checked the box before dispatch.', meaning: 'उसने रवानगी से पहले बॉक्स चेक किया।' }
           ],
           question: PRACTICE_QUESTIONS[1]
         },
         {
-          title: 'Day 3: Tomorrow & Future Plans',
+          title: 'Snippet 3: Future Plans & Tomorrow',
           duration: '4 min',
           sentences: [
-            { english: 'Tomorrow I will come early.', meaning: 'कल मैं जल्दी आऊंगा' },
-            { english: 'I will check the box.', meaning: 'मैं बॉक्स चेक करूँगा' }
+            { english: 'Tomorrow I will come early for duty.', meaning: 'कल मैं ड्यूटी पर जल्दी आऊँगा।' },
+            { english: 'We will dispatch the express shipment.', meaning: 'हम एक्सप्रेस शिपमेंट भेजेंगे।' }
           ],
           question: PRACTICE_QUESTIONS[2]
         }
@@ -104,25 +100,24 @@ export const CourseView: React.FC<CourseViewProps> = ({ onStartPractice }) => {
       duration: '18 min • Core Grammar',
       instructor: 'Coach Neha',
       badge: 'ESSENTIAL',
-      image: 'https://images.unsplash.com/photo-1574680096145-d05b474e2155?auto=format&fit=crop&w=800&q=80',
-      description: 'Master auxiliary verbs (do, does, did, have, has, can, should) naturally in conversation.',
+      image: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=800&q=80',
+      description: 'Master auxiliary verbs (do, does, did, have, has, can, should) naturally in daily conversations.',
       subModules: [
         {
-          title: 'Day 1: Do & Does in Daily Questions',
+          title: 'Snippet 1: Do & Does in Questions',
           duration: '4 min',
           sentences: [
-            { english: 'Do you work here?', meaning: 'क्या आप यहाँ काम करते हैं?' },
-            { english: 'Do you need help?', meaning: 'क्या आपको मदद चाहिए?' },
-            { english: 'Does he work here?', meaning: 'क्या वह यहाँ काम करता है?' }
+            { english: 'Do you need any help with packing?', meaning: 'क्या आपको पैकिंग में कोई मदद चाहिए?' },
+            { english: 'Does he work in the evening shift?', meaning: 'क्या वह शाम की शिफ्ट में काम करता है?' }
           ],
           question: PRACTICE_QUESTIONS[1]
         },
         {
-          title: 'Day 2: Did you check yesterday?',
+          title: 'Snippet 2: Did & Have for Completion',
           duration: '5 min',
           sentences: [
-            { english: 'Did you come yesterday?', meaning: 'क्या आप कल आए थे?' },
-            { english: 'Did you check the box?', meaning: 'क्या आपने बॉक्स चेक किया?' }
+            { english: 'Did you check the delivery receipt?', meaning: 'क्या आपने डिलीवरी रसीद चेक की?' },
+            { english: 'I have completed my assigned task.', meaning: 'मैंने अपना सौंपा गया काम पूरा कर लिया है।' }
           ],
           question: PRACTICE_QUESTIONS[2]
         }
@@ -135,16 +130,16 @@ export const CourseView: React.FC<CourseViewProps> = ({ onStartPractice }) => {
       duration: '20 min • Professional',
       instructor: 'Coach Neha',
       badge: 'WORK',
-      image: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=800&q=80',
+      image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=800&q=80',
       description: 'Talk to supervisors, report damaged inventory, and handle shipments with confidence.',
       subModules: [
         {
-          title: 'Day 1: Reporting to Supervisor',
+          title: 'Snippet 1: Reporting to Supervisor',
           duration: '5 min',
           sentences: [
-            { english: 'Sir, I have finished the task.', meaning: 'सर, मैंने काम पूरा कर लिया है।' },
-            { english: 'Can you check this item?', meaning: 'क्या आप यह आइटम चेक कर सकते हैं?' }
-          ],
+            { english: 'Sir, I have finished all pending orders.', meaning: 'सर, मैंने सभी पेंडिंग ऑर्डर पूरे कर दिए हैं।' },
+            { emoji: '📋', english: 'Can you please verify this invoice?', meaning: 'क्या आप कृपया इस इनवॉइस को सत्यापित कर सकते हैं?' }
+          ] as any,
           question: PRACTICE_QUESTIONS[3]
         }
       ]
@@ -156,15 +151,15 @@ export const CourseView: React.FC<CourseViewProps> = ({ onStartPractice }) => {
       duration: '15 min • Practical',
       instructor: 'Coach Neha',
       badge: 'NEW',
-      image: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=800&q=80',
+      image: 'https://images.unsplash.com/photo-1506784983877-45594efa4cbe?auto=format&fit=crop&w=800&q=80',
       description: 'Practice describing your morning routine, commute, meals, and evening relaxation.',
       subModules: [
         {
-          title: 'Day 1: Morning & Commute',
+          title: 'Snippet 1: Morning & Commute',
           duration: '4 min',
           sentences: [
-            { english: 'I woke up at 6 AM.', meaning: 'मैं सुबह 6 बजे उठा।' },
-            { english: 'I took the bus to work.', meaning: 'मैंने काम के लिए बस पकड़ी।' }
+            { english: 'I woke up at 6 AM and had tea.', meaning: 'मैं सुबह 6 बजे उठा और चाय पी।' },
+            { english: 'I took the bus to reach work on time.', meaning: 'मैं समय पर काम पर पहुँचने के लिए बस से गया।' }
           ],
           question: PRACTICE_QUESTIONS[1]
         }
@@ -177,17 +172,47 @@ export const CourseView: React.FC<CourseViewProps> = ({ onStartPractice }) => {
       duration: '15 min • Casual',
       instructor: 'Coach Neha',
       badge: 'SOCIAL',
-      image: 'https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=800&q=80',
-      description: 'Discuss weekend plans, share news, and chat easily with friends.',
+      image: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=800&q=80',
+      description: 'Discuss weekend plans, share news, and chat easily with friends and colleagues.',
       subModules: [
         {
-          title: 'Day 1: Catching Up',
+          title: 'Snippet 1: Catching Up & Weekend',
           duration: '4 min',
           sentences: [
-            { english: 'How are you doing?', meaning: 'आप कैसे हैं?' },
-            { english: 'Let us grab tea together.', meaning: 'चलो साथ में चाय पीते हैं।' }
+            { english: 'How are you doing today?', meaning: 'आज आप कैसे हैं?' },
+            { english: 'Let us grab evening tea together.', meaning: 'चलो साथ में शाम की चाय पीते हैं।' }
           ],
           question: PRACTICE_QUESTIONS[0]
+        }
+      ]
+    },
+    {
+      id: 'c-6',
+      title: '10,000 Everyday English Patterns',
+      category: 'Patterns',
+      duration: '25 min • Pattern Masterclass',
+      instructor: 'Coach Neha',
+      badge: 'PATTERNS',
+      image: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=800&q=80',
+      description: 'Master core sentence structures and grammatical patterns used across daily work, commuting, and social interactions.',
+      subModules: [
+        {
+          title: 'Snippet 1: Daily Routine & Time Structure',
+          duration: '5 min',
+          sentences: [
+            { english: 'Every morning I wake up at 6 AM and prepare for work.', meaning: 'हर सुबह मैं सुबह 6 बजे उठता हूँ और काम के लिए तैयार होता हूँ।' },
+            { english: 'After that, I take the bus to reach my workplace.', meaning: 'उसके बाद, मैं अपने कार्यस्थल पर पहुँचने के लिए बस लेता हूँ।' }
+          ],
+          question: PRACTICE_QUESTIONS[0]
+        },
+        {
+          title: 'Snippet 2: Problem Solving & Assistance',
+          duration: '5 min',
+          sentences: [
+            { english: 'Can you please check this inventory report?', meaning: 'क्या आप कृपया इस इन्वेंट्री रिपोर्ट को देख सकते हैं?' },
+            { english: 'I will finish the pending dispatch right now.', meaning: 'मैं अभी पेंडिंग रवानगी पूरी कर दूंगा।' }
+          ],
+          question: PRACTICE_QUESTIONS[1]
         }
       ]
     },
@@ -197,7 +222,6 @@ export const CourseView: React.FC<CourseViewProps> = ({ onStartPractice }) => {
     ? courseModules.filter(m => m.category === selectedCategory)
     : courseModules;
 
-  // Handler to start a specific Day/Submodule flow
   const handleStartSubModule = (sub: SubModule) => {
     setActiveSubModule(sub);
     setLessonStep('how_to_use');
@@ -207,29 +231,26 @@ export const CourseView: React.FC<CourseViewProps> = ({ onStartPractice }) => {
     setIsAnswerCorrect(null);
   };
 
-  // 1. If we are inside a Lesson Flow (HOW TO USE -> PRACTICE -> REAL SITUATION -> COMPLETED)
   if (activeSubModule && lessonStep !== 'hub') {
     return (
       <div className="min-h-screen bg-[#000000] text-white pb-32 pt-6 px-4 font-sans select-none max-w-xl mx-auto">
-        {/* Top Progress / Header Bar */}
         <div className="flex items-center justify-between mb-6">
           <button
             onClick={() => {
               if (lessonStep === 'how_to_use') setActiveSubModule(null);
               else setLessonStep('how_to_use');
             }}
-            className="w-10 h-10 rounded-full bg-zinc-900 border border-zinc-800 flex items-center justify-center text-white hover:bg-zinc-800 transition-colors"
+            className="w-10 h-10 rounded-full bg-zinc-900 border border-zinc-800 flex items-center justify-center text-white hover:bg-zinc-800 transition-colors cursor-pointer"
           >
             <ArrowLeft className="w-5 h-5" />
           </button>
           <div className="text-center">
-            <span className="text-[10px] uppercase font-bold text-rose-500 tracking-wider">SkillGo Lesson</span>
+            <span className="text-[10px] uppercase font-bold text-rose-500 tracking-wider">SkillGo Snippet Lesson</span>
             <h2 className="text-sm font-bold text-white truncate max-w-[200px]">{activeSubModule.title}</h2>
           </div>
           <div className="w-10" />
         </div>
 
-        {/* STEP 1: HOW TO USE (Learn one sentence at a time swipe cards) */}
         {lessonStep === 'how_to_use' && (
           <div className="space-y-6">
             <div className="bg-[#18191E] rounded-3xl p-6 border border-zinc-800 shadow-2xl text-center relative overflow-hidden">
@@ -241,7 +262,7 @@ export const CourseView: React.FC<CourseViewProps> = ({ onStartPractice }) => {
                 <BookOpen className="w-8 h-8" />
               </div>
 
-              <p className="text-xs uppercase tracking-widest text-zinc-400 font-semibold mb-2">Learn This Sentence</p>
+              <p className="text-xs uppercase tracking-widest text-zinc-400 font-semibold mb-2">Learn Sentence Snippet</p>
               
               <h3 className="text-2xl font-black text-white tracking-tight mb-2">
                 "{activeSubModule.sentences[cardIndex].english}"
@@ -251,7 +272,6 @@ export const CourseView: React.FC<CourseViewProps> = ({ onStartPractice }) => {
                 💡 {activeSubModule.sentences[cardIndex].meaning}
               </p>
 
-              {/* Audio Listen & Say button */}
               <div className="flex items-center justify-center gap-3 mb-6">
                 <button 
                   onClick={() => {
@@ -265,7 +285,6 @@ export const CourseView: React.FC<CourseViewProps> = ({ onStartPractice }) => {
                 </button>
               </div>
 
-              {/* Navigation Card Button */}
               <button
                 onClick={() => {
                   if (cardIndex < activeSubModule.sentences.length - 1) {
@@ -277,38 +296,37 @@ export const CourseView: React.FC<CourseViewProps> = ({ onStartPractice }) => {
                 }}
                 className="w-full py-4 rounded-2xl bg-[#ccff00] text-black text-sm font-black hover:bg-[#b8f500] transition-all shadow-lg cursor-pointer"
               >
-                {cardIndex < activeSubModule.sentences.length - 1 ? 'Next Sentence →' : 'Now Let’s Practice (Start Practice)'}
+                {cardIndex < activeSubModule.sentences.length - 1 ? 'Next Sentence →' : 'Start Snippet Practice →'}
               </button>
             </div>
           </div>
         )}
 
-        {/* STEP 2: PRACTICE SESSION (Activities 1 to 6) */}
         {lessonStep === 'practice' && (
           <div className="space-y-6">
             <div className="bg-[#18191E] rounded-3xl p-6 border border-zinc-800 shadow-2xl">
               <div className="flex items-center justify-between mb-4">
-                <span className="text-xs font-bold text-cyan-400 uppercase tracking-widest">Practice Activity {practiceStep + 1} of 4</span>
-                <span className="text-xs text-zinc-400">Interactive Drill</span>
+                <span className="text-xs font-bold text-cyan-400 uppercase tracking-widest">Practice Drill {practiceStep + 1} of 3</span>
+                <span className="text-xs text-zinc-400">Interactive Snippet</span>
               </div>
 
               {practiceStep === 0 && (
                 <div className="space-y-4">
-                  <h3 className="text-lg font-bold text-white mb-2">Choose the correct missing word:</h3>
+                  <h3 className="text-lg font-bold text-white mb-2">Choose correct verb:</h3>
                   <div className="p-4 rounded-2xl bg-zinc-900 border border-zinc-800 text-center text-xl font-bold">
-                    "I <span className="text-cyan-400 underline decoration-cyan-400/50">___</span> Rahul."
+                    "I <span className="text-cyan-400 underline">___</span> in the warehouse."
                   </div>
                   <div className="grid grid-cols-3 gap-3 pt-2">
-                    {['am', 'is', 'are'].map((opt) => (
+                    {['work', 'working', 'worked'].map((opt) => (
                       <button
                         key={opt}
                         onClick={() => {
                           setSelectedOption(opt);
-                          setIsAnswerCorrect(opt === 'am');
+                          setIsAnswerCorrect(opt === 'work');
                         }}
                         className={`py-3 rounded-2xl text-sm font-bold border transition-all cursor-pointer ${
                           selectedOption === opt 
-                            ? opt === 'am' ? 'bg-emerald-600 border-emerald-500 text-white' : 'bg-rose-600 border-rose-500 text-white'
+                            ? opt === 'work' ? 'bg-emerald-600 border-emerald-500 text-white' : 'bg-rose-600 border-rose-500 text-white'
                             : 'bg-zinc-900 border-zinc-800 text-zinc-300 hover:bg-zinc-800'
                         }`}
                       >
@@ -321,21 +339,21 @@ export const CourseView: React.FC<CourseViewProps> = ({ onStartPractice }) => {
 
               {practiceStep === 1 && (
                 <div className="space-y-4">
-                  <h3 className="text-lg font-bold text-white mb-2">Complete the sentence:</h3>
+                  <h3 className="text-lg font-bold text-white mb-2">Complete sentence:</h3>
                   <div className="p-4 rounded-2xl bg-zinc-900 border border-zinc-800 text-center text-lg font-bold">
-                    "I am from <span className="text-cyan-400 underline decoration-cyan-400/50">______</span>."
+                    "Yesterday I <span className="text-cyan-400 underline">______</span> orders."
                   </div>
                   <div className="grid grid-cols-3 gap-3 pt-2">
-                    {['Bangalore', 'Yesterday', 'Work'].map((opt) => (
+                    {['finished', 'finish', 'finishing'].map((opt) => (
                       <button
                         key={opt}
                         onClick={() => {
                           setSelectedOption(opt);
-                          setIsAnswerCorrect(opt === 'Bangalore');
+                          setIsAnswerCorrect(opt === 'finished');
                         }}
                         className={`py-3 rounded-2xl text-xs font-bold border transition-all cursor-pointer ${
                           selectedOption === opt 
-                            ? opt === 'Bangalore' ? 'bg-emerald-600 border-emerald-500 text-white' : 'bg-rose-600 border-rose-500 text-white'
+                            ? opt === 'finished' ? 'bg-emerald-600 border-emerald-500 text-white' : 'bg-rose-600 border-rose-500 text-white'
                             : 'bg-zinc-900 border-zinc-800 text-zinc-300 hover:bg-zinc-800'
                         }`}
                       >
@@ -347,41 +365,11 @@ export const CourseView: React.FC<CourseViewProps> = ({ onStartPractice }) => {
               )}
 
               {practiceStep === 2 && (
-                <div className="space-y-4">
-                  <h3 className="text-lg font-bold text-white mb-2">Arrange the sentence cards in correct order:</h3>
-                  <div className="flex gap-2 justify-center py-2">
-                    <span className="px-3 py-2 rounded-xl bg-zinc-800 border border-zinc-700 text-xs font-bold">am</span>
-                    <span className="px-3 py-2 rounded-xl bg-zinc-800 border border-zinc-700 text-xs font-bold">I</span>
-                    <span className="px-3 py-2 rounded-xl bg-zinc-800 border border-zinc-700 text-xs font-bold">ready</span>
-                  </div>
-                  <p className="text-xs text-zinc-400 text-center">Tap the correct starting word:</p>
-                  <div className="grid grid-cols-3 gap-3 pt-2">
-                    {['am', 'I', 'ready'].map((opt) => (
-                      <button
-                        key={opt}
-                        onClick={() => {
-                          setSelectedOption(opt);
-                          setIsAnswerCorrect(opt === 'I');
-                        }}
-                        className={`py-3 rounded-2xl text-xs font-bold border transition-all cursor-pointer ${
-                          selectedOption === opt 
-                            ? opt === 'I' ? 'bg-emerald-600 border-emerald-500 text-white' : 'bg-rose-600 border-rose-500 text-white'
-                            : 'bg-zinc-900 border-zinc-800 text-zinc-300 hover:bg-zinc-800'
-                        }`}
-                      >
-                        {opt}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {practiceStep === 3 && (
                 <div className="space-y-4 text-center">
-                  <h3 className="text-lg font-bold text-white mb-2">Voice Speaking Practice</h3>
-                  <p className="text-xs text-zinc-400">Say this sentence out loud:</p>
+                  <h3 className="text-lg font-bold text-white mb-2">Voice Pronunciation Check</h3>
+                  <p className="text-xs text-zinc-400">Say this snippet out loud:</p>
                   <div className="p-4 rounded-2xl bg-zinc-900 border border-zinc-800 text-lg font-bold text-cyan-400">
-                    "I am ready for work."
+                    "I am ready for the shift."
                   </div>
                   <button
                     onClick={() => {
@@ -409,12 +397,12 @@ export const CourseView: React.FC<CourseViewProps> = ({ onStartPractice }) => {
                 <button
                   disabled={!selectedOption}
                   onClick={() => {
-                    if (practiceStep < 3) {
+                    if (practiceStep < 2) {
                       setPracticeStep(practiceStep + 1);
                       setSelectedOption(null);
                       setIsAnswerCorrect(null);
                     } else {
-                      setLessonStep('real_situation');
+                      setLessonStep('completed');
                     }
                   }}
                   className={`w-full py-4 rounded-2xl text-sm font-black transition-all shadow-lg ${
@@ -423,76 +411,13 @@ export const CourseView: React.FC<CourseViewProps> = ({ onStartPractice }) => {
                       : 'bg-zinc-800 text-zinc-500 cursor-not-allowed'
                   }`}
                 >
-                  {practiceStep < 3 ? 'Next Practice →' : 'Proceed to Real Situation (AI Roleplay) →'}
+                  {practiceStep < 2 ? 'Next Practice →' : 'Complete Snippet →'}
                 </button>
               </div>
             </div>
           </div>
         )}
 
-        {/* STEP 3: REAL LIFE SITUATION (AI Conversation Roleplay) */}
-        {lessonStep === 'real_situation' && (
-          <div className="space-y-6">
-            <div className="bg-[#18191E] rounded-3xl p-6 border border-zinc-800 shadow-2xl">
-              <span className="text-xs font-bold text-amber-400 uppercase tracking-widest">Real-Life Workplace Situation</span>
-              <h3 className="text-xl font-bold text-white mt-1 mb-3">Meeting Your Supervisor</h3>
-              
-              <div className="p-4 rounded-2xl bg-zinc-900 border border-zinc-800 space-y-3 mb-6">
-                <div className="flex items-start gap-3">
-                  <div className="w-8 h-8 rounded-full bg-cyan-500/20 text-cyan-400 flex items-center justify-center font-bold text-xs shrink-0">
-                    Sup
-                  </div>
-                  <div className="bg-zinc-800/80 p-3 rounded-2xl rounded-tl-none text-xs text-zinc-200">
-                    "Hello! Tell me about yourself and your background."
-                  </div>
-                </div>
-              </div>
-
-              <p className="text-xs text-zinc-400 mb-3 font-medium">Choose your response or tap to speak:</p>
-              
-              <div className="space-y-2.5 mb-6">
-                {[
-                  'My name is Rahul and I am from Bangalore.',
-                  'I work in the warehouse everyday.',
-                  'I am ready for the shift.'
-                ].map((resp, i) => (
-                  <button
-                    key={i}
-                    onClick={() => setSelectedOption(resp)}
-                    className={`w-full p-3.5 rounded-2xl text-left text-xs font-bold border transition-all cursor-pointer ${
-                      selectedOption === resp
-                        ? 'bg-rose-600 border-rose-500 text-white'
-                        : 'bg-zinc-900 border-zinc-800 text-zinc-300 hover:bg-zinc-800'
-                    }`}
-                  >
-                    "{resp}"
-                  </button>
-                ))}
-              </div>
-
-              <button
-                onClick={() => {
-                  onStartPractice(activeSubModule.question);
-                }}
-                className="w-full py-4 rounded-2xl bg-gradient-to-r from-amber-500 to-rose-600 text-white text-sm font-black hover:opacity-95 transition-all shadow-lg flex items-center justify-center gap-2 cursor-pointer"
-              >
-                <Mic className="w-4 h-4" />
-                <span>Open AI Live Conversation Roleplay</span>
-              </button>
-
-              <div className="mt-4 text-center">
-                <button
-                  onClick={() => setLessonStep('completed')}
-                  className="text-xs text-zinc-400 hover:text-white underline cursor-pointer"
-                >
-                  Skip to Lesson Completion
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* STEP 4: LESSON COMPLETION */}
         {lessonStep === 'completed' && (
           <div className="space-y-6 text-center">
             <div className="bg-[#18191E] rounded-3xl p-8 border border-zinc-800 shadow-2xl space-y-6">
@@ -501,27 +426,8 @@ export const CourseView: React.FC<CourseViewProps> = ({ onStartPractice }) => {
               </div>
 
               <div>
-                <span className="text-xs font-bold text-emerald-400 uppercase tracking-widest">🎉 WELL DONE!</span>
-                <h2 className="text-2xl font-black text-white mt-1">You completed today's practice</h2>
-              </div>
-
-              <div className="grid grid-cols-2 gap-3 text-left">
-                <div className="p-3 rounded-xl bg-zinc-900 border border-zinc-800 flex items-center gap-2">
-                  <Check className="w-4 h-4 text-emerald-400" />
-                  <span className="text-xs font-bold text-zinc-300">Learn Sentences</span>
-                </div>
-                <div className="p-3 rounded-xl bg-zinc-900 border border-zinc-800 flex items-center gap-2">
-                  <Check className="w-4 h-4 text-emerald-400" />
-                  <span className="text-xs font-bold text-zinc-300">Practice Drills</span>
-                </div>
-                <div className="p-3 rounded-xl bg-zinc-900 border border-zinc-800 flex items-center gap-2">
-                  <Check className="w-4 h-4 text-emerald-400" />
-                  <span className="text-xs font-bold text-zinc-300">Voice Speaking</span>
-                </div>
-                <div className="p-3 rounded-xl bg-zinc-900 border border-zinc-800 flex items-center gap-2">
-                  <Check className="w-4 h-4 text-emerald-400" />
-                  <span className="text-xs font-bold text-zinc-300">Real Situation</span>
-                </div>
+                <span className="text-xs font-bold text-emerald-400 uppercase tracking-widest">🎉 SNIPPET MASTERED!</span>
+                <h2 className="text-2xl font-black text-white mt-1">You completed this learning card</h2>
               </div>
 
               <div className="space-y-3 pt-2">
@@ -529,13 +435,7 @@ export const CourseView: React.FC<CourseViewProps> = ({ onStartPractice }) => {
                   onClick={() => setActiveSubModule(null)}
                   className="w-full py-4 rounded-2xl bg-[#ccff00] text-black text-sm font-black hover:bg-[#b8f500] transition-all shadow-lg cursor-pointer"
                 >
-                  Continue to Next Day →
-                </button>
-                <button
-                  onClick={() => setActiveProgram(null)}
-                  className="w-full py-3 rounded-2xl bg-zinc-900 border border-zinc-800 text-zinc-300 text-xs font-bold hover:bg-zinc-800 transition-all cursor-pointer"
-                >
-                  Back to Course
+                  Back to Snippets Hub →
                 </button>
               </div>
             </div>
@@ -545,7 +445,6 @@ export const CourseView: React.FC<CourseViewProps> = ({ onStartPractice }) => {
     );
   }
 
-  // 2. If a program is active, render the Day-wise Course Plan (Day 1, Day 2...)
   if (activeProgram) {
     return (
       <div className="min-h-screen bg-[#000000] text-white pb-36 font-sans select-none relative">
@@ -568,20 +467,19 @@ export const CourseView: React.FC<CourseViewProps> = ({ onStartPractice }) => {
           </div>
 
           <div className="absolute bottom-4 left-4 right-4 z-20">
-            <p className="text-xs font-bold text-rose-400 tracking-wider uppercase mb-1">SkillGo Day-Wise Curriculum</p>
+            <p className="text-xs font-bold text-rose-400 tracking-wider uppercase mb-1">SkillGo Snippet Module</p>
             <h1 className="text-2xl font-black text-white tracking-tight">{activeProgram.title}</h1>
           </div>
         </div>
 
-        {/* Day Wise Course List */}
         <div className="px-5 mt-4 space-y-4 max-w-xl mx-auto">
           <div>
             <h2 className="text-sm font-bold text-zinc-300">{activeProgram.instructor}</h2>
-            <p className="text-xs text-zinc-400 mt-0.5">{activeProgram.duration} • Day-wise Practice Plan</p>
+            <p className="text-xs text-zinc-400 mt-0.5">{activeProgram.duration} • Core Snippet Focus</p>
           </div>
 
           <div className="pt-2">
-            <h3 className="text-lg font-black text-white mb-3">Day-Wise Plan</h3>
+            <h3 className="text-lg font-black text-white mb-3">Snippet Learning Units</h3>
             <div className="space-y-3">
               {activeProgram.subModules.map((sub, idx) => (
                 <div 
@@ -591,12 +489,12 @@ export const CourseView: React.FC<CourseViewProps> = ({ onStartPractice }) => {
                 >
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-rose-500/20 to-amber-500/20 text-rose-400 flex items-center justify-center font-bold text-sm border border-rose-500/30">
-                      D{idx + 1}
+                      S{idx + 1}
                     </div>
                     <div>
                       <h4 className="text-sm font-bold text-white group-hover:text-rose-400 transition-colors">{sub.title}</h4>
                       <p className="text-xs text-zinc-400 flex items-center gap-1 mt-0.5">
-                        <Clock className="w-3 h-3" /> {sub.duration} • Learn → Practice → Speak
+                        <Clock className="w-3 h-3" /> {sub.duration} • Learn → Practice
                       </p>
                     </div>
                   </div>
@@ -612,15 +510,14 @@ export const CourseView: React.FC<CourseViewProps> = ({ onStartPractice }) => {
     );
   }
 
-  // 3. Main Course Categories Hub
   return (
     <div className="min-h-screen bg-[#000000] text-white pb-36 pt-4 px-4 font-sans select-none">
       <header className="mb-6 px-2">
         <div className="flex items-center gap-2 mb-1">
           <span className="text-2xl font-black text-rose-500 tracking-tight"> SkillGo</span>
-          <span className="text-xs px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-300 font-bold">English Courses</span>
+          <span className="text-xs px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-300 font-bold">Grammar & Tenses Snippets</span>
         </div>
-        <h1 className="text-3xl font-black text-white tracking-tight">Categories 1 to 6</h1>
+        <h1 className="text-3xl font-black text-white tracking-tight">Snippets Hub</h1>
       </header>
 
       <div className="space-y-6 max-w-xl mx-auto">
@@ -633,9 +530,9 @@ export const CourseView: React.FC<CourseViewProps> = ({ onStartPractice }) => {
                 : 'bg-zinc-900 border border-zinc-800 text-zinc-400 hover:text-white'
             }`}
           >
-            All Categories
+            All Snippets
           </button>
-          {['Tenses', 'Helping Verbs', 'Office', 'Daily', 'Friends'].map((cat) => (
+          {['Tenses', 'Helping Verbs', 'Office', 'Daily', 'Friends', 'Patterns'].map((cat) => (
             <button
               key={cat}
               onClick={() => setSelectedCategory(cat)}
@@ -652,8 +549,8 @@ export const CourseView: React.FC<CourseViewProps> = ({ onStartPractice }) => {
 
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-black text-white">SkillGo Core Programs (1–6)</h2>
-            <span className="text-xs text-zinc-400 font-semibold">{filteredModules.length} Programs</span>
+            <h2 className="text-lg font-black text-white">Tenses, Helping Verbs & Topics</h2>
+            <span className="text-xs text-zinc-400 font-semibold">{filteredModules.length} Cards</span>
           </div>
 
           {filteredModules.map((module) => (
@@ -694,3 +591,4 @@ export const CourseView: React.FC<CourseViewProps> = ({ onStartPractice }) => {
     </div>
   );
 };
+

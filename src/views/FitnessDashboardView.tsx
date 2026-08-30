@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import { UserProgress, Question } from '../types';
 import { PRACTICE_QUESTIONS } from '../data/questions';
+import { EnglishProgressScreen } from '../components/myday/EnglishProgressScreen';
 
 interface FitnessDashboardViewProps {
   progress?: UserProgress;
@@ -38,6 +39,7 @@ export const FitnessDashboardView: React.FC<FitnessDashboardViewProps> = ({
   const [subTab, setSubTab] = useState<FitnessSubTab>('summary');
   const [plusCategory, setPlusCategory] = useState<PlusCategory>('For You');
   const [selectedWorkout, setSelectedWorkout] = useState<any | null>(null);
+  const [isMetricsOpen, setIsMetricsOpen] = useState<boolean>(false);
 
   const workouts = [
     {
@@ -138,17 +140,20 @@ export const FitnessDashboardView: React.FC<FitnessDashboardViewProps> = ({
             className="space-y-4 max-w-xl mx-auto"
           >
             {/* Activity Ring Card */}
-            <div className="bg-[#18191E] rounded-3xl p-5 border border-zinc-800/80 shadow-2xl relative overflow-hidden group">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-bold text-white flex items-center gap-2">
-                  Activity Ring
+            <div 
+              onClick={() => setIsMetricsOpen(true)}
+              className="bg-[#18191E] rounded-3xl p-4 border border-zinc-800/80 shadow-2xl relative overflow-hidden group cursor-pointer hover:border-zinc-700 transition-all"
+            >
+              <div className="flex items-center justify-between mb-2.5">
+                <h2 className="text-sm font-bold text-white flex items-center gap-2">
+                  Confidence Score
                 </h2>
-                <div className="w-8 h-8 rounded-full bg-rose-500/20 flex items-center justify-center text-rose-400 font-bold">
-                  <ChevronRight className="w-5 h-5" />
+                <div className="w-7 h-7 rounded-full bg-rose-500/20 flex items-center justify-center text-rose-400 font-bold">
+                  <ChevronRight className="w-4 h-4" />
                 </div>
               </div>
-              <div className="flex items-center gap-6">
-                <div className="relative w-32 h-32 flex items-center justify-center">
+              <div className="flex items-center gap-5">
+                <div className="relative w-24 h-24 flex items-center justify-center shrink-0">
                   <svg className="w-full h-full -rotate-90" viewBox="0 0 100 100">
                     <circle cx="50" cy="50" r="40" stroke="#3f1d24" strokeWidth="10" fill="none" />
                     <circle 
@@ -157,89 +162,113 @@ export const FitnessDashboardView: React.FC<FitnessDashboardViewProps> = ({
                       strokeWidth="10" 
                       fill="none" 
                       strokeDasharray="251.2"
-                      strokeDashoffset="240"
+                      strokeDashoffset="60.3"
                       strokeLinecap="round"
                     />
                   </svg>
                   <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-                    <div className="w-7 h-7 rounded-full bg-rose-500 flex items-center justify-center text-black mb-0.5 shadow-[0_0_10px_rgba(255,45,85,0.6)]">
-                      <ChevronRight className="w-4 h-4 -rotate-45 font-black stroke-[3]" />
+                    <div className="w-6 h-6 rounded-full bg-rose-500 flex items-center justify-center text-black mb-0.5 shadow-[0_0_8px_rgba(255,45,85,0.6)]">
+                      <ChevronRight className="w-3.5 h-3.5 -rotate-45 font-black stroke-[3]" />
                     </div>
                   </div>
                 </div>
                 <div>
-                  <p className="text-xs uppercase tracking-widest text-zinc-400 font-medium">Move</p>
-                  <p className="text-3xl font-black text-[#ff2d55] tracking-tight mt-0.5">
-                    8<span className="text-xl text-zinc-300 font-bold">/360</span> <span className="text-lg text-[#ff2d55]">KCAL</span>
+                  <p className="text-[11px] uppercase tracking-widest text-zinc-400 font-medium">Overall Average</p>
+                  <p className="text-2xl font-black text-[#ff2d55] tracking-tight mt-0.5">
+                    76%
                   </p>
-                  <p className="text-xs text-zinc-400 mt-2">
-                    🔥 <strong className="text-white">{progress?.streakDays || 5} Day Streak</strong> • Daily Activity Goal
+                  <p className="text-xs font-bold text-zinc-300 mt-1">
+                    24 Activities
                   </p>
                 </div>
               </div>
             </div>
 
-            {/* Grid for Step Count & Step Distance */}
+            {/* English Metrics Summary under Activity Ring */}
+            <div className="bg-[#18191E] rounded-3xl p-4 border border-zinc-800/80 shadow-xl flex items-center justify-around text-center">
+              <div>
+                <p className="text-[10px] uppercase font-bold tracking-wider text-zinc-400">Grammar</p>
+                <p className="text-lg font-black text-white mt-0.5">60%</p>
+              </div>
+              <div className="w-px h-8 bg-zinc-800" />
+              <div>
+                <p className="text-[10px] uppercase font-bold tracking-wider text-zinc-400">Comm</p>
+                <p className="text-lg font-black text-cyan-400 mt-0.5">95%</p>
+              </div>
+              <div className="w-px h-8 bg-zinc-800" />
+              <div>
+                <p className="text-[10px] uppercase font-bold tracking-wider text-zinc-400">Vocab</p>
+                <p className="text-lg font-black text-purple-400 mt-0.5">74%</p>
+              </div>
+            </div>
+
+            {/* Grid for Words Spoken & Sentences Spoken */}
             <div className="grid grid-cols-2 gap-4">
-              {/* Step Count */}
+              {/* Words Spoken Card */}
               <div className="bg-[#18191E] rounded-3xl p-4 border border-zinc-800/80 shadow-xl flex flex-col justify-between">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs uppercase tracking-wider font-bold text-zinc-400">
-                    Step Count
+                  <span className="text-[11px] uppercase tracking-wider font-bold text-zinc-400 truncate pr-1">
+                    Words Spoken
                   </span>
-                  <ChevronRight className="w-4 h-4 text-zinc-500" />
+                  <ChevronRight className="w-4 h-4 text-zinc-500 shrink-0" />
                 </div>
                 <div>
-                  <p className="text-xs text-zinc-400">Today</p>
+                  <p className="text-[11px] text-zinc-400">This Week</p>
                   <p className="text-2xl font-black text-[#d9b8ff] tracking-tight">
-                    332
+                    1,450
                   </p>
                 </div>
                 <div className="h-10 mt-3 flex items-end gap-1">
-                  {[10, 5, 15, 8, 5, 5, 5, 45, 60, 20, 10, 5].map((h, i) => (
+                  {[30, 45, 60, 40, 75, 90, 65].map((h, i) => (
                     <div 
                       key={i} 
                       style={{ height: `${h}%` }} 
-                      className={`flex-1 rounded-t-sm ${i === 8 ? 'bg-[#d9b8ff] shadow-[0_0_8px_rgba(217,184,255,0.6)]' : 'bg-zinc-700/50'}`} 
+                      className={`flex-1 rounded-t-sm ${i === 5 ? 'bg-[#d9b8ff] shadow-[0_0_8px_rgba(217,184,255,0.6)]' : 'bg-zinc-700/50'}`} 
                     />
                   ))}
                 </div>
-                <div className="flex justify-between text-[9px] text-zinc-500 mt-1">
-                  <span>12 AM</span>
-                  <span>6 AM</span>
-                  <span>12 PM</span>
-                  <span>6 PM</span>
+                <div className="flex justify-between text-[8px] font-semibold text-zinc-400 mt-1">
+                  <span>Mon</span>
+                  <span>Tue</span>
+                  <span>Wed</span>
+                  <span>Thu</span>
+                  <span>Fri</span>
+                  <span>Sat</span>
+                  <span>Sun</span>
                 </div>
               </div>
 
-              {/* Step Distance */}
+              {/* Sentences Spoken Card */}
               <div className="bg-[#18191E] rounded-3xl p-4 border border-zinc-800/80 shadow-xl flex flex-col justify-between">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs uppercase tracking-wider font-bold text-zinc-400">
-                    Step Distance
+                  <span className="text-[11px] uppercase tracking-wider font-bold text-zinc-400 truncate pr-1">
+                    Sentences Spoken
                   </span>
-                  <ChevronRight className="w-4 h-4 text-zinc-500" />
+                  <ChevronRight className="w-4 h-4 text-zinc-500 shrink-0" />
                 </div>
                 <div>
-                  <p className="text-xs text-zinc-400">Today</p>
+                  <p className="text-[11px] text-zinc-400">This Week</p>
                   <p className="text-2xl font-black text-cyan-400 tracking-tight">
-                    0.20<span className="text-sm font-bold">KM</span>
+                    92
                   </p>
                 </div>
                 <div className="h-10 mt-3 flex items-end gap-1">
-                  {[10, 5, 15, 8, 5, 5, 5, 45, 80, 20, 10, 5].map((h, i) => (
+                  {[25, 50, 40, 65, 80, 95, 70].map((h, i) => (
                     <div 
                       key={i} 
                       style={{ height: `${h}%` }} 
-                      className={`flex-1 rounded-t-sm ${i === 8 ? 'bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.6)]' : 'bg-zinc-700/50'}`} 
+                      className={`flex-1 rounded-t-sm ${i === 5 ? 'bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.6)]' : 'bg-zinc-700/50'}`} 
                     />
                   ))}
                 </div>
-                <div className="flex justify-between text-[9px] text-zinc-500 mt-1">
-                  <span>12 AM</span>
-                  <span>6 AM</span>
-                  <span>12 PM</span>
-                  <span>6 PM</span>
+                <div className="flex justify-between text-[8px] font-semibold text-zinc-400 mt-1">
+                  <span>Mon</span>
+                  <span>Tue</span>
+                  <span>Wed</span>
+                  <span>Thu</span>
+                  <span>Fri</span>
+                  <span>Sat</span>
+                  <span>Sun</span>
                 </div>
               </div>
             </div>
@@ -254,8 +283,11 @@ export const FitnessDashboardView: React.FC<FitnessDashboardViewProps> = ({
                   </span>
                   <ChevronRight className="w-4 h-4 text-zinc-500" />
                 </div>
-                <div className="flex-1 flex items-center justify-center">
-                  <div className="w-8 h-8 rounded-full border-2 border-zinc-600 border-t-zinc-300 animate-spin" />
+                <div className="flex flex-col justify-center my-auto">
+                  <p className="text-xs text-zinc-400">This Week</p>
+                  <p className="text-2xl font-black text-amber-400 tracking-tight mt-0.5">
+                    125 <span className="text-xs text-zinc-300 font-bold">mins</span>
+                  </p>
                 </div>
               </div>
 
@@ -424,6 +456,17 @@ export const FitnessDashboardView: React.FC<FitnessDashboardViewProps> = ({
           </button>
         </nav>
       </div>
+
+      {/* Detailed English Progress Screen Modal */}
+      <EnglishProgressScreen
+        isOpen={isMetricsOpen}
+        onClose={() => setIsMetricsOpen(false)}
+        progress={progress}
+        onStartPractice={() => {
+          setIsMetricsOpen(false);
+          onStartPractice();
+        }}
+      />
     </div>
   );
 };

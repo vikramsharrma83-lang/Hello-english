@@ -128,208 +128,88 @@ export const HomePage: React.FC<HomePageProps> = ({
         )}
       </div>
 
-      {/* Top Section: Smart Watch / English Confidence Progress Card */}
-      <div className="w-full flex items-center justify-center relative my-auto py-1">
-        {/* Ghost Card Left (09) */}
-        <div className="absolute -left-8 top-1/2 -translate-y-1/2 w-40 h-52 rounded-[32px] border border-zinc-900 bg-zinc-950/30 rotate-[-12deg] opacity-20 flex items-center justify-center pointer-events-none">
-          <span className="text-4xl font-mono font-bold text-zinc-700">09</span>
-        </div>
-
-        {/* Center Main Watch / Progress Card - Entirely Clickable */}
-        <motion.div
-          role="button"
-          tabIndex={0}
-          onClick={() => setIsProgressOpen(true)}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-              setIsProgressOpen(true);
-            }
-          }}
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-          className="relative z-10 w-72 sm:w-[300px] h-[340px] rounded-[42px] p-2.5 bg-[#14151a] border-[2px] border-zinc-800 hover:border-zinc-700 shadow-2xl shadow-black flex flex-col cursor-pointer text-left transition-colors group focus:outline-none"
-          title="Click to view detailed English Confidence Progress"
-        >
-          {/* Inner Screen Area */}
-          <div className="w-full h-full rounded-[34px] bg-black border border-zinc-900 p-4 sm:p-5 flex flex-col justify-between items-center relative overflow-hidden">
-            {/* Top Status Header */}
-            <div className="flex items-center justify-between w-full pt-1">
-              <div
-                role="button"
-                tabIndex={0}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onOpenChallenge?.();
-                }}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    e.stopPropagation();
-                    onOpenChallenge?.();
-                  }
-                }}
-                className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-950/40 hover:bg-amber-900/60 border border-amber-800/40 text-amber-300 text-[10px] font-bold transition-colors cursor-pointer"
-                title="View Course Roadmap"
-              >
-                <span>🔥 {progress?.challenge?.totalDays || 5} Days Course</span>
-              </div>
-              <div className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-zinc-900 border border-zinc-800">
-                <span className="w-1.5 h-1.5 rounded-full bg-zinc-400 animate-pulse" />
-                <span className="text-[9px] font-extrabold tracking-wider text-zinc-400 uppercase">
-                  PROGRESS
-                </span>
-              </div>
-            </div>
-
-            {/* Center: Large English Confidence Pie Chart & Main Score */}
-            <div className="flex flex-col items-center justify-center my-auto text-center w-full">
-              {/* Large Pie Chart Ring */}
-              <div className="relative w-28 h-28 sm:w-32 sm:h-32 flex items-center justify-center my-1">
-                <svg className="w-full h-full transform -rotate-90" viewBox="0 0 126 126">
-                  {/* Track */}
-                  <circle
-                    cx="63"
-                    cy="63"
-                    r={normalizedRadius}
-                    fill="transparent"
-                    stroke="#18181b"
-                    strokeWidth={strokeWidth}
-                  />
-
-                  {/* 7 Weighted Slices */}
-                  {watchSlices.map((slice, i) => {
-                    const greyShades = ['#3f3f46', '#52525b', '#71717a', '#a1a1aa', '#d4d4d8', '#71717a', '#52525b'];
-                    return (
-                      <circle
-                        key={slice.id}
-                        cx="63"
-                        cy="63"
-                        r={normalizedRadius}
-                        fill="transparent"
-                        stroke={greyShades[i % greyShades.length]}
-                        strokeWidth={strokeWidth}
-                        strokeDasharray={slice.strokeDasharray}
-                        strokeDashoffset={slice.strokeDashoffset}
-                        strokeLinecap="round"
-                      />
-                    );
-                  })}
-                </svg>
-
-                {/* Center Score % in ring */}
-                <div className="absolute inset-0 flex flex-col items-center justify-center text-center pointer-events-none">
-                  <span className="text-3xl sm:text-4xl font-black text-white tracking-tight leading-none">
-                    {confidenceData.overallScore}%
-                  </span>
+      {/* Main Content Area: Highlighted Course at top/center, and 3-grid compact cards at bottom */}
+      <div className="w-full flex-1 flex flex-col justify-between max-w-sm mx-auto py-2">
+        {/* Top / Center: Highlighted Course Card */}
+        <div className="w-full my-auto">
+          {onOpenChallenge && (
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={onOpenChallenge}
+              className="w-full p-4 rounded-2xl bg-gradient-to-r from-emerald-950/50 via-[#14151b] to-[#14151b] hover:from-emerald-900/60 border-2 border-emerald-500/50 hover:border-emerald-400 text-left transition-all cursor-pointer shadow-[0_0_24px_rgba(16,185,129,0.2)] flex items-center justify-between group"
+            >
+              <div className="flex items-center gap-3.5">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-400/30 via-teal-500/25 to-sky-500/30 border border-emerald-400/50 relative flex items-center justify-center shrink-0 shadow-[0_0_16px_rgba(16,185,129,0.4)] overflow-hidden">
+                  <Target className="w-6 h-6 text-emerald-300 drop-shadow-[0_0_8px_rgba(16,185,129,0.9)] relative z-10" />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-black text-white tracking-wider uppercase">Course</span>
+                    <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-[9px] font-bold text-emerald-300 uppercase">Featured</span>
+                  </div>
+                  <p className="text-xs text-zinc-300 font-medium mt-0.5">
+                    {progress?.challenge?.totalDays || 5}-Day Fluency Roadmap
+                  </p>
                 </div>
               </div>
-
-              {/* Clean Minimal Main Label */}
-              <div className="text-sm sm:text-base font-extrabold text-zinc-200 tracking-tight mt-1.5">
-                English Confidence: {confidenceData.overallScore}%
+              <div className="w-8 h-8 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-300 group-hover:bg-emerald-500 group-hover:text-black transition-colors">
+                <ChevronRight className="w-4 h-4 font-bold" />
               </div>
-
-              {/* 3 Small Indicators in Grey/Zinc shade */}
-              <div className="mt-2.5 px-3 py-1 rounded-full bg-zinc-900 border border-zinc-800 flex items-center justify-center gap-2 text-[10px] font-semibold tracking-tight text-zinc-400">
-                <span>Grammar {confidenceData.cardIndicators.grammar}%</span>
-                <span className="text-zinc-600 font-bold">|</span>
-                <span>Comm {confidenceData.cardIndicators.communication}%</span>
-                <span className="text-zinc-600 font-bold">|</span>
-                <span>Vocab {confidenceData.cardIndicators.vocabulary}%</span>
-              </div>
-            </div>
-
-            <div className="w-full text-center pb-1">
-              <span className="text-[10px] text-zinc-500 font-medium tracking-tight">Tap for Detailed Analytics →</span>
-            </div>
-          </div>
-        </motion.div>
-
-        {/* Ghost Card Right (10) */}
-        <div className="absolute -right-8 top-1/2 -translate-y-1/2 w-40 h-52 rounded-[32px] border border-zinc-900 bg-zinc-950/30 rotate-[12deg] opacity-20 flex items-center justify-center pointer-events-none">
-          <span className="text-4xl font-mono font-bold text-zinc-700">10</span>
+            </motion.button>
+          )}
         </div>
-      </div>
 
-      {/* Clickable Voice Studio Card (Replaces the Tap to Start Talking card) */}
-      <div className="w-full max-w-[280px] mx-auto my-3">
-        <motion.button
-          type="button"
-          onClick={onStart}
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-          className="w-full text-left rounded-2xl p-3.5 bg-[#14151b] hover:bg-zinc-900 border border-zinc-800 hover:border-zinc-700 shadow-xl flex items-center gap-3.5 cursor-pointer transition-all group"
-        >
-          <div className="w-12 h-12 rounded-xl bg-gradient-to-tr from-sky-500/20 to-indigo-500/20 border border-sky-500/30 flex items-center justify-center text-sky-400 shrink-0 shadow-[0_0_12px_rgba(56,189,248,0.2)] group-hover:scale-105 transition-transform">
-            <Mic className="w-6 h-6 animate-pulse text-sky-400" />
-          </div>
-          <div className="flex-1">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-black text-white tracking-tight group-hover:text-sky-400 transition-colors">Voice Studio</span>
-              <span className="px-2 py-0.5 rounded-full bg-sky-500/20 text-[9px] font-bold text-sky-400">TAP TO TALK</span>
-            </div>
-            <p className="text-[11px] text-zinc-400 leading-snug mt-0.5">
-              Buddy listens & helps you master spoken English.
-            </p>
-          </div>
-        </motion.button>
-      </div>
-
-
-
-      {/* Middle Greeting & CTA */}
-      <div className="w-full flex flex-col items-center text-center mt-2 mb-6">
-        {/* Course / Fluency Challenge Card */}
-        {onOpenChallenge && (
+        {/* Bottom: 3-Grid Compact Cards (Voice Studio, Performance, Patterns) */}
+        <div className="grid grid-cols-3 gap-2 w-full mt-4">
+          {/* Voice Studio Card */}
           <motion.button
-            whileHover={{ scale: 1.01 }}
-            whileTap={{ scale: 0.98 }}
-            onClick={onOpenChallenge}
-            className="w-full max-w-[260px] mx-auto mt-3 py-2.5 px-4 rounded-full bg-[#14151b] hover:bg-[#1a1c24] border border-zinc-800 hover:border-zinc-700 text-left transition-all cursor-pointer shadow-lg flex items-center justify-between group"
-          >
-            <div className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-2xl bg-gradient-to-br from-emerald-400/30 via-teal-500/25 to-sky-500/30 border border-emerald-400/40 relative flex items-center justify-center shrink-0 shadow-[0_0_16px_rgba(16,185,129,0.3)] overflow-hidden">
-                <div className="absolute top-0 left-0 w-full h-1/2 bg-gradient-to-b from-white/50 to-transparent pointer-events-none" />
-                <div className="absolute inset-1 rounded-xl bg-radial from-emerald-300/20 via-transparent to-transparent pointer-events-none" />
-                <Target className="w-4.5 h-4.5 text-emerald-300 drop-shadow-[0_0_6px_rgba(16,185,129,0.8)] relative z-10" />
-              </div>
-              <span className="text-xs font-bold text-white tracking-wider">COURSE</span>
-            </div>
-            <ChevronRight className="w-3.5 h-3.5 text-zinc-500 group-hover:text-white transition-colors" />
-          </motion.button>
-        )}
-      </div>
-
-      {/* Bottom Minimal Navigation Dock */}
-      <div className="w-full flex items-center justify-center mt-auto pt-2">
-        <div className="bg-[#15161b] border border-zinc-800 rounded-full px-6 py-2.5 flex items-center gap-8 shadow-2xl">
-          {/* Buddy Tab (Active) */}
-          <button
+            type="button"
             onClick={onStart}
-            className="flex flex-col items-center gap-1 text-sky-400 font-bold text-xs cursor-pointer group"
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.97 }}
+            className="p-3 rounded-2xl bg-[#14151b] hover:bg-zinc-900 border border-zinc-800 hover:border-sky-500/50 text-center transition-all cursor-pointer shadow-lg flex flex-col items-center justify-between group"
           >
-            <div className="w-5 h-5 rounded-full border-2 border-sky-400 flex items-center justify-center">
-              <span className="w-2 h-2 rounded-full bg-sky-400 shadow-[0_0_6px_#38bdf8]" />
+            <div className="w-9 h-9 rounded-xl bg-sky-500/20 border border-sky-500/30 flex items-center justify-center text-sky-400 shadow-[0_0_10px_rgba(56,189,248,0.2)] group-hover:scale-105 transition-transform mb-2">
+              <Mic className="w-4 h-4 animate-pulse text-sky-400" />
             </div>
-            <span className="text-[11px] text-sky-400">Buddy</span>
-          </button>
+            <div>
+              <span className="text-[11px] font-bold text-white tracking-tight block group-hover:text-sky-400 transition-colors">Voice Studio</span>
+              <span className="text-[9px] text-zinc-400 block mt-0.5">Talk & practice</span>
+            </div>
+          </motion.button>
 
-          {/* Patterns Tab */}
-          <button
-            onClick={onOpenPatternLibrary}
-            className="flex flex-col items-center gap-1 text-zinc-400 hover:text-zinc-200 text-xs cursor-pointer transition-colors"
-          >
-            <BookOpen className="w-5 h-5 stroke-[1.8]" />
-            <span className="text-[11px]">Patterns</span>
-          </button>
-
-          {/* Performance Tab */}
-          <button
+          {/* Performance Card */}
+          <motion.button
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.97 }}
             onClick={() => setIsProgressOpen(true)}
-            className="flex flex-col items-center gap-1 text-zinc-400 hover:text-zinc-200 text-xs cursor-pointer transition-colors"
+            className="p-3 rounded-2xl bg-[#14151b] hover:bg-zinc-900 border border-zinc-800 hover:border-amber-500/50 text-center transition-all cursor-pointer shadow-lg flex flex-col items-center justify-between group"
           >
-            <ActivityIcon className="w-5 h-5 stroke-[1.8]" />
-            <span className="text-[11px]">Performance</span>
-          </button>
+            <div className="w-9 h-9 rounded-xl bg-amber-500/20 border border-amber-500/30 flex items-center justify-center text-amber-300 shadow-[0_0_10px_rgba(245,158,11,0.2)] group-hover:scale-105 transition-transform mb-2">
+              <ActivityIcon className="w-4 h-4" />
+            </div>
+            <div>
+              <span className="text-[11px] font-bold text-white tracking-tight block group-hover:text-amber-400 transition-colors">Performance</span>
+              <span className="text-[9px] text-zinc-400 block mt-0.5">Confidence stats</span>
+            </div>
+          </motion.button>
+
+          {/* Patterns Card */}
+          <motion.button
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.97 }}
+            onClick={onOpenPatternLibrary}
+            className="p-3 rounded-2xl bg-[#14151b] hover:bg-zinc-900 border border-zinc-800 hover:border-purple-500/50 text-center transition-all cursor-pointer shadow-lg flex flex-col items-center justify-between group"
+          >
+            <div className="w-9 h-9 rounded-xl bg-purple-500/20 border border-purple-500/30 flex items-center justify-center text-purple-300 shadow-[0_0_10px_rgba(168,85,247,0.2)] group-hover:scale-105 transition-transform mb-2">
+              <BookOpen className="w-4 h-4" />
+            </div>
+            <div>
+              <span className="text-[11px] font-bold text-white tracking-tight block group-hover:text-purple-400 transition-colors">Patterns</span>
+              <span className="text-[9px] text-zinc-400 block mt-0.5">Grammar guide</span>
+            </div>
+          </motion.button>
         </div>
       </div>
 

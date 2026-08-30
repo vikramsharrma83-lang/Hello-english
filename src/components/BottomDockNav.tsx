@@ -1,5 +1,5 @@
 import React from 'react';
-import { BookOpen, BarChart3, Sparkles, Users } from 'lucide-react';
+import { BookOpen, BarChart3, Sparkles } from 'lucide-react';
 
 export type NavTab = 'sheeko' | 'dashboard' | 'buddy' | 'snippets' | 'myday' | 'fitness' | 'course' | 'profile' | 'challenge';
 
@@ -16,7 +16,7 @@ export const BottomDockNav: React.FC<BottomDockNavProps> = ({
     <div className="fixed bottom-6 left-0 right-0 z-40 flex justify-center px-3 pointer-events-none">
       <nav
         aria-label="Main Navigation"
-        className="pointer-events-auto bg-[#18191E]/95 backdrop-blur-2xl rounded-full px-6 py-2.5 border border-zinc-800/90 flex items-center justify-center gap-7 shadow-2xl shadow-black/95 relative"
+        className="pointer-events-auto bg-[#18191E]/95 backdrop-blur-2xl rounded-full px-8 py-2.5 border border-zinc-800/90 flex items-center justify-center gap-10 shadow-2xl shadow-black/95 relative"
       >
         {/* 1. Dashboard */}
         <button
@@ -30,19 +30,7 @@ export const BottomDockNav: React.FC<BottomDockNavProps> = ({
           <span className="text-[9px] font-bold tracking-tight">Dashboard</span>
         </button>
 
-        {/* 2. Buddy */}
-        <button
-          onClick={() => onSelectTab('buddy')}
-          className={`flex flex-col items-center gap-0.5 transition-colors cursor-pointer ${
-            activeTab === 'buddy' || activeTab === 'course' ? 'text-cyan-400' : 'text-zinc-400 hover:text-zinc-200'
-          }`}
-          title="Buddy"
-        >
-          <Users className="w-5 h-5" />
-          <span className="text-[9px] font-bold tracking-tight">Buddy</span>
-        </button>
-
-        {/* 3. Sheekho (Central Highlighted Button) */}
+        {/* 2. Sheekho (Central Highlighted Button) */}
         <button
           onClick={() => onSelectTab('sheeko')}
           className="relative w-14 h-14 rounded-full bg-gradient-to-b from-amber-500/35 via-zinc-900 to-zinc-950 border-2 border-amber-400/80 shadow-[0_0_20px_rgba(245,158,11,0.3)] hover:scale-105 active:scale-95 transition-all duration-300 flex flex-col items-center justify-center cursor-pointer group select-none -mt-4"
@@ -56,11 +44,11 @@ export const BottomDockNav: React.FC<BottomDockNavProps> = ({
           </span>
         </button>
 
-        {/* 4. Snippets */}
+        {/* 3. Snippets */}
         <button
           onClick={() => onSelectTab('snippets')}
           className={`flex flex-col items-center gap-0.5 transition-colors cursor-pointer ${
-            activeTab === 'snippets' || activeTab === 'profile' ? 'text-purple-400' : 'text-zinc-400 hover:text-zinc-200'
+            activeTab === 'snippets' || activeTab === 'profile' || activeTab === 'course' ? 'text-purple-400' : 'text-zinc-400 hover:text-zinc-200'
           }`}
           title="Snippets"
         >
