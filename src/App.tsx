@@ -282,7 +282,7 @@ export default function App() {
             >
               <ChallengeView
                 progress={progress}
-                onBack={() => setActiveTab('fitness')}
+                onBack={() => setActiveTab('sheeko')}
                 onStartMyDay={() => setActiveTab('myday')}
                 onStartPracticeQuestion={(q) => handleStartPractice(q)}
                 onUpdateProgress={setProgress}
@@ -313,8 +313,8 @@ export default function App() {
                 onNavigateTab={(tab) => {
                   if (tab === 'practice') {
                     handleStartPractice();
-                  } else if (tab === 'home' || tab === 'fitness') {
-                    setActiveTab('dashboard');
+                  } else if (tab === 'home' || tab === 'fitness' || tab === 'dashboard') {
+                    setActiveTab('sheeko');
                   } else {
                     setActiveTab(tab as any);
                   }
@@ -335,7 +335,10 @@ export default function App() {
               {practiceStep === 'question' && (
                 <QuestionScreen
                   question={currentQuestion}
-                  onBack={() => setActiveTab(returnTab || 'sheeko')}
+                  onBack={() => {
+                    const fallback = returnTab === 'dashboard' || returnTab === 'fitness' ? 'sheeko' : (returnTab || 'sheeko');
+                    setActiveTab(fallback);
+                  }}
                   onContinue={() => setPracticeStep('speak')}
                   onShuffleQuestion={handleShuffleQuestion}
                 />
@@ -376,7 +379,7 @@ export default function App() {
             >
               <FitnessDashboardView
                 progress={progress}
-                onStartPractice={(q) => handleStartPractice(q, 'dashboard')}
+                onStartPractice={(q) => handleStartPractice(q, 'sheeko')}
                 onOpenMyDay={() => setActiveTab('sheeko')}
               />
             </motion.div>
@@ -393,6 +396,7 @@ export default function App() {
             >
               <BuddyView
                 onStartPractice={() => handleStartPractice()}
+                onBack={() => setActiveTab('sheeko')}
               />
             </motion.div>
           )}
@@ -413,7 +417,7 @@ export default function App() {
           )}
         </AnimatePresence>
 
-        {activeTab !== 'practice' && activeTab !== 'buddy' && activeTab !== 'sheeko' && (
+        {activeTab !== 'practice' && (
           <BottomDockNav
             activeTab={activeTab}
             onSelectTab={(tab) => {

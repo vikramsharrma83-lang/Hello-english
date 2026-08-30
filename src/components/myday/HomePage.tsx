@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'motion/react';
 import {
   Sparkles,
@@ -16,6 +16,7 @@ import {
   Mic,
 } from 'lucide-react';
 import { EnglishProgressScreen } from './EnglishProgressScreen';
+import { SheekoCoverflowCarousel } from '../SheekoCoverflowCarousel';
 import { calculateEnglishConfidence } from '../../utils/confidenceMetrics';
 import { ConversationTurn, PracticeHistoryItem, DayMap, UserProgress } from '../../types';
 
@@ -32,6 +33,69 @@ interface HomePageProps {
   dayMap?: DayMap;
   progress?: UserProgress;
 }
+
+const SlideToStartBar: React.FC<{ onUnlock: () => void }> = ({ onUnlock }) => {
+  const [dragX, setDragX] = useState(0);
+  const [isUnlocked, setIsUnlocked] = useState(false);
+  const trackRef = useRef<HTMLDivElement>(null);
+
+  const handleDrag = (_e: any, info: any) => {
+    if (!trackRef.current || isUnlocked) return;
+    const trackWidth = trackRef.current.clientWidth - 52; // thumb width ~48px + padding
+    const currentX = Math.max(0, Math.min(info.offset.x, trackWidth));
+    setDragX(currentX);
+    if (currentX >= trackWidth * 0.75) {
+      setIsUnlocked(true);
+      onUnlock();
+    }
+  };
+
+  const handleDragEnd = (_e: any, info: any) => {
+    if (!trackRef.current || isUnlocked) return;
+    const trackWidth = trackRef.current.clientWidth - 52;
+    if (info.offset.x >= trackWidth * 0.7) {
+      setIsUnlocked(true);
+      onUnlock();
+    } else {
+      setDragX(0);
+    }
+  };
+
+  return (
+    <div
+      ref={trackRef}
+      className="w-full h-14 rounded-2xl bg-[#121316] border border-zinc-700/80 p-1.5 relative overflow-hidden flex items-center select-none shadow-md cursor-pointer group"
+      onClick={() => {
+        if (!isUnlocked) {
+          setIsUnlocked(true);
+          onUnlock();
+        }
+      }}
+    >
+      {/* Background track text */}
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+        <span className="text-xs font-semibold tracking-wide text-zinc-400 group-hover:text-zinc-300 transition-colors">
+          slide to start
+        </span>
+      </div>
+
+      {/* Draggable thumb */}
+      <motion.div
+        drag="x"
+        dragConstraints={{ left: 0, right: 220 }}
+        dragElastic={0.05}
+        dragMomentum={false}
+        onDrag={handleDrag}
+        onDragEnd={handleDragEnd}
+        animate={{ x: isUnlocked ? 220 : dragX }}
+        transition={{ type: 'spring', stiffness: 400, damping: 35 }}
+        className="w-11 h-11 rounded-xl bg-[#22232a] border border-zinc-600 shadow-lg flex items-center justify-center text-zinc-300 relative z-10 cursor-grab active:cursor-grabbing"
+      >
+        <ChevronRight className="w-5 h-5 text-zinc-200 stroke-[2.5]" />
+      </motion.div>
+    </div>
+  );
+};
 
 export const HomePage: React.FC<HomePageProps> = ({
   onStart,
@@ -98,118 +162,38 @@ export const HomePage: React.FC<HomePageProps> = ({
   });
 
   return (
-    <div className="w-full flex-1 flex flex-col items-center justify-between px-4 pt-4 pb-6 text-zinc-100 max-w-[440px] mx-auto min-h-screen select-none relative">
-      {/* Top Header with Close (X) button & Quick Utilities */}
-      <div className="w-full flex items-center justify-between z-20 py-2">
-        {/* Left: Profile / My studio badge */}
-        <button
-          onClick={onOpenProfile}
-          className="flex items-center gap-2 group cursor-pointer text-left focus:outline-none"
-          title="Open Profile"
-        >
-          <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-amber-500/20 to-sky-500/20 border border-amber-500/30 flex items-center justify-center group-hover:scale-105 transition-transform">
-            <Sparkles className="w-4 h-4 text-amber-400" />
-          </div>
-          <div>
-            <div className="text-xs font-black text-white tracking-tight group-hover:text-amber-400 transition-colors">My studio</div>
-          </div>
-        </button>
-
+    <div className="w-full flex-1 flex flex-col items-center justify-between px-4 pt-2 pb-28 text-zinc-100 max-w-[440px] mx-auto min-h-screen select-none relative">
+      {/* Top Header with Close (X) button */}
+      <div className="w-full flex items-center justify-end z-20 py-1">
         {/* Right: Close (X) icon button to exit My Day back to main app */}
         {onClose && (
           <button
             onClick={onClose}
-            className="w-9 h-9 rounded-full bg-zinc-900/90 hover:bg-zinc-800 border border-zinc-800/80 hover:border-zinc-700 text-zinc-400 hover:text-white flex items-center justify-center transition-all cursor-pointer shadow-lg active:scale-95"
+            className="w-8 h-8 rounded-full bg-zinc-900/90 hover:bg-zinc-800 border border-zinc-800/80 hover:border-zinc-700 text-zinc-400 hover:text-white flex items-center justify-center transition-all cursor-pointer shadow-lg active:scale-95"
             title="Exit My Day"
             aria-label="Exit My Day"
           >
-            <X className="w-4.5 h-4.5 stroke-[2.2]" />
+            <X className="w-4 h-4 stroke-[2.2]" />
           </button>
         )}
       </div>
 
-      {/* Main Content Area: Highlighted Course at top/center, and 3-grid compact cards at bottom */}
-      <div className="w-full flex-1 flex flex-col justify-between max-w-sm mx-auto py-2">
-        {/* Top / Center: Highlighted Course Card */}
-        <div className="w-full my-auto">
-          {onOpenChallenge && (
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              onClick={onOpenChallenge}
-              className="w-full p-4 rounded-2xl bg-gradient-to-r from-emerald-950/50 via-[#14151b] to-[#14151b] hover:from-emerald-900/60 border-2 border-emerald-500/50 hover:border-emerald-400 text-left transition-all cursor-pointer shadow-[0_0_24px_rgba(16,185,129,0.2)] flex items-center justify-between group"
-            >
-              <div className="flex items-center gap-3.5">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-400/30 via-teal-500/25 to-sky-500/30 border border-emerald-400/50 relative flex items-center justify-center shrink-0 shadow-[0_0_16px_rgba(16,185,129,0.4)] overflow-hidden">
-                  <Target className="w-6 h-6 text-emerald-300 drop-shadow-[0_0_8px_rgba(16,185,129,0.9)] relative z-10" />
-                </div>
-                <div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm font-black text-white tracking-wider uppercase">Course</span>
-                    <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-[9px] font-bold text-emerald-300 uppercase">Featured</span>
-                  </div>
-                  <p className="text-xs text-zinc-300 font-medium mt-0.5">
-                    {progress?.challenge?.totalDays || 5}-Day Fluency Roadmap
-                  </p>
-                </div>
-              </div>
-              <div className="w-8 h-8 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-300 group-hover:bg-emerald-500 group-hover:text-black transition-colors">
-                <ChevronRight className="w-4 h-4 font-bold" />
-              </div>
-            </motion.button>
-          )}
+      {/* Main Content Area: Carousel above, Course card, and 3-grid compact cards */}
+      <div className="w-full flex-1 flex flex-col justify-start max-w-sm mx-auto py-0 gap-1.5">
+        {/* Coverflow Carousel with Floating Small Icon Buttons */}
+        <div className="w-full">
+          <SheekoCoverflowCarousel
+            onVoiceStudio={onStart}
+            onPerformance={() => setIsProgressOpen(true)}
+            onPatterns={onOpenPatternLibrary}
+          />
         </div>
 
-        {/* Bottom: 3-Grid Compact Cards (Voice Studio, Performance, Patterns) */}
-        <div className="grid grid-cols-3 gap-2 w-full mt-4">
-          {/* Voice Studio Card */}
-          <motion.button
-            type="button"
-            onClick={onStart}
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.97 }}
-            className="p-3 rounded-2xl bg-[#14151b] hover:bg-zinc-900 border border-zinc-800 hover:border-sky-500/50 text-center transition-all cursor-pointer shadow-lg flex flex-col items-center justify-between group"
-          >
-            <div className="w-9 h-9 rounded-xl bg-sky-500/20 border border-sky-500/30 flex items-center justify-center text-sky-400 shadow-[0_0_10px_rgba(56,189,248,0.2)] group-hover:scale-105 transition-transform mb-2">
-              <Mic className="w-4 h-4 animate-pulse text-sky-400" />
-            </div>
-            <div>
-              <span className="text-[11px] font-bold text-white tracking-tight block group-hover:text-sky-400 transition-colors">Voice Studio</span>
-              <span className="text-[9px] text-zinc-400 block mt-0.5">Talk & practice</span>
-            </div>
-          </motion.button>
-
-          {/* Performance Card */}
-          <motion.button
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.97 }}
-            onClick={() => setIsProgressOpen(true)}
-            className="p-3 rounded-2xl bg-[#14151b] hover:bg-zinc-900 border border-zinc-800 hover:border-amber-500/50 text-center transition-all cursor-pointer shadow-lg flex flex-col items-center justify-between group"
-          >
-            <div className="w-9 h-9 rounded-xl bg-amber-500/20 border border-amber-500/30 flex items-center justify-center text-amber-300 shadow-[0_0_10px_rgba(245,158,11,0.2)] group-hover:scale-105 transition-transform mb-2">
-              <ActivityIcon className="w-4 h-4" />
-            </div>
-            <div>
-              <span className="text-[11px] font-bold text-white tracking-tight block group-hover:text-amber-400 transition-colors">Performance</span>
-              <span className="text-[9px] text-zinc-400 block mt-0.5">Confidence stats</span>
-            </div>
-          </motion.button>
-
-          {/* Patterns Card */}
-          <motion.button
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.97 }}
-            onClick={onOpenPatternLibrary}
-            className="p-3 rounded-2xl bg-[#14151b] hover:bg-zinc-900 border border-zinc-800 hover:border-purple-500/50 text-center transition-all cursor-pointer shadow-lg flex flex-col items-center justify-between group"
-          >
-            <div className="w-9 h-9 rounded-xl bg-purple-500/20 border border-purple-500/30 flex items-center justify-center text-purple-300 shadow-[0_0_10px_rgba(168,85,247,0.2)] group-hover:scale-105 transition-transform mb-2">
-              <BookOpen className="w-4 h-4" />
-            </div>
-            <div>
-              <span className="text-[11px] font-bold text-white tracking-tight block group-hover:text-purple-400 transition-colors">Patterns</span>
-              <span className="text-[9px] text-zinc-400 block mt-0.5">Grammar guide</span>
-            </div>
-          </motion.button>
+        {/* Top / Center: iPhone Slide to Start Bar */}
+        <div className="w-full pt-1">
+          {onOpenChallenge && (
+            <SlideToStartBar onUnlock={onOpenChallenge} />
+          )}
         </div>
       </div>
 

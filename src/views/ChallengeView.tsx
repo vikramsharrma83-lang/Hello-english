@@ -21,6 +21,7 @@ import {
   getOrCreateChallenge,
   startNewChallenge,
 } from '../utils/challengeManager';
+import { MyDayPatternsHub } from '../components/myday/MyDayPatternsHub';
 
 interface ChallengeViewProps {
   progress: UserProgress;
@@ -30,7 +31,7 @@ interface ChallengeViewProps {
   onUpdateProgress?: (updater: (prev: UserProgress) => UserProgress) => void;
 }
 
-type ChallengeSubView = 'carousel' | 'dashboard' | 'training_options';
+type ChallengeSubView = 'carousel' | 'dashboard' | 'training_options' | 'patterns_page';
 
 export const ChallengeView: React.FC<ChallengeViewProps> = ({
   progress,
@@ -49,6 +50,7 @@ export const ChallengeView: React.FC<ChallengeViewProps> = ({
   const [activeIndex, setActiveIndex] = useState(initialIndex >= 0 ? initialIndex : 1);
   const [subView, setSubView] = useState<ChallengeSubView>('carousel');
   const [selectedDayDetail, setSelectedDayDetail] = useState<ChallengeDayProgress | null>(null);
+  const [showPatterns, setShowPatterns] = useState(false);
 
   const selectedPlan: ChallengePlanOption = CHALLENGE_PLANS[activeIndex] || CHALLENGE_PLANS[1];
   const isSelectedPlanActive = activeChallenge.isStarted && activeChallenge.totalDays === selectedPlan.days;
@@ -429,62 +431,111 @@ export const ChallengeView: React.FC<ChallengeViewProps> = ({
         </main>
       )}
 
-      {/* VIEW 3: EXACT REFERENCE TWO-CARD TRAINING OPTIONS PAGE */}
+      {/* VIEW 3: TWO OVERLAPPING WATCH CARDS (DAY STORIES & PATTERNS) */}
       {subView === 'training_options' && (
-        <main className="relative z-20 w-full max-w-lg mx-auto flex-1 flex flex-col py-4 px-4 space-y-5">
+        <main className="relative z-20 w-full max-w-sm mx-auto flex-1 flex flex-col py-3 px-3 space-y-4">
           <div className="px-1 pt-1">
-            <h1 className="text-3xl font-black text-white tracking-tight">
-              Training Options
+            <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+              Day {activeChallenge.currentDay || 1} Training
             </h1>
-            <p className="text-xs font-semibold text-zinc-400 mt-1">
-              Select your practice format for Day {activeChallenge.currentDay || 1}
+            <p className="text-xs font-semibold text-zinc-400 mt-0.5">
+              Select practice module & explore patterns
             </p>
           </div>
 
-          <div className="grid grid-cols-1 gap-4 pt-2">
-            {/* Card 1: Stories */}
-            <motion.button
-              whileTap={{ scale: 0.98 }}
+          {/* Two Overlapping V-shape Watches Container */}
+          <div className="relative w-full py-4 flex flex-col items-center">
+            {/* Card 1: Grey Watch Card (Day Stories) */}
+            <motion.div
+              whileHover={{ scale: 1.02, y: -2 }}
               onClick={onStartMyDay}
-              className="w-full bg-[#12131a] hover:bg-[#181a24] border border-zinc-800/80 rounded-3xl p-5 sm:p-6 flex items-center justify-between transition-all cursor-pointer shadow-xl group text-left"
+              className="w-full rounded-[32px] bg-gradient-to-br from-[#272832] via-[#1a1b24] to-[#121319] border border-zinc-700/80 p-5 shadow-[0_20px_50px_rgba(0,0,0,0.8)] cursor-pointer relative z-10 flex flex-col justify-between group"
             >
-              <div className="flex items-center gap-4">
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-950/80 to-indigo-950/80 border border-purple-500/40 flex items-center justify-center shrink-0 shadow-[0_0_16px_rgba(168,85,247,0.25)]">
-                  <BookOpen className="w-6 h-6 text-purple-400" />
+              <div className="flex items-center justify-between">
+                <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-purple-500/30 to-indigo-500/20 border border-purple-500/40 flex items-center justify-center text-purple-300 shadow-md">
+                  <BookOpen className="w-6 h-6" />
                 </div>
-                <div>
-                  <h3 className="text-lg font-black text-white tracking-tight group-hover:text-purple-300 transition-colors">
-                    Day Stories
-                  </h3>
-                  <p className="text-xs text-zinc-400 mt-0.5">
-                    Read and record immersive workplace narratives
-                  </p>
-                </div>
+                <span className="text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-full bg-zinc-800/80 text-purple-300 border border-zinc-700">
+                  Story Mode
+                </span>
               </div>
-              <ChevronRight className="w-5 h-5 text-zinc-500 group-hover:text-white transition-colors" />
-            </motion.button>
 
-            {/* Card 2: Coach Questions */}
-            <motion.button
-              whileTap={{ scale: 0.98 }}
-              onClick={() => onStartPracticeQuestion()}
-              className="w-full bg-[#12131a] hover:bg-[#181a24] border border-zinc-800/80 rounded-3xl p-5 sm:p-6 flex items-center justify-between transition-all cursor-pointer shadow-xl group text-left"
+              <div className="mt-4">
+                <h3 className="text-xl font-black text-white tracking-tight group-hover:text-purple-300 transition-colors">
+                  Day Stories & Narratives
+                </h3>
+                <p className="text-xs text-zinc-300 mt-1 leading-relaxed">
+                  Read and record immersive workplace stories, scenarios, and reflections.
+                </p>
+              </div>
+
+              <div className="mt-4 pt-3 border-t border-zinc-700/60 flex items-center justify-between text-xs font-bold text-purple-300">
+                <span>Start Reading</span>
+                <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </div>
+            </motion.div>
+
+            {/* Card 2: Black V-Shape Overlapping Watch Card (Patterns & Grammar) */}
+            <motion.div
+              whileHover={{ scale: 1.02, y: -2 }}
+              onClick={() => setSubView('patterns_page')}
+              className="w-[92%] -mt-6 rounded-[32px] bg-gradient-to-b from-[#14151b] via-[#0d0e12] to-[#07080a] border border-zinc-800 p-5 shadow-[0_25px_60px_rgba(0,0,0,0.9)] cursor-pointer relative z-25 flex flex-col justify-between group backdrop-blur-xl"
             >
-              <div className="flex items-center gap-4">
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-sky-950/80 to-cyan-950/80 border border-sky-500/40 flex items-center justify-center shrink-0 shadow-[0_0_16px_rgba(14,165,233,0.25)]">
-                  <Mic className="w-6 h-6 text-sky-400" />
+              <div className="flex items-center justify-between">
+                <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-sky-500/30 to-teal-500/20 border border-sky-500/40 flex items-center justify-center text-sky-300 shadow-md">
+                  <Sparkles className="w-6 h-6" />
                 </div>
-                <div>
-                  <h3 className="text-lg font-black text-white tracking-tight group-hover:text-sky-300 transition-colors">
-                    Coach Questions
-                  </h3>
-                  <p className="text-xs text-zinc-400 mt-0.5">
-                    Real-time AI fluency coach and feedback drills
-                  </p>
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-full bg-zinc-900 text-sky-300 border border-zinc-800">
+                    Open Page
+                  </span>
                 </div>
               </div>
-              <ChevronRight className="w-5 h-5 text-zinc-500 group-hover:text-white transition-colors" />
-            </motion.button>
+
+              <div className="mt-4">
+                <h3 className="text-xl font-black text-white tracking-tight group-hover:text-sky-300 transition-colors">
+                  Grammar & Speaking Patterns
+                </h3>
+                <p className="text-xs text-zinc-400 mt-1 leading-relaxed">
+                  Master essential conversational formulas with interactive drills and reference guides.
+                </p>
+              </div>
+
+              <div className="mt-4 pt-3 border-t border-zinc-800/80 flex items-center justify-between text-xs font-bold text-sky-300">
+                <span>Explore Patterns</span>
+                <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </div>
+            </motion.div>
+          </div>
+        </main>
+      )}
+
+      {/* VIEW 4: DEDICATED PATTERNS PAGE */}
+      {subView === 'patterns_page' && (
+        <main className="relative z-20 w-full max-w-md mx-auto flex-1 flex flex-col py-3 px-3 space-y-4">
+          <div className="flex items-center justify-between px-1 pt-1">
+            <button
+              onClick={() => setSubView('training_options')}
+              className="flex items-center gap-2 text-xs font-bold text-sky-300 bg-sky-500/20 hover:bg-sky-500/30 border border-sky-500/50 px-3.5 py-2 rounded-xl transition-all cursor-pointer active:scale-95 shadow-lg shadow-sky-500/10"
+              aria-label="Back to Training Options"
+            >
+              <ArrowLeft className="w-4 h-4 text-sky-400" />
+              <span>Back</span>
+            </button>
+            <h1 className="text-lg font-black text-white tracking-tight">
+              Grammar & Patterns
+            </h1>
+          </div>
+
+          <div className="w-full bg-[#12131a] border border-zinc-800/80 rounded-3xl p-4 overflow-hidden shadow-xl">
+            <MyDayPatternsHub
+              onStartPracticeQuestion={(q) => {
+                if (onStartPracticeQuestion) {
+                  onStartPracticeQuestion(q);
+                }
+              }}
+              onBackToBuddy={() => setSubView('training_options')}
+            />
           </div>
         </main>
       )}

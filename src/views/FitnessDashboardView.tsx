@@ -21,6 +21,7 @@ import {
 import { UserProgress, Question } from '../types';
 import { PRACTICE_QUESTIONS } from '../data/questions';
 import { EnglishProgressScreen } from '../components/myday/EnglishProgressScreen';
+import { CourseView } from './CourseView';
 
 interface FitnessDashboardViewProps {
   progress?: UserProgress;
@@ -323,139 +324,12 @@ export const FitnessDashboardView: React.FC<FitnessDashboardViewProps> = ({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.2 }}
-            className="space-y-6 max-w-xl mx-auto"
+            className="w-full"
           >
-            {/* Category Pills */}
-            <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
-              {(['For You', 'Explore', 'Plans', 'Library'] as PlusCategory[]).map((cat) => (
-                <button
-                  key={cat}
-                  onClick={() => setPlusCategory(cat)}
-                  className={`px-5 py-2 rounded-full text-sm font-bold transition-all whitespace-nowrap cursor-pointer ${
-                    plusCategory === cat
-                      ? 'bg-white text-black shadow-lg scale-105'
-                      : 'bg-zinc-800/80 text-zinc-300 hover:bg-zinc-700'
-                  }`}
-                >
-                  {cat}
-                </button>
-              ))}
-            </div>
-
-            {/* Workouts Section */}
-            <div>
-              <div className="flex items-center justify-between mb-3">
-                <h2 className="text-xl font-black text-white">Workouts</h2>
-                <span className="text-xs text-rose-400 font-semibold tracking-wider uppercase">New & Picked</span>
-              </div>
-              <div className="space-y-4">
-                {workouts.map((w) => (
-                  <div
-                    key={w.id}
-                    onClick={() => onStartPractice(w.question)}
-                    className="bg-[#18191E] rounded-3xl overflow-hidden border border-zinc-800/80 shadow-xl group cursor-pointer hover:border-zinc-700 transition-all flex flex-col"
-                  >
-                    <div className="relative h-44 overflow-hidden">
-                      <img 
-                        src={w.image} 
-                        alt={w.title} 
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                        referrerPolicy="no-referrer"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
-                      <span className="absolute top-3 left-3 px-2.5 py-1 rounded-full bg-rose-600 text-white text-[10px] font-black tracking-wider uppercase shadow">
-                        {w.badge}
-                      </span>
-                      <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between">
-                        <div>
-                          <h3 className="text-lg font-bold text-white drop-shadow">{w.title}</h3>
-                          <p className="text-xs text-zinc-300">{w.duration} • {w.genre}</p>
-                        </div>
-                        <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white group-hover:bg-rose-600 transition-colors shadow-lg">
-                          <Play className="w-5 h-5 fill-current ml-0.5" />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Meditations Section */}
-            <div>
-              <div className="flex items-center justify-between mb-3">
-                <h2 className="text-xl font-black text-white">Meditations & Focus</h2>
-                <span className="text-xs text-cyan-400 font-semibold tracking-wider uppercase">Calm & Mind</span>
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                {meditations.map((m) => (
-                  <div
-                    key={m.id}
-                    onClick={() => onStartPractice(m.question)}
-                    className="bg-[#18191E] rounded-3xl overflow-hidden border border-zinc-800/80 shadow-xl group cursor-pointer hover:border-zinc-700 transition-all"
-                  >
-                    <div className="relative h-36 overflow-hidden">
-                      <img 
-                        src={m.image} 
-                        alt={m.title} 
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                        referrerPolicy="no-referrer"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
-                      <div className="absolute bottom-2.5 left-2.5 right-2.5">
-                        <h4 className="text-sm font-bold text-white drop-shadow truncate">{m.title}</h4>
-                        <p className="text-[10px] text-zinc-300">{m.duration} • {m.genre}</p>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
+            <CourseView onStartPractice={onStartPractice} />
           </motion.div>
         )}
       </AnimatePresence>
-
-      {/* Apple Fitness Floating Bottom Navigation Bar */}
-      <div className="fixed bottom-6 left-0 right-0 z-50 flex justify-center px-4 pointer-events-none">
-        <nav className="pointer-events-auto bg-[#1C1D22]/95 backdrop-blur-2xl rounded-full px-4 py-2 border border-zinc-800 flex items-center justify-around gap-6 shadow-[0_10px_30px_rgba(0,0,0,0.8)] max-w-sm w-full">
-          <button
-            onClick={() => setSubTab('summary')}
-            className={`flex flex-col items-center gap-1 transition-colors cursor-pointer ${
-              subTab === 'summary' ? 'text-rose-500' : 'text-zinc-400 hover:text-zinc-200'
-            }`}
-          >
-            <Activity className="w-6 h-6" />
-            <span className="text-[10px] font-bold tracking-tight">Summary</span>
-          </button>
-
-          <button
-            onClick={() => setSubTab('fitness_plus')}
-            className={`flex flex-col items-center gap-1 transition-colors cursor-pointer relative ${
-              subTab === 'fitness_plus' ? 'text-rose-500' : 'text-zinc-400 hover:text-zinc-200'
-            }`}
-          >
-            <div className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-rose-500 animate-ping" />
-            <Compass className="w-6 h-6" />
-            <span className="text-[10px] font-bold tracking-tight">Bytes</span>
-          </button>
-
-          <button
-            onClick={onOpenMyDay}
-            className="flex flex-col items-center gap-1 text-amber-400 hover:text-amber-300 transition-colors cursor-pointer"
-          >
-            <Sparkles className="w-6 h-6" />
-            <span className="text-[10px] font-bold tracking-tight">sheeko</span>
-          </button>
-
-          <button
-            onClick={() => onStartPractice()}
-            className="flex flex-col items-center gap-1 text-cyan-400 hover:text-cyan-300 transition-colors cursor-pointer"
-          >
-            <Footprints className="w-6 h-6" />
-            <span className="text-[10px] font-bold tracking-tight">buddy</span>
-          </button>
-        </nav>
-      </div>
 
       {/* Detailed English Progress Screen Modal */}
       <EnglishProgressScreen

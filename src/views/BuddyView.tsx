@@ -12,6 +12,7 @@ import {
   CheckCircle2, 
   RotateCcw,
   ArrowRight,
+  ArrowLeft,
   HelpCircle
 } from 'lucide-react';
 import { speakText, stopSpeaking, soundFx } from '../utils/audio';
@@ -26,9 +27,10 @@ interface BuddyMessage {
 
 interface BuddyViewProps {
   onStartPractice?: () => void;
+  onBack?: () => void;
 }
 
-export const BuddyView: React.FC<BuddyViewProps> = ({ onStartPractice }) => {
+export const BuddyView: React.FC<BuddyViewProps> = ({ onStartPractice, onBack }) => {
   const [messages, setMessages] = useState<BuddyMessage[]>([
     {
       id: '1',
@@ -185,7 +187,16 @@ export const BuddyView: React.FC<BuddyViewProps> = ({ onStartPractice }) => {
       {/* Header */}
       <div className="flex items-center justify-between mb-4 pb-3 border-b border-zinc-800">
         <div className="flex items-center gap-3">
-          <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-sky-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-sky-500/25">
+          {onBack && (
+            <button
+              onClick={onBack}
+              className="w-10 h-10 rounded-xl bg-zinc-900 border border-zinc-800 flex items-center justify-center text-zinc-300 hover:text-white hover:bg-zinc-800 transition-colors cursor-pointer shrink-0"
+              title="Go Back"
+            >
+              <ArrowLeft className="w-5 h-5" />
+            </button>
+          )}
+          <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-sky-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-sky-500/25 shrink-0">
             <Bot className="w-6 h-6 text-white" />
           </div>
           <div>

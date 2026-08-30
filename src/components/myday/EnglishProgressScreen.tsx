@@ -119,10 +119,10 @@ export const EnglishProgressScreen: React.FC<EnglishProgressScreenProps> = ({
           <div className="sticky top-0 bg-[#121318]/95 backdrop-blur-md z-30 pt-4 pb-3 px-4 sm:px-6 border-b border-zinc-800/60 flex items-center justify-between gap-2">
             <button
               onClick={onClose}
-              className="flex items-center gap-2 text-xs font-medium text-zinc-300 bg-zinc-900/90 hover:bg-zinc-800 border border-zinc-700/60 px-3 py-2 rounded-xl transition-all cursor-pointer active:scale-95 shrink-0"
-              aria-label="Back to My Day"
+              className="flex items-center gap-2 text-xs font-bold text-amber-300 bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/50 px-3.5 py-2.5 rounded-xl transition-all cursor-pointer active:scale-95 shrink-0 shadow-lg shadow-amber-500/10"
+              aria-label="Back to Sheeko"
             >
-              <ArrowLeft className="w-4 h-4 text-zinc-400" />
+              <ArrowLeft className="w-4 h-4 text-amber-400" />
               <span>Back</span>
             </button>
 
