@@ -210,7 +210,23 @@ export function parseLearnerStoryToMeaningRepresentation(text: string) {
   }
 
   const uniqueActivities = Array.from(new Set(allActivities));
-  const uniquePeople = Array.from(new Set(allPeople));
+  
+  // Filter people so that only those mentioned in the learner's transcript are included (preventing hallucinated names like Suresh/Kiran)
+  const filteredPeople = allPeople.filter(person => {
+    const pLower = person.toLowerCase();
+    const pTokens = pLower.split(/[\s()]+/);
+    return pTokens.some(token => token.length > 2 && cleanText.includes(token));
+  });
+
+  const directPeopleMentions: string[] = [];
+  const personKeywords = ['mother', 'mom', 'father', 'dad', 'brother', 'sister', 'friend', 'ravi', 'suresh', 'kiran', 'family', 'colleague', 'manager', 'boss', 'wife', 'husband', 'son', 'daughter'];
+  for (const kw of personKeywords) {
+    if (cleanText.includes(kw)) {
+      directPeopleMentions.push(kw.charAt(0).toUpperCase() + kw.slice(1));
+    }
+  }
+
+  const uniquePeople = Array.from(new Set([...filteredPeople, ...directPeopleMentions]));
   const uniquePlaces = Array.from(new Set(allPlaces));
   const uniqueObjects = Array.from(new Set(allObjects));
   const uniqueTimes = Array.from(new Set(allTimes));

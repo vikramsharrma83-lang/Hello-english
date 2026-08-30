@@ -404,7 +404,7 @@ export const FitnessDashboardView: React.FC<FitnessDashboardViewProps> = ({
           >
             <div className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-rose-500 animate-ping" />
             <Compass className="w-6 h-6" />
-            <span className="text-[10px] font-bold tracking-tight">Fitness+</span>
+            <span className="text-[10px] font-bold tracking-tight">Bytes</span>
           </button>
 
           <button
@@ -412,7 +412,7 @@ export const FitnessDashboardView: React.FC<FitnessDashboardViewProps> = ({
             className="flex flex-col items-center gap-1 text-amber-400 hover:text-amber-300 transition-colors cursor-pointer"
           >
             <Sparkles className="w-6 h-6" />
-            <span className="text-[10px] font-bold tracking-tight">My Day</span>
+            <span className="text-[10px] font-bold tracking-tight">sheeko</span>
           </button>
 
           <button
@@ -420,7 +420,7 @@ export const FitnessDashboardView: React.FC<FitnessDashboardViewProps> = ({
             className="flex flex-col items-center gap-1 text-cyan-400 hover:text-cyan-300 transition-colors cursor-pointer"
           >
             <Footprints className="w-6 h-6" />
-            <span className="text-[10px] font-bold tracking-tight">Workout</span>
+            <span className="text-[10px] font-bold tracking-tight">buddy</span>
           </button>
         </nav>
       </div>

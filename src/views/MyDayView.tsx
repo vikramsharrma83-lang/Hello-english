@@ -21,10 +21,11 @@ interface MyDayViewProps {
   onToggleTaskCompleted?: (taskId: string) => void;
   onResetTasks?: () => void;
   onStartPractice?: (question?: Question) => void;
-  onNavigateTab?: (tab: 'home' | 'myday' | 'practice' | 'progress' | 'profile' | 'challenge') => void;
+  onNavigateTab?: (tab: 'home' | 'myday' | 'practice' | 'progress' | 'profile' | 'challenge' | 'fitness') => void;
   initialMode?: 'story' | 'patterns' | 'challenge';
   progress?: UserProgress;
   onUpdateProgress?: (updater: (prev: UserProgress) => UserProgress) => void;
+  onStepChange?: (step: string) => void;
 }
 
 export const MyDayView: React.FC<MyDayViewProps> = ({
@@ -38,11 +39,16 @@ export const MyDayView: React.FC<MyDayViewProps> = ({
   initialMode = 'story',
   progress,
   onUpdateProgress,
+  onStepChange,
 }) => {
   // Navigation State Machine matching story workflow + patterns hub + challenge view
   const [step, setStep] = useState<
     '1_HOME' | '2_CHAT_INPUT' | '3_SYSTEM_SUMMARIZATION' | '4_CHATBOT_CONVERSATION' | '5_TOPIC_COMPLETE' | '6_SESSION_SUMMARY' | 'PATTERNS_HUB' | 'CHALLENGE'
   >(initialMode === 'patterns' ? 'PATTERNS_HUB' : initialMode === 'challenge' ? 'CHALLENGE' : '1_HOME');
+
+  React.useEffect(() => {
+    onStepChange?.(step);
+  }, [step, onStepChange]);
 
   const [dayMap, setDayMap] = useState<DayMap>({
     activities: [],
@@ -383,7 +389,7 @@ export const MyDayView: React.FC<MyDayViewProps> = ({
             }}
             onClose={() => {
               if (onNavigateTab) {
-                onNavigateTab('home');
+                onNavigateTab('fitness');
               }
             }}
             onSelectSample={(sampleText) => {

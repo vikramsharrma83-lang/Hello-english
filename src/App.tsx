@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { SplashScreen } from './components/SplashScreen';
-import { HomeScreen } from './views/HomeScreen';
 import { QuestionScreen } from './views/QuestionScreen';
 import { SpeakScreen } from './views/SpeakScreen';
 import { ResultScreen } from './views/ResultScreen';
 import { ProgressView } from './views/ProgressView';
-import { ProfileView } from './views/ProfileView';
+import { BuddyView } from './views/BuddyView';
 import { MyDayView } from './views/MyDayView';
 import { ChallengeView } from './views/ChallengeView';
 import { CourseView } from './views/CourseView';
@@ -24,9 +23,10 @@ export default function App() {
   const [showSplash, setShowSplash] = useState<boolean>(true);
 
   // Navigation State
-  const [activeTab, setActiveTab] = useState<NavTab>('fitness');
+  const [activeTab, setActiveTab] = useState<NavTab>('myday');
   const [returnTab, setReturnTab] = useState<NavTab>('myday');
   const [practiceStep, setPracticeStep] = useState<PracticeStep>('question');
+  const [myDayStep, setMyDayStep] = useState<string>('1_HOME');
   
   // Current active question
   const [currentQuestion, setCurrentQuestion] = useState<Question>(PRACTICE_QUESTIONS[0]);
@@ -269,32 +269,7 @@ export default function App() {
         
         {/* VIEW ROUTING */}
         <AnimatePresence mode="wait">
-          {activeTab === 'home' && (
-            <motion.div
-              key="home"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.18 }}
-              className="w-full"
-            >
-              <HomeScreen
-                progress={progress}
-                streakDays={progress.streakDays}
-                completedToday={progress.completedToday}
-                dailyGoal={progress.dailyGoal}
-                onStartPractice={handleStartPractice}
-                onOpenChallenge={() => setActiveTab('challenge')}
-                onNavigateTab={(tab) => {
-                  if (tab === 'practice') {
-                    handleStartPractice();
-                  } else {
-                    setActiveTab(tab);
-                  }
-                }}
-              />
-            </motion.div>
-          )}
+
 
           {activeTab === 'challenge' && (
             <motion.div
@@ -307,7 +282,7 @@ export default function App() {
             >
               <ChallengeView
                 progress={progress}
-                onBack={() => setActiveTab('home')}
+                onBack={() => setActiveTab('fitness')}
                 onStartMyDay={() => setActiveTab('myday')}
                 onStartPracticeQuestion={(q) => handleStartPractice(q)}
                 onUpdateProgress={setProgress}
@@ -315,9 +290,9 @@ export default function App() {
             </motion.div>
           )}
 
-          {activeTab === 'myday' && (
+          {(activeTab === 'sheeko' || activeTab === 'myday') && (
             <motion.div
-              key="myday"
+              key="sheeko"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -334,11 +309,14 @@ export default function App() {
                 onStartPractice={handleStartPractice}
                 progress={progress}
                 onUpdateProgress={setProgress}
+                onStepChange={setMyDayStep}
                 onNavigateTab={(tab) => {
                   if (tab === 'practice') {
                     handleStartPractice();
+                  } else if (tab === 'home' || tab === 'fitness') {
+                    setActiveTab('dashboard');
                   } else {
-                    setActiveTab(tab);
+                    setActiveTab(tab as any);
                   }
                 }}
               />
@@ -357,7 +335,7 @@ export default function App() {
               {practiceStep === 'question' && (
                 <QuestionScreen
                   question={currentQuestion}
-                  onBack={() => setActiveTab(returnTab || 'myday')}
+                  onBack={() => setActiveTab(returnTab || 'sheeko')}
                   onContinue={() => setPracticeStep('speak')}
                   onShuffleQuestion={handleShuffleQuestion}
                 />
@@ -387,9 +365,9 @@ export default function App() {
 
 
 
-          {activeTab === 'fitness' && (
+          {(activeTab === 'dashboard' || activeTab === 'fitness') && (
             <motion.div
-              key="fitness"
+              key="dashboard"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -398,15 +376,30 @@ export default function App() {
             >
               <FitnessDashboardView
                 progress={progress}
-                onStartPractice={(q) => handleStartPractice(q, 'fitness')}
-                onOpenMyDay={() => setActiveTab('myday')}
+                onStartPractice={(q) => handleStartPractice(q, 'dashboard')}
+                onOpenMyDay={() => setActiveTab('sheeko')}
               />
             </motion.div>
           )}
 
-          {activeTab === 'course' && (
+          {(activeTab === 'buddy' || activeTab === 'course') && (
             <motion.div
-              key="course"
+              key="buddy"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.18 }}
+              className="w-full"
+            >
+              <BuddyView
+                onStartPractice={() => handleStartPractice()}
+              />
+            </motion.div>
+          )}
+
+          {(activeTab === 'snippets' || activeTab === 'profile') && (
+            <motion.div
+              key="snippets"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -414,42 +407,13 @@ export default function App() {
               className="w-full"
             >
               <CourseView
-                onStartPractice={(q) => handleStartPractice(q, 'course')}
-              />
-            </motion.div>
-          )}
-
-          {activeTab === 'profile' && (
-            <motion.div
-              key="profile"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.18 }}
-              className="w-full"
-            >
-              <ProfileView
-                targetRole={progress.targetRole}
-                onChangeRole={(role) => setProgress((p) => ({ ...p, targetRole: role }))}
-                dailyGoal={progress.dailyGoal}
-                onChangeDailyGoal={(goal) => setProgress((p) => ({ ...p, dailyGoal: goal }))}
-                voiceSpeed={voiceSpeed}
-                onChangeVoiceSpeed={setVoiceSpeed}
-                progress={progress}
-                onSelectSavedPhrase={(phrase) => handleStartPractice(undefined, 'profile')}
-                onRemoveSavedPhrase={(id) => {
-                  setProgress((p) => ({
-                    ...p,
-                    savedPhrases: p.savedPhrases.filter((s) => s.id !== id),
-                  }));
-                }}
-                onStartPractice={() => handleStartPractice()}
+                onStartPractice={(q) => handleStartPractice(q, 'snippets')}
               />
             </motion.div>
           )}
         </AnimatePresence>
 
-        {activeTab !== 'practice' && activeTab !== 'myday' && activeTab !== 'challenge' && (
+        {activeTab !== 'practice' && activeTab !== 'buddy' && activeTab !== 'sheeko' && (
           <BottomDockNav
             activeTab={activeTab}
             onSelectTab={(tab) => {

@@ -13,6 +13,7 @@ import {
   ChevronRight,
   CheckCircle2,
   Zap,
+  Mic,
 } from 'lucide-react';
 import { EnglishProgressScreen } from './EnglishProgressScreen';
 import { calculateEnglishConfidence } from '../../utils/confidenceMetrics';
@@ -75,9 +76,9 @@ export const HomePage: React.FC<HomePageProps> = ({
     return () => clearInterval(interval);
   }, []);
 
-  // Pie chart parameters for Watch Progress Card (Enlarged)
-  const radius = 48;
-  const strokeWidth = 9;
+  // Pie chart parameters for Watch Progress Card (Thicker and Bigger)
+  const radius = 54;
+  const strokeWidth = 16;
   const normalizedRadius = radius - strokeWidth / 2;
   const circumference = normalizedRadius * 2 * Math.PI;
 
@@ -135,9 +136,15 @@ export const HomePage: React.FC<HomePageProps> = ({
         </div>
 
         {/* Center Main Watch / Progress Card - Entirely Clickable */}
-        <motion.button
-          type="button"
+        <motion.div
+          role="button"
+          tabIndex={0}
           onClick={() => setIsProgressOpen(true)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              setIsProgressOpen(true);
+            }
+          }}
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
           className="relative z-10 w-72 sm:w-[300px] h-[340px] rounded-[42px] p-2.5 bg-[#14151a] border-[2px] border-zinc-800 hover:border-zinc-700 shadow-2xl shadow-black flex flex-col cursor-pointer text-left transition-colors group focus:outline-none"
@@ -147,8 +154,23 @@ export const HomePage: React.FC<HomePageProps> = ({
           <div className="w-full h-full rounded-[34px] bg-black border border-zinc-900 p-4 sm:p-5 flex flex-col justify-between items-center relative overflow-hidden">
             {/* Top Status Header */}
             <div className="flex items-center justify-between w-full pt-1">
-              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-950/40 border border-amber-800/40 text-amber-300 text-[10px] font-bold">
-                <span>🔥 {progress?.streakDays || 5}d Streak</span>
+              <div
+                role="button"
+                tabIndex={0}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onOpenChallenge?.();
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.stopPropagation();
+                    onOpenChallenge?.();
+                  }
+                }}
+                className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-950/40 hover:bg-amber-900/60 border border-amber-800/40 text-amber-300 text-[10px] font-bold transition-colors cursor-pointer"
+                title="View Course Roadmap"
+              >
+                <span>🔥 {progress?.challenge?.totalDays || 5} Days Course</span>
               </div>
               <div className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-zinc-900 border border-zinc-800">
                 <span className="w-1.5 h-1.5 rounded-full bg-zinc-400 animate-pulse" />
@@ -167,32 +189,26 @@ export const HomePage: React.FC<HomePageProps> = ({
                   <circle
                     cx="63"
                     cy="63"
-                    r={50}
+                    r={normalizedRadius}
                     fill="transparent"
                     stroke="#18181b"
-                    strokeWidth={10}
+                    strokeWidth={strokeWidth}
                   />
 
-                  {/* 7 Weighted Slices in Black & Grey shades */}
+                  {/* 7 Weighted Slices */}
                   {watchSlices.map((slice, i) => {
                     const greyShades = ['#3f3f46', '#52525b', '#71717a', '#a1a1aa', '#d4d4d8', '#71717a', '#52525b'];
-                    const r = 50;
-                    const circ = r * 2 * Math.PI;
-                    const dashArray = `${(slice.weight / 100) * circ} ${circ}`;
-                    const startAng = (watchSlices.slice(0, i).reduce((acc, cur) => acc + cur.weight, 0) / 100) * 360;
-                    const dashOffset = -((startAng / 360) * circ);
-
                     return (
                       <circle
                         key={slice.id}
                         cx="63"
                         cy="63"
-                        r={r}
+                        r={normalizedRadius}
                         fill="transparent"
                         stroke={greyShades[i % greyShades.length]}
-                        strokeWidth={10}
-                        strokeDasharray={dashArray}
-                        strokeDashoffset={dashOffset}
+                        strokeWidth={strokeWidth}
+                        strokeDasharray={slice.strokeDasharray}
+                        strokeDashoffset={slice.strokeDashoffset}
                         strokeLinecap="round"
                       />
                     );
@@ -226,7 +242,7 @@ export const HomePage: React.FC<HomePageProps> = ({
               <span className="text-[10px] text-zinc-500 font-medium tracking-tight">Tap for Detailed Analytics →</span>
             </div>
           </div>
-        </motion.button>
+        </motion.div>
 
         {/* Ghost Card Right (10) */}
         <div className="absolute -right-8 top-1/2 -translate-y-1/2 w-40 h-52 rounded-[32px] border border-zinc-900 bg-zinc-950/30 rotate-[12deg] opacity-20 flex items-center justify-center pointer-events-none">
@@ -234,17 +250,34 @@ export const HomePage: React.FC<HomePageProps> = ({
         </div>
       </div>
 
+      {/* Clickable Voice Studio Card (Replaces the Tap to Start Talking card) */}
+      <div className="w-full max-w-[280px] mx-auto my-3">
+        <motion.button
+          type="button"
+          onClick={onStart}
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          className="w-full text-left rounded-2xl p-3.5 bg-[#14151b] hover:bg-zinc-900 border border-zinc-800 hover:border-zinc-700 shadow-xl flex items-center gap-3.5 cursor-pointer transition-all group"
+        >
+          <div className="w-12 h-12 rounded-xl bg-gradient-to-tr from-sky-500/20 to-indigo-500/20 border border-sky-500/30 flex items-center justify-center text-sky-400 shrink-0 shadow-[0_0_12px_rgba(56,189,248,0.2)] group-hover:scale-105 transition-transform">
+            <Mic className="w-6 h-6 animate-pulse text-sky-400" />
+          </div>
+          <div className="flex-1">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-black text-white tracking-tight group-hover:text-sky-400 transition-colors">Voice Studio</span>
+              <span className="px-2 py-0.5 rounded-full bg-sky-500/20 text-[9px] font-bold text-sky-400">TAP TO TALK</span>
+            </div>
+            <p className="text-[11px] text-zinc-400 leading-snug mt-0.5">
+              Buddy listens & helps you master spoken English.
+            </p>
+          </div>
+        </motion.button>
+      </div>
+
 
 
       {/* Middle Greeting & CTA */}
       <div className="w-full flex flex-col items-center text-center mt-2 mb-6">
-        {/* Buddy Pill Badge */}
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-zinc-900 border border-zinc-800 text-zinc-400 text-xs font-extrabold tracking-wide mb-3">
-          <Sparkles className="w-3.5 h-3.5 text-zinc-400" />
-          <span>BUDDY</span>
-        </div>
-
-
         {/* Course / Fluency Challenge Card */}
         {onOpenChallenge && (
           <motion.button
