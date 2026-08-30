@@ -101,7 +101,7 @@ export const SheekoCoverflowCarousel: React.FC<SheekoCoverflowCarouselProps> = (
           )}
         </div>
       </div>
-      <div className="relative w-full max-w-[320px] h-[290px] flex items-center justify-center perspective-[1000px]">
+      <div className="relative w-full max-w-[384px] h-[348px] flex items-center justify-center perspective-[1000px]">
         {visibleCards.map(({ card, position }) => {
           const isCenter = position === 'center';
           const isLeft = position === 'left';
@@ -111,15 +111,15 @@ export const SheekoCoverflowCarousel: React.FC<SheekoCoverflowCarouselProps> = (
               key={card.id + position}
               animate={{
                 scale: isCenter ? 1 : 0.82,
-                x: isCenter ? 0 : isLeft ? -100 : 100,
+                x: isCenter ? 0 : isLeft ? -125 : 125,
                 zIndex: isCenter ? 30 : 10,
                 opacity: isCenter ? 1 : 0.45,
                 filter: isCenter ? 'blur(0px)' : 'blur(3px)',
               }}
               transition={{ duration: 0.5, ease: 'easeInOut' }}
-              className={`absolute w-[200px] h-[270px] rounded-[28px] bg-gradient-to-b from-[#22232d] via-[#14151d] to-[#0d0e14] border ${
+              className={`absolute w-[240px] h-[324px] rounded-[32px] bg-gradient-to-b from-[#22232d] via-[#14151d] to-[#0d0e14] border ${
                 isCenter ? 'border-zinc-500/80 shadow-[0_20px_50px_rgba(0,0,0,0.9)]' : 'border-zinc-800 shadow-xl'
-              } p-4 flex flex-col items-center justify-between select-none cursor-pointer`}
+              } p-5 flex flex-col items-center justify-between select-none cursor-pointer`}
               onClick={() => {
                 if (isLeft) setCurrentIndex(prevIndex);
                 if (!isCenter && !isLeft) setCurrentIndex(nextIndex);

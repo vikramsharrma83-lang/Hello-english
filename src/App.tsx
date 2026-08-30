@@ -417,7 +417,7 @@ export default function App() {
           )}
         </AnimatePresence>
 
-        {activeTab !== 'practice' && (
+        {activeTab !== 'practice' && activeTab !== 'buddy' && (
           <BottomDockNav
             activeTab={activeTab}
             onSelectTab={(tab) => {

@@ -513,20 +513,6 @@ export const ChallengeView: React.FC<ChallengeViewProps> = ({
       {/* VIEW 4: DEDICATED PATTERNS PAGE */}
       {subView === 'patterns_page' && (
         <main className="relative z-20 w-full max-w-md mx-auto flex-1 flex flex-col py-3 px-3 space-y-4">
-          <div className="flex items-center justify-between px-1 pt-1">
-            <button
-              onClick={() => setSubView('training_options')}
-              className="flex items-center gap-2 text-xs font-bold text-sky-300 bg-sky-500/20 hover:bg-sky-500/30 border border-sky-500/50 px-3.5 py-2 rounded-xl transition-all cursor-pointer active:scale-95 shadow-lg shadow-sky-500/10"
-              aria-label="Back to Training Options"
-            >
-              <ArrowLeft className="w-4 h-4 text-sky-400" />
-              <span>Back</span>
-            </button>
-            <h1 className="text-lg font-black text-white tracking-tight">
-              Grammar & Patterns
-            </h1>
-          </div>
-
           <div className="w-full bg-[#12131a] border border-zinc-800/80 rounded-3xl p-4 overflow-hidden shadow-xl">
             <MyDayPatternsHub
               onStartPracticeQuestion={(q) => {

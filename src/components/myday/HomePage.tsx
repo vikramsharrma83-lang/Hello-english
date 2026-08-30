@@ -41,7 +41,7 @@ const SlideToStartBar: React.FC<{ onUnlock: () => void }> = ({ onUnlock }) => {
 
   const handleDrag = (_e: any, info: any) => {
     if (!trackRef.current || isUnlocked) return;
-    const trackWidth = trackRef.current.clientWidth - 52; // thumb width ~48px + padding
+    const trackWidth = trackRef.current.clientWidth - 76; // thumb width ~64px + padding
     const currentX = Math.max(0, Math.min(info.offset.x, trackWidth));
     setDragX(currentX);
     if (currentX >= trackWidth * 0.75) {
@@ -52,7 +52,7 @@ const SlideToStartBar: React.FC<{ onUnlock: () => void }> = ({ onUnlock }) => {
 
   const handleDragEnd = (_e: any, info: any) => {
     if (!trackRef.current || isUnlocked) return;
-    const trackWidth = trackRef.current.clientWidth - 52;
+    const trackWidth = trackRef.current.clientWidth - 76;
     if (info.offset.x >= trackWidth * 0.7) {
       setIsUnlocked(true);
       onUnlock();
@@ -64,7 +64,7 @@ const SlideToStartBar: React.FC<{ onUnlock: () => void }> = ({ onUnlock }) => {
   return (
     <div
       ref={trackRef}
-      className="w-full h-14 rounded-2xl bg-[#121316] border border-zinc-700/80 p-1.5 relative overflow-hidden flex items-center select-none shadow-md cursor-pointer group"
+      className="w-full max-w-sm mx-auto h-20 rounded-full bg-gradient-to-r from-[#e5e7eb] via-[#d1d5db] to-[#9ca3af] border border-zinc-400/60 p-2 relative overflow-hidden flex items-center select-none shadow-[inset_0_4px_8px_rgba(0,0,0,0.25),0_8px_20px_rgba(0,0,0,0.3)] cursor-pointer group"
       onClick={() => {
         if (!isUnlocked) {
           setIsUnlocked(true);
@@ -73,25 +73,25 @@ const SlideToStartBar: React.FC<{ onUnlock: () => void }> = ({ onUnlock }) => {
       }}
     >
       {/* Background track text */}
-      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-        <span className="text-xs font-semibold tracking-wide text-zinc-400 group-hover:text-zinc-300 transition-colors">
+      <div className="absolute inset-0 flex items-center justify-center pl-8 pointer-events-none">
+        <span className="text-sm font-black tracking-widest text-zinc-600 uppercase drop-shadow-sm">
           slide to start
         </span>
       </div>
 
-      {/* Draggable thumb */}
+      {/* Draggable white thumb with orange chevron */}
       <motion.div
         drag="x"
-        dragConstraints={{ left: 0, right: 220 }}
+        dragConstraints={{ left: 0, right: 230 }}
         dragElastic={0.05}
         dragMomentum={false}
         onDrag={handleDrag}
         onDragEnd={handleDragEnd}
-        animate={{ x: isUnlocked ? 220 : dragX }}
+        animate={{ x: isUnlocked ? 230 : dragX }}
         transition={{ type: 'spring', stiffness: 400, damping: 35 }}
-        className="w-11 h-11 rounded-xl bg-[#22232a] border border-zinc-600 shadow-lg flex items-center justify-center text-zinc-300 relative z-10 cursor-grab active:cursor-grabbing"
+        className="w-16 h-16 rounded-full bg-white border border-zinc-200 shadow-[0_6px_16px_rgba(0,0,0,0.35)] flex items-center justify-center text-[#f59e0b] relative z-10 cursor-grab active:cursor-grabbing"
       >
-        <ChevronRight className="w-5 h-5 text-zinc-200 stroke-[2.5]" />
+        <ChevronRight className="w-8 h-8 stroke-[3]" />
       </motion.div>
     </div>
   );
