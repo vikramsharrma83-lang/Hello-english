@@ -7,6 +7,7 @@ import { ResultScreen } from './views/ResultScreen';
 import { ProgressView } from './views/ProgressView';
 import { BuddyView } from './views/BuddyView';
 import { MyDayView } from './views/MyDayView';
+import { ChallengeListScreen } from './views/ChallengeListScreen';
 import { ChallengeView } from './views/ChallengeView';
 import { CourseView } from './views/CourseView';
 import { FitnessDashboardView } from './views/FitnessDashboardView';

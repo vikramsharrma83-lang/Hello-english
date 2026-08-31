@@ -4,6 +4,7 @@ import {
   Flame,
   ChevronRight,
   HelpCircle,
+  Target,
 } from 'lucide-react';
 import { ConversationTurn, PracticeHistoryItem, DayMap, UserProgress } from '../../types';
 
@@ -12,6 +13,7 @@ interface HomePageProps {
   onOpenPatternLibrary: () => void;
   onOpenInspector: () => void;
   onOpenChallenge?: () => void;
+  onOpenChallengeList?: () => void;
   onOpenProfile?: () => void;
   onSelectSample?: (sampleText: string) => void;
   onClose?: () => void;
@@ -26,6 +28,7 @@ interface HomePageProps {
 export const HomePage: React.FC<HomePageProps> = ({
   onStart,
   onOpenChallenge,
+  onOpenChallengeList,
   language = 'en',
 }) => {
   const [greeting, setGreeting] = useState('');
@@ -46,14 +49,17 @@ export const HomePage: React.FC<HomePageProps> = ({
 
       {/* Dashboard Section */}
       <div className="w-full flex gap-4 mb-6">
-        {/* Streak Card */}
-        <div className="flex-[0.8] bg-zinc-900/60 rounded-2xl p-3 border border-zinc-800 flex items-center justify-center gap-2">
-          <Flame className="w-5 h-5 text-orange-500" />
+        {/* Streak Card - Changed to Challenge Card */}
+        <button 
+          onClick={onOpenChallengeList}
+          className="flex-[0.8] bg-purple-900/40 rounded-2xl p-3 border border-purple-800 flex items-center justify-center gap-2 hover:bg-purple-900/60 transition-colors"
+        >
+          <Target className="w-5 h-5 text-purple-400" />
           <div className="flex flex-col">
-            <span className="text-sm font-bold leading-none">0 day</span>
-            <span className="text-[9px] text-zinc-500 uppercase">Streak</span>
+            <span className="text-sm font-bold leading-none">Challenges</span>
+            <span className="text-[9px] text-purple-300 uppercase">Start</span>
           </div>
-        </div>
+        </button>
         
         {/* Weekly Tracker Card */}
         <div className="flex-[1.2] bg-zinc-900/60 rounded-2xl p-3 border border-zinc-800">

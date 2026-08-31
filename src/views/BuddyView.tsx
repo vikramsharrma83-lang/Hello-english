@@ -391,7 +391,7 @@ export const BuddyView: React.FC<BuddyViewProps> = ({ onStartPractice, onBack, l
           </button>
         </motion.div>
       ) : viewMode === 'selection' ? (
-        <div className="flex-1 flex flex-col gap-4 p-6">
+        <div className="flex-1 flex flex-col justify-center gap-4 p-6">
           <button 
             onClick={() => setViewMode('chat')} 
             className="flex items-center gap-4 p-6 bg-zinc-900 border border-zinc-800 rounded-3xl hover:bg-zinc-800 transition-all group shadow-lg"
