@@ -21,8 +21,8 @@ import { recordChallengePractice } from './utils/challengeManager';
 type PracticeStep = 'question' | 'speak' | 'result';
 
 export default function App() {
-  // Splash Screen & Industry Role Picker State
-  const [showSplash, setShowSplash] = useState<boolean>(false);
+  const [showSplash, setShowSplash] = useState<boolean>(true);
+  // Industry Role Picker State
   const [showRolePicker, setShowRolePicker] = useState<boolean>(false);
 
   // Navigation State
@@ -272,17 +272,14 @@ export default function App() {
 
   return (
     <main className="w-full min-h-screen bg-[#090d16] text-slate-100 flex justify-center selection:bg-cyan-500/30 selection:text-cyan-200">
-      {/* Splash Screen & Industry Role Picker */}
       <AnimatePresence>
         {showSplash && (
-          <SplashScreen
-            onFinish={() => {
-              setShowSplash(false);
-              setShowRolePicker(true);
-            }}
-            durationMs={3000}
-          />
+          <SplashScreen onFinish={() => setShowSplash(false)} />
         )}
+      </AnimatePresence>
+
+      {/* Industry Role Picker */}
+      <AnimatePresence>
         {showRolePicker && (
           <RolePicker
             options={["All", "Retail", "Hotels", "Warehouse", "Home service"]}

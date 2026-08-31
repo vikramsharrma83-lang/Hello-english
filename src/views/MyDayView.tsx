@@ -77,6 +77,8 @@ export const MyDayView: React.FC<MyDayViewProps> = ({
   const [completedTopics, setCompletedTopics] = useState<string[]>([]);
   const [latestAnalysis, setLatestAnalysis] = useState<DeepAnalysis | undefined>(undefined);
   const [lastCompletionSummary, setLastCompletionSummary] = useState<string | undefined>(undefined);
+  const [rockRollInitialView, setRockRollInitialView] = useState<'profiles' | 'dashboard' | 'retail-dashboard' | 'dummy'>('profiles');
+  const [rockRollDummyName, setRockRollDummyName] = useState<string>('Retail');
 
   const [isLoading, setIsLoading] = useState(false);
   const [voiceEnabled, setVoiceEnabled] = useState(true);
@@ -399,7 +401,22 @@ export const MyDayView: React.FC<MyDayViewProps> = ({
             onStart={() => setStep('2_CHAT_INPUT')}
             onOpenPatternLibrary={() => setStep('PATTERNS_HUB')}
             onOpenChallenge={() => setStep('CHALLENGE')}
-            onOpenRockRoll={() => setStep('ROCK_ROLL')}
+            onOpenRockRoll={(sector) => {
+              if (sector === 'hospitality') {
+                setRockRollInitialView('dashboard');
+              } else if (sector === 'retail') {
+                setRockRollInitialView('retail-dashboard');
+              } else if (sector === 'supply-chain') {
+                setRockRollInitialView('dummy');
+                setRockRollDummyName('Supply Chain');
+              } else if (sector === 'services') {
+                setRockRollInitialView('dummy');
+                setRockRollDummyName('Services');
+              } else {
+                setRockRollInitialView('profiles');
+              }
+              setStep('ROCK_ROLL');
+            }}
             onOpenRolePicker={onOpenRolePicker}
             onOpenInspector={() => setInspectorOpen(true)}
             onOpenProfile={() => {
@@ -425,7 +442,15 @@ export const MyDayView: React.FC<MyDayViewProps> = ({
 
         {/* ROCK AND ROLL VIEW */}
         {step === 'ROCK_ROLL' && (
-          <RockAndRollContainer onBack={() => setStep('1_HOME')} />
+          <RockAndRollContainer 
+            key={rockRollInitialView + '-' + rockRollDummyName}
+            initialView={rockRollInitialView}
+            initialDummyName={rockRollDummyName}
+            onBack={() => {
+              setRockRollInitialView('dashboard');
+              setStep('1_HOME');
+            }} 
+          />
         )}
         {step === 'CHALLENGE' && (
           <div className="w-full flex-1 flex flex-col">

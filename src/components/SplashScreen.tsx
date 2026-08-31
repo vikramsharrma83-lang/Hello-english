@@ -1,77 +1,93 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
-import logoSrc from '../Pics/Hello english logo.png';
-import { Sparkles } from 'lucide-react';
 
 interface SplashScreenProps {
   onFinish: () => void;
-  durationMs?: number; // 3000ms (3.0s)
 }
 
-export const SplashScreen: React.FC<SplashScreenProps> = ({
-  onFinish,
-  durationMs = 3000,
-}) => {
-  const [imageError, setImageError] = useState(false);
+export const SplashScreen: React.FC<SplashScreenProps> = ({ onFinish }) => {
+  const [zoomComplete, setZoomComplete] = useState(false);
+  const [isExiting, setIsExiting] = useState(false);
 
   useEffect(() => {
+    // Zoom-in finishes after 1800ms
     const timer = setTimeout(() => {
-      onFinish();
-    }, durationMs);
-
+      setZoomComplete(true);
+    }, 1800);
     return () => clearTimeout(timer);
-  }, [durationMs, onFinish]);
+  }, []);
+
+  const handleTap = () => {
+    if (isExiting) return;
+    setIsExiting(true);
+    // Smooth dissolve exit duration 800ms
+    setTimeout(() => {
+      onFinish();
+    }, 800);
+  };
 
   return (
     <motion.div
-      key="splash-screen"
-      initial={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.3, ease: 'easeInOut' }}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black text-white overflow-hidden select-none cursor-pointer"
-      onClick={onFinish}
+      initial={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
+      animate={
+        isExiting
+          ? { opacity: 0, scale: 1.02, filter: 'blur(8px)' }
+          : { opacity: 1, scale: 1, filter: 'blur(0px)' }
+      }
+      transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+      onClick={handleTap}
+      className="fixed inset-0 z-50 flex flex-col items-center justify-between bg-[#FAFAFA] text-black cursor-pointer select-none overflow-hidden px-6 py-16"
     >
-      {/* Ambient subtle backlight glow */}
-      <div className="absolute w-72 h-72 rounded-full bg-white/5 blur-3xl pointer-events-none" />
+      {/* Top spacing / subtle brand mark */}
+      <div className="w-full flex justify-center pt-8">
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: zoomComplete ? 0.6 : 0, y: zoomComplete ? 0 : -10 }}
+          transition={{ duration: 0.6 }}
+          className="text-xs uppercase tracking-[0.3em] font-medium text-neutral-400"
+          style={{ fontFamily: "'Syncopate', sans-serif" }}
+        >
+          Cinematic Edition
+        </motion.div>
+      </div>
 
-      {/* Choreography: Enters from Left -> Rests at Center -> Zooms in to Max -> Settles Back -> Exits to Right (3s) */}
-      <motion.div
-        initial={{ x: '-100vw', opacity: 0, scale: 0.8 }}
-        animate={{
-          x: ['-100vw', '0vw', '0vw', '0vw', '100vw'],
-          scale: [0.8, 1.0, 1.5, 1.0, 0.85],
-          opacity: [0, 1, 1, 1, 0],
-        }}
-        transition={{
-          duration: 3.0,
-          times: [0, 0.22, 0.52, 0.74, 1.0], // 0s: start left, 0.66s: rest center, 1.56s: zoom max, 2.22s: settle back, 3.0s: exit right
-          ease: ['easeOut', 'easeInOut', 'easeInOut', 'easeIn'],
-        }}
-        className="relative z-10 flex flex-col items-center justify-center p-4 max-w-[85vw] max-h-[70vh]"
-      >
-        {!imageError ? (
-          <img
-            src={logoSrc}
-            alt="Hello English Logo"
-            onError={() => setImageError(true)}
-            className="w-auto h-auto max-w-[280px] sm:max-w-[340px] max-h-[220px] object-contain brightness-0 invert drop-shadow-[0_0_24px_rgba(255,255,255,0.4)]"
-            referrerPolicy="no-referrer"
-          />
-        ) : (
-          <div className="flex flex-col items-center text-center p-6 text-white">
-            <div className="w-20 h-20 rounded-2xl bg-white/10 border border-white/20 flex items-center justify-center text-white shadow-[0_0_30px_rgba(255,255,255,0.3)] mb-3">
-              <Sparkles className="w-10 h-10 text-white" />
-            </div>
-            <h1 className="text-3xl font-black tracking-tight text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.4)]">
-              Hello English
-            </h1>
-            <p className="text-xs font-semibold text-zinc-300 tracking-wider uppercase mt-1">
-              Workplace English
-            </p>
-          </div>
-        )}
-      </motion.div>
+      {/* Central Wordmark with Slow Zoom-In Animation */}
+      <div className="flex flex-col items-center justify-center my-auto">
+        <motion.h1
+          initial={{ scale: 0.9, opacity: 0, filter: 'blur(6px)' }}
+          animate={{ scale: 1, opacity: 1, filter: 'blur(0px)' }}
+          transition={{
+            duration: 1.8,
+            ease: [0.16, 1, 0.3, 1],
+          }}
+          className="text-3xl sm:text-5xl md:text-6xl font-bold uppercase tracking-[0.25em] sm:tracking-[0.35em] text-center text-black"
+          style={{ fontFamily: "'Syncopate', sans-serif" }}
+        >
+          HELLO ENGLISH
+        </motion.h1>
+
+        <motion.div
+          initial={{ width: 0, opacity: 0 }}
+          animate={{ width: zoomComplete ? '80px' : '40px', opacity: 1 }}
+          transition={{ duration: 1.2, delay: 0.5 }}
+          className="h-[2px] bg-black mt-6"
+        />
+      </div>
+
+      {/* Bottom Interactive Hint */}
+      <div className="w-full flex flex-col items-center pb-8">
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: zoomComplete ? 1 : 0, y: zoomComplete ? 0 : 10 }}
+          transition={{ duration: 0.6, ease: 'easeOut' }}
+          className="flex flex-col items-center space-y-2"
+        >
+          <span className="text-xs uppercase tracking-[0.25em] font-medium text-neutral-500 animate-pulse">
+            Tap anywhere to continue
+          </span>
+          <div className="w-1.5 h-1.5 rounded-full bg-neutral-400 mt-1" />
+        </motion.div>
+      </div>
     </motion.div>
   );
 };
-

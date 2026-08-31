@@ -92,7 +92,7 @@ export const RetailDashboardView: React.FC<{
   ];
 
   return (
-    <div className="w-full min-h-screen bg-black text-white p-4 pt-8 pb-16 flex flex-col">
+    <div className="w-full bg-black text-white p-4 pt-6 pb-16 flex flex-col min-h-full">
       <div className="flex justify-between items-center mb-5">
         <button
           onClick={onBack}

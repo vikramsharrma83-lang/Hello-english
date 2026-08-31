@@ -90,7 +90,7 @@ export const RockAndRollDashboardView: React.FC<{
   const data = [pikku, chakkar, jaldi, mehmaan, hisab, kyaHua, vip];
 
   return (
-    <div className="w-full min-h-screen bg-black text-white p-4 pt-8 pb-16 flex flex-col">
+    <div className="w-full bg-black text-white p-4 pt-6 pb-16 flex flex-col min-h-full">
       {/* Top Header */}
       <div className="flex justify-between items-center mb-5">
         <button

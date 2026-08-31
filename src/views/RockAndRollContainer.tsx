@@ -9,13 +9,24 @@ import { RockAndRollDashboard } from './RockAndRollDashboard';
 import { RockAndRollDummyView } from './RockAndRollDummyView';
 import { RockAndRollSession } from '../types/rockAndRollTypes';
 
-export const RockAndRollContainer: React.FC<{ onBack: () => void }> = ({ onBack }) => {
-  const [view, setView] = useState<'profiles' | 'dashboard' | 'retail-dashboard' | 'situations' | 'chat' | 'summary' | 'stats' | 'dummy'>('profiles');
+export const RockAndRollContainer: React.FC<{ 
+  onBack: () => void;
+  initialView?: 'dashboard' | 'retail-dashboard' | 'dummy';
+  initialDummyName?: string;
+}> = ({ onBack, initialView = 'dashboard', initialDummyName = 'Retail' }) => {
+  const [view, setView] = useState<'dashboard' | 'retail-dashboard' | 'situations' | 'chat' | 'summary' | 'stats' | 'dummy'>(initialView);
   const [selectedTheme, setSelectedTheme] = useState<any | null>(null);
   const [selectedChallenge, setSelectedChallenge] = useState<any | null>(null);
-  const [dummyProfileName, setDummyProfileName] = useState<string>('Retail');
+  const [dummyProfileName, setDummyProfileName] = useState<string>(initialDummyName);
   const [sessions, setSessions] = useState<RockAndRollSession[]>([]);
   const [completedSummary, setCompletedSummary] = useState<any | null>(null);
+
+  React.useEffect(() => {
+    setView(initialView);
+    if (initialDummyName) {
+      setDummyProfileName(initialDummyName);
+    }
+  }, [initialView, initialDummyName]);
 
   const handleSelectTheme = (theme: any) => {
     setSelectedTheme(theme);
@@ -44,26 +55,15 @@ export const RockAndRollContainer: React.FC<{ onBack: () => void }> = ({ onBack 
   };
 
   return (
-    <div className="w-full h-full">
-      {view === 'profiles' && (
-        <RockAndRollProfilesView 
-          onBack={onBack} 
-          onSelectHospitality={() => setView('dashboard')}
-          onSelectRetail={() => setView('retail-dashboard')}
-          onSelectDummy={(name) => {
-            setDummyProfileName(name);
-            setView('dummy');
-          }}
-        />
-      )}
+    <div className="w-full min-h-full bg-black flex flex-col">
       {view === 'dummy' && (
         <RockAndRollDummyView 
           profileName={dummyProfileName} 
-          onBack={() => setView('profiles')} 
+          onBack={onBack} 
         />
       )}
-      {view === 'dashboard' && <RockAndRollDashboardView onBack={() => setView('profiles')} onSelectTheme={handleSelectTheme} onOpenDashboard={() => setView('stats')} />}
-      {view === 'retail-dashboard' && <RetailDashboardView onBack={() => setView('profiles')} onSelectTheme={handleSelectTheme} />}
+      {view === 'dashboard' && <RockAndRollDashboardView onBack={onBack} onSelectTheme={handleSelectTheme} onOpenDashboard={() => setView('stats')} />}
+      {view === 'retail-dashboard' && <RetailDashboardView onBack={onBack} onSelectTheme={handleSelectTheme} />}
       {view === 'stats' && <RockAndRollDashboard onBack={() => setView('dashboard')} sessions={sessions} />}
       {view === 'situations' && <RockAndRollSituationsView theme={selectedTheme} onBack={() => {
         if (selectedTheme?.bucketId?.startsWith('retail_')) {

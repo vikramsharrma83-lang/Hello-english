@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { motion } from 'motion/react';
+import { motion, AnimatePresence } from 'motion/react';
 import {
   Flame,
   ChevronRight,
@@ -7,6 +7,11 @@ import {
   Target,
   Music,
   Briefcase,
+  Building2,
+  ShoppingBag,
+  Truck,
+  Users,
+  X,
 } from 'lucide-react';
 import { ConversationTurn, PracticeHistoryItem, DayMap, UserProgress } from '../../types';
 
@@ -15,7 +20,7 @@ interface HomePageProps {
   onOpenPatternLibrary: () => void;
   onOpenInspector: () => void;
   onOpenChallenge?: () => void;
-  onOpenRockRoll?: () => void;
+  onOpenRockRoll?: (sector?: string) => void;
   onOpenRolePicker?: () => void;
   onOpenProfile?: () => void;
   onSelectSample?: (sampleText: string) => void;
@@ -37,6 +42,7 @@ export const HomePage: React.FC<HomePageProps> = ({
   language = 'en',
 }) => {
   const [greeting, setGreeting] = useState('');
+  const [showActionMenu, setShowActionMenu] = useState(false);
 
   useEffect(() => {
     const hours = new Date().getHours();
@@ -67,34 +73,108 @@ export const HomePage: React.FC<HomePageProps> = ({
           )}
         </div>
 
-        <motion.button 
-          onClick={onOpenRockRoll} 
-          className="relative group p-0.5 flex items-center justify-center cursor-pointer"
-          initial={{ filter: "drop-shadow(0 0 6px rgba(245, 158, 11, 0.5))" }}
-          animate={{
-            scale: [1, 1.06, 1],
-            filter: [
-              "drop-shadow(0 0 6px rgba(245, 158, 11, 0.5)) drop-shadow(0 0 12px rgba(234, 179, 8, 0.35))", 
-              "drop-shadow(0 0 12px rgba(245, 158, 11, 0.8)) drop-shadow(0 0 20px rgba(250, 204, 21, 0.6))", 
-              "drop-shadow(0 0 6px rgba(245, 158, 11, 0.5)) drop-shadow(0 0 12px rgba(234, 179, 8, 0.35))"
-            ],
-          }}
-          transition={{
-            duration: 2.2,
-            ease: "easeInOut",
-            repeat: Infinity,
-          }}
-          whileHover={{ scale: 1.15 }}
-          whileTap={{ scale: 0.95 }}
-          title="Open Rock & Roll"
-        >
-          {/* Gold Circle Badge */}
-          <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-amber-600 via-yellow-400 to-amber-200 p-[1.5px] shadow-[0_0_12px_rgba(245,158,11,0.5)] flex items-center justify-center">
-            <div className="w-full h-full rounded-full bg-gradient-to-b from-amber-400 via-amber-500 to-yellow-600 flex items-center justify-center text-black">
-              <Music className="w-3.5 h-3.5 text-zinc-950 stroke-[2.5]" />
+        <div className="relative">
+          <motion.button 
+            onClick={() => setShowActionMenu(!showActionMenu)} 
+            className="relative group p-0.5 flex items-center justify-center cursor-pointer"
+            initial={{ filter: "drop-shadow(0 0 6px rgba(245, 158, 11, 0.5))" }}
+            animate={{
+              scale: [1, 1.06, 1],
+              filter: [
+                "drop-shadow(0 0 6px rgba(245, 158, 11, 0.5)) drop-shadow(0 0 12px rgba(234, 179, 8, 0.35))", 
+                "drop-shadow(0 0 12px rgba(245, 158, 11, 0.8)) drop-shadow(0 0 20px rgba(250, 204, 21, 0.6))", 
+                "drop-shadow(0 0 6px rgba(245, 158, 11, 0.5)) drop-shadow(0 0 12px rgba(234, 179, 8, 0.35))"
+              ],
+            }}
+            transition={{
+              duration: 2.2,
+              ease: "easeInOut",
+              repeat: Infinity,
+            }}
+            whileHover={{ scale: 1.15 }}
+            whileTap={{ scale: 0.95 }}
+            title="Open Rock & Roll"
+          >
+            {/* Gold Circle Badge */}
+            <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-amber-600 via-yellow-400 to-amber-200 p-[1.5px] shadow-[0_0_12px_rgba(245,158,11,0.5)] flex items-center justify-center">
+              <div className="w-full h-full rounded-full bg-gradient-to-b from-amber-400 via-amber-500 to-yellow-600 flex items-center justify-center text-black">
+                <Music className="w-3.5 h-3.5 text-zinc-950 stroke-[2.5]" />
+              </div>
             </div>
-          </div>
-        </motion.button>
+          </motion.button>
+
+          {/* 2x2 Action Icons Localized Overlay Container */}
+          <AnimatePresence>
+            {showActionMenu && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9, y: -4 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.9, y: -4 }}
+                transition={{ duration: 0.15 }}
+                className="absolute right-0 top-10 z-50 w-44 bg-zinc-950 border border-zinc-800 rounded-2xl p-2.5 shadow-2xl backdrop-blur-xl"
+              >
+                <div className="flex items-center justify-between pb-1.5 mb-2 border-b border-zinc-800/80">
+                  <span className="text-[10px] font-bold text-amber-400 uppercase tracking-wider">Sectors</span>
+                  <button 
+                    onClick={() => setShowActionMenu(false)}
+                    className="text-zinc-400 hover:text-white p-0.5 rounded-full hover:bg-zinc-800 transition-colors"
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                </div>
+                <div className="grid grid-cols-2 gap-1.5">
+                  <button
+                    onClick={() => {
+                      setShowActionMenu(false);
+                      if (onOpenRockRoll) onOpenRockRoll('hospitality');
+                    }}
+                    className="flex flex-col items-center justify-center p-2 rounded-xl bg-zinc-900 hover:bg-amber-500/20 hover:border-amber-500/50 border border-zinc-800 text-zinc-300 hover:text-white transition-all cursor-pointer group"
+                    title="Hospitality"
+                  >
+                    <Building2 className="w-4 h-4 text-amber-400 mb-1 group-hover:scale-110 transition-transform" />
+                    <span className="text-[9px] font-medium tracking-tight">Hospitality</span>
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      setShowActionMenu(false);
+                      if (onOpenRockRoll) onOpenRockRoll('retail');
+                    }}
+                    className="flex flex-col items-center justify-center p-2 rounded-xl bg-zinc-900 hover:bg-amber-500/20 hover:border-amber-500/50 border border-zinc-800 text-zinc-300 hover:text-white transition-all cursor-pointer group"
+                    title="Retail"
+                  >
+                    <ShoppingBag className="w-4 h-4 text-amber-400 mb-1 group-hover:scale-110 transition-transform" />
+                    <span className="text-[9px] font-medium tracking-tight">Retail</span>
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      setShowActionMenu(false);
+                      if (onOpenRockRoll) onOpenRockRoll('supply-chain');
+                    }}
+                    className="flex flex-col items-center justify-center p-2 rounded-xl bg-zinc-900 hover:bg-amber-500/20 hover:border-amber-500/50 border border-zinc-800 text-zinc-300 hover:text-white transition-all cursor-pointer group"
+                    title="Supply Chain"
+                  >
+                    <Truck className="w-4 h-4 text-amber-400 mb-1 group-hover:scale-110 transition-transform" />
+                    <span className="text-[9px] font-medium tracking-tight">Supply Chain</span>
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      setShowActionMenu(false);
+                      if (onOpenRockRoll) onOpenRockRoll('services');
+                    }}
+                    className="flex flex-col items-center justify-center p-2 rounded-xl bg-zinc-900 hover:bg-amber-500/20 hover:border-amber-500/50 border border-zinc-800 text-zinc-300 hover:text-white transition-all cursor-pointer group"
+                    title="Services"
+                  >
+                    <Users className="w-4 h-4 text-amber-400 mb-1 group-hover:scale-110 transition-transform" />
+                    <span className="text-[9px] font-medium tracking-tight">Services</span>
+                  </button>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
       </div>
 
       {/* Dashboard Section */}
