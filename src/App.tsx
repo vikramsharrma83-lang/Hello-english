@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { SplashScreen } from './components/SplashScreen';
+import { RolePicker } from './components/RolePicker';
 import { QuestionScreen } from './views/QuestionScreen';
 import { SpeakScreen } from './views/SpeakScreen';
 import { ResultScreen } from './views/ResultScreen';
@@ -22,6 +23,7 @@ type PracticeStep = 'question' | 'speak' | 'result';
 export default function App() {
   // Splash Screen State
   const [showSplash, setShowSplash] = useState<boolean>(true);
+  const [showRolePicker, setShowRolePicker] = useState<boolean>(false);
 
   // Navigation State
   const [activeTab, setActiveTab] = useState<NavTab>('myday');
@@ -260,8 +262,20 @@ export default function App() {
       <AnimatePresence>
         {showSplash && (
           <SplashScreen
-            onFinish={() => setShowSplash(false)}
+            onFinish={() => {
+              setShowSplash(false);
+              setShowRolePicker(true);
+            }}
             durationMs={3000}
+          />
+        )}
+        {showRolePicker && (
+          <RolePicker
+            options={["All", "Retail", "Hotels", "Warehouse", "Home service"]}
+            onSelect={(role) => {
+              console.log('Selected role:', role);
+              setShowRolePicker(false);
+            }}
           />
         )}
       </AnimatePresence>
@@ -429,6 +443,7 @@ export default function App() {
           (activeTab !== 'sheeko' || myDayStep === '1_HOME') &&
           activeTab !== 'dashboard' &&
           activeTab !== 'fitness' &&
+          !showRolePicker &&
           !((activeTab === 'sheeko') && (myDayStep === '2_CHAT_INPUT' || myDayStep === '4_CHATBOT_CONVERSATION'))) && (
           <BottomDockNav
             activeTab={activeTab}
