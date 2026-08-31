@@ -143,7 +143,7 @@ export const ChallengeView: React.FC<ChallengeViewProps> = ({
 
         <div className="flex items-center gap-1.5 text-xs font-black text-white bg-zinc-900/90 px-3.5 py-1 rounded-full border border-zinc-800 tracking-tight">
           <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
-          <span>{subView === 'carousel' ? 'Challenges' : `${selectedPlan.days} Days`}</span>
+          <span>{subView === 'carousel' ? 'Talk to me' : `${selectedPlan.days} Days`}</span>
         </div>
 
         <div className="w-12" /> {/* spacer for alignment */}
@@ -162,7 +162,7 @@ export const ChallengeView: React.FC<ChallengeViewProps> = ({
             <button
               onClick={handlePrev}
               className="absolute left-0 sm:left-2 top-1/2 -translate-y-1/2 z-40 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-zinc-900/80 hover:bg-zinc-800 border border-zinc-700/60 text-zinc-300 hover:text-white flex items-center justify-center cursor-pointer shadow-xl transition-all active:scale-95"
-              aria-label="Previous Challenge Duration"
+              aria-label="Previous Talk to me Duration"
             >
               <ChevronLeft className="w-5 h-5 stroke-[2.5]" />
             </button>
@@ -170,7 +170,7 @@ export const ChallengeView: React.FC<ChallengeViewProps> = ({
             <button
               onClick={handleNext}
               className="absolute right-0 sm:right-2 top-1/2 -translate-y-1/2 z-40 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-zinc-900/80 hover:bg-zinc-800 border border-zinc-700/60 text-zinc-300 hover:text-white flex items-center justify-center cursor-pointer shadow-xl transition-all active:scale-95"
-              aria-label="Next Challenge Duration"
+              aria-label="Next Talk to me Duration"
             >
               <ChevronRight className="w-5 h-5 stroke-[2.5]" />
             </button>
@@ -276,11 +276,11 @@ export const ChallengeView: React.FC<ChallengeViewProps> = ({
               </h1>
             </div>
             <p className="text-xs font-semibold text-zinc-400 mt-1 pl-6">
-              Challenge Roadmap & Tracker
+              Talk to me Roadmap & Tracker
             </p>
           </div>
 
-          {/* Active Challenge Card Summary */}
+          {/* Active Talk to me Card Summary */}
           <div className="bg-[#12131a] border border-zinc-800/80 rounded-3xl p-4 sm:p-5 shadow-xl">
             <div className="flex items-center justify-between pb-3 border-b border-zinc-800">
               <div className="flex items-center gap-2">
@@ -363,7 +363,7 @@ export const ChallengeView: React.FC<ChallengeViewProps> = ({
             </div>
           </div>
 
-          {/* Get More From Your Challenge Section: Practice Action Card - Moved Down */}
+          {/* Get More From Your Talk to me Section: Practice Action Card - Moved Down */}
           <div className="space-y-3 pt-8">
             <motion.button
               whileHover={{ scale: 1.01 }}

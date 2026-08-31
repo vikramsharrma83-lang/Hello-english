@@ -5,6 +5,7 @@ import {
   ChevronRight,
   HelpCircle,
   Target,
+  Music,
 } from 'lucide-react';
 import { ConversationTurn, PracticeHistoryItem, DayMap, UserProgress } from '../../types';
 
@@ -13,7 +14,7 @@ interface HomePageProps {
   onOpenPatternLibrary: () => void;
   onOpenInspector: () => void;
   onOpenChallenge?: () => void;
-  onOpenChallengeList?: () => void;
+  onOpenRockRoll?: () => void;
   onOpenProfile?: () => void;
   onSelectSample?: (sampleText: string) => void;
   onClose?: () => void;
@@ -28,7 +29,7 @@ interface HomePageProps {
 export const HomePage: React.FC<HomePageProps> = ({
   onStart,
   onOpenChallenge,
-  onOpenChallengeList,
+  onOpenRockRoll,
   language = 'en',
 }) => {
   const [greeting, setGreeting] = useState('');
@@ -43,26 +44,19 @@ export const HomePage: React.FC<HomePageProps> = ({
   return (
     <div className="w-full flex-1 flex flex-col items-center justify-start px-6 pt-12 pb-28 text-zinc-100 max-w-[440px] mx-auto min-h-screen bg-black">
       {/* Header */}
-      <h1 className="text-xl font-light text-zinc-400 uppercase tracking-widest mb-8">
-        {greeting} VIKRAM!
-      </h1>
+      <div className="flex items-center gap-2 mb-8">
+        <h1 className="text-xl font-light text-zinc-400 uppercase tracking-widest">
+          {greeting} VIKRAM!
+        </h1>
+        <button onClick={onOpenRockRoll} className="p-1 text-zinc-500 hover:text-white">
+          <Music className="w-5 h-5" />
+        </button>
+      </div>
 
       {/* Dashboard Section */}
-      <div className="w-full flex gap-4 mb-6">
-        {/* Streak Card - Changed to Challenge Card */}
-        <button 
-          onClick={onOpenChallengeList}
-          className="flex-[0.8] bg-purple-900/40 rounded-2xl p-3 border border-purple-800 flex items-center justify-center gap-2 hover:bg-purple-900/60 transition-colors"
-        >
-          <Target className="w-5 h-5 text-purple-400" />
-          <div className="flex flex-col">
-            <span className="text-sm font-bold leading-none">Challenges</span>
-            <span className="text-[9px] text-purple-300 uppercase">Start</span>
-          </div>
-        </button>
-        
+      <div className="w-full mb-6">
         {/* Weekly Tracker Card */}
-        <div className="flex-[1.2] bg-zinc-900/60 rounded-2xl p-3 border border-zinc-800">
+        <div className="bg-zinc-900/60 rounded-2xl p-3 border border-zinc-800">
           <span className="text-[9px] text-zinc-500 uppercase mb-2 block">This Week</span>
           <div className="flex justify-between gap-1">
             {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((day, index) => (

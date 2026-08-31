@@ -10,7 +10,8 @@ import { SessionSummary } from '../components/myday/SessionSummary';
 import { EngineInspectorDrawer } from '../components/myday/EngineInspectorDrawer';
 import { PatternLibraryModal } from '../components/myday/PatternLibraryModal';
 import { MyDayPatternsHub } from '../components/myday/MyDayPatternsHub';
-import { ChallengeListScreen } from './ChallengeListScreen';
+import { ChallengeView } from './ChallengeView';
+import { RockAndRollContainer } from './RockAndRollContainer';
 import { DayMap, ActiveTopic, ConversationTurn, DeepAnalysis, Question, UserProgress } from '../types';
 
 interface MyDayViewProps {
@@ -47,7 +48,7 @@ export const MyDayView: React.FC<MyDayViewProps> = ({
 }) => {
   // Navigation State Machine matching story workflow + patterns hub + challenge view
   const [step, setStep] = useState<
-    '1_HOME' | '2_CHAT_INPUT' | '3_SYSTEM_SUMMARIZATION' | '4_CHATBOT_CONVERSATION' | '5_TOPIC_COMPLETE' | '6_SESSION_SUMMARY' | 'PATTERNS_HUB' | 'CHALLENGE' | 'CHALLENGE_LIST'
+    '1_HOME' | '2_CHAT_INPUT' | '3_SYSTEM_SUMMARIZATION' | '4_CHATBOT_CONVERSATION' | '5_TOPIC_COMPLETE' | '6_SESSION_SUMMARY' | 'PATTERNS_HUB' | 'CHALLENGE' | 'ROCK_ROLL'
   >(initialMode === 'patterns' ? 'PATTERNS_HUB' : initialMode === 'challenge' ? 'CHALLENGE' : '1_HOME');
 
   React.useEffect(() => {
@@ -385,7 +386,7 @@ export const MyDayView: React.FC<MyDayViewProps> = ({
             onStart={() => setStep('2_CHAT_INPUT')}
             onOpenPatternLibrary={() => setStep('PATTERNS_HUB')}
             onOpenChallenge={() => setStep('CHALLENGE')}
-            onOpenChallengeList={() => setStep('CHALLENGE_LIST')}
+            onOpenRockRoll={() => setStep('ROCK_ROLL')}
             onOpenInspector={() => setInspectorOpen(true)}
             onOpenProfile={() => {
               if (onNavigateTab) {
@@ -408,9 +409,9 @@ export const MyDayView: React.FC<MyDayViewProps> = ({
           />
         )}
 
-        {/* 5-DAY FLUENCY CHALLENGE VIEW */}
-        {step === 'CHALLENGE_LIST' && (
-          <ChallengeListScreen onBack={() => setStep('1_HOME')} />
+        {/* ROCK AND ROLL VIEW */}
+        {step === 'ROCK_ROLL' && (
+          <RockAndRollContainer onBack={() => setStep('1_HOME')} />
         )}
         {step === 'CHALLENGE' && (
           <div className="w-full flex-1 flex flex-col">

@@ -8,10 +8,9 @@ import { ResultScreen } from './views/ResultScreen';
 import { ProgressView } from './views/ProgressView';
 import { BuddyView } from './views/BuddyView';
 import { MyDayView } from './views/MyDayView';
-import { ChallengeListScreen } from './views/ChallengeListScreen';
-import { ChallengeView } from './views/ChallengeView';
 import { CourseView } from './views/CourseView';
 import { FitnessDashboardView } from './views/FitnessDashboardView';
+import { RockAndRollContainer } from './views/RockAndRollContainer';
 import { BottomDockNav, NavTab } from './components/BottomDockNav';
 import { AnalysisResult, Question, SavedPhrase, UserProgress } from './types';
 import { PRACTICE_QUESTIONS } from './data/questions';
@@ -284,7 +283,8 @@ export default function App() {
       <div className="w-full max-w-[440px] min-h-screen bg-[#090d16] shadow-2xl relative flex flex-col justify-between overflow-x-hidden border-x border-slate-800/80">
         
         {/* VIEW ROUTING */}
-        <AnimatePresence mode="wait">
+        <div className="flex-1 overflow-y-auto">
+          <AnimatePresence mode="wait">
 
 
           {activeTab === 'challenge' && (
@@ -296,13 +296,7 @@ export default function App() {
               transition={{ duration: 0.22 }}
               className="w-full"
             >
-              <ChallengeView
-                progress={progress}
-                onBack={() => setActiveTab('sheeko')}
-                onStartMyDay={() => setActiveTab('myday')}
-                onStartPracticeQuestion={(q) => handleStartPractice(q)}
-                onUpdateProgress={setProgress}
-              />
+              <RockAndRollContainer onBack={() => setActiveTab('sheeko')} />
             </motion.div>
           )}
 
@@ -435,6 +429,7 @@ export default function App() {
             </motion.div>
           )}
         </AnimatePresence>
+        </div>
 
         {(activeTab !== 'practice' &&
           activeTab !== 'buddy' &&
