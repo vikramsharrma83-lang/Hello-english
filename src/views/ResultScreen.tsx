@@ -200,6 +200,18 @@ export const ResultScreen: React.FC<ResultScreenProps> = ({
             <p className="text-base sm:text-lg md:text-xl font-bold text-slate-900 leading-snug">
               “{result.learnerTranscript}”
             </p>
+
+            {/* What you mean (Learner's intended meaning) */}
+            {result.intendedMeaning && (
+              <div className="mt-3.5 pt-3 border-t border-[#DDD6FE]/70">
+                <span className="text-[11px] font-black uppercase tracking-wider text-[#6D28D9] block mb-1">
+                  What you mean
+                </span>
+                <p className="text-sm sm:text-base font-semibold text-slate-700 leading-relaxed">
+                  “{result.intendedMeaning}”
+                </p>
+              </div>
+            )}
           </motion.div>
 
           {/* CARD 2 — What you want to say (Larger System Response & Clean Visual Hierarchy) */}
@@ -296,8 +308,38 @@ export const ResultScreen: React.FC<ResultScreenProps> = ({
               )}
             </button>
 
-            {/* Key Vocabulary Highlights */}
-            {result.keyVocabulary && result.keyVocabulary.length > 0 && (
+            {/* Useful Workplace Phrases / Correction Teaching */}
+            {result.usefulPhrases && result.usefulPhrases.length > 0 ? (
+              <div className="mt-4 pt-3.5 border-t border-[#FED7AA]/60">
+                <span className="text-[11px] font-black uppercase tracking-wider text-[#7C3AED] block mb-2.5">
+                  Useful Workplace Phrases
+                </span>
+                <div className="space-y-2.5">
+                  {result.usefulPhrases.map((phrase, pIdx) => (
+                    <div
+                      key={pIdx}
+                      className="p-3 rounded-2xl bg-white/95 border border-[#E9D5FF] text-xs sm:text-sm shadow-2xs space-y-1.5"
+                    >
+                      <div className="flex flex-wrap items-center gap-1.5 font-bold text-slate-900">
+                        <span className="text-slate-500 font-medium">Learner said:</span>
+                        <span className="text-rose-700 line-through font-semibold">“{phrase.learnerSaid}”</span>
+                        <span className="text-slate-400 font-bold mx-0.5">→</span>
+                        <span className="text-slate-500 font-medium">Better English:</span>
+                        <span className="text-[#7C3AED] font-black">“{phrase.betterEnglish}”</span>
+                        {phrase.hindiMeaning && (
+                          <span className="text-[11px] text-slate-500 font-medium ml-1">
+                            ({phrase.hindiMeaning})
+                          </span>
+                        )}
+                      </div>
+                      <div className="text-slate-600 text-xs font-medium pl-1 border-l-2 border-[#C084FC]">
+                        {phrase.teaching}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : result.keyVocabulary && result.keyVocabulary.length > 0 ? (
               <div className="mt-4 pt-3.5 border-t border-[#FED7AA]/60">
                 <span className="text-[11px] font-extrabold uppercase tracking-wider text-[#7C3AED] block mb-2">
                   Useful Workplace Phrases
@@ -316,7 +358,7 @@ export const ResultScreen: React.FC<ResultScreenProps> = ({
                   ))}
                 </div>
               </div>
-            )}
+            ) : null}
           </motion.div>
         </div>
       </div>

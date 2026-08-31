@@ -2,7 +2,7 @@ import React from 'react';
 import { Activity, Compass, Sparkles, Footprints } from 'lucide-react';
 import { getTranslation } from '../lib/translations';
 
-export type NavTab = 'sheeko' | 'dashboard' | 'buddy' | 'snippets' | 'myday' | 'fitness' | 'course' | 'profile' | 'challenge';
+export type NavTab = 'sheeko' | 'dashboard' | 'buddy' | 'snippets' | 'myday' | 'fitness' | 'course' | 'profile' | 'challenge' | 'drill';
 
 interface BottomDockNavProps {
   activeTab: NavTab;

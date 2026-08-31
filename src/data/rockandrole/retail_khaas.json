@@ -1,0 +1,38 @@
+{
+  "industry": "Retail",
+  "bucketId": "retail_khaas",
+  "theme": "⭐ KHAAS",
+  "themeDescription": "VIP, high-value & special customers",
+  "challenges": [
+    {
+      "id": "KHAAS-01",
+      "industry": "Retail",
+      "bucketId": "retail_khaas",
+      "title": "Providing premium service to a high-value VIP shopper",
+      "shortDescription": "Assist a loyalty tier VIP member looking for exclusive new arrivals.",
+      "staffRole": "senior store consultant",
+      "guestRole": "VIP customer",
+      "mission": "Deliver white-glove personalized service and present exclusive collections.",
+      "guestProfile": {
+        "personality": "refined and discerning",
+        "approximateAgeGroup": "adult 30–70",
+        "communicationStyle": "polite, expecting high standards",
+        "emotionalState": "expectant",
+        "whatTheGuestCaresAboutMost": "exclusive attention and curated choices"
+      },
+      "levels": {
+        "level1": {
+          "name": "HANDLE",
+          "customerMood": "pleased",
+          "resistance": "low",
+          "pressure": "low",
+          "guestBehaviour": "Expects prompt attention and private styling advice.",
+          "hiddenObjectives": ["Acknowledge VIP status", "Showcase premium range"],
+          "possibleSolutions": ["Private lounge assistance", "Exclusive preview access"],
+          "acceptableOutcomes": ["CUSTOMER_HAPPY", "CUSTOMER_ACCEPTED"],
+          "unacceptablePromises": ["Do not offer unauthorized permanent discounts."]
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "industry": "Retail",
+  "bucketId": "retail_samjho",
+  "theme": "🤔 SAMJHO",
+  "themeDescription": "Confused customers & product questions",
+  "challenges": [
+    {
+      "id": "SAMJHO-01",
+      "industry": "Retail",
+      "bucketId": "retail_samjho",
+      "title": "Explaining complex product features to a confused shopper",
+      "shortDescription": "Guide a customer who is unsure between two electronics models.",
+      "staffRole": "store advisor",
+      "guestRole": "confused shopper",
+      "mission": "Ask clarifying questions about their needs and explain features simply.",
+      "guestProfile": {
+        "personality": "hesitant and curious",
+        "approximateAgeGroup": "adult 25–70",
+        "communicationStyle": "asking many questions",
+        "emotionalState": "uncertain",
+        "whatTheGuestCaresAboutMost": "making the right purchase decision"
+      },
+      "levels": {
+        "level1": {
+          "name": "HANDLE",
+          "customerMood": "confused",
+          "resistance": "low",
+          "pressure": "low",
+          "guestBehaviour": "Asks detailed questions comparing specs.",
+          "hiddenObjectives": ["Identify primary use case", "Recommend best fit"],
+          "possibleSolutions": ["Demonstrate product", "Compare top 2 models"],
+          "acceptableOutcomes": ["CUSTOMER_HAPPY", "CUSTOMER_ACCEPTED"],
+          "unacceptablePromises": ["Do not exaggerate battery life or specs."]
+        }
+      }
+    }
+  ]
+}

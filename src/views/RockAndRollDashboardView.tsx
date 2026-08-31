@@ -51,16 +51,14 @@ const ThemeCard: React.FC<ThemeCardProps> = ({ theme, onSelect }) => {
     tag: 'Customer Service',
   };
 
-  const challengeCount = theme.challenges?.length || 0;
-
   return (
     <motion.div
       whileHover={{ y: -2 }}
       whileTap={{ scale: 0.98 }}
       onClick={onSelect}
-      className="group relative w-full h-44 rounded-2xl overflow-hidden border border-white/10 bg-zinc-950 cursor-pointer shadow-lg transition-all duration-200"
+      className="group relative w-full aspect-[3/4] rounded-2xl overflow-hidden border border-white/10 bg-zinc-950 cursor-pointer shadow-lg transition-all duration-200"
     >
-      {/* Real Photography Background (No cartoon, no stretch) */}
+      {/* Real Photography Background */}
       <img
         src={meta.image}
         alt={theme.theme}
@@ -69,36 +67,16 @@ const ThemeCard: React.FC<ThemeCardProps> = ({ theme, onSelect }) => {
       />
 
       {/* Cinematic Dark Gradient Scrim */}
-      <div className="absolute inset-0 bg-gradient-to-t from-[#090b10] via-[#090b10]/70 to-black/30" />
-      <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-200" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/20" />
 
       {/* Content Container */}
-      <div className="relative h-full p-4 flex flex-col justify-between z-10">
-        {/* Top Badges */}
-        <div className="flex items-center justify-between">
-          <span className="px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/15 text-[10px] font-semibold text-zinc-300 uppercase tracking-wider">
-            {meta.tag}
-          </span>
-          <span className="px-2 py-0.5 rounded-full bg-white/10 backdrop-blur-md text-[10px] font-medium text-zinc-300">
-            {challengeCount} {challengeCount === 1 ? 'scenario' : 'scenarios'}
-          </span>
-        </div>
-
-        {/* Bottom Theme Details */}
-        <div className="flex items-end justify-between gap-3">
-          <div className="min-w-0">
-            <h3 className="text-lg font-bold text-white tracking-tight drop-shadow-md flex items-center gap-1.5">
-              <span>{theme.theme}</span>
-            </h3>
-            <p className="text-xs text-zinc-300 font-medium line-clamp-1 mt-0.5 drop-shadow">
-              {theme.themeDescription}
-            </p>
-          </div>
-
-          <div className="flex-shrink-0 w-8 h-8 rounded-full bg-white/10 backdrop-blur-md border border-white/15 flex items-center justify-center text-white group-hover:bg-white group-hover:text-black transition-all">
-            <ChevronRight className="w-4 h-4" />
-          </div>
-        </div>
+      <div className="relative h-full p-2.5 flex flex-col justify-end z-10 text-left">
+        <h3 className="text-xs font-bold text-white tracking-tight drop-shadow-md leading-tight">
+          {theme.theme}
+        </h3>
+        <p className="text-[10px] text-zinc-300 font-medium line-clamp-1 mt-0.5 opacity-90">
+          {meta.tag}
+        </p>
       </div>
     </motion.div>
   );
@@ -153,8 +131,8 @@ export const RockAndRollDashboardView: React.FC<{
         </p>
       </div>
 
-      {/* Themes Cards Grid */}
-      <div className="flex flex-col gap-3.5">
+      {/* Themes Cards Grid - 3 Column Layout matching reference */}
+      <div className="grid grid-cols-3 gap-2.5">
         {data.map((d) => (
           <ThemeCard
             key={d.bucketId}

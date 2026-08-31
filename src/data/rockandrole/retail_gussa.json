@@ -1,0 +1,38 @@
+{
+  "industry": "Retail",
+  "bucketId": "retail_gussa",
+  "theme": "😤 GUSSA",
+  "themeDescription": "Angry & complaining customers",
+  "challenges": [
+    {
+      "id": "GUSSA-01",
+      "industry": "Retail",
+      "bucketId": "retail_gussa",
+      "title": "Handling an angry customer over a defective product",
+      "shortDescription": "De-escalate an upset shopper demanding an immediate refund for a damaged item.",
+      "staffRole": "retail sales associate",
+      "guestRole": "frustrated retail customer",
+      "mission": "Listen calmly, acknowledge the customer's frustration, inspect the product or receipt, and offer a valid store policy resolution.",
+      "guestProfile": {
+        "personality": "aggressive and impatient",
+        "approximateAgeGroup": "adult 20–60",
+        "communicationStyle": "loud, direct, demanding",
+        "emotionalState": "Angry",
+        "whatTheGuestCaresAboutMost": "getting a quick refund or replacement without hassle"
+      },
+      "levels": {
+        "level1": {
+          "name": "HANDLE",
+          "customerMood": "angry",
+          "resistance": "medium",
+          "pressure": "high",
+          "guestBehaviour": "Expresses strong anger about the defective product.",
+          "hiddenObjectives": ["Acknowledge frustration", "Check receipt/item", "Offer policy solution"],
+          "possibleSolutions": ["Exchange item", "Store credit", "Manager review"],
+          "acceptableOutcomes": ["CUSTOMER_HAPPY", "CUSTOMER_ACCEPTED"],
+          "unacceptablePromises": ["Do not promise cash refund without receipt if policy forbids it."]
+        }
+      }
+    }
+  ]
+}

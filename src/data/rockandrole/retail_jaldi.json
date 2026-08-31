@@ -1,0 +1,38 @@
+{
+  "industry": "Retail",
+  "bucketId": "retail_jaldi",
+  "theme": "🏃 JALDI",
+  "themeDescription": "Urgent shopping requests",
+  "challenges": [
+    {
+      "id": "JALDI-R-01",
+      "industry": "Retail",
+      "bucketId": "retail_jaldi",
+      "title": "Customer in a rush needing express checkout",
+      "shortDescription": "Assist a customer who needs to check out immediately to catch a flight.",
+      "staffRole": "cashier",
+      "guestRole": "hurried shopper",
+      "mission": "Speed up the billing process efficiently while maintaining accuracy.",
+      "guestProfile": {
+        "personality": "anxious and hurried",
+        "approximateAgeGroup": "adult 20–50",
+        "communicationStyle": "fast, urgent",
+        "emotionalState": "stressed",
+        "whatTheGuestCaresAboutMost": "speed and immediate checkout"
+      },
+      "levels": {
+        "level1": {
+          "name": "HANDLE",
+          "customerMood": "impatient",
+          "resistance": "medium",
+          "pressure": "high",
+          "guestBehaviour": "Checks watch repeatedly and asks to hurry.",
+          "hiddenObjectives": ["Quick scan and pack", "Polite reassurance"],
+          "possibleSolutions": ["Express billing lane", "Quick digital receipt"],
+          "acceptableOutcomes": ["CUSTOMER_HAPPY", "CUSTOMER_ACCEPTED"],
+          "unacceptablePromises": ["Do not skip barcode scanning or security tags."]
+        }
+      }
+    }
+  ]
+}

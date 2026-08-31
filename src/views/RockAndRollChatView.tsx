@@ -175,7 +175,7 @@ export const RockAndRollChatView: React.FC<RockAndRollChatViewProps> = ({
   ];
 
   // Send Learner Message and Generate Dynamic Customer Reaction
-  const handleSendMessage = (textToSend?: string) => {
+  const handleSendMessage = async (textToSend?: string) => {
     const text = (textToSend || inputText).trim();
     if (!text) return;
 
@@ -217,17 +217,60 @@ export const RockAndRollChatView: React.FC<RockAndRollChatViewProps> = ({
       coachingFeedback: feedback,
     };
 
-    setMessages((prev) => [...prev, learnerMsg]);
+    const updatedMessages = [...messages, learnerMsg];
+    setMessages(updatedMessages);
     setInputText('');
-    setTurnCount((prev) => prev + 1);
+    const newTurnCount = turnCount + 1;
+    setTurnCount(newTurnCount);
 
     // Simulate customer thinking & dynamic response
     setIsCustomerTyping(true);
 
+    try {
+      const response = await fetch('/api/rock-and-roll/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          challenge,
+          history: updatedMessages,
+          learnerMessage: text,
+          turnCount: newTurnCount,
+        }),
+      });
+
+      if (response.ok) {
+        const aiData = await response.json();
+        setIsCustomerTyping(false);
+        const newMood = aiData.customerMood || 'neutral';
+        setCustomerMood(newMood);
+        if (aiData.resolutionReached) {
+          setIsResolved(true);
+        }
+
+        const customerMsg: ChatMessage = {
+          id: `customer-${Date.now()}`,
+          sender: 'customer',
+          text: aiData.customerReply || "I understand. Let's proceed.",
+          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          emotion: newMood,
+        };
+
+        setMessages((prev) => [...prev, customerMsg]);
+        soundFx.playBubblePop();
+
+        if (isSpeakingEnabled) {
+          speakText(customerMsg.text, 'en-IN', 0.96);
+        }
+        return;
+      }
+    } catch (e) {
+      console.warn("AI chat API error, falling back to local generator", e);
+    }
+
     setTimeout(() => {
       const { replyText, newMood, resolutionReached } = generateCustomerReply({
         learnerText: text,
-        turnNumber: turnCount + 1,
+        turnNumber: newTurnCount,
         challenge,
         currentMood: customerMood,
       });
@@ -339,18 +382,51 @@ export const RockAndRollChatView: React.FC<RockAndRollChatViewProps> = ({
   }
 
   // Complete and package session debrief data
-  const handleFinishDebrief = () => {
+  const handleFinishDebrief = async () => {
     soundFx.playSuccessChime();
+    try {
+      const response = await fetch('/api/rock-and-roll/summary', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          challenge,
+          history: messages,
+        }),
+      });
+      if (response.ok) {
+        const summaryData = await response.json();
+        onComplete(summaryData);
+        return;
+      }
+    } catch (e) {
+      console.warn("AI summary API error, falling back to local summary", e);
+    }
+
     const finalScore = Math.round((empathyScore * 0.4) + (handlingScore * 0.35) + (grammarScore * 0.25));
 
     onComplete({
-      situationTitle: challenge.title,
+      situationName: challenge.title,
       score: Math.min(99, Math.max(68, finalScore)),
       isResolved: true,
-      situationHandling: handlingScore,
-      englishGrammar: grammarScore,
+      howIHandledIt: {
+        communication: 'Good',
+        speaking: 'Good',
+        confidence: 'Getting Better',
+        situationHandling: 'Good'
+      },
+      iDidWell: [
+        "Maintained professional de-escalation tone",
+        "Acknowledged customer urgency promptly"
+      ],
+      practiceNext: [
+        "Avoid pausing too long between verification steps",
+        "Use more assertive phrasing when setting timeframes"
+      ],
+      myNaturalEnglish: [
+        { learnerSaid: "I will check room right now sir.", betterEnglish: "I will check the room right away, sir.", explanation: "Adding articles and polite timeframe adverbs." }
+      ],
+      nextTimeGoal: "Confidently state the exact expected timeframe within the first 30 seconds.",
       customerResponse: customerMood === 'happy' || customerMood === 'satisfied' ? 'Happy' : 'Neutral',
-      turnsTaken: turnCount,
       timestamp: Date.now(),
     });
   };

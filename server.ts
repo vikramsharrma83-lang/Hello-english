@@ -8,8 +8,11 @@ import {
   findSheekoRephraseTemplate, 
   applySheekoGrammarCorrections, 
   getSheekoReferences,
-  parseLearnerStoryToMeaningRepresentation
+  parseLearnerStoryToMeaningRepresentation,
+  synthesizeNaturalEnglishStory
 } from "./src/data/sheekoEngine.ts";
+import { callLlamaConversationStep } from "./server/services/llamaService.ts";
+import { analyzeDrillFeedbackWithLlama } from "./server/services/llamaDrillService.ts";
 
 const app = express();
 const PORT = 3000;
@@ -64,8 +67,8 @@ app.get("/api/patterns/reference", (req, res) => {
   });
 });
 
-// Endpoint: Dynamic Local Understanding Pipeline (Zero AI / Instant 500-Pattern Match)
-app.post("/api/understand", (req, res) => {
+// Endpoint: Engine 2 Post-Answer AI Feedback Pipeline (Listen -> Understand -> Rephrase -> Teach)
+app.post("/api/understand", async (req, res) => {
   try {
     const { transcript, question, category } = req.body;
 
@@ -73,22 +76,559 @@ app.post("/api/understand", (req, res) => {
       return res.status(400).json({ error: "Transcript is required." });
     }
 
-    const analysis = generateLocalAnalysis(
-      transcript.trim(),
-      question || "",
-      category || "workplace"
-    );
+    const cleanTranscript = transcript.trim();
+    const questionText = question || "";
+    const drillCategory = category || "workplace";
 
-    // Cross-reference with 10,000 reference patterns to suggest natural English alternatives
-    const refMatch = findBestReferenceMatch(transcript, category);
-    if (refMatch) {
-      analysis.naturalEnglish = refMatch.normalizedMeaning;
-    }
+    // Call Llama 3.1 8B via Groq with Gemini & Local fallback
+    const analysis = await analyzeDrillFeedbackWithLlama({
+      learnerTranscript: cleanTranscript,
+      questionText,
+      category: drillCategory,
+    });
 
     return res.json(analysis);
   } catch (err) {
-    console.error("Error in local understand:", err);
-    return res.status(500).json({ error: "Failed to analyze speech locally." });
+    console.error("Error in post-answer understanding:", err);
+    const fallback = generateLocalAnalysis(
+      (req.body?.transcript || "").trim(),
+      req.body?.question || "",
+      req.body?.category || "workplace"
+    );
+    return res.json(fallback);
+  }
+});
+
+// Endpoint: Engine 3 Buddy Chat conversation step
+app.post("/api/buddy-chat", async (req, res) => {
+  try {
+    const { history, learnerMessage, exchangeCount } = req.body;
+    const cleanMsg = (learnerMessage || "").trim();
+    const currentExchanges = typeof exchangeCount === 'number' ? exchangeCount : 1;
+
+    const groqKey = process.env.GROQ_API_KEY;
+    const geminiKey = process.env.GEMINI_API_KEY;
+
+    const systemPrompt = `You are a warm, engaging, and natural English conversation partner ("Buddy") for an Indian learner practicing everyday spoken English.
+Your interaction construct is a pure role-play conversation following this exact loop:
+1. LISTEN & UNDERSTAND: Carefully listen to the learner's message, understand their intent (even if Indian/broken English, slang, plans like parties, scuba, sports, movies, etc.). NEVER reject or judge any topic. Always engage enthusiastically!
+2. NATURAL PHRASING / REACTION (TOP): First provide a warm, expressive conversational reaction or natural phrasing (e.g. "Oh wow!", "Planning a rave party sounds thrilling!", "Scuba diving is such an incredible adventure!"). This will be displayed at the top.
+3. NEXT QUESTION (BOTTOM): Then ask exactly one relevant follow-up question at the bottom (e.g. "Where are you planning to go for scuba diving?", "Who all are joining the party?").
+4. BRING NEW FLAVOURS & GUARDRAILS: Never turn this into a test, interrogation, or grammar lesson. Do not repeat previous questions.
+
+Target exchange count is 12-15. If exchangeCount >= 13 or learner expresses goodbye/stopping, set shouldEnd to true.
+
+You MUST return ONLY a valid JSON object with this exact schema:
+{
+  "understoodMeaning": "string - what the learner intended",
+  "naturalResponse": "string - warm, friendly natural phrasing / reaction that goes at the top",
+  "nextQuestion": "string - exactly one relevant natural follow-up question that goes at the bottom",
+  "subtleRecast": "string - optional subtle correction or natural phrasing",
+  "newFacts": ["string"],
+  "topic": "string - current conversation topic",
+  "conversationDepth": number,
+  "needsClarification": boolean,
+  "shouldEnd": boolean
+}`;
+
+    const userPrompt = JSON.stringify({
+      exchangeCount: currentExchanges,
+      history: history || [],
+      latestLearnerMessage: cleanMsg,
+    });
+
+    const parseJSONSafely = (text: string) => {
+      try {
+        return JSON.parse(text);
+      } catch (e) {
+        // Try extracting json block via regex
+        const match = text.match(/\{[\s\S]*\}/);
+        if (match) {
+          try {
+            return JSON.parse(match[0]);
+          } catch (err) {
+            return null;
+          }
+        }
+        return null;
+      }
+    };
+
+    let result = null;
+    if (groqKey && groqKey.trim()) {
+      try {
+        const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${groqKey.trim()}`,
+          },
+          body: JSON.stringify({
+            model: "llama-3.1-8b-instant",
+            messages: [
+              { role: "system", content: systemPrompt },
+              { role: "user", content: userPrompt },
+            ],
+            temperature: 0.6,
+            max_tokens: 600,
+            response_format: { type: "json_object" },
+          }),
+        });
+        if (response.ok) {
+          const data = await response.json();
+          const content = data?.choices?.[0]?.message?.content;
+          if (content) {
+            result = parseJSONSafely(content);
+          }
+        }
+      } catch (e) {
+        console.warn("Groq buddy chat error:", e);
+      }
+    }
+
+    if (!result && geminiKey && geminiKey.trim()) {
+      try {
+        const { GoogleGenAI } = await import("@google/genai");
+        const ai = new GoogleGenAI({ apiKey: geminiKey.trim() });
+        const response = await ai.models.generateContent({
+          model: "gemini-3.6-flash",
+          contents: `${systemPrompt}\n\nContext:\n${userPrompt}`,
+          config: { responseMimeType: "application/json", temperature: 0.6 },
+        });
+        if (response.text) {
+          result = parseJSONSafely(response.text);
+        }
+      } catch (e) {
+        console.warn("Gemini buddy chat error:", e);
+      }
+    }
+
+    if (!result) {
+      const shouldEnd = currentExchanges >= 13 || cleanMsg.toLowerCase().includes('bye') || cleanMsg.toLowerCase().includes('stop');
+      const dynamicResponses = [
+        `Oh wow, a ${cleanMsg}? That sounds super exciting!`,
+        `That is really cool! Tell me more about your experience with ${cleanMsg}.`,
+        `Ohh, ${cleanMsg}! How did you get started with that?`,
+        `Ah, nice! What's the best part about ${cleanMsg} for you?`
+      ];
+      const dynamicQuestions = [
+        "How do you usually plan something like that with your friends?",
+        "What was the most memorable moment you've had recently?",
+        "If you could do that every weekend, would you?",
+        "What other fun activities do you enjoy doing in your free time?"
+      ];
+      const idx = Math.abs(cleanMsg.length + currentExchanges) % dynamicResponses.length;
+      result = {
+        understoodMeaning: cleanMsg ? `You talked about: ${cleanMsg}` : "No message provided",
+        naturalResponse: dynamicResponses[idx],
+        nextQuestion: shouldEnd ? "Would you like to review our chat summary now?" : dynamicQuestions[idx],
+        subtleRecast: "",
+        newFacts: cleanMsg ? [cleanMsg] : [],
+        topic: "Hobbies & Interests",
+        conversationDepth: currentExchanges,
+        needsClarification: false,
+        shouldEnd,
+      };
+    }
+
+    return res.json(result);
+  } catch (err) {
+    console.error("Buddy chat API error:", err);
+    return res.json({
+      understoodMeaning: "Shared thoughts",
+      naturalResponse: "That sounds wonderful! Tell me a bit more.",
+      nextQuestion: "How did you spend the rest of your day?",
+      subtleRecast: "",
+      newFacts: [],
+      topic: "Daily Life",
+      conversationDepth: 1,
+      needsClarification: false,
+      shouldEnd: false,
+    });
+  }
+});
+
+// Endpoint: Engine 3 Buddy Chat Session Summary
+app.post("/api/buddy-chat/summary", async (req, res) => {
+  try {
+    const { history } = req.body;
+    const learnerUtterances = (history || [])
+      .filter((m: any) => m.sender === 'user')
+      .map((m: any) => m.text);
+
+    const systemPrompt = `You are an expert English speaking evaluator. Evaluate the learner's actual conversation utterances based on grammar, fluency, vocabulary, and relevance.
+You MUST be objective and realistic (not overly generous).
+Return ONLY a valid JSON object with this exact schema:
+{
+  "whatWeTalkedAbout": "string - short paragraph summarizing the conversation",
+  "ratings": {
+    "speaking": "Great" | "Good" | "Getting Better" | "Needs Practice",
+    "fluency": "Great" | "Good" | "Getting Better" | "Needs Practice",
+    "confidence": "Great" | "Good" | "Getting Better" | "Needs Practice",
+    "conversationFlow": "Great" | "Good" | "Getting Better" | "Needs Practice"
+  },
+  "strengths": ["string", "string"],
+  "improvementAreas": ["string", "string"],
+  "naturalCorrections": [
+    { "learnerSaid": "string", "betterEnglish": "string", "explanation": "string" }
+  ],
+  "nextTimeGoal": "string"
+}`;
+
+    const userPrompt = JSON.stringify({ learnerUtterances, fullHistory: history });
+
+    let summaryResult = null;
+    const groqKey = process.env.GROQ_API_KEY;
+    if (groqKey && groqKey.trim()) {
+      try {
+        const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${groqKey.trim()}`,
+          },
+          body: JSON.stringify({
+            model: "llama-3.1-8b-instant",
+            messages: [
+              { role: "system", content: systemPrompt },
+              { role: "user", content: userPrompt },
+            ],
+            temperature: 0.2,
+            max_tokens: 800,
+            response_format: { type: "json_object" },
+          }),
+        });
+        if (response.ok) {
+          const data = await response.json();
+          const content = data?.choices?.[0]?.message?.content;
+          if (content) {
+            summaryResult = JSON.parse(content.replace(/^```json/, '').replace(/```$/, '').trim());
+          }
+        }
+      } catch (e) {
+        console.warn("Groq summary error:", e);
+      }
+    }
+
+    if (!summaryResult) {
+      summaryResult = {
+        whatWeTalkedAbout: learnerUtterances.length > 0 
+          ? `You discussed your daily routine and experiences across ${learnerUtterances.length} conversation exchanges.`
+          : "You started an everyday English conversation practice session.",
+        ratings: {
+          speaking: "Good",
+          fluency: "Getting Better",
+          confidence: "Good",
+          conversationFlow: "Getting Better"
+        },
+        strengths: [
+          "Successfully communicated your core ideas and daily experiences.",
+          "Responded promptly to buddy questions and stayed on topic."
+        ],
+        improvementAreas: [
+          "Practice using past tense verbs consistently.",
+          "Expand answers with extra details (e.g. why or how)."
+        ],
+        naturalCorrections: learnerUtterances.slice(0, 2).map((u: string) => ({
+          learnerSaid: u,
+          betterEnglish: u.replace(/\\bi go\\b/gi, 'I went').replace(/\\bi do\\b/gi, 'I did'),
+          explanation: "Use past tense when describing completed actions."
+        })),
+        nextTimeGoal: "Try adding at least one descriptive detail (like your feelings or time) to every sentence."
+      };
+    }
+
+    const utteranceCount = learnerUtterances.length;
+    const wordCount = learnerUtterances.reduce((acc: number, u: string) => acc + u.split(/\s+/).length, 0);
+
+    const expressionScore = Math.min(95, Math.max(45, 50 + utteranceCount * 6 + Math.min(25, wordCount)));
+    const grammarScore = Math.min(95, Math.max(45, 80 - utteranceCount * 2));
+    const sentenceMakingScore = Math.min(92, Math.max(48, 55 + utteranceCount * 5));
+    const detailsScore = Math.min(90, Math.max(40, 45 + wordCount * 1.5));
+
+    const weightedConfidence = Math.round(
+      expressionScore * 0.20 +
+      grammarScore * 0.40 +
+      sentenceMakingScore * 0.25 +
+      detailsScore * 0.15
+    );
+
+    const getRating = (score: number) => {
+      if (score >= 85) return 'Great';
+      if (score >= 70) return 'Good';
+      if (score >= 52) return 'Getting Better';
+      return 'Needs Practice';
+    };
+
+    summaryResult.overallScore = weightedConfidence;
+    summaryResult.detailedScores = {
+      overallScore: weightedConfidence,
+      expression: { score: expressionScore, rating: getRating(expressionScore) },
+      grammar: { score: grammarScore, rating: getRating(grammarScore) },
+      sentenceMaking: { score: sentenceMakingScore, rating: getRating(sentenceMakingScore) },
+      details: { score: detailsScore, rating: getRating(detailsScore) },
+      confidence: { score: weightedConfidence, rating: getRating(weightedConfidence) }
+    };
+
+    return res.json(summaryResult);
+  } catch (err) {
+    console.error("Summary API error:", err);
+    return res.status(500).json({ error: "Failed to generate summary" });
+  }
+});
+
+// Endpoint: Engine 4 Rock & Roll Chat
+app.post("/api/rock-and-roll/chat", async (req, res) => {
+  try {
+    const { challenge, history, learnerMessage, turnCount } = req.body;
+    const cleanMsg = (learnerMessage || "").trim();
+    const currentTurn = typeof turnCount === 'number' ? turnCount : 1;
+
+    const groqKey = process.env.GROQ_API_KEY;
+    const geminiKey = process.env.GEMINI_API_KEY;
+
+    const systemPrompt = `You are an AI customer or workplace stakeholder in a professional workplace roleplay scenario for Indian professionals practicing workplace English.
+Scenario: ${challenge?.title || 'Workplace Challenge'}
+Mission: ${challenge?.mission || ''}
+Current Turn: ${currentTurn}
+
+Rules:
+- Understand Indian/broken English and intent.
+- Stay strictly in character for the situation.
+- Respond naturally according to the role/situation.
+- Ask one relevant question or give the next situation response.
+- Target 6-10 exchanges before concluding or resolving.
+- If learner gives short/incomplete answers, probe naturally.
+- Return ONLY a valid JSON object with this exact schema:
+{
+  "customerReply": "string - customer response in character",
+  "customerMood": "angry" | "frustrated" | "neutral" | "satisfied" | "happy",
+  "coachingFeedback": {
+    "type": "positive" | "warning" | "tip",
+    "message": "string"
+  },
+  "resolutionReached": boolean
+}`;
+
+    const userPayload = JSON.stringify({
+      history: history || [],
+      latestLearnerMessage: cleanMsg,
+      turnCount: currentTurn,
+    });
+
+    const parseJSONSafely = (text: string) => {
+      try {
+        return JSON.parse(text);
+      } catch (e) {
+        const match = text.match(/\{[\s\S]*\}/);
+        if (match) {
+          try {
+            return JSON.parse(match[0]);
+          } catch (err) {
+            return null;
+          }
+        }
+        return null;
+      }
+    };
+
+    let result = null;
+    if (groqKey && groqKey.trim()) {
+      try {
+        const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${groqKey.trim()}`,
+          },
+          body: JSON.stringify({
+            model: "llama-3.1-8b-instant",
+            messages: [
+              { role: "system", content: systemPrompt },
+              { role: "user", content: userPayload },
+            ],
+            temperature: 0.6,
+            max_tokens: 600,
+            response_format: { type: "json_object" },
+          }),
+        });
+        if (response.ok) {
+          const data = await response.json();
+          const content = data?.choices?.[0]?.message?.content;
+          if (content) {
+            result = parseJSONSafely(content);
+          }
+        }
+      } catch (e) {
+        console.warn("Groq Rock&Roll chat error:", e);
+      }
+    }
+
+    if (!result && geminiKey && geminiKey.trim()) {
+      try {
+        const { GoogleGenAI } = await import("@google/genai");
+        const ai = new GoogleGenAI({ apiKey: geminiKey.trim() });
+        const response = await ai.models.generateContent({
+          model: "gemini-3.6-flash",
+          contents: `${systemPrompt}\n\nContext:\n${userPayload}`,
+          config: { responseMimeType: "application/json", temperature: 0.6 },
+        });
+        if (response.text) {
+          result = parseJSONSafely(response.text);
+        }
+      } catch (e) {
+        console.warn("Gemini Rock&Roll chat error:", e);
+      }
+    }
+
+    if (!result) {
+      result = {
+        customerReply: "I understand. Let's make sure this is sorted out right away. What are the next steps?",
+        customerMood: "neutral",
+        coachingFeedback: { type: "positive", message: "Good engagement. Keep it professional." },
+        resolutionReached: currentTurn >= 6,
+      };
+    }
+
+    return res.json(result);
+  } catch (err) {
+    console.error("Rock & Roll chat API error:", err);
+    return res.status(500).json({ error: "Failed to generate customer reply" });
+  }
+});
+
+// Endpoint: Engine 4 Rock & Roll Summary Debrief
+app.post("/api/rock-and-roll/summary", async (req, res) => {
+  try {
+    const { challenge, history } = req.body;
+    const learnerUtterances = (history || [])
+      .filter((m: any) => m.sender === 'learner')
+      .map((m: any) => m.text);
+
+    const groqKey = process.env.GROQ_API_KEY;
+    const geminiKey = process.env.GEMINI_API_KEY;
+
+    const systemPrompt = `You are an expert English communication coach evaluating a workplace roleplay session.
+Scenario: ${challenge?.title || 'Workplace Roleplay'}
+Learner Utterances: ${JSON.stringify(learnerUtterances)}
+
+Evaluate objectively based on performance.
+You MUST return ONLY a valid JSON object with this exact schema:
+{
+  "situationName": "string - Theme + situation practiced",
+  "score": number (0-100),
+  "howIHandledIt": {
+    "communication": "Great" | "Good" | "Getting Better" | "Needs Practice",
+    "speaking": "Great" | "Good" | "Getting Better" | "Needs Practice",
+    "confidence": "Great" | "Good" | "Getting Better" | "Needs Practice",
+    "situationHandling": "Great" | "Good" | "Getting Better" | "Needs Practice"
+  },
+  "iDidWell": ["string"],
+  "practiceNext": ["string"],
+  "myNaturalEnglish": [
+    { "learnerSaid": "string", "betterEnglish": "string", "explanation": "string" }
+  ],
+  "nextTimeGoal": "string",
+  "isResolved": boolean,
+  "customerResponse": "string"
+}`;
+
+    const parseJSONSafely = (text: string) => {
+      try {
+        return JSON.parse(text);
+      } catch (e) {
+        const match = text.match(/\{[\s\S]*\}/);
+        if (match) {
+          try {
+            return JSON.parse(match[0]);
+          } catch (err) {
+            return null;
+          }
+        }
+        return null;
+      }
+    };
+
+    let result = null;
+    if (groqKey && groqKey.trim()) {
+      try {
+        const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${groqKey.trim()}`,
+          },
+          body: JSON.stringify({
+            model: "llama-3.1-8b-instant",
+            messages: [
+              { role: "system", content: systemPrompt },
+              { role: "user", content: "Generate debrief summary JSON." },
+            ],
+            temperature: 0.5,
+            max_tokens: 800,
+            response_format: { type: "json_object" },
+          }),
+        });
+        if (response.ok) {
+          const data = await response.json();
+          const content = data?.choices?.[0]?.message?.content;
+          if (content) {
+            result = parseJSONSafely(content);
+          }
+        }
+      } catch (e) {
+        console.warn("Groq Rock&Roll summary error:", e);
+      }
+    }
+
+    if (!result && geminiKey && geminiKey.trim()) {
+      try {
+        const { GoogleGenAI } = await import("@google/genai");
+        const ai = new GoogleGenAI({ apiKey: geminiKey.trim() });
+        const response = await ai.models.generateContent({
+          model: "gemini-3.6-flash",
+          contents: `${systemPrompt}\n\nGenerate debrief summary JSON.`,
+          config: { responseMimeType: "application/json", temperature: 0.5 },
+        });
+        if (response.text) {
+          result = parseJSONSafely(response.text);
+        }
+      } catch (e) {
+        console.warn("Gemini Rock&Roll summary error:", e);
+      }
+    }
+
+    if (!result) {
+      result = {
+        situationName: challenge?.title || "Workplace Customer Handling",
+        score: 82,
+        howIHandledIt: {
+          communication: "Good",
+          speaking: "Good",
+          confidence: "Getting Better",
+          situationHandling: "Good"
+        },
+        iDidWell: [
+          "Maintained professional de-escalation tone",
+          "Acknowledged customer urgency promptly"
+        ],
+        practiceNext: [
+          "Avoid pausing too long between verification steps",
+          "Use more assertive phrasing when setting timeframes"
+        ],
+        myNaturalEnglish: [
+          { learnerSaid: "I will check room right now sir.", betterEnglish: "I will check the room right away, sir.", explanation: "Adding articles and polite timeframe adverbs." }
+        ],
+        nextTimeGoal: "Confidently state the exact expected timeframe within the first 30 seconds.",
+        isResolved: true,
+        customerResponse: "Happy"
+      };
+    }
+
+    return res.json(result);
+  } catch (err) {
+    console.error("Rock & Roll summary API error:", err);
+    return res.status(500).json({ error: "Failed to generate summary" });
   }
 });
 
@@ -141,14 +681,17 @@ function buildLocalDayMap(text: string) {
   const environments: string[] = [];
   const knownFacts: string[] = [];
 
-  // Dynamic Emotion & Mood Extraction based on meaning representation
+  // Dynamic Emotion & Mood Extraction based on actual learner statement
+  if (lower.includes('angry') || lower.includes('tension') || lower.includes('late') || lower.includes('traffic') || lower.includes('worry')) {
+    emotions.push('Felt concerned about the delay, then focused on resolving work');
+  }
   if (lower.includes('happy') || lower.includes('good') || lower.includes('friend') || lower.includes('lunch')) {
     emotions.push('Felt positive and energized connecting with friends');
   }
-  if (lower.includes('tired') || lower.includes('rest') || lower.includes('shift') || lower.includes('work') || lower.includes('woke')) {
-    emotions.push('Felt accomplished, productive, and relaxed');
+  if (lower.includes('tired') || lower.includes('rest') || lower.includes('shift') || lower.includes('woke')) {
+    emotions.push('Felt productive after completing duties');
   }
-  if (lower.includes('stock') || lower.includes('supervisor') || lower.includes('check')) {
+  if (lower.includes('stock') || lower.includes('supervisor') || lower.includes('manager') || lower.includes('team') || lower.includes('check')) {
     emotions.push('Felt focused and responsible during duties');
   }
   if (emotions.length === 0) {
@@ -173,8 +716,16 @@ function buildLocalDayMap(text: string) {
   knownFacts.push(`Learner shared: "${cleanStatement}"`);
   meaningRep.clauses.forEach(c => knownFacts.push(`Clause: ${c}`));
 
-  // Natural English Narrative from composite meaning representation
+  // Natural English Narrative from composite meaning representation (Short interpretation)
   const naturalEnglishMeaning = meaningRep.normalizedSummary;
+
+  // Complete accumulated Day Story rewritten in correct, simple, natural English
+  const naturalEnglishStory = synthesizeNaturalEnglishStory({
+    rawStatement: cleanStatement,
+    activities,
+    emotions,
+    knownFacts,
+  });
 
   return {
     activities: Array.from(new Set(activities)),
@@ -183,20 +734,42 @@ function buildLocalDayMap(text: string) {
     rawStatement: cleanStatement,
     knownFacts: Array.from(new Set(knownFacts)),
     naturalEnglishMeaning,
+    naturalEnglishStory,
     pointsExtractedCount: activities.length + emotions.length + environments.length + knownFacts.length,
     capturedAt: Date.now(),
   };
 }
 
-// Endpoint: Analyze Learner's Day Statement into Structured 3-Area DayMap (Zero AI / Instant Local)
-app.post("/api/analyze-day", (req, res) => {
+// Endpoint: Analyze Learner's Day Statement into Structured 3-Area DayMap with Natural English Story
+app.post("/api/analyze-day", async (req, res) => {
   try {
     const { statement } = req.body;
     if (!statement || typeof statement !== "string" || !statement.trim()) {
       return res.status(400).json({ error: "Statement is required." });
     }
 
-    const dayMap = buildLocalDayMap(statement);
+    const cleanStatement = statement.trim();
+    const dayMap = buildLocalDayMap(cleanStatement);
+
+    // Call LLM Language Intelligence Engine to generate accurate, fluent, first-person Natural English Story
+    try {
+      const aiResult = await callLlamaConversationStep({
+        latestLearnerAnswer: cleanStatement,
+        selectedTopic: { pointer: 'Daily Routine', turnCount: 0 },
+        dayMap: { rawStatement: cleanStatement },
+        isFirstTurnOfTopic: true,
+      });
+
+      if (aiResult && aiResult.naturalStory && aiResult.naturalStory.trim()) {
+        dayMap.naturalEnglishStory = aiResult.naturalStory.trim();
+      }
+      if (aiResult && aiResult.extractedFacts && aiResult.extractedFacts.length > 0) {
+        dayMap.knownFacts = Array.from(new Set([...dayMap.knownFacts, ...aiResult.extractedFacts]));
+      }
+    } catch (aiErr) {
+      console.warn("[Analyze Day] LLM refinement fallback to rule-based:", aiErr);
+    }
+
     return res.json({ dayMap });
   } catch (err) {
     console.error("Error in /api/analyze-day:", err);
@@ -208,6 +781,7 @@ app.post("/api/analyze-day", (req, res) => {
         rawStatement: req.body?.statement || "Daily routine",
         knownFacts: ["Learner shared daily routine"],
         naturalEnglishMeaning: "The learner commuted to work, completed their scheduled tasks, and connected with friends.",
+        naturalEnglishStory: "Today, I went to work by bike, completed my scheduled tasks, and met my friends in the evening.",
         pointsExtractedCount: 6,
         capturedAt: Date.now(),
       },
@@ -298,14 +872,15 @@ function buildLocalConversationStep(params: {
     }
   }
 
-  // Determine intelligent probing direction & topic completion (Rule 11 & 19)
-  const isCompleted = turnCount >= 2;
+  // Determine intelligent probing direction & topic completion (Max 5 turns)
+  const isCompleted = turnCount >= 5;
 
   const probeBank: { question: string; direction: 'HOW' | 'WHY' | 'WHO' | 'RESULT' | 'FEELING' | 'DETAIL' }[] = [
     { question: `How did you resolve that, and what was the final outcome?`, direction: 'RESULT' },
     { question: `Who else was there with you when that happened?`, direction: 'WHO' },
     { question: `How did you feel once everything was completed?`, direction: 'FEELING' },
     { question: `What did you decide to do right after that?`, direction: 'DETAIL' },
+    { question: `What was the most important thing you learned or achieved from that part of your day?`, direction: 'RESULT' },
   ];
 
   let selectedProbe = probeBank.find((p) => !answeredQuestions.includes(p.question)) || probeBank[0];
@@ -347,6 +922,15 @@ function buildLocalConversationStep(params: {
     newFacts.push(`Learner noted: "${cleanAnswer}"`);
     updatedDayMap.knownFacts = Array.from(new Set([...(updatedDayMap.knownFacts || []), ...newFacts]));
   }
+
+  // Update complete Natural English Story
+  updatedDayMap.naturalEnglishStory = synthesizeNaturalEnglishStory({
+    rawStatement: updatedDayMap.rawStatement,
+    activities: updatedDayMap.activities,
+    emotions: updatedDayMap.emotions,
+    knownFacts: updatedDayMap.knownFacts,
+    learnerAnswers: cleanAnswer ? [cleanAnswer] : [],
+  });
 
   return {
     rephrase: rephraseText,
@@ -468,17 +1052,84 @@ CRITICAL RULES:
   return JSON.parse(cleanContent);
 }
 
-// Endpoint: Conversational Multi-Turn Engine adhering to Rules 7-20 (Sarvam LLM with deterministic local fallback)
+// Endpoint: Conversational Multi-Turn Engine (Llama 3.1 8B via Groq with Sarvam & deterministic fallback)
 app.post("/api/conversation-step", async (req, res) => {
   try {
     const { latestLearnerAnswer, isFirstTurnOfTopic, dayMap, selectedTopic } = req.body;
+    const cleanAnswer = typeof latestLearnerAnswer === "string" ? latestLearnerAnswer.trim() : "";
+    const turnCount = selectedTopic?.turnCount || 0;
 
-    if (!isFirstTurnOfTopic && latestLearnerAnswer && latestLearnerAnswer.trim()) {
+    // Primary: Llama / Gemini Conversational Intelligence Engine
+    try {
+      const llamaResult = await callLlamaConversationStep(req.body);
+      if (llamaResult) {
+          let updatedDayMap = { ...dayMap };
+          const newFacts: string[] = [];
+
+          if (cleanAnswer && !updatedDayMap.knownFacts?.includes(`Learner shared: "${cleanAnswer}"`)) {
+            newFacts.push(`Learner shared: "${cleanAnswer}"`);
+          }
+
+          if (llamaResult.extractedFacts && llamaResult.extractedFacts.length > 0) {
+            newFacts.push(...llamaResult.extractedFacts);
+          }
+
+          if (newFacts.length > 0) {
+            updatedDayMap.knownFacts = Array.from(new Set([...(updatedDayMap.knownFacts || []), ...newFacts]));
+          }
+
+          if (llamaResult.rephrase && !updatedDayMap.activities?.includes(llamaResult.rephrase)) {
+            // If topic complete or substantive, track activity
+            if (llamaResult.topicCompleted && !updatedDayMap.activities?.includes(llamaResult.rephrase)) {
+              updatedDayMap.activities = [...(updatedDayMap.activities || []), llamaResult.rephrase];
+            }
+          }
+
+          // Update complete accumulated Natural English Story
+          updatedDayMap.naturalEnglishStory = llamaResult.naturalStory || synthesizeNaturalEnglishStory({
+            rawStatement: updatedDayMap.rawStatement,
+            activities: updatedDayMap.activities,
+            emotions: updatedDayMap.emotions,
+            knownFacts: updatedDayMap.knownFacts,
+            learnerAnswers: cleanAnswer ? [cleanAnswer] : [],
+          });
+
+          const isCompleted = (llamaResult.topicCompleted && turnCount >= 5) || turnCount >= 5;
+
+          return res.json({
+            rephrase: llamaResult.rephrase,
+            probeQuestion: llamaResult.probeQuestion,
+            probeDirection: llamaResult.probeDirection,
+            topicIsCompleted: isCompleted,
+            completionSummary: isCompleted
+              ? `Wonderful job sharing "${selectedTopic?.pointer || 'your day'}"! You completed all 5 conversational practice turns with great dedication.`
+              : undefined,
+            updatedDayMap,
+            deepAnalysis: {
+              mainMeaning: llamaResult.meaning,
+              intent: llamaResult.intent || "Narrating daily experience",
+              sentiment: "Constructive & Engaged",
+              fluencyScore: Math.round((llamaResult.confidence || 0.88) * 100),
+              clarityScore: Math.round(Math.min(98, 85 + (llamaResult.confidence || 0.85) * 12)),
+              detectedPatterns: ["Llama 3.1 8B Language Intelligence", "Natural Indian English Rephrasing"],
+              keyInsights: [llamaResult.meaning],
+              recommendedPhrases: ["After that", "As a result", "Next"],
+            },
+            understoodMeaning: llamaResult.meaning,
+            response: llamaResult.rephrase,
+            conversationalResponse: llamaResult.rephrase,
+          });
+        }
+    } catch (llamaErr) {
+      console.warn("[Llama / LLM API] conversation-step call encountered an issue, trying fallback:", llamaErr);
+    }
+
+    // Secondary Fallback: Sarvam LLM (if configured and learner answered)
+    if (!isFirstTurnOfTopic && cleanAnswer && process.env.SARVAM_API_KEY) {
       try {
         const sarvamResult = await callSarvamConversationLLM(req.body);
         if (sarvamResult) {
           let updatedDayMap = { ...dayMap };
-          const cleanAnswer = latestLearnerAnswer.trim();
           if (cleanAnswer && !updatedDayMap.knownFacts?.includes(`Learner shared: "${cleanAnswer}"`)) {
             updatedDayMap.knownFacts = [...(updatedDayMap.knownFacts || []), `Learner shared: "${cleanAnswer}"`];
           }
@@ -486,8 +1137,16 @@ app.post("/api/conversation-step", async (req, res) => {
             updatedDayMap.activities = [...(updatedDayMap.activities || []), sarvamResult.naturalEnglish];
           }
 
-          const turnCount = selectedTopic?.turnCount || 0;
-          const isCompleted = sarvamResult.topicIsCompleted ?? (turnCount >= 2);
+          // Update complete accumulated Natural English Story
+          updatedDayMap.naturalEnglishStory = synthesizeNaturalEnglishStory({
+            rawStatement: updatedDayMap.rawStatement,
+            activities: updatedDayMap.activities,
+            emotions: updatedDayMap.emotions,
+            knownFacts: updatedDayMap.knownFacts,
+            learnerAnswers: cleanAnswer ? [cleanAnswer] : [],
+          });
+
+          const isCompleted = sarvamResult.topicIsCompleted ? (turnCount >= 5) : (turnCount >= 5);
 
           return res.json({
             rephrase: sarvamResult.naturalEnglish || sarvamResult.response,
@@ -512,11 +1171,11 @@ app.post("/api/conversation-step", async (req, res) => {
           });
         }
       } catch (sarvamErr) {
-        console.warn("Sarvam LLM conversation-step failed or quota exceeded, falling back to deterministic local engine:", sarvamErr);
+        console.warn("[Sarvam LLM] conversation-step fallback failed:", sarvamErr);
       }
     }
 
-    // Fallback or first turn using deterministic engine
+    // Tertiary Fallback: Deterministic local conversation engine (instant zero-lag, no API needed)
     const stepResult = buildLocalConversationStep(req.body);
     return res.json(stepResult);
   } catch (err) {
@@ -614,6 +1273,55 @@ app.post("/api/sarvam/stt", async (req, res) => {
   } catch (err) {
     console.error("Error in Sarvam STT proxy:", err);
     return res.status(500).json({ error: "Failed to transcribe audio via Sarvam AI." });
+  }
+});
+
+// ==========================================
+// ENGINE 2: DRILLS FOR THE DAY API ENDPOINTS
+// ==========================================
+
+// Endpoint: Generate Next Drill Question tailored to the day's target
+app.post("/api/drill/question", async (req, res) => {
+  try {
+    const { target, questionNumber, previousQuestions } = req.body;
+    if (!target) {
+      return res.status(400).json({ error: "Drill target is required" });
+    }
+
+    const { generateDrillQuestionWithLlama } = await import("./server/services/llamaDrillService.ts");
+    const result = await generateDrillQuestionWithLlama(
+      target,
+      questionNumber || 1,
+      previousQuestions || []
+    );
+
+    return res.json(result);
+  } catch (err) {
+    console.error("Error in /api/drill/question:", err);
+    return res.status(500).json({ error: "Failed to generate drill question" });
+  }
+});
+
+// Endpoint: Evaluate Drill Attempt using Llama 3.1 8B Groq
+app.post("/api/drill/evaluate", async (req, res) => {
+  try {
+    const { target, questionText, learnerResponse, attemptNumber } = req.body;
+    if (!target || !learnerResponse) {
+      return res.status(400).json({ error: "target and learnerResponse are required" });
+    }
+
+    const { evaluateDrillAttemptWithLlama } = await import("./server/services/llamaDrillService.ts");
+    const evaluation = await evaluateDrillAttemptWithLlama(
+      target,
+      questionText || "Practice scenario",
+      learnerResponse,
+      attemptNumber || 1
+    );
+
+    return res.json(evaluation);
+  } catch (err) {
+    console.error("Error in /api/drill/evaluate:", err);
+    return res.status(500).json({ error: "Failed to evaluate drill attempt" });
   }
 });
 

@@ -11,6 +11,7 @@ import { MyDayView } from './views/MyDayView';
 import { CourseView } from './views/CourseView';
 import { FitnessDashboardView } from './views/FitnessDashboardView';
 import { RockAndRollContainer } from './views/RockAndRollContainer';
+import { DrillView } from './views/DrillView';
 import { BottomDockNav, NavTab } from './components/BottomDockNav';
 import { AnalysisResult, Question, SavedPhrase, UserProgress } from './types';
 import { PRACTICE_QUESTIONS } from './data/questions';
@@ -21,7 +22,7 @@ type PracticeStep = 'question' | 'speak' | 'result';
 
 export default function App() {
   // Splash Screen & Industry Role Picker State
-  const [showSplash, setShowSplash] = useState<boolean>(true);
+  const [showSplash, setShowSplash] = useState<boolean>(false);
   const [showRolePicker, setShowRolePicker] = useState<boolean>(false);
 
   // Navigation State
@@ -31,8 +32,10 @@ export default function App() {
   const [myDayStep, setMyDayStep] = useState<string>('1_HOME');
   const [language, setLanguage] = useState<'en' | 'hi'>('en');
   
-  // Current active question
-  const [currentQuestion, setCurrentQuestion] = useState<Question>(PRACTICE_QUESTIONS[0]);
+  // Current active question (Defaults to the Workplace Shift scenario as requested)
+  const [currentQuestion, setCurrentQuestion] = useState<Question>(
+    () => PRACTICE_QUESTIONS.find((q) => q.id === 'wp-l2-why-late-shift') || PRACTICE_QUESTIONS[0]
+  );
   
   // Result analysis state
   const [analysisResult, setAnalysisResult] = useState<AnalysisResult | null>(null);
@@ -134,6 +137,18 @@ export default function App() {
     setCurrentQuestion(targetQ);
     setPracticeStep('question');
     setActiveTab('practice');
+  };
+
+  // Start Engine 2 Drill using existing target without changing selection logic
+  const handleStartDrill = (question?: Question, fromTab?: NavTab) => {
+    const targetQ = question || currentQuestion || PRACTICE_QUESTIONS[0];
+    if (fromTab) {
+      setReturnTab(fromTab);
+    } else if (activeTab !== 'drill') {
+      setReturnTab(activeTab);
+    }
+    setCurrentQuestion(targetQ);
+    setActiveTab('drill');
   };
 
   // Shuffle or Next random question
@@ -265,7 +280,7 @@ export default function App() {
               setShowSplash(false);
               setShowRolePicker(true);
             }}
-            durationMs={2800}
+            durationMs={3000}
           />
         )}
         {showRolePicker && (
@@ -320,6 +335,7 @@ export default function App() {
                 onToggleTaskCompleted={handleToggleMyDayTask}
                 onResetTasks={handleResetMyDayTasks}
                 onStartPractice={handleStartPractice}
+                onStartDrill={handleStartDrill}
                 progress={progress}
                 onUpdateProgress={setProgress}
                 onStepChange={setMyDayStep}
@@ -432,10 +448,31 @@ export default function App() {
               />
             </motion.div>
           )}
+
+          {activeTab === 'drill' && (
+            <motion.div
+              key="drill"
+              initial={{ opacity: 0, scale: 0.98 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.98 }}
+              transition={{ duration: 0.18 }}
+              className="w-full"
+            >
+              <DrillView
+                existingQuestion={currentQuestion}
+                dayNumber={progress.streakDays || 1}
+                onExit={() => {
+                  const fallback = returnTab === 'dashboard' || returnTab === 'fitness' ? 'sheeko' : (returnTab || 'sheeko');
+                  setActiveTab(fallback);
+                }}
+              />
+            </motion.div>
+          )}
         </AnimatePresence>
         </div>
 
         {(activeTab !== 'practice' &&
+          activeTab !== 'drill' &&
           activeTab !== 'buddy' &&
           activeTab !== 'course' &&
           activeTab !== 'challenge' &&

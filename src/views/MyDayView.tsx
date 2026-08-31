@@ -7,12 +7,14 @@ import { DayMapVisualizer } from '../components/myday/DayMapVisualizer';
 import { ConversationView } from '../components/myday/ConversationView';
 import { TopicCompletionCard } from '../components/myday/TopicCompletionCard';
 import { SessionSummary } from '../components/myday/SessionSummary';
+import { DayStorySessionReport } from '../components/myday/DayStorySessionReport';
 import { EngineInspectorDrawer } from '../components/myday/EngineInspectorDrawer';
 import { PatternLibraryModal } from '../components/myday/PatternLibraryModal';
 import { MyDayPatternsHub } from '../components/myday/MyDayPatternsHub';
 import { ChallengeView } from './ChallengeView';
 import { RockAndRollContainer } from './RockAndRollContainer';
 import { DayMap, ActiveTopic, ConversationTurn, DeepAnalysis, Question, UserProgress } from '../types';
+import { parseLearnerStoryToMeaningRepresentation, extractNaturalEnglishMeaning, synthesizeNaturalEnglishStory } from '../data/sheekoEngine';
 
 interface MyDayViewProps {
   userName?: string;
@@ -22,6 +24,7 @@ interface MyDayViewProps {
   onToggleTaskCompleted?: (taskId: string) => void;
   onResetTasks?: () => void;
   onStartPractice?: (question?: Question) => void;
+  onStartDrill?: (question?: Question) => void;
   onNavigateTab?: (tab: 'home' | 'myday' | 'practice' | 'progress' | 'profile' | 'challenge' | 'fitness') => void;
   initialMode?: 'story' | 'patterns' | 'challenge';
   progress?: UserProgress;
@@ -39,6 +42,7 @@ export const MyDayView: React.FC<MyDayViewProps> = ({
   onToggleTaskCompleted,
   onResetTasks,
   onStartPractice,
+  onStartDrill,
   onNavigateTab,
   initialMode = 'story',
   progress,
@@ -85,23 +89,27 @@ export const MyDayView: React.FC<MyDayViewProps> = ({
     if (!clean) return;
     setIsLoading(true);
 
+    const parsed = parseLearnerStoryToMeaningRepresentation(clean);
     const fallbackDayMap: DayMap = {
-      activities: [
-        clean.toLowerCase().includes('bike') ? 'Went to work by bike' : 'Started daily shift & work tasks',
-        clean.toLowerCase().includes('inbound') ? 'Handled inbound product items' : 'Completed planned activities',
-        clean.toLowerCase().includes('ravi') || clean.toLowerCase().includes('friend') ? 'Met friends in the evening' : 'Wrapped up evening routine',
-      ],
+      activities: parsed.activities.length > 0 ? parsed.activities : [clean],
       emotions: [
-        clean.toLowerCase().includes('angry') || clean.toLowerCase().includes('tension') ? 'Felt worried about feedback' : 'Felt focused and motivated',
+        clean.toLowerCase().includes('angry') || clean.toLowerCase().includes('tension') || clean.toLowerCase().includes('late')
+          ? 'Felt concerned about the delay, then focused on resolving work'
+          : 'Felt focused and motivated',
       ],
-      environments: [
-        clean.toLowerCase().includes('supervisor') ? 'Supervisor at workplace' : 'Daily workplace',
-        clean.toLowerCase().includes('ravi') ? 'Ravi in the evening' : 'Transit & neighborhood',
-      ],
+      environments: parsed.places.length > 0
+        ? parsed.places.map(p => `At ${p}`)
+        : ['Workplace & transit environment'],
       rawStatement: clean,
       knownFacts: [`Learner shared: "${clean}"`],
-      naturalEnglishMeaning: `The learner shared their daily experience: ${clean}`,
-      pointsExtractedCount: 6,
+      naturalEnglishMeaning: parsed.normalizedSummary || extractNaturalEnglishMeaning(clean),
+      naturalEnglishStory: synthesizeNaturalEnglishStory({
+        rawStatement: clean,
+        activities: parsed.activities,
+        emotions: ['Felt focused and responsible'],
+        knownFacts: [`Learner shared: "${clean}"`],
+      }),
+      pointsExtractedCount: parsed.activities.length + parsed.places.length + 2,
       capturedAt: Date.now(),
     };
 
@@ -292,16 +300,19 @@ export const MyDayView: React.FC<MyDayViewProps> = ({
         onToggleTaskCompleted('share_day');
       }
 
-      // Check if topic reached natural exploration completion
-      if (data.topicIsCompleted && selectedTopic.turnCount >= 2) {
+      const learnerTurnsCount = turns.filter((t) => t.speaker === 'learner').length + 1;
+
+      // Check if topic reached fixed 5-turn completion or learner finishes
+      if (learnerTurnsCount >= 5 || (data.topicIsCompleted && learnerTurnsCount >= 5)) {
         setCompletedTopics((prev) => Array.from(new Set([...prev, selectedTopic.pointer])));
-        setLastCompletionSummary(data.completionSummary);
-        setSelectedTopic((prev) => (prev ? { ...prev, isCompleted: true } : null));
+        setLastCompletionSummary(data.completionSummary || `Great job completing all 5 practice turns!`);
+        setSelectedTopic((prev) => (prev ? { ...prev, isCompleted: true, turnCount: learnerTurnsCount } : null));
         setTimeout(() => {
-          setStep('5_TOPIC_COMPLETE');
-        }, 1200);
+          // Open Day Story Session Report automatically after completed session
+          setStep('6_SESSION_SUMMARY');
+        }, 1400);
       } else {
-        setSelectedTopic((prev) => (prev ? { ...prev, turnCount: prev.turnCount + 1 } : null));
+        setSelectedTopic((prev) => (prev ? { ...prev, turnCount: learnerTurnsCount } : null));
       }
     } catch (e) {
       console.error('Conversation step error:', e);
@@ -513,6 +524,13 @@ export const MyDayView: React.FC<MyDayViewProps> = ({
                   onStartPractice(q);
                 }
               }}
+              onStartDrill={(q) => {
+                if (onStartDrill) {
+                  onStartDrill(q);
+                } else if (onStartPractice) {
+                  onStartPractice(q);
+                }
+              }}
               onUpdateProgress={onUpdateProgress}
             />
           </div>
@@ -603,14 +621,17 @@ export const MyDayView: React.FC<MyDayViewProps> = ({
           />
         )}
 
-        {/* PAGE 6: Full Session Summary */}
+        {/* PAGE 6: Day Story Session Report (Engine 1 Learner-facing Report) */}
         {step === '6_SESSION_SUMMARY' && (
-          <SessionSummary
-            dayMap={dayMap}
-            turns={turns}
-            onStartNewDay={handleResetSession}
-            onGoBackToChat={() => setStep('4_CHATBOT_CONVERSATION')}
-          />
+          <div className="w-full min-h-screen bg-[#fbfbfd] text-zinc-900 flex flex-col">
+            <DayStorySessionReport
+              dayMap={dayMap}
+              turns={turns}
+              latestAnalysis={latestAnalysis}
+              onStartNewDay={handleResetSession}
+              onGoBackToChat={() => setStep('4_CHATBOT_CONVERSATION')}
+            />
+          </div>
         )}
       </main>
 

@@ -26,6 +26,13 @@ export interface PatternMatchResult {
   matchType: 'exact' | 'strong' | 'partial' | 'thematic';
 }
 
+export interface UsefulPhraseCorrection {
+  learnerSaid: string;
+  betterEnglish: string;
+  teaching: string;
+  hindiMeaning?: string;
+}
+
 export interface EngineAnalysisResult {
   learnerTranscript: string;
   intendedMeaning: string;
@@ -33,6 +40,7 @@ export interface EngineAnalysisResult {
   hindiMeaning: string;
   encouragingNote: string;
   keyVocabulary: { wordOrPhrase: string; hindiMeaning: string }[];
+  usefulPhrases?: UsefulPhraseCorrection[];
   confidenceScore: number;
   matchedPatternId?: string;
 }
@@ -288,6 +296,7 @@ export function applyComprehensiveGrammarFixes(raw: string): string {
 
 /**
  * Generate a dynamic, high quality local analysis from the learner's transcript and patterns library
+ * Follows Listen -> Understand -> Rephrase -> Teach
  */
 export function generateLocalAnalysis(
   transcript: string,
@@ -299,52 +308,167 @@ export function generateLocalAnalysis(
     return {
       learnerTranscript: '',
       intendedMeaning: 'You started your speaking attempt.',
-      naturalEnglish: 'I am ready to speak.',
-      hindiMeaning: 'मैं बोलने के लिए तैयार हूँ।',
+      naturalEnglish: 'I am ready to answer.',
+      hindiMeaning: 'मैं उत्तर देने के लिए तैयार हूँ।',
       encouragingNote: 'Press the microphone and say a few words in English!',
       keyVocabulary: [{ wordOrPhrase: 'ready to speak', hindiMeaning: 'बोलने के लिए तैयार' }],
+      usefulPhrases: [],
       confidenceScore: 90,
     };
   }
 
-  const matches = findMatchingPatterns(clean, 5);
-  const topMatch = matches.length > 0 ? matches[0] : null;
+  const lower = clean.toLowerCase();
+  const qLower = (questionText || '').toLowerCase();
 
   let naturalEnglish = '';
   let intendedMeaning = '';
   let hindiMeaning = '';
   let encouragingNote = 'Great attempt! Coach Neha understood your exact thought.';
+  let usefulPhrases: UsefulPhraseCorrection[] = [];
   let keyVocab: { wordOrPhrase: string; hindiMeaning: string }[] = [];
   let confidenceScore = 92;
 
-  if (topMatch && (topMatch.matchType === 'exact' || (topMatch.matchType === 'strong' && topMatch.score >= 8.0))) {
-    const p = topMatch.pattern;
-    naturalEnglish = p.natural_english;
-    intendedMeaning = `You wanted to clearly say: "${clean}".`;
-    hindiMeaning = `इसे सही और स्वाभाविक अंग्रेजी में इस प्रकार बोलें।`;
-    encouragingNote = `Awesome! Coach Neha understood your message. Here is the natural ${p.category.toLowerCase()} pattern.`;
-    
-    keyVocab = [
+  // 1. Specific Contextual Handlers (e.g. Late for shift / Hospital / Traffic / Routine)
+  if (lower.includes('hosptial') || lower.includes('hospital') || lower.includes('doctor') || lower.includes('clinic')) {
+    intendedMeaning = 'You were late because you were at the hospital.';
+    naturalEnglish = 'I was late because I was at the hospital.';
+    hindiMeaning = 'मैं अस्पताल में था, इसलिए मुझे देर हो गई।';
+    usefulPhrases = [
       {
-        wordOrPhrase: p.natural_english.split(' ').slice(0, 3).join(' ') || p.category,
-        hindiMeaning: CATEGORY_HINDI_MAP[p.category] || 'महत्वपूर्ण बातचीत वाक्यांश',
+        learnerSaid: lower.includes('come home late') ? 'i come home late' : (lower.includes('late') ? 'late' : 'come late'),
+        betterEnglish: 'I was late',
+        teaching: 'Use “I was late” when talking about being late in the past.',
+        hindiMeaning: 'मुझे देर हो गई थी',
+      },
+      {
+        learnerSaid: lower.includes('in hosptial') ? 'in hosptial' : (lower.includes('in hospital') ? 'in hospital' : 'hospital'),
+        betterEnglish: 'because I was at the hospital',
+        teaching: 'Use “because” to explain the reason for a situation.',
+        hindiMeaning: 'अस्पताल में होने के कारण',
       },
     ];
-    confidenceScore = Math.min(99, Math.round(88 + topMatch.score));
+  } else if (lower.includes('traffic') || lower.includes('jam') || lower.includes('road')) {
+    intendedMeaning = 'You were delayed due to heavy traffic on the road.';
+    naturalEnglish = 'I was late because I got stuck in heavy traffic.';
+    hindiMeaning = 'रास्ते में भारी ट्रैफिक था, इसलिए मुझे देर हो गई।';
+    usefulPhrases = [
+      {
+        learnerSaid: lower.includes('because traffic') ? 'because traffic' : 'traffic',
+        betterEnglish: 'due to heavy traffic',
+        teaching: 'Use “due to heavy traffic” or “stuck in traffic” to explain road delays.',
+        hindiMeaning: 'भारी ट्रैफिक के कारण',
+      },
+      {
+        learnerSaid: lower.includes('i late') ? 'i late' : 'late',
+        betterEnglish: 'I was delayed',
+        teaching: 'Use “I was delayed” when explaining an unavoidable delay in the past.',
+        hindiMeaning: 'मुझे देर हो गई थी',
+      },
+    ];
+  } else if (lower.includes('puncture') || lower.includes('bike break') || lower.includes('tyre') || lower.includes('tire')) {
+    intendedMeaning = 'You were delayed because your bike had a flat tyre.';
+    naturalEnglish = 'I was late because my bike had a flat tyre on the way.';
+    hindiMeaning = 'रास्ते में मेरी बाइक पंक्चर हो गई थी, इसलिए मुझे देर हो गई।';
+    usefulPhrases = [
+      {
+        learnerSaid: 'bike tyre',
+        betterEnglish: 'had a flat tyre',
+        teaching: 'Say “had a flat tyre” or “bike had a puncture” for vehicle problems.',
+        hindiMeaning: 'टायर पंक्चर होना',
+      },
+      {
+        learnerSaid: 'on road',
+        betterEnglish: 'on the way',
+        teaching: 'Use “on the way” when talking about traveling to work.',
+        hindiMeaning: 'रास्ते में',
+      },
+    ];
+  } else if (lower.includes('stock') || lower.includes('inventory') || lower.includes('check')) {
+    intendedMeaning = 'You were carrying out the stock checking as instructed by your supervisor.';
+    naturalEnglish = 'I was checking the stock inventory as instructed by my supervisor.';
+    hindiMeaning = 'सुपरवाइज़र के निर्देश पर मैं स्टॉक इन्वेंटरी चेक कर रहा था।';
+    usefulPhrases = [
+      {
+        learnerSaid: lower.includes('supervisor tell') ? 'supervisor tell' : 'supervisor say',
+        betterEnglish: 'as instructed by my supervisor',
+        teaching: 'Use “as instructed by” or “my supervisor asked me to” in professional workplace settings.',
+        hindiMeaning: 'सुपरवाइज़र के निर्देश अनुसार',
+      },
+      {
+        learnerSaid: 'check stock',
+        betterEnglish: 'checking the stock inventory',
+        teaching: 'Use “checking the stock inventory” for accurate workplace vocabulary.',
+        hindiMeaning: 'स्टॉक इन्वेंटरी चेक करना',
+      },
+    ];
+  } else if (lower.includes('doubt') || lower.includes('question') || lower.includes('ask')) {
+    intendedMeaning = 'You had a question about the task and needed clarification.';
+    naturalEnglish = 'I have a question regarding this task. Could you please clarify?';
+    hindiMeaning = 'इस काम को लेकर मेरा एक सवाल था, क्या आप इसे स्पष्ट कर सकते हैं?';
+    usefulPhrases = [
+      {
+        learnerSaid: lower.includes('having doubt') || lower.includes('one doubt') ? 'having a doubt' : 'doubt',
+        betterEnglish: 'I have a question',
+        teaching: 'In workplace English, use “I have a question” instead of “I have a doubt”.',
+        hindiMeaning: 'मेरा एक सवाल है',
+      },
+    ];
   } else {
-    naturalEnglish = applyComprehensiveGrammarFixes(clean);
-    intendedMeaning = `You wanted to communicate clearly about: "${clean}".`;
-    hindiMeaning = 'आपका संदेश स्पष्ट है - इसे प्राकृतिक वर्कप्लेस अंग्रेजी में इस प्रकार कह सकते हैं।';
-    
+    // 2. Pattern Matching and Rule-Based Deconstruction
+    const matches = findMatchingPatterns(clean, 5);
+    const topMatch = matches.length > 0 ? matches[0] : null;
+
+    if (topMatch && (topMatch.matchType === 'exact' || (topMatch.matchType === 'strong' && topMatch.score >= 8.0))) {
+      const p = topMatch.pattern;
+      naturalEnglish = p.natural_english;
+      intendedMeaning = `You wanted to explain: "${p.natural_english}".`;
+      hindiMeaning = p.hindi_meaning || 'इसे सही और स्वाभाविक अंग्रेजी में इस प्रकार बोलें।';
+      encouragingNote = `Awesome! Coach Neha understood your message. Here is the natural ${p.category.toLowerCase()} pattern.`;
+
+      usefulPhrases = [
+        {
+          learnerSaid: p.broken_english || clean,
+          betterEnglish: p.natural_english,
+          teaching: p.explanation || `Use "${p.natural_english}" for natural conversational English.`,
+          hindiMeaning: p.hindi_meaning,
+        },
+      ];
+      confidenceScore = Math.min(99, Math.round(88 + topMatch.score));
+    } else {
+      naturalEnglish = applyComprehensiveGrammarFixes(clean);
+      intendedMeaning = `You wanted to state that you ${naturalEnglish.replace(/[.?!]+$/, '').toLowerCase()}.`;
+      hindiMeaning = 'आपका संदेश स्पष्ट है - इसे प्राकृतिक वर्कप्लेस अंग्रेजी में इस प्रकार कह सकते हैं।';
+
+      const words = clean.split(/\s+/);
+      if (words.length >= 2) {
+        usefulPhrases = [
+          {
+            learnerSaid: clean,
+            betterEnglish: naturalEnglish,
+            teaching: 'Use correct subject-verb tense agreement when speaking about past activities.',
+            hindiMeaning: 'सही क्रिया और काल का प्रयोग',
+          },
+        ];
+      }
+      confidenceScore = 88;
+    }
+  }
+
+  // Populate keyVocabulary from usefulPhrases or tokens
+  if (usefulPhrases.length > 0) {
+    keyVocab = usefulPhrases.map((p) => ({
+      wordOrPhrase: p.betterEnglish,
+      hindiMeaning: p.hindiMeaning || 'उपयोगी वाक्यांश',
+    }));
+  } else {
     const words = tokenize(naturalEnglish);
     const keyPhrase = words.slice(0, Math.min(3, words.length)).join(' ');
     keyVocab = [
       {
-        wordOrPhrase: keyPhrase || 'clear speech',
+        wordOrPhrase: keyPhrase || 'workplace English',
         hindiMeaning: 'महत्वपूर्ण बातचीत वाक्यांश',
       },
     ];
-    confidenceScore = 88;
   }
 
   return {
@@ -353,8 +477,8 @@ export function generateLocalAnalysis(
     naturalEnglish,
     hindiMeaning,
     encouragingNote,
+    usefulPhrases,
     keyVocabulary: keyVocab,
     confidenceScore,
-    matchedPatternId: topMatch?.pattern.id,
   };
 }

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   Mic,
@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { DayMap, ActiveTopic, ConversationTurn } from '../../types';
 import { speakText, stopSpeaking, soundFx } from '../../utils/audio';
+import { synthesizeNaturalEnglishStory } from '../../data/sheekoEngine';
 
 interface ConversationViewProps {
   dayMap: DayMap;
@@ -55,9 +56,22 @@ export const ConversationView: React.FC<ConversationViewProps> = ({
   const [inputText, setInputText] = useState('');
   const [isRecording, setIsRecording] = useState(false);
   const [playingTurnId, setPlayingTurnId] = useState<string | null>(null);
+  const [showStoryModal, setShowStoryModal] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const recognitionRef = useRef<any>(null);
+
+  // Compute live updated Natural English Story
+  const liveNaturalStory = dayMap.naturalEnglishStory || synthesizeNaturalEnglishStory({
+    rawStatement: dayMap.rawStatement,
+    activities: dayMap.activities,
+    emotions: dayMap.emotions,
+    knownFacts: dayMap.knownFacts,
+    learnerAnswers: turns
+      .filter((t) => t.speaker === 'learner')
+      .map((t) => (t.rawLearnerText || t.text || '').trim())
+      .filter(Boolean),
+  });
 
   // Auto scroll to bottom
   useEffect(() => {
@@ -178,10 +192,14 @@ export const ConversationView: React.FC<ConversationViewProps> = ({
     });
   };
 
+  const currentLearnerTurnCount = useMemo(() => {
+    return turns.filter((t) => t.speaker === 'learner').length;
+  }, [turns]);
+
   return (
     <div className="w-full flex-1 flex flex-col px-4 pt-3 pb-6 text-zinc-100 max-w-[460px] mx-auto min-h-[calc(100vh-80px)]">
       {/* Top App Bar with back button on page 4 */}
-      <div className="w-full flex items-center justify-between py-2 mb-3">
+      <div className="w-full flex items-center justify-between py-2 mb-2">
         {/* Left: Back Button + Title + Subtitle + Buddy Pill */}
         <div className="flex items-center gap-2.5">
           <button
@@ -205,6 +223,15 @@ export const ConversationView: React.FC<ConversationViewProps> = ({
 
         {/* Right: Actions */}
         <div className="flex items-center gap-1.5">
+          <button
+            onClick={() => setShowStoryModal(true)}
+            className="px-2.5 py-1.5 rounded-full bg-[#181920] hover:bg-[#232530] border border-sky-500/40 flex items-center gap-1.5 text-sky-400 hover:text-sky-300 transition-colors cursor-pointer text-xs font-bold"
+            title="View Full Natural English Story"
+          >
+            <Sparkles className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">Story</span>
+          </button>
+
           {onOpenPatternLibrary && (
             <button
               onClick={onOpenPatternLibrary}
@@ -242,6 +269,41 @@ export const ConversationView: React.FC<ConversationViewProps> = ({
               )}
             </button>
           )}
+        </div>
+      </div>
+
+      {/* 5-Turn Progress Bar Indicator */}
+      <div className="w-full bg-[#14151c] border border-zinc-800/90 rounded-2xl p-3 mb-3 shadow-md flex flex-col gap-2">
+        <div className="flex items-center justify-between text-xs">
+          <div className="flex items-center gap-1.5 font-bold text-zinc-200">
+            <Sparkles className="w-3.5 h-3.5 text-sky-400" />
+            <span>Turn {Math.min(5, Math.max(1, currentLearnerTurnCount + 1))} of 5</span>
+          </div>
+          <span className="text-[11px] text-zinc-400 font-medium">
+            {currentLearnerTurnCount >= 5
+              ? 'Target Reached (5/5)'
+              : `${Math.max(0, 5 - currentLearnerTurnCount)} turns to full report`}
+          </span>
+        </div>
+
+        {/* 5 Progress Segments */}
+        <div className="w-full grid grid-cols-5 gap-1.5">
+          {[1, 2, 3, 4, 5].map((stepNum) => {
+            const isFilled = stepNum <= currentLearnerTurnCount;
+            const isCurrent = stepNum === currentLearnerTurnCount + 1;
+            return (
+              <div
+                key={stepNum}
+                className={`h-1.5 rounded-full transition-all duration-300 ${
+                  isFilled
+                    ? 'bg-sky-400 shadow-[0_0_8px_rgba(56,189,248,0.5)]'
+                    : isCurrent
+                    ? 'bg-sky-500/50 animate-pulse'
+                    : 'bg-zinc-800'
+                }`}
+              />
+            );
+          })}
         </div>
       </div>
 
@@ -321,7 +383,8 @@ export const ConversationView: React.FC<ConversationViewProps> = ({
               </motion.div>
             );
           } else {
-            // Learner message bubble
+            // Learner message bubble: shows only the learner's actual latest spoken/transcribed response
+            const learnerUtterance = (turn.rawLearnerText || turn.text || '').trim();
             return (
               <motion.div
                 key={turn.id || index}
@@ -331,10 +394,10 @@ export const ConversationView: React.FC<ConversationViewProps> = ({
               >
                 <div className="max-w-[85%] bg-[#0B69A3] text-white rounded-2xl rounded-br-sm px-4 py-3 shadow-lg">
                   <span className="text-[10px] font-bold text-sky-200 block uppercase tracking-wider mb-0.5">
-                    YOU SHARED:
+                    YOUR WORDS
                   </span>
                   <p className="text-sm font-normal leading-relaxed">
-                    {turn.text}
+                    {learnerUtterance}
                   </p>
                 </div>
               </motion.div>
@@ -419,6 +482,72 @@ export const ConversationView: React.FC<ConversationViewProps> = ({
           <Send className="w-3.5 h-3.5 stroke-[2.2]" />
         </button>
       </div>
+
+      {/* Live Natural English Story Sheet Modal */}
+      <AnimatePresence>
+        {showStoryModal && (
+          <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4">
+            <motion.div
+              initial={{ opacity: 0, y: 40 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 40 }}
+              className="w-full max-w-[460px] bg-[#14151c] border border-zinc-800 rounded-t-[32px] sm:rounded-[32px] p-5 shadow-2xl max-h-[85vh] flex flex-col"
+            >
+              <div className="flex items-center justify-between pb-3 border-b border-zinc-800/80 mb-3">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-xl bg-sky-500/20 text-sky-400 flex items-center justify-center border border-sky-500/30">
+                    <Sparkles className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-black text-white">Natural English Story</h3>
+                    <p className="text-[10px] text-zinc-400">Updates live as you speak</p>
+                  </div>
+                </div>
+
+                <button
+                  onClick={() => setShowStoryModal(false)}
+                  className="w-8 h-8 rounded-full bg-zinc-800 hover:bg-zinc-700 text-zinc-300 flex items-center justify-center cursor-pointer text-xs font-bold"
+                >
+                  ✕
+                </button>
+              </div>
+
+              <div className="overflow-y-auto flex-1 flex flex-col gap-3 py-1">
+                {/* Complete Rewritten Story Box */}
+                <div className="bg-gradient-to-b from-[#181b26] to-[#12131a] border border-sky-500/40 rounded-2xl p-4 shadow-inner">
+                  <span className="text-[10px] font-extrabold uppercase tracking-wider text-sky-400 block mb-1 flex items-center gap-1">
+                    <Sparkles className="w-3 h-3" />
+                    Complete Story So Far
+                  </span>
+                  <p className="text-sm text-zinc-100 font-medium leading-relaxed">
+                    "{liveNaturalStory}"
+                  </p>
+                </div>
+
+                {dayMap.rawStatement && (
+                  <div className="bg-zinc-950/60 border border-zinc-800/70 p-3 rounded-2xl">
+                    <span className="text-[10px] font-extrabold uppercase tracking-wider text-zinc-500 block mb-1">
+                      Initial Words
+                    </span>
+                    <p className="text-xs text-zinc-400 italic">
+                      "{dayMap.rawStatement}"
+                    </p>
+                  </div>
+                )}
+              </div>
+
+              <div className="pt-3 border-t border-zinc-800/80 mt-2">
+                <button
+                  onClick={() => setShowStoryModal(false)}
+                  className="w-full py-2.5 rounded-xl bg-sky-500 hover:bg-sky-400 text-white font-bold text-xs shadow-md transition-colors cursor-pointer"
+                >
+                  Continue Conversation
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

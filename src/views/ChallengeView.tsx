@@ -29,6 +29,7 @@ interface ChallengeViewProps {
   onBack: () => void;
   onStartMyDay: () => void;
   onStartPracticeQuestion: (question?: Question) => void;
+  onStartDrill?: (question?: Question) => void;
   onUpdateProgress?: (updater: (prev: UserProgress) => UserProgress) => void;
 }
 
@@ -39,6 +40,7 @@ export const ChallengeView: React.FC<ChallengeViewProps> = ({
   onBack,
   onStartMyDay,
   onStartPracticeQuestion,
+  onStartDrill,
   onUpdateProgress,
 }) => {
   const activeChallenge = getOrCreateChallenge(progress);
@@ -408,12 +410,11 @@ export const ChallengeView: React.FC<ChallengeViewProps> = ({
 
           {/* Two Overlapping V-shape Watches Container */}
           <div className="relative w-full py-4 flex flex-col items-center">
-            {/* Card 1: Black V-Shape Overlapping Watch Card (Patterns & Grammar - now Drills for the day) */}
+            {/* Card 1: Black V-Shape Overlapping Watch Card (Patterns & Grammar Library) */}
             <motion.div
               whileHover={{ scale: 1.02, y: -2 }}
               onClick={() => {
-                const randomQuestion = PRACTICE_QUESTIONS[Math.floor(Math.random() * PRACTICE_QUESTIONS.length)];
-                onStartPracticeQuestion(randomQuestion);
+                setSubView('patterns_page');
               }}
               className="w-full rounded-[32px] bg-gradient-to-b from-[#14151b] via-[#0d0e12] to-[#07080a] border border-zinc-800 p-5 shadow-[0_25px_60px_rgba(0,0,0,0.9)] cursor-pointer relative z-25 flex flex-col justify-between group backdrop-blur-xl"
             >
@@ -430,15 +431,15 @@ export const ChallengeView: React.FC<ChallengeViewProps> = ({
 
               <div className="mt-4">
                 <h3 className="text-xl font-black text-white tracking-tight group-hover:text-sky-300 transition-colors">
-                  Drills for the day
+                  Patterns & Grammar Library
                 </h3>
                 <p className="text-xs text-zinc-400 mt-1 leading-relaxed">
-                  Master essential conversational formulas with interactive drills and reference guides.
+                  Master essential conversational formulas with interactive practice questions and reference guides.
                 </p>
               </div>
 
               <div className="mt-4 pt-3 border-t border-zinc-800/80 flex items-center justify-between text-xs font-bold text-sky-300">
-                <span>Explore Drills</span>
+                <span>Explore Patterns</span>
                 <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </div>
             </motion.div>

@@ -1,0 +1,38 @@
+{
+  "industry": "Retail",
+  "bucketId": "retail_hisab",
+  "theme": "💸 HISAB",
+  "themeDescription": "Billing, payment & price issues",
+  "challenges": [
+    {
+      "id": "HISAB-R-01",
+      "industry": "Retail",
+      "bucketId": "retail_hisab",
+      "title": "Disputing a promotional discount not applied at billing",
+      "shortDescription": "Resolve a pricing discrepancy where shelf tag showed 20% off but bill shows full price.",
+      "staffRole": "billing executive",
+      "guestRole": "vigilant shopper",
+      "mission": "Check the shelf price, verify promotion validity, and correct the bill politely.",
+      "guestProfile": {
+        "personality": "detail-oriented and firm",
+        "approximateAgeGroup": "adult 25–65",
+        "communicationStyle": "questioning and direct",
+        "emotionalState": "annoyed",
+        "whatTheGuestCaresAboutMost": "paying the correct discounted price"
+      },
+      "levels": {
+        "level1": {
+          "name": "HANDLE",
+          "customerMood": "concerned",
+          "resistance": "low",
+          "pressure": "medium",
+          "guestBehaviour": "Points out price mismatch on bill vs shelf.",
+          "hiddenObjectives": ["Verify shelf label", "Apply correct discount"],
+          "possibleSolutions": ["Manual bill correction", "Supervisor override"],
+          "acceptableOutcomes": ["CUSTOMER_HAPPY", "CUSTOMER_ACCEPTED"],
+          "unacceptablePromises": ["Do not argue with customer before verifying shelf."]
+        }
+      }
+    }
+  ]
+}

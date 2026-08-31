@@ -1,0 +1,38 @@
+{
+  "industry": "Retail",
+  "bucketId": "retail_badlo",
+  "theme": "🔄 BADLO",
+  "themeDescription": "Returns & exchanges",
+  "challenges": [
+    {
+      "id": "BADLO-01",
+      "industry": "Retail",
+      "bucketId": "retail_badlo",
+      "title": "Exchanging a clothing size without receipt",
+      "shortDescription": "Handle a customer wanting to exchange shirt size without original receipt.",
+      "staffRole": "returns desk associate",
+      "guestRole": "customer wanting exchange",
+      "mission": "Check store exchange policy, verify item condition, and offer alternative exchange options.",
+      "guestProfile": {
+        "personality": "hopeful but slightly defensive",
+        "approximateAgeGroup": "adult 20–60",
+        "communicationStyle": "persuasive",
+        "emotionalState": "hopeful",
+        "whatTheGuestCaresAboutMost": "getting the right size without losing money"
+      },
+      "levels": {
+        "level1": {
+          "name": "HANDLE",
+          "customerMood": "cooperative",
+          "resistance": "medium",
+          "pressure": "medium",
+          "guestBehaviour": "Explains they received it as a gift and lost the receipt.",
+          "hiddenObjectives": ["Verify tags on item", "Check manager approval if needed"],
+          "possibleSolutions": ["Size exchange", "Current price store credit"],
+          "acceptableOutcomes": ["CUSTOMER_HAPPY", "CUSTOMER_ACCEPTED"],
+          "unacceptablePromises": ["Do not promise cash refund without receipt."]
+        }
+      }
+    }
+  ]
+}

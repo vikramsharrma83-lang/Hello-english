@@ -165,7 +165,7 @@ export const QuestionScreen: React.FC<QuestionScreenProps> = ({
               ) : (
                 <>
                   <Volume2 className="w-4 h-4 text-[#7C3AED]" />
-                  <span>🔊 Listen in English</span>
+                  <span>Listen in English</span>
                 </>
               )}
             </button>

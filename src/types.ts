@@ -44,6 +44,13 @@ export interface Question {
   iconType?: string;
 }
 
+export interface UsefulPhraseCorrection {
+  learnerSaid: string;
+  betterEnglish: string;
+  teaching: string;
+  hindiMeaning?: string;
+}
+
 export interface AnalysisResult {
   learnerTranscript: string;
   intendedMeaning: string;
@@ -54,6 +61,7 @@ export interface AnalysisResult {
     wordOrPhrase: string;
     hindiMeaning: string;
   }[];
+  usefulPhrases?: UsefulPhraseCorrection[];
   confidenceScore: number;
 }
 
@@ -95,6 +103,7 @@ export interface DayMap {
   rawStatement: string;
   knownFacts: string[];
   naturalEnglishMeaning?: string;
+  naturalEnglishStory?: string;
   pointsExtractedCount?: number;
   capturedAt: number;
 }

@@ -18,6 +18,7 @@ import {
   Users,
 } from 'lucide-react';
 import { DayMap, ActiveTopic } from '../../types';
+import { synthesizeNaturalEnglishStory } from '../../data/sheekoEngine';
 
 interface DayMapVisualizerProps {
   dayMap: DayMap;
@@ -60,10 +61,12 @@ export const DayMapVisualizer: React.FC<DayMapVisualizerProps> = ({
     ? dayMap.environments
     : ['Workplace and daily environment'];
 
-  const naturalEnglish = dayMap.naturalEnglishMeaning ||
-    (dayMap.rawStatement
-      ? dayMap.rawStatement
-      : 'The learner shared their daily experience.');
+  const naturalStory = dayMap.naturalEnglishStory || synthesizeNaturalEnglishStory({
+    rawStatement: dayMap.rawStatement,
+    activities: dayMap.activities,
+    emotions: dayMap.emotions,
+    knownFacts: dayMap.knownFacts,
+  });
 
   const pointsCount = dayMap.pointsExtractedCount || (activities.length + emotions.length + environments.length);
 
@@ -151,15 +154,15 @@ export const DayMapVisualizer: React.FC<DayMapVisualizerProps> = ({
           </h1>
         </div>
 
-        {/* Card 1: Natural English Meaning */}
-        <div className="bg-[#14151c] border border-zinc-800/90 rounded-3xl p-5 shadow-xl">
+        {/* Card 1: Natural English Story */}
+        <div className="bg-gradient-to-b from-[#141824] to-[#14151c] border border-sky-500/40 rounded-3xl p-5 shadow-xl">
           <div className="flex items-center gap-1.5 text-sky-400 font-bold text-xs uppercase tracking-wider mb-2.5">
             <Sparkles className="w-3.5 h-3.5 text-sky-400" />
-            <span>NATURAL ENGLISH MEANING:</span>
+            <span>NATURAL ENGLISH STORY:</span>
           </div>
 
-          <p className="text-sm text-zinc-200 leading-relaxed font-normal">
-            {naturalEnglish}
+          <p className="text-sm text-zinc-100 leading-relaxed font-medium">
+            "{naturalStory}"
           </p>
         </div>
 

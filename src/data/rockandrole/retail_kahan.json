@@ -1,0 +1,38 @@
+{
+  "industry": "Retail",
+  "bucketId": "retail_kahan",
+  "theme": "🔍 KAHAN?",
+  "themeDescription": "Product availability, stock & finding things",
+  "challenges": [
+    {
+      "id": "KAHAN-01",
+      "industry": "Retail",
+      "bucketId": "retail_kahan",
+      "title": "Checking inventory for an out-of-stock item",
+      "shortDescription": "Assist a customer looking for a specific item size currently not on display.",
+      "staffRole": "floor assistant",
+      "guestRole": "searching shopper",
+      "mission": "Check inventory system, search stockroom, or offer alternatives.",
+      "guestProfile": {
+        "personality": "expectant",
+        "approximateAgeGroup": "adult 20–50",
+        "communicationStyle": "direct",
+        "emotionalState": "neutral",
+        "whatTheGuestCaresAboutMost": "finding the exact item or alternative"
+      },
+      "levels": {
+        "level1": {
+          "name": "HANDLE",
+          "customerMood": "cooperative",
+          "resistance": "low",
+          "pressure": "low",
+          "guestBehaviour": "Inquires if stock is available in warehouse.",
+          "hiddenObjectives": ["Check stock terminal", "Offer home delivery if available"],
+          "possibleSolutions": ["Stockroom check", "Store pickup from nearby branch"],
+          "acceptableOutcomes": ["CUSTOMER_HAPPY", "CUSTOMER_ACCEPTED"],
+          "unacceptablePromises": ["Do not promise exact restock date without confirmation."]
+        }
+      }
+    }
+  ]
+}
