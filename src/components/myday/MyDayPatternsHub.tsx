@@ -438,7 +438,7 @@ export const MyDayPatternsHub: React.FC<MyDayPatternsHubProps> = ({
           ))}
         </div>
 
-        {/* Bottom Floating Navigation Dock (Apple Watch Style) */}
+        {/* Bottom Floating Navigation Dock */}
         <div className="fixed bottom-4 left-0 right-0 max-w-sm mx-auto px-4 z-50 pointer-events-auto">
           <div className="bg-[#1C1C1E]/95 backdrop-blur-md border border-white/10 rounded-full px-2 py-1.5 flex items-center justify-around shadow-2xl">
             {/* My Story / Buddy Tab */}

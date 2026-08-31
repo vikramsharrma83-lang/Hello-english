@@ -16,6 +16,12 @@ import {
 } from 'lucide-react';
 import { PRACTICE_QUESTIONS } from '../data/questions';
 import { UserProgress, Question, ChallengeDayProgress } from '../types';
+import {
+  CHALLENGE_PLANS,
+  ChallengePlanOption,
+  getOrCreateChallenge,
+  startNewChallenge,
+} from '../utils/challengeManager';
 import { MyDayPatternsHub } from '../components/myday/MyDayPatternsHub';
 
 interface ChallengeViewProps {
@@ -405,7 +411,10 @@ export const ChallengeView: React.FC<ChallengeViewProps> = ({
             {/* Card 1: Black V-Shape Overlapping Watch Card (Patterns & Grammar - now Drills for the day) */}
             <motion.div
               whileHover={{ scale: 1.02, y: -2 }}
-              onClick={() => setSubView('patterns_page')}
+              onClick={() => {
+                const randomQuestion = PRACTICE_QUESTIONS[Math.floor(Math.random() * PRACTICE_QUESTIONS.length)];
+                onStartPracticeQuestion(randomQuestion);
+              }}
               className="w-full rounded-[32px] bg-gradient-to-b from-[#14151b] via-[#0d0e12] to-[#07080a] border border-zinc-800 p-5 shadow-[0_25px_60px_rgba(0,0,0,0.9)] cursor-pointer relative z-25 flex flex-col justify-between group backdrop-blur-xl"
             >
               <div className="flex items-center justify-between">

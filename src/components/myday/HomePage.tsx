@@ -59,8 +59,8 @@ export const HomePage: React.FC<HomePageProps> = ({
         <div className="flex-[1.2] bg-zinc-900/60 rounded-2xl p-3 border border-zinc-800">
           <span className="text-[9px] text-zinc-500 uppercase mb-2 block">This Week</span>
           <div className="flex justify-between gap-1">
-            {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((day) => (
-              <div key={day} className="flex flex-col items-center gap-0.5">
+            {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((day, index) => (
+              <div key={`${day}-${index}`} className="flex flex-col items-center gap-0.5">
                 <div className="w-5 h-5 rounded-full bg-zinc-800"></div>
                 <span className="text-[8px] text-zinc-600">{day}</span>
               </div>
