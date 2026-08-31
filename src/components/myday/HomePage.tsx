@@ -1,23 +1,10 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import {
-  Sparkles,
-  Activity as ActivityIcon,
-  BookOpen,
-  Sliders,
-  Info,
-  ArrowRight,
-  Target,
-  Languages,
-  TrendingUp,
+  Flame,
   ChevronRight,
-  CheckCircle2,
-  Zap,
-  Mic,
+  HelpCircle,
 } from 'lucide-react';
-import { EnglishProgressScreen } from './EnglishProgressScreen';
-import { SheekoCoverflowCarousel } from '../SheekoCoverflowCarousel';
-import { calculateEnglishConfidence } from '../../utils/confidenceMetrics';
 import { ConversationTurn, PracticeHistoryItem, DayMap, UserProgress } from '../../types';
 
 interface HomePageProps {
@@ -36,184 +23,78 @@ interface HomePageProps {
   onToggleLanguage?: () => void;
 }
 
-const SlideToStartBar: React.FC<{ onUnlock: () => void; language?: 'en' | 'hi' }> = ({ onUnlock, language = 'en' }) => {
-  const [dragX, setDragX] = useState(0);
-  const [isUnlocked, setIsUnlocked] = useState(false);
-  const trackRef = useRef<HTMLDivElement>(null);
-
-  const handleDrag = (_e: any, info: any) => {
-    if (!trackRef.current || isUnlocked) return;
-    const trackWidth = trackRef.current.clientWidth - 76; // thumb width ~64px + padding
-    const currentX = Math.max(0, Math.min(info.offset.x, trackWidth));
-    setDragX(currentX);
-    if (currentX >= trackWidth * 0.75) {
-      setIsUnlocked(true);
-      onUnlock();
-    }
-  };
-
-  const handleDragEnd = (_e: any, info: any) => {
-    if (!trackRef.current || isUnlocked) return;
-    const trackWidth = trackRef.current.clientWidth - 76;
-    if (info.offset.x >= trackWidth * 0.7) {
-      setIsUnlocked(true);
-      onUnlock();
-    } else {
-      setDragX(0);
-    }
-  };
-
-  return (
-    <div
-      ref={trackRef}
-      className="w-full max-w-sm mx-auto h-20 rounded-full bg-gradient-to-r from-[#1c1d24] via-[#15161b] to-[#0e0f12] border border-zinc-700/80 p-2 relative overflow-hidden flex items-center select-none shadow-[inset_0_4px_12px_rgba(0,0,0,0.8),0_8px_24px_rgba(0,0,0,0.5)] cursor-pointer group"
-      onClick={() => {
-        if (!isUnlocked) {
-          setIsUnlocked(true);
-          onUnlock();
-        }
-      }}
-    >
-      {/* Background track text */}
-      <div className="absolute inset-0 flex items-center justify-center pl-8 pointer-events-none">
-        <span className="text-sm font-black tracking-widest text-zinc-400 uppercase drop-shadow-sm">
-          {language === 'hi' ? 'स्लाइड करके शुरू करें' : 'slide to start'}
-        </span>
-      </div>
-
-      {/* Draggable white thumb with orange chevron */}
-      <motion.div
-        drag="x"
-        dragConstraints={{ left: 0, right: 230 }}
-        dragElastic={0.05}
-        dragMomentum={false}
-        onDrag={handleDrag}
-        onDragEnd={handleDragEnd}
-        animate={{ x: isUnlocked ? 230 : dragX }}
-        transition={{ type: 'spring', stiffness: 400, damping: 35 }}
-        className="w-16 h-16 rounded-full bg-white border border-zinc-200 shadow-[0_6px_16px_rgba(0,0,0,0.35)] flex items-center justify-center text-[#f59e0b] relative z-10 cursor-grab active:cursor-grabbing"
-      >
-        <ChevronRight className="w-8 h-8 stroke-[3]" />
-      </motion.div>
-    </div>
-  );
-};
-
 export const HomePage: React.FC<HomePageProps> = ({
   onStart,
-  onOpenPatternLibrary,
-  onOpenInspector,
   onOpenChallenge,
-  onOpenProfile,
-  onClose,
-  turns = [],
-  practiceHistory = [],
-  dayMap,
-  progress,
   language = 'en',
-  onToggleLanguage,
 }) => {
-  const [timeString, setTimeString] = useState('3:23');
-  const [greeting, setGreeting] = useState('Good Afternoon');
-  const [isProgressOpen, setIsProgressOpen] = useState(false);
-
-  const confidenceData = calculateEnglishConfidence(turns, practiceHistory, dayMap);
-
-  useEffect(() => {
-    const updateClockAndGreeting = () => {
-      const now = new Date();
-      let hours = now.getHours();
-      const minutes = now.getMinutes();
-      const formattedMin = minutes < 10 ? `0${minutes}` : `${minutes}`;
-      
-      // 12-hour format display
-      const displayHours = hours % 12 || 12;
-      setTimeString(`${displayHours}:${formattedMin}`);
-
-      if (hours < 12) {
-        setGreeting('Good Morning');
-      } else if (hours < 17) {
-        setGreeting('Good Afternoon');
-      } else {
-        setGreeting('Good Evening');
-      }
-    };
-
-    updateClockAndGreeting();
-    const interval = setInterval(updateClockAndGreeting, 30000);
-    return () => clearInterval(interval);
-  }, []);
-
-  // Pie chart parameters for Watch Progress Card (Thicker and Bigger)
-  const radius = 54;
-  const strokeWidth = 16;
-  const normalizedRadius = radius - strokeWidth / 2;
-  const circumference = normalizedRadius * 2 * Math.PI;
-
-  let cumulativeWeight = 0;
-  const watchSlices = confidenceData.metrics.map((metric) => {
-    const startAngle = (cumulativeWeight / 100) * 360;
-    cumulativeWeight += metric.weight;
-
-    const strokeDasharray = `${(metric.weight / 100) * circumference} ${circumference}`;
-    const strokeDashoffset = -((startAngle / 360) * circumference);
-
-    return {
-      ...metric,
-      strokeDasharray,
-      strokeDashoffset,
-    };
-  });
-
   return (
-    <div className="w-full flex-1 flex flex-col items-center justify-between px-4 pt-2 pb-28 text-zinc-100 max-w-[440px] mx-auto min-h-screen select-none relative">
-      {/* Top Header with Language Selection Button */}
-      <div className="w-full flex items-center justify-end z-20 py-1">
-        {onToggleLanguage && (
-          <button
-            onClick={onToggleLanguage}
-            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-zinc-900/90 hover:bg-zinc-800 border border-zinc-800 hover:border-zinc-700 text-zinc-200 hover:text-white transition-all cursor-pointer shadow-lg active:scale-95 text-xs font-semibold"
-            title="Toggle Language / भाषा बदलें"
-            aria-label="Toggle Language"
+    <div className="w-full flex-1 flex flex-col items-center justify-start px-6 pt-12 pb-28 text-zinc-100 max-w-[440px] mx-auto min-h-screen bg-black">
+      {/* Header */}
+      <h1 className="text-xl font-light text-zinc-400 uppercase tracking-widest mb-8">
+        WELCOME BACK VIKRAM!
+      </h1>
+
+      {/* Dashboard Section */}
+      <div className="w-full flex gap-4 mb-6">
+        {/* Streak Card */}
+        <div className="flex-1 bg-zinc-900/60 rounded-2xl p-5 border border-zinc-800 flex flex-col items-center justify-center gap-1">
+          <Flame className="w-8 h-8 text-orange-500" />
+          <span className="text-2xl font-bold">0 day</span>
+          <span className="text-xs text-zinc-500 uppercase">Streak</span>
+        </div>
+        
+        {/* Weekly Tracker Card */}
+        <div className="flex-[2] bg-zinc-900/60 rounded-2xl p-5 border border-zinc-800">
+          <span className="text-xs text-zinc-500 uppercase mb-4 block">This Week</span>
+          <div className="flex justify-between gap-2">
+            {['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'].map((day) => (
+              <div key={day} className="flex flex-col items-center gap-1">
+                <div className="w-8 h-8 rounded-full bg-zinc-800"></div>
+                <span className="text-[10px] text-zinc-600">{day}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Level Card */}
+      <div className="w-full bg-zinc-900/60 rounded-2xl p-5 border border-zinc-800 mb-8">
+        <div className="flex justify-between items-center mb-3">
+          <div className="flex items-center gap-2">
+            <span className="text-lg font-bold">Beginner</span>
+            <HelpCircle className="w-4 h-4 text-zinc-500" />
+          </div>
+          <span className="text-zinc-400">0 Points</span>
+        </div>
+        <div className="w-full h-2 bg-zinc-800 rounded-full overflow-hidden">
+          <div className="w-[10%] h-full bg-zinc-600"></div>
+        </div>
+        <div className="flex justify-between text-xs text-zinc-500 mt-2">
+          <span>Level 1</span>
+          <span>100 POINTS TO LEVEL 2</span>
+        </div>
+      </div>
+
+      {/* Today's Challenge */}
+      <h2 className="text-2xl font-semibold mb-4 text-center">Today's Challenge</h2>
+      
+      {/* Featured Challenge Card */}
+      <div className="w-full relative group">
+        <div className="absolute inset-0 bg-green-500/20 blur-2xl rounded-3xl opacity-50"></div>
+        <div className="w-full bg-zinc-900/80 rounded-3xl p-8 border border-green-500/50 flex flex-col items-center text-center relative z-10">
+          <span className="bg-zinc-800 text-zinc-300 text-xs px-3 py-1 rounded-full mb-4">+25 Points</span>
+          <h3 className="text-4xl font-semibold mb-2">Convince Me</h3>
+          <p className="text-zinc-400 mb-8 max-w-[200px]">Pitch it. Defend it. Win them over.</p>
+          
+          <button 
+            onClick={onOpenChallenge || onStart}
+            className="w-full py-4 bg-zinc-100 text-black font-semibold rounded-2xl hover:bg-white transition-colors"
           >
-            <Languages className="w-4 h-4 text-amber-400" />
-            <span>{language === 'hi' ? 'हिंदी (EN)' : 'English (हिन्दी)'}</span>
+            Start Challenge
           </button>
-        )}
-      </div>
-
-      {/* Main Content Area: Carousel above, Course card, and 3-grid compact cards */}
-      <div className="w-full flex-1 flex flex-col justify-start max-w-sm mx-auto py-0 gap-1.5">
-        {/* Coverflow Carousel with Floating Small Icon Buttons */}
-        <div className="w-full">
-          <SheekoCoverflowCarousel
-            onVoiceStudio={onStart}
-            onPerformance={() => setIsProgressOpen(true)}
-            onPatterns={onOpenPatternLibrary}
-          />
-        </div>
-
-        {/* Top / Center: iPhone Slide to Start Bar */}
-        <div className="w-full pt-1">
-          {onOpenChallenge && (
-            <SlideToStartBar onUnlock={onOpenChallenge} language={language} />
-          )}
         </div>
       </div>
-
-      {/* Detailed English Progress Screen Modal */}
-      <EnglishProgressScreen
-        isOpen={isProgressOpen}
-        onClose={() => setIsProgressOpen(false)}
-        turns={turns}
-        practiceHistory={practiceHistory}
-        dayMap={dayMap}
-        progress={progress}
-        onStartPractice={() => {
-          setIsProgressOpen(false);
-          onStart();
-        }}
-      />
     </div>
   );
 };
