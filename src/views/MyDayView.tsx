@@ -27,6 +27,7 @@ interface MyDayViewProps {
   progress?: UserProgress;
   onUpdateProgress?: (updater: (prev: UserProgress) => UserProgress) => void;
   onStepChange?: (step: string) => void;
+  onOpenRolePicker?: () => void;
   language?: 'en' | 'hi';
   onToggleLanguage?: () => void;
 }
@@ -43,6 +44,7 @@ export const MyDayView: React.FC<MyDayViewProps> = ({
   progress,
   onUpdateProgress,
   onStepChange,
+  onOpenRolePicker,
   language = 'en',
   onToggleLanguage,
 }) => {
@@ -387,6 +389,7 @@ export const MyDayView: React.FC<MyDayViewProps> = ({
             onOpenPatternLibrary={() => setStep('PATTERNS_HUB')}
             onOpenChallenge={() => setStep('CHALLENGE')}
             onOpenRockRoll={() => setStep('ROCK_ROLL')}
+            onOpenRolePicker={onOpenRolePicker}
             onOpenInspector={() => setInspectorOpen(true)}
             onOpenProfile={() => {
               if (onNavigateTab) {

@@ -20,8 +20,8 @@ import { recordChallengePractice } from './utils/challengeManager';
 type PracticeStep = 'question' | 'speak' | 'result';
 
 export default function App() {
-  // Splash Screen State
-  const [showSplash, setShowSplash] = useState<boolean>(false);
+  // Splash Screen & Industry Role Picker State
+  const [showSplash, setShowSplash] = useState<boolean>(true);
   const [showRolePicker, setShowRolePicker] = useState<boolean>(false);
 
   // Navigation State
@@ -257,7 +257,7 @@ export default function App() {
 
   return (
     <main className="w-full min-h-screen bg-[#090d16] text-slate-100 flex justify-center selection:bg-cyan-500/30 selection:text-cyan-200">
-      {/* Splash Screen */}
+      {/* Splash Screen & Industry Role Picker */}
       <AnimatePresence>
         {showSplash && (
           <SplashScreen
@@ -265,14 +265,17 @@ export default function App() {
               setShowSplash(false);
               setShowRolePicker(true);
             }}
-            durationMs={3000}
+            durationMs={2800}
           />
         )}
         {showRolePicker && (
           <RolePicker
             options={["All", "Retail", "Hotels", "Warehouse", "Home service"]}
             onSelect={(role) => {
-              console.log('Selected role:', role);
+              setProgress((prev) => ({
+                ...prev,
+                targetRole: role,
+              }));
               setShowRolePicker(false);
             }}
           />
@@ -320,6 +323,7 @@ export default function App() {
                 progress={progress}
                 onUpdateProgress={setProgress}
                 onStepChange={setMyDayStep}
+                onOpenRolePicker={() => setShowRolePicker(true)}
                 language={language}
                 onToggleLanguage={() => setLanguage((prev) => (prev === 'en' ? 'hi' : 'en'))}
                 onNavigateTab={(tab) => {

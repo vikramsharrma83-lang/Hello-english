@@ -6,6 +6,7 @@ import {
   HelpCircle,
   Target,
   Music,
+  Briefcase,
 } from 'lucide-react';
 import { ConversationTurn, PracticeHistoryItem, DayMap, UserProgress } from '../../types';
 
@@ -15,6 +16,7 @@ interface HomePageProps {
   onOpenInspector: () => void;
   onOpenChallenge?: () => void;
   onOpenRockRoll?: () => void;
+  onOpenRolePicker?: () => void;
   onOpenProfile?: () => void;
   onSelectSample?: (sampleText: string) => void;
   onClose?: () => void;
@@ -30,6 +32,8 @@ export const HomePage: React.FC<HomePageProps> = ({
   onStart,
   onOpenChallenge,
   onOpenRockRoll,
+  onOpenRolePicker,
+  progress,
   language = 'en',
 }) => {
   const [greeting, setGreeting] = useState('');
@@ -41,13 +45,28 @@ export const HomePage: React.FC<HomePageProps> = ({
     else setGreeting('Good Evening');
   }, []);
 
+  const currentRole = progress?.targetRole || 'Hotels';
+
   return (
-    <div className="w-full flex-1 flex flex-col items-center justify-start px-6 pt-12 pb-28 text-zinc-100 max-w-[440px] mx-auto min-h-screen bg-black">
+    <div className="w-full flex-1 flex flex-col items-center justify-start px-6 pt-10 pb-28 text-zinc-100 max-w-[440px] mx-auto min-h-screen bg-black">
       {/* Header */}
-      <div className="flex items-center gap-2 mb-8">
-        <h1 className="text-xl font-light text-zinc-400 uppercase tracking-widest">
-          {greeting} VIKRAM!
-        </h1>
+      <div className="w-full flex items-center justify-between gap-2 mb-6">
+        <div>
+          <h1 className="text-xl font-light text-zinc-400 uppercase tracking-widest">
+            {greeting} {progress?.userName?.toUpperCase() || 'VIKRAM'}!
+          </h1>
+          {onOpenRolePicker && (
+            <button
+              onClick={onOpenRolePicker}
+              className="flex items-center gap-1.5 mt-1 px-2.5 py-0.5 rounded-full bg-zinc-900 border border-zinc-800 hover:border-zinc-700 text-[11px] text-cyan-400 hover:text-cyan-300 transition-colors cursor-pointer"
+            >
+              <Briefcase className="w-3 h-3 text-cyan-400" />
+              <span>{currentRole}</span>
+              <span className="text-[9px] text-zinc-500 font-bold">CHANGE</span>
+            </button>
+          )}
+        </div>
+
         <motion.button 
           onClick={onOpenRockRoll} 
           className="relative group p-0.5 flex items-center justify-center cursor-pointer"
