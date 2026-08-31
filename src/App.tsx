@@ -421,10 +421,14 @@ export default function App() {
           )}
         </AnimatePresence>
 
-        {activeTab !== 'practice' &&
-         activeTab !== 'buddy' &&
-         activeTab !== 'course' &&
-         !((activeTab === 'sheeko' || activeTab === 'myday') && (myDayStep === '2_CHAT_INPUT' || myDayStep === '4_CHATBOT_CONVERSATION')) && (
+        {(activeTab !== 'practice' &&
+          activeTab !== 'buddy' &&
+          activeTab !== 'course' &&
+          activeTab !== 'challenge' &&
+          (activeTab !== 'sheeko' || myDayStep === '1_HOME') &&
+          activeTab !== 'dashboard' &&
+          activeTab !== 'fitness' &&
+          !((activeTab === 'sheeko') && (myDayStep === '2_CHAT_INPUT' || myDayStep === '4_CHATBOT_CONVERSATION'))) && (
           <BottomDockNav
             activeTab={activeTab}
             language={language}

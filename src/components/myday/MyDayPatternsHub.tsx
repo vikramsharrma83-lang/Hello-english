@@ -23,6 +23,7 @@ interface MyDayPatternsHubProps {
   onStartPracticeQuestion: (question: Question) => void;
   onUsePatternForStory?: (patternText: string) => void;
   onBackToBuddy?: () => void;
+  hideNavigation?: boolean;
 }
 
 export type CategoryKey = 'workplace' | 'daily_routine' | 'friends';
@@ -153,6 +154,7 @@ const LEVELS: {
 export const MyDayPatternsHub: React.FC<MyDayPatternsHubProps> = ({
   onStartPracticeQuestion,
   onBackToBuddy,
+  hideNavigation = false,
 }) => {
   const [selectedCategory, setSelectedCategory] = useState<CategoryConfig | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -438,29 +440,31 @@ export const MyDayPatternsHub: React.FC<MyDayPatternsHubProps> = ({
           ))}
         </div>
 
-        {/* Bottom Floating Navigation Dock */}
-        <div className="fixed bottom-4 left-0 right-0 max-w-sm mx-auto px-4 z-50 pointer-events-auto">
-          <div className="bg-[#1C1C1E]/95 backdrop-blur-md border border-white/10 rounded-full px-2 py-1.5 flex items-center justify-around shadow-2xl">
-            {/* My Story / Buddy Tab */}
-            {onBackToBuddy && (
-              <button
-                onClick={onBackToBuddy}
-                className="flex flex-col items-center gap-0.5 px-3 py-1 text-[#8E8E93] hover:text-white transition-colors cursor-pointer"
-              >
-                <div className="w-5 h-5 rounded-full border border-[#8E8E93] flex items-center justify-center">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#8E8E93]" />
-                </div>
-                <span className="text-[10px] font-medium">My Story</span>
-              </button>
-            )}
+        {!hideNavigation && (
+          /* Bottom Floating Navigation Dock */
+          <div className="fixed bottom-4 left-0 right-0 max-w-sm mx-auto px-4 z-50 pointer-events-auto">
+            <div className="bg-[#1C1C1E]/95 backdrop-blur-md border border-white/10 rounded-full px-2 py-1.5 flex items-center justify-around shadow-2xl">
+              {/* My Story / Buddy Tab */}
+              {onBackToBuddy && (
+                <button
+                  onClick={onBackToBuddy}
+                  className="flex flex-col items-center gap-0.5 px-3 py-1 text-[#8E8E93] hover:text-white transition-colors cursor-pointer"
+                >
+                  <div className="w-5 h-5 rounded-full border border-[#8E8E93] flex items-center justify-center">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#8E8E93]" />
+                  </div>
+                  <span className="text-[10px] font-medium">My Story</span>
+                </button>
+              )}
 
-            {/* Discover / Patterns Tab (Active Pill) */}
-            <div className="bg-[#3A3A3C] text-amber-400 rounded-full px-4 py-1.5 flex items-center gap-1.5 shadow-sm">
-              <Compass className="w-4 h-4 fill-amber-400 text-amber-400" />
-              <span className="text-xs font-semibold text-white">Discover</span>
+              {/* Discover / Patterns Tab (Active Pill) */}
+              <div className="bg-[#3A3A3C] text-amber-400 rounded-full px-4 py-1.5 flex items-center gap-1.5 shadow-sm">
+                <Compass className="w-4 h-4 fill-amber-400 text-amber-400" />
+                <span className="text-xs font-semibold text-white">Discover</span>
+              </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
     );
   }
@@ -562,29 +566,30 @@ export const MyDayPatternsHub: React.FC<MyDayPatternsHubProps> = ({
         </div>
       </div>
 
-      {/* Bottom Floating Navigation Dock (Apple Watch Style) */}
-      <div className="fixed bottom-4 left-0 right-0 max-w-sm mx-auto px-4 z-30 pointer-events-auto">
-        <div className="bg-[#1C1C1E]/95 backdrop-blur-md border border-white/10 rounded-full px-2 py-1.5 flex items-center justify-around shadow-2xl">
-          {/* My Story / Buddy Tab */}
-          {onBackToBuddy && (
-            <button
-              onClick={onBackToBuddy}
-              className="flex flex-col items-center gap-0.5 px-3 py-1 text-[#8E8E93] hover:text-white transition-colors cursor-pointer"
-            >
-              <div className="w-5 h-5 rounded-full border border-[#8E8E93] flex items-center justify-center">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#8E8E93]" />
-              </div>
-              <span className="text-[10px] font-medium">My Story</span>
-            </button>
-          )}
+      {!hideNavigation && (
+        <div className="fixed bottom-4 left-0 right-0 max-w-sm mx-auto px-4 z-30 pointer-events-auto">
+          <div className="bg-[#1C1C1E]/95 backdrop-blur-md border border-white/10 rounded-full px-2 py-1.5 flex items-center justify-around shadow-2xl">
+            {/* My Story / Buddy Tab */}
+            {onBackToBuddy && (
+              <button
+                onClick={onBackToBuddy}
+                className="flex flex-col items-center gap-0.5 px-3 py-1 text-[#8E8E93] hover:text-white transition-colors cursor-pointer"
+              >
+                <div className="w-5 h-5 rounded-full border border-[#8E8E93] flex items-center justify-center">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#8E8E93]" />
+                </div>
+                <span className="text-[10px] font-medium">My Story</span>
+              </button>
+            )}
 
-          {/* Discover / Patterns Tab (Active Pill) */}
-          <div className="bg-[#3A3A3C] text-amber-400 rounded-full px-4 py-1.5 flex items-center gap-1.5 shadow-sm">
-            <Compass className="w-4 h-4 fill-amber-400 text-amber-400" />
-            <span className="text-xs font-semibold text-white">Discover</span>
+            {/* Discover / Patterns Tab (Active Pill) */}
+            <div className="bg-[#3A3A3C] text-amber-400 rounded-full px-4 py-1.5 flex items-center gap-1.5 shadow-sm">
+              <Compass className="w-4 h-4 fill-amber-400 text-amber-400" />
+              <span className="text-xs font-semibold text-white">Discover</span>
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

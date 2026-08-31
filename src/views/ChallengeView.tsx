@@ -292,44 +292,44 @@ export const ChallengeView: React.FC<ChallengeViewProps> = ({
 
             {/* 3 Quick Metric Boxes (Enlarged & Prominent) */}
             <div className="grid grid-cols-3 gap-3 py-3.5 border-b border-zinc-800 text-center">
-              <div className="p-3.5 rounded-2xl bg-black/60 border border-emerald-500/20 shadow-inner">
-                <span className="text-[11px] font-extrabold uppercase tracking-wider text-emerald-400 block">
+              <div className="p-3.5 rounded-2xl bg-black/40 border border-zinc-800 shadow-inner">
+                <span className="text-[11px] font-extrabold uppercase tracking-wider text-zinc-600 block">
                   Completed
                 </span>
-                <span className="text-xl sm:text-2xl font-black text-white mt-1 block">
+                <span className="text-xl sm:text-2xl font-black text-zinc-500 mt-1 block">
                   {currentDoneActivities}
                 </span>
-                <span className="text-[11px] text-zinc-400 block mt-0.5">Activities</span>
+                <span className="text-[11px] text-zinc-700 block mt-0.5">Activities</span>
               </div>
 
-              <div className="p-3.5 rounded-2xl bg-black/60 border border-amber-500/20 shadow-inner">
-                <span className="text-[11px] font-extrabold uppercase tracking-wider text-amber-400 block">
+              <div className="p-3.5 rounded-2xl bg-black/40 border border-zinc-800 shadow-inner">
+                <span className="text-[11px] font-extrabold uppercase tracking-wider text-zinc-600 block">
                   Target
                 </span>
-                <span className="text-xl sm:text-2xl font-black text-white mt-1 block">
+                <span className="text-xl sm:text-2xl font-black text-zinc-500 mt-1 block">
                   {totalTargetActivities}
                 </span>
-                <span className="text-[11px] text-zinc-400 block mt-0.5">Activities</span>
+                <span className="text-[11px] text-zinc-700 block mt-0.5">Activities</span>
               </div>
 
-              <div className="p-3.5 rounded-2xl bg-black/60 border border-sky-500/20 shadow-inner">
-                <span className="text-[11px] font-extrabold uppercase tracking-wider text-sky-400 block">
+              <div className="p-3.5 rounded-2xl bg-black/40 border border-zinc-800 shadow-inner">
+                <span className="text-[11px] font-extrabold uppercase tracking-wider text-zinc-600 block">
                   Time Left
                 </span>
-                <span className="text-xl sm:text-2xl font-black text-white mt-1 block">
+                <span className="text-xl sm:text-2xl font-black text-zinc-500 mt-1 block">
                   {Math.max(1, selectedPlan.days - (activeChallenge.currentDay || 1) + 1)}
                 </span>
-                <span className="text-[11px] text-zinc-400 block mt-0.5">Days Left</span>
+                <span className="text-[11px] text-zinc-700 block mt-0.5">Days Left</span>
               </div>
             </div>
 
             {/* Dots for Each Day */}
             <div className="pt-5 pb-1">
               <div className="flex items-center justify-between mb-4">
-                <span className="text-[11px] font-extrabold uppercase tracking-wider text-zinc-400">
+                <span className="text-[11px] font-extrabold uppercase tracking-wider text-zinc-500">
                   Daily Progress Roadmap
                 </span>
-                <span className="text-[10px] text-zinc-500">Tap a day to view log</span>
+                <span className="text-[10px] text-zinc-600">Tap a day to view log</span>
               </div>
 
               <div className="flex justify-center gap-4">
@@ -347,13 +347,13 @@ export const ChallengeView: React.FC<ChallengeViewProps> = ({
                       <div
                         className={`w-5 h-5 rounded-full border-2 ${
                           isDone
-                            ? 'bg-emerald-500 border-emerald-500'
+                            ? 'bg-zinc-700 border-zinc-700'
                             : isCurrent
-                            ? 'bg-amber-500 border-amber-500'
-                            : 'bg-transparent border-zinc-700'
+                            ? 'bg-zinc-500 border-zinc-500'
+                            : 'bg-transparent border-zinc-800'
                         }`}
                       />
-                      <span className={`text-[10px] font-extrabold ${isCurrent ? 'text-amber-300' : 'text-zinc-500'}`}>
+                      <span className={`text-[10px] font-extrabold ${isCurrent ? 'text-zinc-500' : 'text-zinc-700'}`}>
                         D{dayItem.day}
                       </span>
                     </button>
@@ -363,13 +363,13 @@ export const ChallengeView: React.FC<ChallengeViewProps> = ({
             </div>
           </div>
 
-          {/* Get More From Your Challenge Section: Practice Action Card */}
-          <div className="space-y-3 pt-1">
+          {/* Get More From Your Challenge Section: Practice Action Card - Moved Down */}
+          <div className="space-y-3 pt-8">
             <motion.button
               whileHover={{ scale: 1.01 }}
               whileTap={{ scale: 0.98 }}
               onClick={() => setSubView('training_options')}
-              className="w-full relative overflow-hidden rounded-[28px] p-5 bg-gradient-to-b from-purple-950/90 via-black/90 to-black/90 border border-purple-900/60 hover:border-purple-800/50 flex items-center justify-between transition-all cursor-pointer shadow-[0_15px_35px_rgba(0,0,0,0.8)] backdrop-blur-xl group"
+              className="w-full relative overflow-hidden rounded-[28px] p-5 bg-[#12131a] border border-zinc-800 flex items-center justify-between transition-all cursor-pointer shadow-none backdrop-blur-xl group"
             >
               {/* Apple Glass Loom Glow & Top Shine */}
               <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-white/30 to-transparent pointer-events-none" />
@@ -481,6 +481,7 @@ export const ChallengeView: React.FC<ChallengeViewProps> = ({
         <main className="relative z-20 w-full max-w-md mx-auto flex-1 flex flex-col py-3 px-3 space-y-4">
           <div className="w-full bg-[#12131a] border border-zinc-800/80 rounded-3xl p-4 overflow-hidden shadow-xl">
             <MyDayPatternsHub
+              hideNavigation={true}
               onStartPracticeQuestion={(q) => {
                 if (onStartPracticeQuestion) {
                   onStartPracticeQuestion(q);

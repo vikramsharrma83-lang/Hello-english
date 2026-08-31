@@ -87,23 +87,19 @@ export const HomePage: React.FC<HomePageProps> = ({
         </div>
       </div>
 
-      {/* Today's Challenge */}
-      <h2 className="text-2xl font-semibold mb-4 text-center">Today's Challenge</h2>
-      
       {/* Featured Challenge Card */}
-      <div className="w-full relative group">
-        <div className="absolute inset-0 bg-green-500/20 blur-2xl rounded-3xl opacity-50"></div>
-        <div className="w-full bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8 flex flex-col items-center text-center relative z-10 shadow-[0_8px_32px_rgba(0,0,0,0.3)]">
-          <div className="absolute inset-0 bg-gradient-to-br from-green-500/10 to-transparent rounded-3xl"></div>
-          <span className="bg-zinc-800/50 text-zinc-300 text-xs px-3 py-1 rounded-full mb-4 relative z-20">+25 Points</span>
-          <h3 className="text-4xl font-semibold mb-2 relative z-20">Talk to me</h3>
+      <div className="w-screen -mx-6 px-6 relative group mt-2">
+        <div className="w-full bg-gradient-to-b from-[#14151b] via-[#0d0e12] to-[#07080a] border-2 border-purple-900/50 rounded-[32px] p-6 flex flex-col items-center text-center relative z-10 shadow-[0_25px_60px_rgba(0,0,0,0.9)]">
+          <div className="absolute inset-0 bg-gradient-to-b from-purple-900/20 to-transparent rounded-[32px]"></div>
+          <span className="bg-zinc-900/80 text-zinc-300 text-xs px-3 py-1 rounded-full mb-4 relative z-20 border border-zinc-700">+25 Points</span>
+          <h3 className="text-4xl font-semibold mb-2 relative z-20 text-transparent bg-clip-text bg-gradient-to-r from-white to-purple-400">Talk to me</h3>
           <p className="text-zinc-400 mb-8 max-w-[200px] relative z-20">Pitch it. Defend it. Win them over.</p>
           
           <button 
             onClick={onOpenChallenge || onStart}
-            className="w-full py-4 bg-zinc-100 text-black font-semibold rounded-2xl hover:bg-white transition-colors relative z-20"
+            className="w-full py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold rounded-2xl hover:bg-white transition-colors relative z-20"
           >
-            Start
+            Start Challenge
           </button>
         </div>
       </div>
