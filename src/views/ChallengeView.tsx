@@ -14,13 +14,8 @@ import {
   ListChecks,
   Sparkles,
 } from 'lucide-react';
+import { PRACTICE_QUESTIONS } from '../data/questions';
 import { UserProgress, Question, ChallengeDayProgress } from '../types';
-import {
-  CHALLENGE_PLANS,
-  ChallengePlanOption,
-  getOrCreateChallenge,
-  startNewChallenge,
-} from '../utils/challengeManager';
 import { MyDayPatternsHub } from '../components/myday/MyDayPatternsHub';
 
 interface ChallengeViewProps {
@@ -268,11 +263,14 @@ export const ChallengeView: React.FC<ChallengeViewProps> = ({
         <main className="relative z-20 w-full max-w-lg mx-auto flex-1 flex flex-col py-2 px-4 space-y-5">
           {/* Header Title replacement matching Apple Watch Discover reference */}
           <div className="px-1 pt-1">
-            <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight">
-              {selectedPlan.days} Days
-            </h1>
-            <p className="text-xs font-semibold text-zinc-400 mt-1">
-              Get Started • Challenge Roadmap & Tracker
+            <div className="flex items-center gap-3">
+              <span className={`w-3 h-3 rounded-full ${activeChallenge.isStarted ? 'bg-emerald-400 shadow-[0_0_8px_#34d399]' : 'bg-red-500 shadow-[0_0_8px_#ef4444]'}`} />
+              <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight">
+                {selectedPlan.days} Days
+              </h1>
+            </div>
+            <p className="text-xs font-semibold text-zinc-400 mt-1 pl-6">
+              Challenge Roadmap & Tracker
             </p>
           </div>
 
@@ -280,14 +278,10 @@ export const ChallengeView: React.FC<ChallengeViewProps> = ({
           <div className="bg-[#12131a] border border-zinc-800/80 rounded-3xl p-4 sm:p-5 shadow-xl">
             <div className="flex items-center justify-between pb-3 border-b border-zinc-800">
               <div className="flex items-center gap-2">
-                <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-[0_0_8px_#34d399]" />
-                <span className="text-xs font-black uppercase tracking-wider text-emerald-400">
-                  {selectedPlan.days}-Day Plan Active
+                <span className="text-xs font-black uppercase tracking-wider text-zinc-300">
+                  Daily Progress Overview
                 </span>
               </div>
-              <span className="text-xs font-bold text-zinc-300 bg-zinc-900 px-2.5 py-0.5 rounded-full border border-zinc-800">
-                Day {activeChallenge.currentDay || 1} of {selectedPlan.days}
-              </span>
             </div>
 
             {/* 3 Quick Metric Boxes (Enlarged & Prominent) */}
@@ -323,67 +317,37 @@ export const ChallengeView: React.FC<ChallengeViewProps> = ({
               </div>
             </div>
 
-            {/* Vertical Bars for Each Day */}
-            <div className="pt-3 pb-1">
-              <div className="flex items-center justify-between mb-2">
+            {/* Dots for Each Day */}
+            <div className="pt-5 pb-1">
+              <div className="flex items-center justify-between mb-4">
                 <span className="text-[11px] font-extrabold uppercase tracking-wider text-zinc-400">
                   Daily Progress Roadmap
                 </span>
                 <span className="text-[10px] text-zinc-500">Tap a day to view log</span>
               </div>
 
-              <div
-                className="grid gap-2"
-                style={{
-                  gridTemplateColumns: `repeat(${selectedPlan.days}, minmax(0, 1fr))`,
-                }}
-              >
+              <div className="flex justify-center gap-4">
                 {activeChallenge.dailyProgress.slice(0, selectedPlan.days).map((dayItem) => {
                   const isDone = dayItem.isCompleted;
                   const isCurrent = dayItem.isCurrent;
-                  const fillHeight = isDone ? 100 : isCurrent ? 55 : 0;
-
+                  
                   return (
                     <button
                       key={dayItem.day}
                       type="button"
                       onClick={() => setSelectedDayDetail(dayItem)}
-                      className={`flex flex-col items-center p-2 rounded-2xl border transition-all cursor-pointer active:scale-95 text-center ${
-                        isCurrent
-                          ? 'bg-emerald-950/40 border-emerald-500/60 shadow-lg shadow-emerald-500/10'
-                          : isDone
-                          ? 'bg-zinc-900/80 border-emerald-900/40'
-                          : 'bg-black/30 border-zinc-800/60 text-zinc-500'
-                      }`}
+                      className="flex flex-col items-center gap-2"
                     >
-                      <div className="mb-1.5 flex items-center justify-center">
-                        {isDone ? (
-                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-                        ) : isCurrent ? (
-                          <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_6px_#34d399]" />
-                        ) : (
-                          <Lock className="w-3 h-3 text-zinc-600" />
-                        )}
-                      </div>
-
-                      <div className="w-3.5 h-14 bg-black/60 rounded-full overflow-hidden p-0.5 border border-zinc-800 flex flex-col justify-end">
-                        <div
-                          className={`w-full rounded-full transition-all duration-500 ${
-                            isDone
-                              ? 'bg-emerald-500'
-                              : isCurrent
-                              ? 'bg-gradient-to-t from-emerald-500 to-emerald-400'
-                              : 'bg-zinc-700'
-                          }`}
-                          style={{ height: `${fillHeight}%` }}
-                        />
-                      </div>
-
-                      <span
-                        className={`text-[10px] font-extrabold mt-1.5 ${
-                          isCurrent ? 'text-emerald-300' : isDone ? 'text-zinc-200' : 'text-zinc-500'
+                      <div
+                        className={`w-5 h-5 rounded-full border-2 ${
+                          isDone
+                            ? 'bg-emerald-500 border-emerald-500'
+                            : isCurrent
+                            ? 'bg-amber-500 border-amber-500'
+                            : 'bg-transparent border-zinc-700'
                         }`}
-                      >
+                      />
+                      <span className={`text-[10px] font-extrabold ${isCurrent ? 'text-amber-300' : 'text-zinc-500'}`}>
                         D{dayItem.day}
                       </span>
                     </button>
@@ -395,35 +359,28 @@ export const ChallengeView: React.FC<ChallengeViewProps> = ({
 
           {/* Get More From Your Challenge Section: Practice Action Card */}
           <div className="space-y-3 pt-1">
-            <h2 className="text-lg font-black text-white tracking-tight px-1">
-              Get More From Your Challenge
-            </h2>
-
             <motion.button
               whileHover={{ scale: 1.01 }}
               whileTap={{ scale: 0.98 }}
               onClick={() => setSubView('training_options')}
-              className="w-full relative overflow-hidden rounded-[28px] p-5 bg-gradient-to-b from-zinc-900/90 via-[#13171f]/80 to-black/90 border border-zinc-700/60 hover:border-emerald-500/50 flex items-center justify-between transition-all cursor-pointer shadow-[0_15px_35px_rgba(0,0,0,0.6)] backdrop-blur-xl group"
+              className="w-full relative overflow-hidden rounded-[28px] p-5 bg-gradient-to-b from-purple-950/90 via-black/90 to-black/90 border border-purple-900/60 hover:border-purple-800/50 flex items-center justify-between transition-all cursor-pointer shadow-[0_15px_35px_rgba(0,0,0,0.8)] backdrop-blur-xl group"
             >
               {/* Apple Glass Loom Glow & Top Shine */}
               <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-white/30 to-transparent pointer-events-none" />
-              <div className="absolute -right-12 -top-12 w-40 h-40 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none group-hover:bg-emerald-500/20 transition-all duration-500" />
+              <div className="absolute -right-12 -top-12 w-40 h-40 bg-purple-900/20 rounded-full blur-2xl pointer-events-none group-hover:bg-purple-800/20 transition-all duration-500" />
               
               <div className="flex items-center gap-4 text-left relative z-10">
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-500/30 via-teal-500/20 to-emerald-900/40 border border-emerald-400/50 flex items-center justify-center shrink-0 shadow-[0_0_20px_rgba(16,185,129,0.35)] relative overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-t from-emerald-500/20 to-transparent pointer-events-none" />
-                  <Play className="w-6 h-6 text-emerald-300 fill-emerald-300 ml-0.5 drop-shadow-[0_0_8px_rgba(16,185,129,0.8)] relative z-10" />
+                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-900/30 via-indigo-950/20 to-purple-950/40 border border-purple-900/50 flex items-center justify-center shrink-0 shadow-[0_0_20px_rgba(126,34,206,0.2)] relative overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-t from-purple-950/20 to-transparent pointer-events-none" />
+                  <Play className="w-6 h-6 text-purple-400 fill-purple-950 ml-0.5 relative z-10" />
                 </div>
                 <div>
-                  <h3 className="text-base font-black text-white tracking-tight group-hover:text-emerald-300 transition-colors">
+                  <h3 className="text-sm font-black text-white tracking-tight group-hover:text-purple-300 transition-colors whitespace-nowrap">
                     Practice Today's Story & Drills
                   </h3>
-                  <p className="text-xs text-zinc-400 mt-0.5 font-medium">
-                    Choose between Day Stories and Coach Questions
-                  </p>
                 </div>
               </div>
-              <div className="w-9 h-9 rounded-full bg-zinc-800/80 border border-zinc-700/80 flex items-center justify-center text-zinc-400 group-hover:text-white group-hover:bg-emerald-600/30 group-hover:border-emerald-500/50 transition-all relative z-10 shrink-0">
+              <div className="w-9 h-9 rounded-full bg-zinc-800/80 border border-zinc-700/80 flex items-center justify-center text-zinc-400 group-hover:text-white group-hover:bg-purple-600/30 group-hover:border-purple-500/50 transition-all relative z-10 shrink-0">
                 <ChevronRight className="w-4.5 h-4.5" />
               </div>
             </motion.button>
@@ -445,11 +402,43 @@ export const ChallengeView: React.FC<ChallengeViewProps> = ({
 
           {/* Two Overlapping V-shape Watches Container */}
           <div className="relative w-full py-4 flex flex-col items-center">
-            {/* Card 1: Grey Watch Card (Day Stories) */}
+            {/* Card 1: Black V-Shape Overlapping Watch Card (Patterns & Grammar - now Drills for the day) */}
+            <motion.div
+              whileHover={{ scale: 1.02, y: -2 }}
+              onClick={() => setSubView('patterns_page')}
+              className="w-full rounded-[32px] bg-gradient-to-b from-[#14151b] via-[#0d0e12] to-[#07080a] border border-zinc-800 p-5 shadow-[0_25px_60px_rgba(0,0,0,0.9)] cursor-pointer relative z-25 flex flex-col justify-between group backdrop-blur-xl"
+            >
+              <div className="flex items-center justify-between">
+                <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-sky-500/30 to-teal-500/20 border border-sky-500/40 flex items-center justify-center text-sky-300 shadow-md">
+                  <Sparkles className="w-6 h-6" />
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-full bg-zinc-900 text-sky-300 border border-zinc-800">
+                    Open Page
+                  </span>
+                </div>
+              </div>
+
+              <div className="mt-4">
+                <h3 className="text-xl font-black text-white tracking-tight group-hover:text-sky-300 transition-colors">
+                  Drills for the day
+                </h3>
+                <p className="text-xs text-zinc-400 mt-1 leading-relaxed">
+                  Master essential conversational formulas with interactive drills and reference guides.
+                </p>
+              </div>
+
+              <div className="mt-4 pt-3 border-t border-zinc-800/80 flex items-center justify-between text-xs font-bold text-sky-300">
+                <span>Explore Drills</span>
+                <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </div>
+            </motion.div>
+
+            {/* Card 2: Grey Watch Card (Day Stories) */}
             <motion.div
               whileHover={{ scale: 1.02, y: -2 }}
               onClick={onStartMyDay}
-              className="w-full rounded-[32px] bg-gradient-to-br from-[#272832] via-[#1a1b24] to-[#121319] border border-zinc-700/80 p-5 shadow-[0_20px_50px_rgba(0,0,0,0.8)] cursor-pointer relative z-10 flex flex-col justify-between group"
+              className="w-[92%] -mt-6 rounded-[32px] bg-gradient-to-br from-[#272832] via-[#1a1b24] to-[#121319] border border-zinc-700/80 p-5 shadow-[0_20px_50px_rgba(0,0,0,0.8)] cursor-pointer relative z-10 flex flex-col justify-between group"
             >
               <div className="flex items-center justify-between">
                 <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-purple-500/30 to-indigo-500/20 border border-purple-500/40 flex items-center justify-center text-purple-300 shadow-md">
@@ -471,38 +460,6 @@ export const ChallengeView: React.FC<ChallengeViewProps> = ({
 
               <div className="mt-4 pt-3 border-t border-zinc-700/60 flex items-center justify-between text-xs font-bold text-purple-300">
                 <span>Start Reading</span>
-                <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </div>
-            </motion.div>
-
-            {/* Card 2: Black V-Shape Overlapping Watch Card (Patterns & Grammar) */}
-            <motion.div
-              whileHover={{ scale: 1.02, y: -2 }}
-              onClick={() => setSubView('patterns_page')}
-              className="w-[92%] -mt-6 rounded-[32px] bg-gradient-to-b from-[#14151b] via-[#0d0e12] to-[#07080a] border border-zinc-800 p-5 shadow-[0_25px_60px_rgba(0,0,0,0.9)] cursor-pointer relative z-25 flex flex-col justify-between group backdrop-blur-xl"
-            >
-              <div className="flex items-center justify-between">
-                <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-sky-500/30 to-teal-500/20 border border-sky-500/40 flex items-center justify-center text-sky-300 shadow-md">
-                  <Sparkles className="w-6 h-6" />
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-full bg-zinc-900 text-sky-300 border border-zinc-800">
-                    Open Page
-                  </span>
-                </div>
-              </div>
-
-              <div className="mt-4">
-                <h3 className="text-xl font-black text-white tracking-tight group-hover:text-sky-300 transition-colors">
-                  Grammar & Speaking Patterns
-                </h3>
-                <p className="text-xs text-zinc-400 mt-1 leading-relaxed">
-                  Master essential conversational formulas with interactive drills and reference guides.
-                </p>
-              </div>
-
-              <div className="mt-4 pt-3 border-t border-zinc-800/80 flex items-center justify-between text-xs font-bold text-sky-300">
-                <span>Explore Patterns</span>
                 <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </div>
             </motion.div>

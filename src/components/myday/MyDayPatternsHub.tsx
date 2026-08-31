@@ -523,9 +523,9 @@ export const MyDayPatternsHub: React.FC<MyDayPatternsHubProps> = ({
                 onClick={() => handleSelectRandomLevelQuestion(lvl.id)}
                 className="w-full text-left flex items-center gap-4 p-3.5 sm:p-4 rounded-2xl bg-[#1C1C1E] border border-white/5 hover:border-blue-500/60 hover:bg-[#242428] transition-all cursor-pointer group active:scale-[0.98] shadow-md shadow-black/40"
               >
-                {/* App Store Blue Circular Icon Container */}
+                {/* Circular Icon Container */}
                 <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-[#2C2C2E] border border-white/10 flex items-center justify-center shrink-0 shadow-sm">
-                  <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-gradient-to-b from-[#2997FF] via-[#0071E3] to-[#0058B6] flex items-center justify-center text-white font-black text-sm sm:text-base shadow-lg shadow-blue-500/30 group-hover:scale-105 transition-transform">
+                  <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-gradient-to-b from-purple-500 to-indigo-600 flex items-center justify-center text-white font-black text-sm sm:text-base shadow-lg shadow-purple-500/30 group-hover:scale-105 transition-transform">
                     <span>L{lvl.levelNumber}</span>
                   </div>
                 </div>

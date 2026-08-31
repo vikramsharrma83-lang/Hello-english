@@ -28,30 +28,41 @@ export const HomePage: React.FC<HomePageProps> = ({
   onOpenChallenge,
   language = 'en',
 }) => {
+  const [greeting, setGreeting] = useState('');
+
+  useEffect(() => {
+    const hours = new Date().getHours();
+    if (hours < 12) setGreeting('Good Morning');
+    else if (hours < 17) setGreeting('Good Afternoon');
+    else setGreeting('Good Evening');
+  }, []);
+
   return (
     <div className="w-full flex-1 flex flex-col items-center justify-start px-6 pt-12 pb-28 text-zinc-100 max-w-[440px] mx-auto min-h-screen bg-black">
       {/* Header */}
       <h1 className="text-xl font-light text-zinc-400 uppercase tracking-widest mb-8">
-        WELCOME BACK VIKRAM!
+        {greeting} VIKRAM!
       </h1>
 
       {/* Dashboard Section */}
       <div className="w-full flex gap-4 mb-6">
         {/* Streak Card */}
-        <div className="flex-1 bg-zinc-900/60 rounded-2xl p-5 border border-zinc-800 flex flex-col items-center justify-center gap-1">
-          <Flame className="w-8 h-8 text-orange-500" />
-          <span className="text-2xl font-bold">0 day</span>
-          <span className="text-xs text-zinc-500 uppercase">Streak</span>
+        <div className="flex-[0.8] bg-zinc-900/60 rounded-2xl p-3 border border-zinc-800 flex items-center justify-center gap-2">
+          <Flame className="w-5 h-5 text-orange-500" />
+          <div className="flex flex-col">
+            <span className="text-sm font-bold leading-none">0 day</span>
+            <span className="text-[9px] text-zinc-500 uppercase">Streak</span>
+          </div>
         </div>
         
         {/* Weekly Tracker Card */}
-        <div className="flex-[2] bg-zinc-900/60 rounded-2xl p-5 border border-zinc-800">
-          <span className="text-xs text-zinc-500 uppercase mb-4 block">This Week</span>
-          <div className="flex justify-between gap-2">
-            {['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'].map((day) => (
-              <div key={day} className="flex flex-col items-center gap-1">
-                <div className="w-8 h-8 rounded-full bg-zinc-800"></div>
-                <span className="text-[10px] text-zinc-600">{day}</span>
+        <div className="flex-[1.2] bg-zinc-900/60 rounded-2xl p-3 border border-zinc-800">
+          <span className="text-[9px] text-zinc-500 uppercase mb-2 block">This Week</span>
+          <div className="flex justify-between gap-1">
+            {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((day) => (
+              <div key={day} className="flex flex-col items-center gap-0.5">
+                <div className="w-5 h-5 rounded-full bg-zinc-800"></div>
+                <span className="text-[8px] text-zinc-600">{day}</span>
               </div>
             ))}
           </div>
@@ -82,16 +93,17 @@ export const HomePage: React.FC<HomePageProps> = ({
       {/* Featured Challenge Card */}
       <div className="w-full relative group">
         <div className="absolute inset-0 bg-green-500/20 blur-2xl rounded-3xl opacity-50"></div>
-        <div className="w-full bg-zinc-900/80 rounded-3xl p-8 border border-green-500/50 flex flex-col items-center text-center relative z-10">
-          <span className="bg-zinc-800 text-zinc-300 text-xs px-3 py-1 rounded-full mb-4">+25 Points</span>
-          <h3 className="text-4xl font-semibold mb-2">Convince Me</h3>
-          <p className="text-zinc-400 mb-8 max-w-[200px]">Pitch it. Defend it. Win them over.</p>
+        <div className="w-full bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8 flex flex-col items-center text-center relative z-10 shadow-[0_8px_32px_rgba(0,0,0,0.3)]">
+          <div className="absolute inset-0 bg-gradient-to-br from-green-500/10 to-transparent rounded-3xl"></div>
+          <span className="bg-zinc-800/50 text-zinc-300 text-xs px-3 py-1 rounded-full mb-4 relative z-20">+25 Points</span>
+          <h3 className="text-4xl font-semibold mb-2 relative z-20">Talk to me</h3>
+          <p className="text-zinc-400 mb-8 max-w-[200px] relative z-20">Pitch it. Defend it. Win them over.</p>
           
           <button 
             onClick={onOpenChallenge || onStart}
-            className="w-full py-4 bg-zinc-100 text-black font-semibold rounded-2xl hover:bg-white transition-colors"
+            className="w-full py-4 bg-zinc-100 text-black font-semibold rounded-2xl hover:bg-white transition-colors relative z-20"
           >
-            Start Challenge
+            Start
           </button>
         </div>
       </div>

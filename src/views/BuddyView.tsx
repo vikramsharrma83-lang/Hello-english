@@ -203,14 +203,9 @@ export const BuddyView: React.FC<BuddyViewProps> = ({ onStartPractice, onBack, l
             <Bot className="w-6 h-6 text-white" />
           </div>
           <div>
-            <div className="flex items-center gap-2">
-              <h1 className="text-lg font-black tracking-tight">{language === 'hi' ? 'बडी स्पीकिंग पार्टनर' : 'Buddy Speaking Partner'}</h1>
-              <span className="px-2 py-0.5 rounded-full bg-sky-500/20 border border-sky-500/30 text-sky-400 text-[10px] font-bold">
-                LIVE AI
-              </span>
-            </div>
+            <h1 className="text-lg font-black tracking-tight whitespace-nowrap">{language === 'hi' ? 'बडी स्पीकिंग पार्टनर' : 'Buddy Speaking Partner'}</h1>
             <p className="text-xs text-zinc-400">
-              {language === 'hi' ? 'खुलकर बात करें • Buddy सुनता है और सुधारता है' : 'Talk freely • Buddy listens, understands & rephrases'}
+              {language === 'hi' ? 'खुलकर बात करें' : 'Talk freely'}
             </p>
           </div>
         </div>
@@ -282,21 +277,7 @@ export const BuddyView: React.FC<BuddyViewProps> = ({ onStartPractice, onBack, l
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Quick Prompts */}
-      <div className="mb-3">
-        <p className="text-[11px] font-bold text-zinc-500 uppercase tracking-wider mb-2">Quick Talk Prompts:</p>
-        <div className="flex flex-wrap gap-2">
-          {quickPrompts.map((prompt, idx) => (
-            <button
-              key={idx}
-              onClick={() => handleSend(prompt)}
-              className="text-xs bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 hover:border-zinc-700 text-zinc-300 px-3 py-1.5 rounded-full transition-colors cursor-pointer"
-            >
-              "{prompt}"
-            </button>
-          ))}
-        </div>
-      </div>
+
 
       {/* Input Bar */}
       <div className="sticky bottom-0 bg-zinc-950/95 backdrop-blur-md pt-3 pb-4 z-30 mt-auto">

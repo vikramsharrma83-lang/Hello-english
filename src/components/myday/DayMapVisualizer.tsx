@@ -238,129 +238,131 @@ export const DayMapVisualizer: React.FC<DayMapVisualizerProps> = ({
             OR CHOOSE ANY LISTED ACTIVITY / TOPIC:
           </span>
 
-          {/* ACTIVITIES Box */}
-          <div className="bg-[#14151c] border border-zinc-800 rounded-3xl p-4 mb-3 shadow-lg">
-            <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center gap-2 text-emerald-400">
-                <Zap className="w-4 h-4 stroke-[2.5]" />
-                <span className="text-xs font-extrabold uppercase tracking-wider text-zinc-200">
-                  ACTIVITIES
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+            {/* ACTIVITIES Box */}
+            <div className="bg-[#14151c] border border-zinc-800 rounded-3xl p-4 shadow-lg">
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-2 text-emerald-400">
+                  <Zap className="w-4 h-4 stroke-[2.5]" />
+                  <span className="text-xs font-extrabold uppercase tracking-wider text-zinc-200">
+                    ACTIVITIES
+                  </span>
+                </div>
+                <span className="w-5 h-5 rounded-full bg-emerald-950/80 border border-emerald-500/40 text-emerald-400 text-[11px] font-extrabold flex items-center justify-center">
+                  {activities.length}
                 </span>
               </div>
-              <span className="w-5 h-5 rounded-full bg-emerald-950/80 border border-emerald-500/40 text-emerald-400 text-[11px] font-extrabold flex items-center justify-center">
-                {activities.length}
-              </span>
+
+              <div className="flex flex-col gap-2">
+                {activities.map((act, idx) => {
+                  const isSelected = !isWholeStorySelected && selectedTopic?.pointer === act;
+                  return (
+                    <button
+                      key={idx}
+                      onClick={() => onSelectTopic(act, 'ACTIVITY')}
+                      className={`w-full text-left py-3 px-4 rounded-2xl border transition-all flex items-center gap-3 cursor-pointer ${
+                        isSelected
+                          ? 'bg-sky-950/40 border-sky-500 text-white font-semibold ring-1 ring-sky-500/40'
+                          : 'bg-[#1b1d26] border-zinc-800/80 hover:bg-[#22242f] text-zinc-300 font-normal'
+                      }`}
+                    >
+                      <div
+                        className={`w-2.5 h-2.5 rounded-full ${
+                          isSelected ? 'bg-sky-400 shadow-[0_0_6px_#38bdf8]' : 'bg-zinc-600'
+                        }`}
+                      />
+                      <span className="text-xs flex-1 truncate">{act}</span>
+                      {isSelected && <Check className="w-4 h-4 text-sky-400 stroke-[2.5]" />}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
 
-            <div className="flex flex-col gap-2">
-              {activities.map((act, idx) => {
-                const isSelected = !isWholeStorySelected && selectedTopic?.pointer === act;
-                return (
-                  <button
-                    key={idx}
-                    onClick={() => onSelectTopic(act, 'ACTIVITY')}
-                    className={`w-full text-left py-3 px-4 rounded-2xl border transition-all flex items-center gap-3 cursor-pointer ${
-                      isSelected
-                        ? 'bg-sky-950/40 border-sky-500 text-white font-semibold ring-1 ring-sky-500/40'
-                        : 'bg-[#1b1d26] border-zinc-800/80 hover:bg-[#22242f] text-zinc-300 font-normal'
-                    }`}
-                  >
-                    <div
-                      className={`w-2.5 h-2.5 rounded-full ${
-                        isSelected ? 'bg-sky-400 shadow-[0_0_6px_#38bdf8]' : 'bg-zinc-600'
-                      }`}
-                    />
-                    <span className="text-xs flex-1 truncate">{act}</span>
-                    {isSelected && <Check className="w-4 h-4 text-sky-400 stroke-[2.5]" />}
-                  </button>
-                );
-              })}
-            </div>
+            {/* FEELINGS & MOOD Box */}
+            {emotions.length > 0 && (
+              <div className="bg-[#14151c] border border-zinc-800 rounded-3xl p-4 shadow-lg">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-2 text-rose-400">
+                    <Heart className="w-4 h-4 stroke-[2.5]" />
+                    <span className="text-xs font-extrabold uppercase tracking-wider text-zinc-200">
+                      FEELINGS & MOOD
+                    </span>
+                  </div>
+                  <span className="w-5 h-5 rounded-full bg-rose-950/80 border border-rose-500/40 text-rose-400 text-[11px] font-extrabold flex items-center justify-center">
+                    {emotions.length}
+                  </span>
+                </div>
+
+                <div className="flex flex-col gap-2">
+                  {emotions.map((emo, idx) => {
+                    const isSelected = !isWholeStorySelected && selectedTopic?.pointer === emo;
+                    return (
+                      <button
+                        key={idx}
+                        onClick={() => onSelectTopic(emo, 'EMOTION')}
+                        className={`w-full text-left py-3 px-4 rounded-2xl border transition-all flex items-center gap-3 cursor-pointer ${
+                          isSelected
+                            ? 'bg-rose-950/40 border-rose-500 text-white font-semibold ring-1 ring-rose-500/40'
+                            : 'bg-[#1b1d26] border-zinc-800/80 hover:bg-[#22242f] text-zinc-300 font-normal'
+                        }`}
+                      >
+                        <div
+                          className={`w-2.5 h-2.5 rounded-full ${
+                            isSelected ? 'bg-rose-400 shadow-[0_0_6px_#f43f5e]' : 'bg-zinc-600'
+                          }`}
+                        />
+                        <span className="text-xs flex-1 truncate">{emo}</span>
+                        {isSelected && <Check className="w-4 h-4 text-rose-400 stroke-[2.5]" />}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* CONTEXT & PEOPLE Box */}
+            {environments.length > 0 && (
+              <div className="bg-[#14151c] border border-zinc-800 rounded-3xl p-4 shadow-lg">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-2 text-amber-400">
+                    <Users className="w-4 h-4 stroke-[2.5]" />
+                    <span className="text-xs font-extrabold uppercase tracking-wider text-zinc-200">
+                      CONTEXT & PEOPLE
+                    </span>
+                  </div>
+                  <span className="w-5 h-5 rounded-full bg-amber-950/80 border border-amber-500/40 text-amber-400 text-[11px] font-extrabold flex items-center justify-center">
+                    {environments.length}
+                  </span>
+                </div>
+
+                <div className="flex flex-col gap-2">
+                  {environments.map((env, idx) => {
+                    const isSelected = !isWholeStorySelected && selectedTopic?.pointer === env;
+                    return (
+                      <button
+                        key={idx}
+                        onClick={() => onSelectTopic(env, 'ENVIRONMENT')}
+                        className={`w-full text-left py-3 px-4 rounded-2xl border transition-all flex items-center gap-3 cursor-pointer ${
+                          isSelected
+                            ? 'bg-amber-950/40 border-amber-500 text-white font-semibold ring-1 ring-amber-500/40'
+                            : 'bg-[#1b1d26] border-zinc-800/80 hover:bg-[#22242f] text-zinc-300 font-normal'
+                        }`}
+                      >
+                        <div
+                          className={`w-2.5 h-2.5 rounded-full ${
+                            isSelected ? 'bg-amber-400 shadow-[0_0_6px_#fbbf24]' : 'bg-zinc-600'
+                          }`}
+                        />
+                        <span className="text-xs flex-1 truncate">{env}</span>
+                        {isSelected && <Check className="w-4 h-4 text-amber-400 stroke-[2.5]" />}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
           </div>
-
-          {/* FEELINGS & MOOD Box */}
-          {emotions.length > 0 && (
-            <div className="bg-[#14151c] border border-zinc-800 rounded-3xl p-4 mb-3 shadow-lg">
-              <div className="flex items-center justify-between mb-3">
-                <div className="flex items-center gap-2 text-rose-400">
-                  <Heart className="w-4 h-4 stroke-[2.5]" />
-                  <span className="text-xs font-extrabold uppercase tracking-wider text-zinc-200">
-                    FEELINGS & MOOD
-                  </span>
-                </div>
-                <span className="w-5 h-5 rounded-full bg-rose-950/80 border border-rose-500/40 text-rose-400 text-[11px] font-extrabold flex items-center justify-center">
-                  {emotions.length}
-                </span>
-              </div>
-
-              <div className="flex flex-col gap-2">
-                {emotions.map((emo, idx) => {
-                  const isSelected = !isWholeStorySelected && selectedTopic?.pointer === emo;
-                  return (
-                    <button
-                      key={idx}
-                      onClick={() => onSelectTopic(emo, 'EMOTION')}
-                      className={`w-full text-left py-3 px-4 rounded-2xl border transition-all flex items-center gap-3 cursor-pointer ${
-                        isSelected
-                          ? 'bg-rose-950/40 border-rose-500 text-white font-semibold ring-1 ring-rose-500/40'
-                          : 'bg-[#1b1d26] border-zinc-800/80 hover:bg-[#22242f] text-zinc-300 font-normal'
-                      }`}
-                    >
-                      <div
-                        className={`w-2.5 h-2.5 rounded-full ${
-                          isSelected ? 'bg-rose-400 shadow-[0_0_6px_#f43f5e]' : 'bg-zinc-600'
-                        }`}
-                      />
-                      <span className="text-xs flex-1 truncate">{emo}</span>
-                      {isSelected && <Check className="w-4 h-4 text-rose-400 stroke-[2.5]" />}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-
-          {/* CONTEXT & PEOPLE Box */}
-          {environments.length > 0 && (
-            <div className="bg-[#14151c] border border-zinc-800 rounded-3xl p-4 mb-4 shadow-lg">
-              <div className="flex items-center justify-between mb-3">
-                <div className="flex items-center gap-2 text-amber-400">
-                  <Users className="w-4 h-4 stroke-[2.5]" />
-                  <span className="text-xs font-extrabold uppercase tracking-wider text-zinc-200">
-                    CONTEXT & PEOPLE
-                  </span>
-                </div>
-                <span className="w-5 h-5 rounded-full bg-amber-950/80 border border-amber-500/40 text-amber-400 text-[11px] font-extrabold flex items-center justify-center">
-                  {environments.length}
-                </span>
-              </div>
-
-              <div className="flex flex-col gap-2">
-                {environments.map((env, idx) => {
-                  const isSelected = !isWholeStorySelected && selectedTopic?.pointer === env;
-                  return (
-                    <button
-                      key={idx}
-                      onClick={() => onSelectTopic(env, 'ENVIRONMENT')}
-                      className={`w-full text-left py-3 px-4 rounded-2xl border transition-all flex items-center gap-3 cursor-pointer ${
-                        isSelected
-                          ? 'bg-amber-950/40 border-amber-500 text-white font-semibold ring-1 ring-amber-500/40'
-                          : 'bg-[#1b1d26] border-zinc-800/80 hover:bg-[#22242f] text-zinc-300 font-normal'
-                      }`}
-                    >
-                      <div
-                        className={`w-2.5 h-2.5 rounded-full ${
-                          isSelected ? 'bg-amber-400 shadow-[0_0_6px_#fbbf24]' : 'bg-zinc-600'
-                        }`}
-                      />
-                      <span className="text-xs flex-1 truncate">{env}</span>
-                      {isSelected && <Check className="w-4 h-4 text-amber-400 stroke-[2.5]" />}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          )}
         </div>
 
         {/* Bottom Current Selection & CTA (if specific topic chosen) */}
