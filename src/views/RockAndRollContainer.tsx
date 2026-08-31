@@ -11,6 +11,7 @@ export const RockAndRollContainer: React.FC<{ onBack: () => void }> = ({ onBack 
   const [selectedTheme, setSelectedTheme] = useState<any | null>(null);
   const [selectedChallenge, setSelectedChallenge] = useState<any | null>(null);
   const [sessions, setSessions] = useState<RockAndRollSession[]>([]);
+  const [completedSummary, setCompletedSummary] = useState<any | null>(null);
 
   const handleSelectTheme = (theme: any) => {
     setSelectedTheme(theme);
@@ -23,18 +24,18 @@ export const RockAndRollContainer: React.FC<{ onBack: () => void }> = ({ onBack 
   };
 
   const handleChatComplete = (summary: any) => {
-    // In a real app, calculate actual session metrics here
     const newSession: RockAndRollSession = {
       id: Date.now().toString(),
-      situationTitle: selectedChallenge.title,
-      score: 82,
-      isResolved: true,
-      situationHandling: 85,
-      englishGrammar: 78,
-      customerResponse: 'Happy',
+      situationTitle: selectedChallenge?.title || 'Roleplay Challenge',
+      score: summary?.score || 82,
+      isResolved: summary?.isResolved ?? true,
+      situationHandling: summary?.situationHandling || 85,
+      englishGrammar: summary?.englishGrammar || 78,
+      customerResponse: summary?.customerResponse || 'Happy',
       timestamp: Date.now(),
     };
     setSessions([newSession, ...sessions]);
+    setCompletedSummary(summary);
     setView('summary');
   };
 
@@ -43,8 +44,8 @@ export const RockAndRollContainer: React.FC<{ onBack: () => void }> = ({ onBack 
       {view === 'dashboard' && <RockAndRollDashboardView onBack={onBack} onSelectTheme={handleSelectTheme} onOpenDashboard={() => setView('stats')} />}
       {view === 'stats' && <RockAndRollDashboard onBack={() => setView('dashboard')} sessions={sessions} />}
       {view === 'situations' && <RockAndRollSituationsView theme={selectedTheme} onBack={() => setView('dashboard')} onSelectChallenge={handleSelectChallenge} />}
-      {view === 'chat' && <RockAndRollChatView challenge={selectedChallenge} onComplete={handleChatComplete} />}
-      {view === 'summary' && <RockAndRollSummaryView challenge={selectedChallenge} onBack={() => setView('dashboard')} />}
+      {view === 'chat' && <RockAndRollChatView challenge={selectedChallenge} onComplete={handleChatComplete} onBack={() => setView('situations')} />}
+      {view === 'summary' && <RockAndRollSummaryView challenge={selectedChallenge} summary={completedSummary} onBack={() => setView('dashboard')} />}
     </div>
   );
 };

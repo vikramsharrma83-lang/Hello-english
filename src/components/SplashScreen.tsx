@@ -28,7 +28,7 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({
       initial={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.35, ease: 'easeInOut' }}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-white overflow-hidden select-none"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-[#090d16] text-white overflow-hidden select-none cursor-pointer"
       onClick={onFinish}
     >
       {/* Choreography: Enters from Left -> Stays in Center & Zooms In -> Exits to Right */}
@@ -59,10 +59,10 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({
             <div className="w-20 h-20 rounded-2xl bg-gradient-to-tr from-[#F97316] via-[#EC4899] to-[#8B5CF6] flex items-center justify-center text-white shadow-md mb-3">
               <Sparkles className="w-10 h-10" />
             </div>
-            <h1 className="text-3xl font-black tracking-tight text-slate-900">
+            <h1 className="text-3xl font-black tracking-tight text-white">
               Hello <span className="text-[#EC4899]">English</span>
             </h1>
-            <p className="text-xs font-bold text-slate-500 mt-1">
+            <p className="text-xs font-bold text-zinc-400 mt-1">
               Speak Fluent Workplace English
             </p>
           </div>

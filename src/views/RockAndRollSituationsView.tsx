@@ -1,16 +1,82 @@
 import React from 'react';
+import { ArrowLeft, ChevronRight, MessageSquareCode } from 'lucide-react';
+import { motion } from 'motion/react';
 
-export const RockAndRollSituationsView: React.FC<{ theme: any, onBack: () => void, onSelectChallenge: (challenge: any) => void }> = ({ theme, onBack, onSelectChallenge }) => {
+const THEME_IMAGES: Record<string, string> = {
+  pikku: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=800&q=80',
+  chakkar: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=800&q=80',
+  jaldi: 'https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&w=800&q=80',
+  mehmaan: 'https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?auto=format&fit=crop&w=800&q=80',
+  hisab: 'https://images.unsplash.com/photo-1556742049-0a67e5572290?auto=format&fit=crop&w=800&q=80',
+  kyaHua: 'https://images.unsplash.com/photo-1590381105924-c72589b9ef3f?auto=format&fit=crop&w=800&q=80',
+  vip: 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=800&q=80',
+};
+
+export const RockAndRollSituationsView: React.FC<{
+  theme: any;
+  onBack: () => void;
+  onSelectChallenge: (challenge: any) => void;
+}> = ({ theme, onBack, onSelectChallenge }) => {
+  const bannerImage = THEME_IMAGES[theme.bucketId] || 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=800&q=80';
+
   return (
-    <div className="w-full min-h-screen bg-black text-white p-6 pt-16">
-      <button onClick={onBack} className="mb-6 p-2 bg-zinc-800 rounded-full cursor-pointer">← Back to Themes</button>
-      <h1 className="text-3xl font-bold mb-8">{theme.theme} Situations</h1>
-      <div className="flex flex-col gap-4">
+    <div className="w-full min-h-screen bg-black text-white p-4 pt-8 pb-16 flex flex-col">
+      {/* Top Navigation */}
+      <div className="flex items-center justify-between mb-4">
+        <button
+          onClick={onBack}
+          className="flex items-center gap-1.5 px-3 py-1.5 bg-zinc-900 border border-zinc-800 rounded-full text-zinc-300 hover:text-white text-xs font-medium cursor-pointer transition-colors"
+        >
+          <ArrowLeft className="w-3.5 h-3.5" />
+          <span>Back to Tracks</span>
+        </button>
+      </div>
+
+      {/* Theme Hero Banner Card with Real Image */}
+      <div className="relative w-full h-36 rounded-2xl overflow-hidden border border-white/10 mb-5 shadow-xl">
+        <img
+          src={bannerImage}
+          alt={theme.theme}
+          referrerPolicy="no-referrer"
+          className="w-full h-full object-cover object-center"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-black/25" />
+        <div className="absolute inset-0 p-4 flex flex-col justify-end">
+          <span className="text-[10px] text-purple-400 font-bold uppercase tracking-wider">
+            {theme.challenges?.length || 0} Workplace Scenarios
+          </span>
+          <h1 className="text-xl font-bold text-white tracking-tight mt-0.5">{theme.theme}</h1>
+          <p className="text-xs text-zinc-300 line-clamp-1">{theme.themeDescription}</p>
+        </div>
+      </div>
+
+      {/* Situations List */}
+      <div className="flex items-center justify-between mb-3">
+        <h2 className="text-xs font-bold uppercase tracking-wider text-zinc-400">Available Scenarios</h2>
+      </div>
+
+      <div className="flex flex-col gap-2.5">
         {theme.challenges.map((c: any) => (
-          <div key={c.id} className="p-4 rounded-3xl border border-white/10 bg-zinc-900 cursor-pointer" onClick={() => onSelectChallenge(c)}>
-            <h3 className="text-lg font-bold">{c.title}</h3>
-            <p className="text-sm text-white/70">{c.shortDescription}</p>
-          </div>
+          <motion.div
+            key={c.id}
+            whileHover={{ y: -1 }}
+            whileTap={{ scale: 0.99 }}
+            className="p-3.5 rounded-xl border border-white/[0.08] bg-zinc-900/80 hover:bg-zinc-900 hover:border-white/20 cursor-pointer transition-all flex items-center justify-between gap-3"
+            onClick={() => onSelectChallenge(c)}
+          >
+            <div className="flex items-start gap-3 min-w-0">
+              <div className="w-8 h-8 rounded-lg bg-purple-500/10 border border-purple-500/20 text-purple-400 flex items-center justify-center flex-shrink-0 mt-0.5">
+                <MessageSquareCode className="w-4 h-4" />
+              </div>
+              <div className="min-w-0">
+                <h3 className="text-xs font-bold text-zinc-100">{c.title}</h3>
+                <p className="text-[11px] text-zinc-400 line-clamp-2 mt-0.5 leading-snug">{c.shortDescription}</p>
+              </div>
+            </div>
+            <div className="flex-shrink-0 w-6 h-6 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400">
+              <ChevronRight className="w-3.5 h-3.5" />
+            </div>
+          </motion.div>
         ))}
       </div>
     </div>

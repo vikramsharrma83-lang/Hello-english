@@ -48,9 +48,34 @@ export const HomePage: React.FC<HomePageProps> = ({
         <h1 className="text-xl font-light text-zinc-400 uppercase tracking-widest">
           {greeting} VIKRAM!
         </h1>
-        <button onClick={onOpenRockRoll} className="p-1 text-zinc-500 hover:text-white">
-          <Music className="w-5 h-5" />
-        </button>
+        <motion.button 
+          onClick={onOpenRockRoll} 
+          className="relative group p-0.5 flex items-center justify-center cursor-pointer"
+          initial={{ filter: "drop-shadow(0 0 6px rgba(245, 158, 11, 0.5))" }}
+          animate={{
+            scale: [1, 1.06, 1],
+            filter: [
+              "drop-shadow(0 0 6px rgba(245, 158, 11, 0.5)) drop-shadow(0 0 12px rgba(234, 179, 8, 0.35))", 
+              "drop-shadow(0 0 12px rgba(245, 158, 11, 0.8)) drop-shadow(0 0 20px rgba(250, 204, 21, 0.6))", 
+              "drop-shadow(0 0 6px rgba(245, 158, 11, 0.5)) drop-shadow(0 0 12px rgba(234, 179, 8, 0.35))"
+            ],
+          }}
+          transition={{
+            duration: 2.2,
+            ease: "easeInOut",
+            repeat: Infinity,
+          }}
+          whileHover={{ scale: 1.15 }}
+          whileTap={{ scale: 0.95 }}
+          title="Open Rock & Roll"
+        >
+          {/* Gold Circle Badge */}
+          <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-amber-600 via-yellow-400 to-amber-200 p-[1.5px] shadow-[0_0_12px_rgba(245,158,11,0.5)] flex items-center justify-center">
+            <div className="w-full h-full rounded-full bg-gradient-to-b from-amber-400 via-amber-500 to-yellow-600 flex items-center justify-center text-black">
+              <Music className="w-3.5 h-3.5 text-zinc-950 stroke-[2.5]" />
+            </div>
+          </div>
+        </motion.button>
       </div>
 
       {/* Dashboard Section */}
@@ -92,14 +117,14 @@ export const HomePage: React.FC<HomePageProps> = ({
         <div className="w-full bg-gradient-to-b from-[#14151b] via-[#0d0e12] to-[#07080a] border-2 border-purple-900/50 rounded-[32px] p-6 flex flex-col items-center text-center relative z-10 shadow-[0_25px_60px_rgba(0,0,0,0.9)]">
           <div className="absolute inset-0 bg-gradient-to-b from-purple-900/20 to-transparent rounded-[32px]"></div>
           <span className="bg-zinc-900/80 text-zinc-300 text-xs px-3 py-1 rounded-full mb-4 relative z-20 border border-zinc-700">+25 Points</span>
-          <h3 className="text-4xl font-semibold mb-2 relative z-20 text-transparent bg-clip-text bg-gradient-to-r from-white to-purple-400">Talk to me</h3>
+          <h3 className="text-4xl font-semibold mb-2 relative z-20 text-transparent bg-clip-text bg-gradient-to-r from-white to-purple-400">Talk to Me</h3>
           <p className="text-zinc-400 mb-8 max-w-[200px] relative z-20">Pitch it. Defend it. Win them over.</p>
           
           <button 
             onClick={onOpenChallenge || onStart}
             className="w-full py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold rounded-2xl hover:bg-white transition-colors relative z-20"
           >
-            Start Challenge
+            Start
           </button>
         </div>
       </div>

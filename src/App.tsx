@@ -21,7 +21,7 @@ type PracticeStep = 'question' | 'speak' | 'result';
 
 export default function App() {
   // Splash Screen State
-  const [showSplash, setShowSplash] = useState<boolean>(true);
+  const [showSplash, setShowSplash] = useState<boolean>(false);
   const [showRolePicker, setShowRolePicker] = useState<boolean>(false);
 
   // Navigation State
