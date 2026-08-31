@@ -20,7 +20,6 @@ export const RolePicker: React.FC<PickerProps> = ({ options, onSelect }) => {
     const index = Math.max(0, Math.min(options.length - 1, snapToIndex));
     setSelectedIndex(index);
     y.set(-index * ITEM_HEIGHT);
-    onSelect(options[index]);
   };
 
   return (
@@ -36,18 +35,19 @@ export const RolePicker: React.FC<PickerProps> = ({ options, onSelect }) => {
           dragConstraints={{ top: -(options.length - 1) * ITEM_HEIGHT, bottom: 0 }}
           style={{ y: smoothY }}
           onDragEnd={handleDragEnd}
-          className="cursor-grab active:cursor-grabbing w-full"
+          className="cursor-grab active:cursor-grabbing w-full touch-none"
         >
           {options.map((option, index) => {
-            const opacity = useTransform(y, [-(index - 2) * ITEM_HEIGHT, -index * ITEM_HEIGHT, -(index + 2) * ITEM_HEIGHT], [0.3, 1, 0.3]);
-            const scale = useTransform(y, [-(index - 2) * ITEM_HEIGHT, -index * ITEM_HEIGHT, -(index + 2) * ITEM_HEIGHT], [0.8, 1, 0.8]);
-            const rotateX = useTransform(y, [-(index - 2) * ITEM_HEIGHT, -index * ITEM_HEIGHT, -(index + 2) * ITEM_HEIGHT], [30, 0, -30]);
+            // Using a slightly more aggressive transform for more pronounced scaling and opacity changes
+            const opacity = useTransform(y, [-(index - 1) * ITEM_HEIGHT, -index * ITEM_HEIGHT, -(index + 1) * ITEM_HEIGHT], [0.4, 1, 0.4]);
+            const scale = useTransform(y, [-(index - 1) * ITEM_HEIGHT, -index * ITEM_HEIGHT, -(index + 1) * ITEM_HEIGHT], [0.85, 1.3, 0.85]);
+            const rotateX = useTransform(y, [-(index - 1) * ITEM_HEIGHT, -index * ITEM_HEIGHT, -(index + 1) * ITEM_HEIGHT], [20, 0, -20]);
 
             return (
               <motion.div
                 key={option}
                 style={{ opacity, scale, rotateX, height: ITEM_HEIGHT }}
-                className={`flex items-center justify-center text-2xl ${index === selectedIndex ? 'text-white font-bold' : 'text-gray-600 font-normal'}`}
+                className={`flex items-center justify-center text-xl ${index === selectedIndex ? 'text-white font-bold' : 'text-gray-600 font-normal'}`}
               >
                 {option}
               </motion.div>
