@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { SplashScreen } from './components/SplashScreen';
+import { LoginPage } from './components/LoginPage';
 import { RolePicker } from './components/RolePicker';
 import { QuestionScreen } from './views/QuestionScreen';
 import { SpeakScreen } from './views/SpeakScreen';
@@ -22,6 +23,9 @@ type PracticeStep = 'question' | 'speak' | 'result';
 
 export default function App() {
   const [showSplash, setShowSplash] = useState<boolean>(true);
+  const [showLogin, setShowLogin] = useState<boolean>(() => {
+    return !localStorage.getItem('hello_english_logged_in');
+  });
   // Industry Role Picker State
   const [showRolePicker, setShowRolePicker] = useState<boolean>(false);
 
@@ -275,6 +279,17 @@ export default function App() {
       <AnimatePresence>
         {showSplash && (
           <SplashScreen onFinish={() => setShowSplash(false)} />
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {!showSplash && showLogin && (
+          <LoginPage
+            onLoginSuccess={(userId) => {
+              localStorage.setItem('hello_english_logged_in', userId);
+              setShowLogin(false);
+            }}
+          />
         )}
       </AnimatePresence>
 
