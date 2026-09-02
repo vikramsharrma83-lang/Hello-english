@@ -63,13 +63,14 @@ export const HomePage: React.FC<HomePageProps> = ({
       {/* Full-bleed high-quality inspirational study/learning background image */}
       <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden select-none">
         <img
-          src="https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=1200&q=85"
+          src="https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=1200&q=80"
           alt="Inspirational Learning Background"
           referrerPolicy="no-referrer"
-          className="w-full h-full object-cover object-center opacity-70 filter brightness-95 contrast-105 saturate-110"
+          className="w-full h-full object-cover object-center opacity-40 filter brightness-[0.80] contrast-[1.10] saturate-[1.05]"
         />
-        {/* Balanced gradient overlay to maintain high visibility while keeping UI razor-sharp */}
-        <div className="absolute inset-0 bg-gradient-to-b from-slate-950/70 via-slate-950/30 to-slate-950/85" />
+        {/* Deep, smooth ambient vignette and gradients */}
+        <div className="absolute inset-0 bg-gradient-to-b from-slate-950/85 via-slate-950/55 to-slate-950/95" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_transparent_30%,_rgba(2,6,23,0.85)_100%)]" />
       </div>
 
       {/* Header with Greeting on Left and Rock & Roll on Right Top, with other character underneath */}
@@ -223,7 +224,7 @@ export const HomePage: React.FC<HomePageProps> = ({
         {/* Slim Metrics Dashboard (Beginner Level & This Week Activity) */}
         <div className="w-full grid grid-cols-2 gap-2.5 mb-4">
           {/* Slim Level Card */}
-          <div className="bg-slate-950/75 border border-slate-700/70 hover:border-slate-600 rounded-2xl p-3 flex flex-col justify-between shadow-lg transition-colors backdrop-blur-xl">
+          <div className="bg-white/[0.07] hover:bg-white/[0.1] border border-white/20 hover:border-white/30 rounded-2xl p-3 flex flex-col justify-between shadow-lg transition-colors backdrop-blur-xl">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-1.5">
                 <div className="w-2 h-2 rounded-full bg-sky-400 shadow-[0_0_8px_rgba(56,189,248,0.9)]" />
@@ -231,27 +232,27 @@ export const HomePage: React.FC<HomePageProps> = ({
                   {language === 'hi' ? 'Beginner' : 'Beginner'}
                 </span>
               </div>
-              <span className="text-[10px] font-mono font-bold text-sky-300 bg-sky-950/90 px-1.5 py-0.5 rounded border border-sky-700/60 shadow-xs">
+              <span className="text-[10px] font-mono font-bold text-sky-300 bg-sky-950/80 px-1.5 py-0.5 rounded border border-sky-600/50 shadow-xs">
                 {language === 'hi' ? '0 अंक' : '0 Pts'}
               </span>
             </div>
 
             <div className="my-2">
-              <div className="w-full h-1.5 bg-slate-800/90 rounded-full overflow-hidden">
-                <div className="w-[15%] h-full bg-gradient-to-r from-sky-500 to-indigo-500 rounded-full shadow-[0_0_8px_rgba(56,189,248,0.5)]"></div>
+              <div className="w-full h-1.5 bg-black/40 rounded-full overflow-hidden">
+                <div className="w-[15%] h-full bg-gradient-to-r from-sky-400 to-indigo-400 rounded-full shadow-[0_0_8px_rgba(56,189,248,0.5)]"></div>
               </div>
             </div>
 
             <div className="flex items-center justify-between text-[9px] text-slate-300 font-medium">
               <span className="text-slate-200 font-bold">{language === 'hi' ? 'स्तर 1' : 'Lvl 1'}</span>
-              <span className="text-slate-400">{language === 'hi' ? 'स्तर 2 के लिए 100 अंक' : '100 pts to Lvl 2'}</span>
+              <span className="text-slate-300">{language === 'hi' ? 'स्तर 2 के लिए 100 अंक' : '100 pts to Lvl 2'}</span>
             </div>
           </div>
 
           {/* Slim Weekly Streak Card */}
-          <div className="bg-slate-950/75 border border-slate-700/70 hover:border-slate-600 rounded-2xl p-3 flex flex-col justify-between shadow-lg transition-colors backdrop-blur-xl">
+          <div className="bg-white/[0.07] hover:bg-white/[0.1] border border-white/20 hover:border-white/30 rounded-2xl p-3 flex flex-col justify-between shadow-lg transition-colors backdrop-blur-xl">
             <div className="flex items-center justify-between">
-              <span className="text-[9.5px] font-bold text-slate-300 uppercase tracking-wider">
+              <span className="text-[9.5px] font-bold text-slate-200 uppercase tracking-wider">
                 {language === 'hi' ? 'इस सप्ताह' : 'This Week'}
               </span>
               <div className="flex items-center gap-1 text-sky-300 font-semibold text-[10.5px]">
@@ -270,15 +271,15 @@ export const HomePage: React.FC<HomePageProps> = ({
                     <div
                       className={`w-4 h-4 rounded-full flex items-center justify-center text-[8px] font-bold transition-all ${
                         isToday
-                          ? 'bg-sky-500 text-slate-950 ring-2 ring-sky-400/50 shadow-[0_0_8px_rgba(56,189,248,0.6)]'
+                          ? 'bg-sky-400 text-slate-950 ring-2 ring-sky-300/60 shadow-[0_0_8px_rgba(56,189,248,0.7)]'
                           : isCompleted
-                          ? 'bg-slate-700 text-slate-200'
-                          : 'bg-slate-800/80 text-slate-500'
+                          ? 'bg-white/20 text-white'
+                          : 'bg-white/10 text-slate-400'
                       }`}
                     >
                       {isToday ? '•' : ''}
                     </div>
-                    <span className={`text-[8px] font-medium ${isToday ? 'text-sky-300 font-bold' : 'text-slate-400'}`}>
+                    <span className={`text-[8px] font-medium ${isToday ? 'text-sky-300 font-bold' : 'text-slate-300'}`}>
                       {day}
                     </span>
                   </div>
@@ -288,22 +289,22 @@ export const HomePage: React.FC<HomePageProps> = ({
           </div>
         </div>
 
-        {/* Featured "Let's Learn" Card - Apple Glass Glowing Aesthetic */}
+        {/* Featured "Let's Learn" Card - Apple Glass Translucent Aesthetic */}
         <div className="w-full relative group">
           {/* Ambient Apple Glass Background Glow */}
-          <div className="absolute -inset-0.5 bg-gradient-to-r from-sky-500/30 via-indigo-500/25 to-teal-500/30 rounded-[30px] blur-xl opacity-80 group-hover:opacity-100 transition-all duration-700" />
+          <div className="absolute -inset-0.5 bg-gradient-to-r from-sky-400/25 via-indigo-400/20 to-purple-400/25 rounded-[30px] blur-xl opacity-75 group-hover:opacity-100 transition-all duration-700" />
           
           <div 
             onClick={onOpenChallenge || onStart}
-            className="w-full relative bg-slate-950/65 backdrop-blur-2xl border border-white/20 hover:border-white/30 rounded-[28px] p-6 flex flex-col items-center text-center shadow-[0_20px_50px_rgba(0,0,0,0.65),inset_0_1px_1px_rgba(255,255,255,0.3),inset_0_-1px_1px_rgba(0,0,0,0.4)] cursor-pointer transition-all duration-300 active:scale-[0.99] overflow-hidden"
+            className="w-full relative bg-white/[0.08] hover:bg-white/[0.12] backdrop-blur-2xl border border-white/30 hover:border-white/45 rounded-[28px] p-6 flex flex-col items-center text-center shadow-[0_20px_50px_rgba(0,0,0,0.45),inset_0_1.5px_2px_rgba(255,255,255,0.45),inset_0_-1px_2px_rgba(0,0,0,0.3)] cursor-pointer transition-all duration-300 active:scale-[0.99] overflow-hidden"
           >
-            {/* Subtle frosted glass specular highlight bar across the top */}
-            <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-white/50 to-transparent" />
+            {/* Specular frosted glass top highlight bar */}
+            <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-white/70 to-transparent" />
 
-            {/* Micro Points Pill */}
-            <div className="inline-flex items-center gap-1 bg-white/15 backdrop-blur-md text-slate-100 text-xs px-3 py-1 rounded-full mb-3 border border-white/20 shadow-xs font-medium">
-              <Sparkles className="w-3.5 h-3.5 text-sky-300" />
-              <span>{language === 'hi' ? '+25 अंक' : '+25 Points'}</span>
+            {/* Micro Translucent Points Pill */}
+            <div className="inline-flex items-center gap-1.5 bg-white/15 backdrop-blur-xl text-white text-xs px-3.5 py-1 rounded-full mb-3 border border-white/35 shadow-[0_2px_10px_rgba(0,0,0,0.2),inset_0_1px_1px_rgba(255,255,255,0.4)] font-medium">
+              <Sparkles className="w-3.5 h-3.5 text-sky-300 drop-shadow-[0_0_6px_rgba(56,189,248,0.8)]" />
+              <span className="tracking-wide">{language === 'hi' ? '+25 अंक' : '+25 Points'}</span>
             </div>
 
             {/* Title */}
@@ -312,13 +313,13 @@ export const HomePage: React.FC<HomePageProps> = ({
             </h3>
 
             {/* Subtitle */}
-            <p className="text-slate-200 text-xs mb-6 max-w-[240px] leading-relaxed font-normal drop-shadow-xs">
+            <p className="text-slate-100/90 text-xs mb-6 max-w-[240px] leading-relaxed font-normal drop-shadow-sm">
               {getTranslation(language, 'pitch_defend')}
             </p>
             
-            {/* Apple-styled Glass Button CTA with glowing purple aura */}
+            {/* Apple-styled Translucent Glass Button CTA with purple glow */}
             <div 
-              className="w-full py-3.5 bg-gradient-to-r from-purple-600/35 via-purple-500/25 to-indigo-600/35 hover:from-purple-600/45 hover:to-indigo-600/45 active:scale-[0.98] text-white font-extrabold text-sm tracking-wider uppercase rounded-2xl transition-all duration-300 flex items-center justify-center border border-purple-400/50 shadow-[0_0_24px_rgba(168,85,247,0.45),inset_0_1px_1px_rgba(255,255,255,0.4)] backdrop-blur-md hover:border-purple-300 hover:shadow-[0_0_32px_rgba(168,85,247,0.65)]"
+              className="w-full py-3.5 bg-gradient-to-r from-purple-500/30 via-purple-600/25 to-indigo-500/30 hover:from-purple-500/40 hover:to-indigo-500/40 active:scale-[0.98] text-white font-extrabold text-sm tracking-wider uppercase rounded-2xl transition-all duration-300 flex items-center justify-center border border-purple-300/60 shadow-[0_0_24px_rgba(168,85,247,0.4),inset_0_1.5px_2px_rgba(255,255,255,0.5)] backdrop-blur-xl hover:border-purple-200 hover:shadow-[0_0_32px_rgba(168,85,247,0.65)]"
             >
               {getTranslation(language, 'start')}
             </div>
