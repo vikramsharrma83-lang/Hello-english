@@ -31,6 +31,7 @@ interface MyDayViewProps {
   onUpdateProgress?: (updater: (prev: UserProgress) => UserProgress) => void;
   onStepChange?: (step: string) => void;
   onOpenRolePicker?: () => void;
+  onOpenHelpRoadmap?: () => void;
   language?: 'en' | 'hi';
   onToggleLanguage?: () => void;
 }
@@ -49,6 +50,7 @@ export const MyDayView: React.FC<MyDayViewProps> = ({
   onUpdateProgress,
   onStepChange,
   onOpenRolePicker,
+  onOpenHelpRoadmap,
   language = 'en',
   onToggleLanguage,
 }) => {
@@ -437,6 +439,7 @@ export const MyDayView: React.FC<MyDayViewProps> = ({
             progress={progress}
             language={language}
             onToggleLanguage={onToggleLanguage}
+            onOpenHelpRoadmap={onOpenHelpRoadmap}
           />
         )}
 

@@ -23,11 +23,9 @@ import { recordChallengePractice } from './utils/challengeManager';
 type PracticeStep = 'question' | 'speak' | 'result';
 
 export default function App() {
-  const [showSplash, setShowSplash] = useState<boolean>(true);
-  const [showPurpose, setShowPurpose] = useState<boolean>(true);
-  const [showLogin, setShowLogin] = useState<boolean>(() => {
-    return !localStorage.getItem('hello_english_logged_in');
-  });
+  const [showSplash, setShowSplash] = useState<boolean>(false);
+  const [showPurpose, setShowPurpose] = useState<boolean>(false);
+  const [showLogin, setShowLogin] = useState<boolean>(false);
   // Industry Role Picker State
   const [showRolePicker, setShowRolePicker] = useState<boolean>(false);
 
@@ -286,7 +284,10 @@ export default function App() {
 
       <AnimatePresence>
         {!showSplash && showPurpose && (
-          <AppPurposeScreen onContinue={() => setShowPurpose(false)} />
+          <AppPurposeScreen 
+            onContinue={() => setShowPurpose(false)} 
+            onClose={() => setShowPurpose(false)}
+          />
         )}
       </AnimatePresence>
 
@@ -360,6 +361,7 @@ export default function App() {
                 onUpdateProgress={setProgress}
                 onStepChange={setMyDayStep}
                 onOpenRolePicker={() => setShowRolePicker(true)}
+                onOpenHelpRoadmap={() => setShowPurpose(true)}
                 language={language}
                 onToggleLanguage={() => setLanguage((prev) => (prev === 'en' ? 'hi' : 'en'))}
                 onNavigateTab={(tab) => {

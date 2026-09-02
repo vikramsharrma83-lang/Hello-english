@@ -435,7 +435,7 @@ export const CourseView: React.FC<CourseViewProps> = ({ onStartPractice }) => {
                   onClick={() => setActiveSubModule(null)}
                   className="w-full py-4 rounded-2xl bg-[#ccff00] text-black text-sm font-black hover:bg-[#b8f500] transition-all shadow-lg cursor-pointer"
                 >
-                  Back to Snippets Hub →
+                  Back to Hub →
                 </button>
               </div>
             </div>
@@ -513,11 +513,10 @@ export const CourseView: React.FC<CourseViewProps> = ({ onStartPractice }) => {
   return (
     <div className="min-h-screen bg-[#000000] text-white pb-36 pt-4 px-4 font-sans select-none">
       <header className="mb-6 px-2">
-        <div className="flex items-center gap-2 mb-1">
-          <span className="text-2xl font-black text-rose-500 tracking-tight"> SkillGo</span>
-          <span className="text-xs px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-300 font-bold">Grammar & Tenses Snippets</span>
-        </div>
-        <h1 className="text-3xl font-black text-white tracking-tight">Snippets Hub</h1>
+        <h1 className="text-3xl font-black tracking-tight flex items-center gap-2">
+          <span className="text-rose-500">SkillGo</span>
+          <span className="text-white">Hub</span>
+        </h1>
       </header>
 
       <div className="space-y-6 max-w-xl mx-auto">
