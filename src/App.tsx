@@ -13,6 +13,7 @@ import { MyDayView } from './views/MyDayView';
 import { CourseView } from './views/CourseView';
 import { FitnessDashboardView } from './views/FitnessDashboardView';
 import { RockAndRollContainer } from './views/RockAndRollContainer';
+import { ChallengeView } from './views/ChallengeView';
 import { DrillView } from './views/DrillView';
 import { BottomDockNav, NavTab } from './components/BottomDockNav';
 import { AnalysisResult, Question, SavedPhrase, UserProgress } from './types';
@@ -23,7 +24,7 @@ import { recordChallengePractice } from './utils/challengeManager';
 type PracticeStep = 'question' | 'speak' | 'result';
 
 export default function App() {
-  const [showSplash, setShowSplash] = useState<boolean>(true);
+  const [showSplash, setShowSplash] = useState<boolean>(false);
   const [showPurpose, setShowPurpose] = useState<boolean>(false);
   const [showLogin, setShowLogin] = useState<boolean>(false);
   // Industry Role Picker State
@@ -335,6 +336,29 @@ export default function App() {
               transition={{ duration: 0.22 }}
               className="w-full"
             >
+              <ChallengeView
+                progress={progress}
+                onBack={() => setActiveTab('sheeko')}
+                onStartMyDay={() => {
+                  setActiveTab('sheeko');
+                  setMyDayStep('2_CHAT_INPUT');
+                }}
+                onStartPracticeQuestion={handleStartPractice}
+                onStartDrill={handleStartDrill}
+                onUpdateProgress={setProgress}
+              />
+            </motion.div>
+          )}
+
+          {activeTab === 'rocknroll' && (
+            <motion.div
+              key="rocknroll"
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -15 }}
+              transition={{ duration: 0.22 }}
+              className="w-full"
+            >
               <RockAndRollContainer onBack={() => setActiveTab('sheeko')} />
             </motion.div>
           )}
@@ -409,15 +433,27 @@ export default function App() {
                 />
               )}
 
-              {practiceStep === 'result' && analysisResult && (
-                <ResultScreen
-                  question={currentQuestion}
-                  result={analysisResult}
-                  onTryAgain={() => setPracticeStep('speak')}
-                  onNextQuestion={handleShuffleQuestion}
-                  onSavePhrase={handleToggleSavePhrase}
-                  isSaved={isCurrentPhraseSaved}
-                />
+              {practiceStep === 'result' && (
+                analysisResult ? (
+                  <ResultScreen
+                    question={currentQuestion}
+                    result={analysisResult}
+                    onTryAgain={() => setPracticeStep('speak')}
+                    onNextQuestion={handleShuffleQuestion}
+                    onSavePhrase={handleToggleSavePhrase}
+                    isSaved={isCurrentPhraseSaved}
+                  />
+                ) : (
+                  <QuestionScreen
+                    question={currentQuestion}
+                    onBack={() => {
+                      const fallback = returnTab === 'dashboard' || returnTab === 'fitness' ? 'sheeko' : (returnTab || 'sheeko');
+                      setActiveTab(fallback);
+                    }}
+                    onContinue={() => setPracticeStep('speak')}
+                    onShuffleQuestion={handleShuffleQuestion}
+                  />
+                )
               )}
             </motion.div>
           )}
