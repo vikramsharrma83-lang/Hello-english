@@ -7,14 +7,18 @@ import {
   Layers
 } from 'lucide-react';
 import { UserProgress, Question } from '../types';
+import { PRACTICE_QUESTIONS } from '../data/questions';
 import { EnglishProgressScreen } from '../components/myday/EnglishProgressScreen';
 import { PlaygroundReportModal } from '../components/myday/PlaygroundReportModal';
 import { PlaygroundAwardsSnapshotModal } from '../components/myday/PlaygroundAwardsSnapshotModal';
+import { DailyEnglishReportView } from './DailyEnglishReportView';
 import { getDrillSessionRecords } from '../utils/drillScoringEngine';
 
 interface FitnessDashboardViewProps {
   progress?: UserProgress;
   onStartPractice: (question?: Question) => void;
+  onStartDrill?: (question?: Question) => void;
+  onOpenBuddy?: () => void;
   onOpenMyDay: () => void;
   onOpenPlayground?: () => void;
   onBack: () => void;
@@ -23,12 +27,15 @@ interface FitnessDashboardViewProps {
 export const FitnessDashboardView: React.FC<FitnessDashboardViewProps> = ({
   progress,
   onStartPractice,
+  onStartDrill,
+  onOpenBuddy,
   onOpenMyDay,
   onOpenPlayground,
   onBack,
 }) => {
   const [isMetricsOpen, setIsMetricsOpen] = useState<boolean>(false);
   const [isPlaygroundReportOpen, setIsPlaygroundReportOpen] = useState<boolean>(false);
+  const [isDailyEnglishReportOpen, setIsDailyEnglishReportOpen] = useState<boolean>(false);
   const [isAwardsSnapshotOpen, setIsAwardsSnapshotOpen] = useState<boolean>(false);
 
   const drillRecords = getDrillSessionRecords();
@@ -52,6 +59,50 @@ export const FitnessDashboardView: React.FC<FitnessDashboardViewProps> = ({
 
   const dashOffset = Number((251.2 * (1 - overallAverage / 100)).toFixed(1));
 
+  // Render Daily English Progress Report page when open
+  if (isDailyEnglishReportOpen) {
+    return (
+      <DailyEnglishReportView
+        progress={progress}
+        onBack={() => setIsDailyEnglishReportOpen(false)}
+        onStartActivity={(actionType, targetQuestionId) => {
+          setIsDailyEnglishReportOpen(false);
+          const matchedQuestion = targetQuestionId
+            ? PRACTICE_QUESTIONS.find((q) => q.id === targetQuestionId) || PRACTICE_QUESTIONS[0]
+            : PRACTICE_QUESTIONS[0];
+
+          switch (actionType) {
+            case 'sentence_building':
+            case 'workplace':
+              if (onStartDrill) {
+                onStartDrill(matchedQuestion);
+              } else {
+                onStartPractice(matchedQuestion);
+              }
+              break;
+            case 'speaking':
+            case 'daily_routine':
+              onOpenMyDay();
+              break;
+            case 'conversation':
+              if (onOpenBuddy) {
+                onOpenBuddy();
+              } else {
+                onOpenMyDay();
+              }
+              break;
+            case 'fix_sentence':
+            case 'vocabulary':
+            case 'listening':
+            default:
+              onStartPractice(matchedQuestion);
+              break;
+          }
+        }}
+      />
+    );
+  }
+
   return (
     <div className="min-h-screen bg-black text-white pb-32 pt-5 px-4 font-sans select-none max-w-[440px] mx-auto">
       {/* Top Header */}
@@ -65,25 +116,14 @@ export const FitnessDashboardView: React.FC<FitnessDashboardViewProps> = ({
           </h1>
         </div>
         <div className="flex items-center gap-2">
-          {/* Playground Report Button */}
           <button 
-            onClick={() => setIsPlaygroundReportOpen(true)}
-            className="p-2 rounded-full bg-[#18191E] border border-sky-500/40 text-sky-400 hover:bg-sky-500/20 transition-all shadow-[0_0_12px_rgba(56,189,248,0.2)] cursor-pointer"
-            title="Playground Daily Report"
+            onClick={() => setIsDailyEnglishReportOpen(true)}
+            className="px-3.5 py-1.5 rounded-full bg-[#151922] border border-sky-500/40 text-sky-300 hover:text-white hover:bg-sky-500/20 hover:border-sky-400 text-xs font-semibold tracking-tight flex items-center gap-1.5 transition-colors cursor-pointer"
+            title="Daily Report"
           >
-            <Layers className="w-4 h-4" />
+            <Layers className="w-3.5 h-3.5 text-sky-400" />
+            <span>Daily Report</span>
           </button>
-          
-          <button 
-            onClick={onOpenMyDay}
-            className="px-3 py-1.5 rounded-full bg-[#18191E] border border-amber-500/50 text-amber-400 text-xs font-bold tracking-wide flex items-center gap-1.5 hover:bg-amber-500/20 transition-all shadow-[0_0_12px_rgba(245,158,11,0.25)] cursor-pointer"
-          >
-            <Sparkles className="w-3.5 h-3.5 text-amber-400 animate-pulse" />
-            <span>My Day</span>
-          </button>
-          <div className="w-9 h-9 rounded-full border-2 border-[#ff3b30] bg-[#141519] flex items-center justify-center font-bold text-sm text-white shadow-md">
-            {progress?.userName?.[0]?.toUpperCase() || 'V'}
-          </div>
         </div>
       </header>
 
@@ -282,6 +322,7 @@ export const FitnessDashboardView: React.FC<FitnessDashboardViewProps> = ({
       <PlaygroundReportModal
         isOpen={isPlaygroundReportOpen}
         onClose={() => setIsPlaygroundReportOpen(false)}
+        onOpenDailyReport={() => setIsDailyEnglishReportOpen(true)}
         onOpenPlayground={() => {
           setIsPlaygroundReportOpen(false);
           if (onOpenPlayground) {

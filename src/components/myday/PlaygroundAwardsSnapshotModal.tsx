@@ -2,13 +2,11 @@ import React from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   X,
-  Trophy,
   Flame,
   MessageSquare,
   Zap,
   Music,
   Calendar,
-  CheckCircle2,
   Sparkles,
 } from 'lucide-react';
 import { getPlaygroundDaySnapshots, DailyPlaygroundSnapshot } from '../../utils/playgroundManager';
@@ -36,30 +34,26 @@ export const PlaygroundAwardsSnapshotModal: React.FC<PlaygroundAwardsSnapshotMod
   return (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-3.5 sm:p-4 bg-black/80 backdrop-blur-sm">
+        <div
+          onClick={onClose}
+          className="fixed inset-0 z-50 flex items-center justify-center p-3.5 sm:p-4 bg-black/75 backdrop-blur-sm"
+        >
           <motion.div
-            initial={{ opacity: 0, scale: 0.96, y: 10 }}
+            initial={{ opacity: 0, scale: 0.97, y: 8 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.96, y: 10 }}
-            className="w-full max-w-xl bg-[#0d1117] border border-zinc-800 rounded-2xl p-5 text-zinc-100 shadow-2xl relative overflow-hidden flex flex-col max-h-[90vh]"
+            exit={{ opacity: 0, scale: 0.97, y: 8 }}
+            onClick={(e) => e.stopPropagation()}
+            className="w-full max-w-xl bg-[#111317] border border-zinc-800 rounded-2xl p-5 text-zinc-100 shadow-2xl relative flex flex-col max-h-[90vh]"
           >
             {/* Header */}
-            <div className="flex items-center justify-between pb-3.5 border-b border-zinc-800 shrink-0">
-              <div className="flex items-center gap-2.5">
-                <div className="w-9 h-9 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400">
-                  <Trophy className="w-4.5 h-4.5" />
-                </div>
-                <div>
-                  <h3 className="text-sm sm:text-base font-semibold text-white tracking-tight flex items-center gap-2">
-                    <span>Playground Daily Snapshots</span>
-                    <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded-full bg-zinc-800 border border-zinc-700 text-amber-400">
-                      Awards
-                    </span>
-                  </h3>
-                  <p className="text-xs text-zinc-400">
-                    Day-wise activity history and completion records
-                  </p>
-                </div>
+            <div className="flex items-center justify-between pb-4 border-b border-zinc-800/80 shrink-0">
+              <div>
+                <h3 className="text-base font-semibold text-white tracking-tight">
+                  Daily Activity Snapshots
+                </h3>
+                <p className="text-xs text-zinc-400 mt-0.5">
+                  Day-by-day record of speaking exercises and milestones
+                </p>
               </div>
 
               <button
@@ -71,107 +65,101 @@ export const PlaygroundAwardsSnapshotModal: React.FC<PlaygroundAwardsSnapshotMod
               </button>
             </div>
 
-            {/* Subtitle / summary info banner */}
-            <div className="my-3 px-3.5 py-2.5 bg-zinc-900/90 border border-zinc-800 rounded-xl flex items-center justify-between text-xs shrink-0">
-              <div className="flex items-center gap-2 text-zinc-300">
-                <Calendar className="w-3.5 h-3.5 text-amber-400" />
-                <span>Daily record of completed speech exercises</span>
+            {/* Sub-header / metadata row */}
+            <div className="py-2.5 px-3 sm:px-4 flex items-center justify-between text-xs text-zinc-400 border-b border-zinc-800/80 shrink-0">
+              <div className="flex items-center gap-1.5 text-zinc-400">
+                <Calendar className="w-3.5 h-3.5 text-zinc-500" />
+                <span>Recent Activity Log</span>
               </div>
-              <span className="text-xs font-semibold text-zinc-400">
-                {snapshots.length} Days Recorded
+              <span className="text-zinc-500 font-medium text-[11px]">
+                {snapshots.length} {snapshots.length === 1 ? 'day' : 'days'} recorded
               </span>
             </div>
 
-            {/* Day Snapshots Timeline List */}
-            <div className="flex-1 overflow-y-auto space-y-2 pr-1 custom-scrollbar">
-              {snapshots.map((snap) => {
+            {/* Flat List (Structured rows with subtle horizontal dividers & background tint) */}
+            <div className="flex-1 overflow-y-auto custom-scrollbar pr-1 divide-y divide-zinc-800/40">
+              {snapshots.map((snap, index) => {
                 const isFull = snap.completionPercent >= 100;
                 return (
                   <div
                     key={snap.id}
-                    className={`w-full bg-zinc-900/70 border rounded-xl p-3 sm:p-3.5 transition-colors ${
+                    className={`py-4 sm:py-4.5 px-3 sm:px-4 flex items-center justify-between gap-3 sm:gap-4 transition-colors ${
                       snap.isToday
-                        ? 'border-amber-500/40 bg-zinc-900'
-                        : isFull
-                        ? 'border-emerald-500/30'
-                        : 'border-zinc-800/80 hover:border-zinc-700'
-                    }`}
+                        ? 'bg-amber-500/[0.04]'
+                        : index % 2 === 1
+                        ? 'bg-zinc-900/25'
+                        : 'bg-transparent'
+                    } hover:bg-zinc-800/25`}
                   >
-                    {/* Single Line Layout for Day Snapshot */}
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-3">
-                      {/* Left: Date & Percentage Done */}
-                      <div className="flex items-center gap-2.5 shrink-0">
-                        <span className="text-xs sm:text-sm font-semibold text-white whitespace-nowrap">
-                          {snap.formattedDate}
-                        </span>
-                        <span className="text-zinc-600 text-xs">—</span>
+                    {/* Left: Date & De-emphasized Status on the Same Line */}
+                    <div className="flex items-center gap-2.5 sm:gap-4 shrink-0 min-w-0">
+                      <span className="text-xs sm:text-sm font-medium text-white whitespace-nowrap min-w-[58px] sm:min-w-[64px]">
+                        {snap.formattedDate}
+                      </span>
+                      <span className="text-zinc-700 text-xs">—</span>
 
-                        {/* Percentage Badge */}
+                      {/* Clean Status Dot & De-emphasized Percentage */}
+                      <div className="flex items-center gap-1.5 text-xs shrink-0">
                         <span
-                          className={`text-xs font-medium px-2 py-0.5 rounded-md border whitespace-nowrap inline-flex items-center gap-1.5 ${
+                          className={`w-1.5 h-1.5 rounded-full shrink-0 ${
                             isFull
-                              ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400'
-                              : snap.completionPercent >= 70
-                              ? 'bg-amber-500/10 border-amber-500/30 text-amber-400'
-                              : 'bg-zinc-800/80 border-zinc-700 text-zinc-400'
+                              ? 'bg-emerald-400'
+                              : snap.completionPercent > 0
+                              ? 'bg-amber-400'
+                              : 'bg-zinc-600'
                           }`}
-                        >
-                          {isFull && <CheckCircle2 className="w-3 h-3 text-emerald-400" />}
-                          {snap.completionPercent}% activity done
+                        />
+                        <span className="text-zinc-300 font-medium whitespace-nowrap text-xs">
+                          {snap.completionPercent}%{' '}
+                          <span className="text-zinc-500 font-light text-[11px]">Done</span>
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Right: Metrics aligned into strict vertical columns across all days */}
+                    <div className="grid grid-cols-4 gap-2.5 sm:gap-4 md:gap-5 items-center shrink-0">
+                      {/* Sheeko (Flame) */}
+                      <div
+                        className="flex items-center justify-start gap-1.5 w-9 sm:w-11 text-zinc-400 hover:text-zinc-200 transition-colors"
+                        title={`Sheeko: ${snap.sheekoCount}`}
+                      >
+                        <Flame className="w-3.5 h-3.5 text-zinc-400 shrink-0" />
+                        <span className="text-xs font-medium text-zinc-200 tabular-nums">
+                          {snap.sheekoCount}
                         </span>
                       </div>
 
-                      {/* Right: Activity Icons & Counts in One Single Line */}
-                      <div className="flex items-center gap-2 sm:gap-2.5 text-xs text-zinc-300 bg-zinc-950/80 px-2.5 py-1.5 rounded-lg border border-zinc-800 whitespace-nowrap overflow-x-auto">
-                        {/* Sheeko */}
-                        <div
-                          className="flex items-center gap-1 text-amber-400"
-                          title={`Sheeko: ${snap.sheekoCount}`}
-                        >
-                          <Flame className="w-3.5 h-3.5" />
-                          <span className="font-medium text-zinc-200">
-                            Sheeko {snap.sheekoCount}
-                          </span>
-                        </div>
+                      {/* Buddy (Comment bubble) */}
+                      <div
+                        className="flex items-center justify-start gap-1.5 w-9 sm:w-11 text-zinc-400 hover:text-zinc-200 transition-colors"
+                        title={`Buddy: ${snap.buddyCount}`}
+                      >
+                        <MessageSquare className="w-3.5 h-3.5 text-zinc-400 shrink-0" />
+                        <span className="text-xs font-medium text-zinc-200 tabular-nums">
+                          {snap.buddyCount}
+                        </span>
+                      </div>
 
-                        <span className="text-zinc-700">•</span>
+                      {/* Bytes (Lightning) */}
+                      <div
+                        className="flex items-center justify-start gap-1.5 w-9 sm:w-11 text-zinc-400 hover:text-zinc-200 transition-colors"
+                        title={`Bytes: ${snap.bytesCount}`}
+                      >
+                        <Zap className="w-3.5 h-3.5 text-zinc-400 shrink-0" />
+                        <span className="text-xs font-medium text-zinc-200 tabular-nums">
+                          {snap.bytesCount}
+                        </span>
+                      </div>
 
-                        {/* Buddy */}
-                        <div
-                          className="flex items-center gap-1 text-blue-400"
-                          title={`Buddy: ${snap.buddyCount}`}
-                        >
-                          <MessageSquare className="w-3.5 h-3.5" />
-                          <span className="font-medium text-zinc-200">
-                            Buddy {snap.buddyCount}
-                          </span>
-                        </div>
-
-                        <span className="text-zinc-700">•</span>
-
-                        {/* Bytes */}
-                        <div
-                          className="flex items-center gap-1 text-emerald-400"
-                          title={`Bytes: ${snap.bytesCount}`}
-                        >
-                          <Zap className="w-3.5 h-3.5" />
-                          <span className="font-medium text-zinc-200">
-                            Bytes {snap.bytesCount}
-                          </span>
-                        </div>
-
-                        <span className="text-zinc-700">•</span>
-
-                        {/* Rock and Roll */}
-                        <div
-                          className="flex items-center gap-1 text-purple-400"
-                          title={`Rock & Roll: ${snap.rockRollCount}`}
-                        >
-                          <Music className="w-3.5 h-3.5" />
-                          <span className="font-medium text-zinc-200">
-                            Rock & Roll {snap.rockRollCount}
-                          </span>
-                        </div>
+                      {/* Rock & Roll (Music note) */}
+                      <div
+                        className="flex items-center justify-start gap-1.5 w-9 sm:w-11 text-zinc-400 hover:text-zinc-200 transition-colors"
+                        title={`Rock & Roll: ${snap.rockRollCount}`}
+                      >
+                        <Music className="w-3.5 h-3.5 text-zinc-400 shrink-0" />
+                        <span className="text-xs font-medium text-zinc-200 tabular-nums">
+                          {snap.rockRollCount}
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -179,8 +167,8 @@ export const PlaygroundAwardsSnapshotModal: React.FC<PlaygroundAwardsSnapshotMod
               })}
             </div>
 
-            {/* Footer CTA */}
-            <div className="pt-3.5 mt-2 border-t border-zinc-800 flex items-center justify-between gap-3 shrink-0">
+            {/* Footer */}
+            <div className="pt-3.5 mt-2 border-t border-zinc-800/80 flex items-center justify-between gap-3 shrink-0">
               <span className="text-xs text-zinc-500">
                 Completed plans update daily automatically
               </span>
@@ -191,9 +179,9 @@ export const PlaygroundAwardsSnapshotModal: React.FC<PlaygroundAwardsSnapshotMod
                     onClose();
                     onOpenPlayground();
                   }}
-                  className="px-3.5 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-zinc-950 text-xs font-semibold transition-colors flex items-center gap-1.5 cursor-pointer"
+                  className="px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-xs font-medium transition-colors flex items-center gap-1.5 cursor-pointer"
                 >
-                  <Sparkles className="w-3.5 h-3.5" />
+                  <Sparkles className="w-3.5 h-3.5 text-amber-400" />
                   <span>Open Playground</span>
                 </button>
               )}

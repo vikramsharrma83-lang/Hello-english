@@ -487,6 +487,8 @@ export default function App() {
               <FitnessDashboardView
                 progress={progress}
                 onStartPractice={(q) => handleStartPractice(q, 'sheeko')}
+                onStartDrill={(q) => handleStartDrill(q, 'sheeko')}
+                onOpenBuddy={() => setActiveTab('buddy')}
                 onOpenMyDay={() => {
                   setMyDayInitialMode('story');
                   setActiveTab('sheeko');
