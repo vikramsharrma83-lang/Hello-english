@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { ConversationTurn, PracticeHistoryItem, DayMap, UserProgress } from '../../types';
 import { getTranslation } from '../../lib/translations';
+import { isPlaygroundActiveAndIncomplete } from '../../utils/playgroundManager';
 
 interface HomePageProps {
   onStart: () => void;
@@ -50,6 +51,11 @@ export const HomePage: React.FC<HomePageProps> = ({
   const [greeting, setGreeting] = useState('');
   const [showActionMenu, setShowActionMenu] = useState(false);
   const [showStatsDrawer, setShowStatsDrawer] = useState(false);
+  const [hasIncompletePlayground, setHasIncompletePlayground] = useState<boolean>(() => isPlaygroundActiveAndIncomplete());
+
+  useEffect(() => {
+    setHasIncompletePlayground(isPlaygroundActiveAndIncomplete());
+  }, []);
 
   useEffect(() => {
     const hours = new Date().getHours();
@@ -267,9 +273,17 @@ export const HomePage: React.FC<HomePageProps> = ({
             onClick={onStart}
             whileHover={{ scale: 1.04, y: -2 }}
             whileTap={{ scale: 0.96 }}
-            className="inline-flex items-center gap-3 px-6 py-3.5 rounded-full bg-[#181a20]/90 hover:bg-[#20232b] border border-slate-700/80 hover:border-slate-500 text-white font-semibold text-sm sm:text-base shadow-2xl transition-all cursor-pointer backdrop-blur-xl group shadow-black/80"
+            className="inline-flex items-center gap-3 px-6 py-3.5 rounded-full bg-[#181a20]/90 hover:bg-[#20232b] border border-slate-700/80 hover:border-slate-500 text-white font-semibold text-sm sm:text-base shadow-2xl transition-all cursor-pointer backdrop-blur-xl group shadow-black/80 relative"
           >
-            <Sparkles className="w-4 h-4 text-amber-400 fill-amber-400 drop-shadow-[0_0_6px_rgba(245,158,11,0.8)]" />
+            <div className="relative flex items-center justify-center">
+              <Sparkles className="w-4 h-4 text-amber-400 fill-amber-400 drop-shadow-[0_0_6px_rgba(245,158,11,0.8)]" />
+              {hasIncompletePlayground && (
+                <span 
+                  className="absolute -top-1.5 -right-1.5 w-2.5 h-2.5 rounded-full bg-rose-500 ring-2 ring-[#181a20] shadow-[0_0_8px_rgba(244,63,94,0.95)] animate-pulse" 
+                  title="Daily Playground incomplete"
+                />
+              )}
+            </div>
             <span className="tracking-wide">Start My Day</span>
             <ArrowRight className="w-4 h-4 text-slate-300 group-hover:translate-x-1 transition-transform" />
           </motion.button>

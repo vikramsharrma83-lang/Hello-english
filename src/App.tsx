@@ -35,6 +35,7 @@ export default function App() {
   const [returnTab, setReturnTab] = useState<NavTab>('myday');
   const [practiceStep, setPracticeStep] = useState<PracticeStep>('question');
   const [myDayStep, setMyDayStep] = useState<string>('1_HOME');
+  const [myDayInitialMode, setMyDayInitialMode] = useState<'story' | 'patterns' | 'challenge' | 'playground'>('story');
   const [language, setLanguage] = useState<'en' | 'hi'>('en');
   
   // Current active question (Defaults to the Workplace Shift scenario as requested)
@@ -275,6 +276,18 @@ export default function App() {
     ? progress.savedPhrases.some((p) => p.improvedSentence === analysisResult.naturalEnglish)
     : false;
 
+  // Bottom navigation visibility: hide on all Start My Day screens, active drills, practice, role picker, and sub-flows
+  const isStartMyDayOrSubScreen =
+    (activeTab === 'sheeko' || activeTab === 'myday') && myDayStep !== '1_HOME';
+
+  const shouldShowBottomNav =
+    activeTab !== 'practice' &&
+    activeTab !== 'drill' &&
+    activeTab !== 'challenge' &&
+    activeTab !== 'rocknroll' &&
+    !showRolePicker &&
+    !isStartMyDayOrSubScreen;
+
   return (
     <main className="w-full min-h-screen bg-[#090d16] text-slate-100 flex justify-center selection:bg-cyan-500/30 selection:text-cyan-200">
       <AnimatePresence>
@@ -381,6 +394,7 @@ export default function App() {
                 onResetTasks={handleResetMyDayTasks}
                 onStartPractice={handleStartPractice}
                 onStartDrill={handleStartDrill}
+                initialMode={myDayInitialMode}
                 progress={progress}
                 onUpdateProgress={setProgress}
                 onStepChange={setMyDayStep}
@@ -394,6 +408,7 @@ export default function App() {
                   } else if (tab === 'fitness' || tab === 'dashboard') {
                     setActiveTab('dashboard');
                   } else if (tab === 'home' || tab === 'sheeko' || tab === 'myday') {
+                    setMyDayInitialMode('story');
                     setActiveTab('sheeko');
                   } else {
                     setActiveTab(tab as any);
@@ -472,8 +487,18 @@ export default function App() {
               <FitnessDashboardView
                 progress={progress}
                 onStartPractice={(q) => handleStartPractice(q, 'sheeko')}
-                onOpenMyDay={() => setActiveTab('sheeko')}
-                onBack={() => setActiveTab('sheeko')}
+                onOpenMyDay={() => {
+                  setMyDayInitialMode('story');
+                  setActiveTab('sheeko');
+                }}
+                onOpenPlayground={() => {
+                  setMyDayInitialMode('playground');
+                  setActiveTab('sheeko');
+                }}
+                onBack={() => {
+                  setMyDayInitialMode('story');
+                  setActiveTab('sheeko');
+                }}
               />
             </motion.div>
           )}
@@ -532,12 +557,7 @@ export default function App() {
         </AnimatePresence>
         </div>
 
-        {(activeTab !== 'practice' &&
-          activeTab !== 'drill' &&
-          activeTab !== 'challenge' &&
-          (activeTab !== 'sheeko' || myDayStep === '1_HOME') &&
-          !showRolePicker &&
-          !((activeTab === 'sheeko') && (myDayStep === '2_CHAT_INPUT' || myDayStep === '4_CHATBOT_CONVERSATION'))) && (
+        {shouldShowBottomNav && (
           <BottomDockNav
             activeTab={activeTab}
             language={language}

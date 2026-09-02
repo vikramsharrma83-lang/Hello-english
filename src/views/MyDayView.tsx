@@ -13,6 +13,11 @@ import { PatternLibraryModal } from '../components/myday/PatternLibraryModal';
 import { MyDayPatternsHub } from '../components/myday/MyDayPatternsHub';
 import { ChallengeView } from './ChallengeView';
 import { RockAndRollContainer } from './RockAndRollContainer';
+import { StartMyDayWarmupView } from '../components/myday/StartMyDayWarmupView';
+import { DailyPlanningView } from '../components/myday/DailyPlanningView';
+import { PlanConfirmationView } from '../components/myday/PlanConfirmationView';
+import { PlaygroundView } from '../components/myday/PlaygroundView';
+import { isStartMyDayDoneToday, getPlaygroundData, incrementPlaygroundActivity, resetPlaygroundForRebuild } from '../utils/playgroundManager';
 import { DayMap, ActiveTopic, ConversationTurn, DeepAnalysis, Question, UserProgress } from '../types';
 import { parseLearnerStoryToMeaningRepresentation, extractNaturalEnglishMeaning, synthesizeNaturalEnglishStory } from '../data/sheekoEngine';
 
@@ -26,7 +31,7 @@ interface MyDayViewProps {
   onStartPractice?: (question?: Question) => void;
   onStartDrill?: (question?: Question) => void;
   onNavigateTab?: (tab: 'home' | 'myday' | 'practice' | 'progress' | 'profile' | 'challenge' | 'fitness') => void;
-  initialMode?: 'story' | 'patterns' | 'challenge';
+  initialMode?: 'story' | 'patterns' | 'challenge' | 'playground';
   progress?: UserProgress;
   onUpdateProgress?: (updater: (prev: UserProgress) => UserProgress) => void;
   onStepChange?: (step: string) => void;
@@ -54,10 +59,18 @@ export const MyDayView: React.FC<MyDayViewProps> = ({
   language = 'en',
   onToggleLanguage,
 }) => {
-  // Navigation State Machine matching story workflow + patterns hub + challenge view
+  // Navigation State Machine matching story workflow + patterns hub + challenge view + start my day warm-up, daily planning, plan confirmation & playground
   const [step, setStep] = useState<
-    '1_HOME' | '2_CHAT_INPUT' | '3_SYSTEM_SUMMARIZATION' | '4_CHATBOT_CONVERSATION' | '5_TOPIC_COMPLETE' | '6_SESSION_SUMMARY' | 'PATTERNS_HUB' | 'CHALLENGE' | 'ROCK_ROLL'
-  >(initialMode === 'patterns' ? 'PATTERNS_HUB' : initialMode === 'challenge' ? 'CHALLENGE' : '1_HOME');
+    '1_HOME' | '2_CHAT_INPUT' | '3_SYSTEM_SUMMARIZATION' | '4_CHATBOT_CONVERSATION' | '5_TOPIC_COMPLETE' | '6_SESSION_SUMMARY' | 'PATTERNS_HUB' | 'CHALLENGE' | 'ROCK_ROLL' | 'START_MY_DAY_WARMUP' | 'DAILY_PLANNING' | 'PLAN_CONFIRMATION' | 'PLAYGROUND'
+  >(
+    initialMode === 'patterns'
+      ? 'PATTERNS_HUB'
+      : initialMode === 'challenge'
+      ? 'CHALLENGE'
+      : initialMode === 'playground'
+      ? 'PLAYGROUND'
+      : '1_HOME'
+  );
 
   React.useEffect(() => {
     onStepChange?.(step);
@@ -311,6 +324,7 @@ export const MyDayView: React.FC<MyDayViewProps> = ({
         setCompletedTopics((prev) => Array.from(new Set([...prev, selectedTopic.pointer])));
         setLastCompletionSummary(data.completionSummary || `Great job completing all 5 practice turns!`);
         setSelectedTopic((prev) => (prev ? { ...prev, isCompleted: true, turnCount: learnerTurnsCount } : null));
+        incrementPlaygroundActivity('buddy');
         setTimeout(() => {
           // Open Day Story Session Report automatically after completed session
           setStep('6_SESSION_SUMMARY');
@@ -400,7 +414,16 @@ export const MyDayView: React.FC<MyDayViewProps> = ({
         {/* PAGE 1: Minimalist Home Page (With top X exit button to return to Home) */}
         {step === '1_HOME' && (
           <HomePage
-            onStart={() => setStep('2_CHAT_INPUT')}
+            onStart={() => {
+              const plan = getPlaygroundData();
+              if (isStartMyDayDoneToday() && plan.planConfirmed) {
+                setStep('PLAYGROUND');
+              } else if (!isStartMyDayDoneToday()) {
+                setStep('START_MY_DAY_WARMUP');
+              } else {
+                setStep('DAILY_PLANNING');
+              }
+            }}
             onOpenPatternLibrary={() => setStep('PATTERNS_HUB')}
             onOpenChallenge={() => setStep('CHALLENGE')}
             onOpenRockRoll={(sector) => {
@@ -660,6 +683,52 @@ export const MyDayView: React.FC<MyDayViewProps> = ({
               onGoBackToChat={() => setStep('4_CHATBOT_CONVERSATION')}
             />
           </div>
+        )}
+
+        {/* 1. START MY DAY WARM-UP & 2-ATTEMPT SPOKEN DRILL FLOW */}
+        {step === 'START_MY_DAY_WARMUP' && (
+          <StartMyDayWarmupView
+            onCompleteWarmup={() => setStep('DAILY_PLANNING')}
+            onExit={() => setStep('1_HOME')}
+          />
+        )}
+
+        {/* 2. DAILY PLANNING FLOW (Sheeko Journey + Daily Activities) */}
+        {step === 'DAILY_PLANNING' && (
+          <DailyPlanningView
+            onPlanCreated={() => setStep('1_HOME')}
+            onExit={() => setStep('1_HOME')}
+          />
+        )}
+
+        {/* 3. PLAN CONFIRMATION FLOW ("YOUR PLAN IS READY!") */}
+        {step === 'PLAN_CONFIRMATION' && (
+          <PlanConfirmationView
+            onGoToPlayground={() => setStep('PLAYGROUND')}
+            onExit={() => setStep('1_HOME')}
+          />
+        )}
+
+        {/* 4. MY PLAYGROUND INTERACTIVE DASHBOARD */}
+        {step === 'PLAYGROUND' && (
+          <PlaygroundView
+            onExit={() => setStep('1_HOME')}
+            onRestartQuestions={() => {
+              resetPlaygroundForRebuild();
+              setStep('START_MY_DAY_WARMUP');
+            }}
+            onNavigateTab={(tab) => {
+              if (tab === 'buddy') {
+                setStep('2_CHAT_INPUT');
+              } else if (tab === 'rockroll') {
+                setStep('ROCK_ROLL');
+              } else if (tab === 'learn' || tab === 'bytes') {
+                setStep('PATTERNS_HUB');
+              } else if (onNavigateTab) {
+                onNavigateTab(tab as any);
+              }
+            }}
+          />
         )}
       </main>
 

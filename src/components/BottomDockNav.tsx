@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Activity, Compass, Sparkles, Footprints, Music, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { getTranslation } from '../lib/translations';
+import { isPlaygroundActiveAndIncomplete } from '../utils/playgroundManager';
 
 export type NavTab = 'sheeko' | 'dashboard' | 'buddy' | 'snippets' | 'myday' | 'fitness' | 'course' | 'profile' | 'challenge' | 'drill' | 'rocknroll';
 
@@ -27,6 +28,7 @@ export const BottomDockNav: React.FC<BottomDockNavProps> = ({
   language = 'en',
 }) => {
   const [isSheekoOpen, setIsSheekoOpen] = useState<boolean>(false);
+  const isPlaygroundIncomplete = isPlaygroundActiveAndIncomplete();
 
   const popoutIcons: PopoutItem[] = [
     {
@@ -197,7 +199,12 @@ export const BottomDockNav: React.FC<BottomDockNavProps> = ({
               {isSheekoOpen ? (
                 <X className="w-7 h-7 stroke-[2.8]" />
               ) : (
-                <Sparkles className="w-7 h-7 stroke-[2.2] fill-amber-950/20" />
+                <div className="relative flex items-center justify-center">
+                  <Sparkles className="w-7 h-7 stroke-[2.2] fill-amber-950/20" />
+                  {isPlaygroundIncomplete && (
+                    <span className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-rose-500 ring-2 ring-[#18191E] shadow-[0_0_8px_rgba(244,63,94,0.9)] animate-pulse" />
+                  )}
+                </div>
               )}
             </motion.button>
             <span className="text-[10px] font-extrabold tracking-tight text-amber-400 mt-1 uppercase">

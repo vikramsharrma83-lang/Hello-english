@@ -3,16 +3,20 @@ import { motion, AnimatePresence } from 'motion/react';
 import { 
   Award, 
   ChevronRight, 
-  Sparkles
+  Sparkles,
+  Layers
 } from 'lucide-react';
 import { UserProgress, Question } from '../types';
 import { EnglishProgressScreen } from '../components/myday/EnglishProgressScreen';
+import { PlaygroundReportModal } from '../components/myday/PlaygroundReportModal';
+import { PlaygroundAwardsSnapshotModal } from '../components/myday/PlaygroundAwardsSnapshotModal';
 import { getDrillSessionRecords } from '../utils/drillScoringEngine';
 
 interface FitnessDashboardViewProps {
   progress?: UserProgress;
   onStartPractice: (question?: Question) => void;
   onOpenMyDay: () => void;
+  onOpenPlayground?: () => void;
   onBack: () => void;
 }
 
@@ -20,9 +24,12 @@ export const FitnessDashboardView: React.FC<FitnessDashboardViewProps> = ({
   progress,
   onStartPractice,
   onOpenMyDay,
+  onOpenPlayground,
   onBack,
 }) => {
   const [isMetricsOpen, setIsMetricsOpen] = useState<boolean>(false);
+  const [isPlaygroundReportOpen, setIsPlaygroundReportOpen] = useState<boolean>(false);
+  const [isAwardsSnapshotOpen, setIsAwardsSnapshotOpen] = useState<boolean>(false);
 
   const drillRecords = getDrillSessionRecords();
   const totalActivities = Math.max(24, (progress?.totalPracticed || 0) + drillRecords.length * 3);
@@ -57,15 +64,24 @@ export const FitnessDashboardView: React.FC<FitnessDashboardViewProps> = ({
             Sunday, 30 Aug
           </h1>
         </div>
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-2">
+          {/* Playground Report Button */}
+          <button 
+            onClick={() => setIsPlaygroundReportOpen(true)}
+            className="p-2 rounded-full bg-[#18191E] border border-sky-500/40 text-sky-400 hover:bg-sky-500/20 transition-all shadow-[0_0_12px_rgba(56,189,248,0.2)] cursor-pointer"
+            title="Playground Daily Report"
+          >
+            <Layers className="w-4 h-4" />
+          </button>
+          
           <button 
             onClick={onOpenMyDay}
-            className="px-3.5 py-1.5 rounded-full bg-[#18191E] border border-amber-500/50 text-amber-400 text-xs font-bold tracking-wide flex items-center gap-1.5 hover:bg-amber-500/20 transition-all shadow-[0_0_12px_rgba(245,158,11,0.25)] cursor-pointer"
+            className="px-3 py-1.5 rounded-full bg-[#18191E] border border-amber-500/50 text-amber-400 text-xs font-bold tracking-wide flex items-center gap-1.5 hover:bg-amber-500/20 transition-all shadow-[0_0_12px_rgba(245,158,11,0.25)] cursor-pointer"
           >
             <Sparkles className="w-3.5 h-3.5 text-amber-400 animate-pulse" />
             <span>My Day</span>
           </button>
-          <div className="w-10 h-10 rounded-full border-2 border-[#ff3b30] bg-[#141519] flex items-center justify-center font-bold text-base text-white shadow-md">
+          <div className="w-9 h-9 rounded-full border-2 border-[#ff3b30] bg-[#141519] flex items-center justify-center font-bold text-sm text-white shadow-md">
             {progress?.userName?.[0]?.toUpperCase() || 'V'}
           </div>
         </div>
@@ -231,7 +247,7 @@ export const FitnessDashboardView: React.FC<FitnessDashboardViewProps> = ({
 
           {/* Awards */}
           <div 
-            onClick={onOpenMyDay}
+            onClick={() => setIsAwardsSnapshotOpen(true)}
             className="bg-[#18191E] rounded-3xl p-4 border border-zinc-800/80 shadow-xl flex flex-col justify-between h-[148px] cursor-pointer group hover:border-zinc-700 transition-all"
           >
             <div className="flex items-center justify-between mb-1">
@@ -244,8 +260,8 @@ export const FitnessDashboardView: React.FC<FitnessDashboardViewProps> = ({
               <div className="w-11 h-11 rounded-2xl border-2 border-[#00ff88] bg-zinc-950/90 shadow-[0_0_12px_rgba(0,255,136,0.3)] flex items-center justify-center mb-1">
                 <Award className="w-6 h-6 text-[#00ff88]" />
               </div>
-              <span className="text-xs font-bold text-white leading-tight">June Challenge</span>
-              <span className="text-[10px] text-zinc-400 font-medium">2026</span>
+              <span className="text-xs font-bold text-white leading-tight">Daily Snapshots</span>
+              <span className="text-[10px] text-zinc-400 font-medium">Playground Records</span>
             </div>
           </div>
         </div>
@@ -259,6 +275,30 @@ export const FitnessDashboardView: React.FC<FitnessDashboardViewProps> = ({
         onStartPractice={() => {
           setIsMetricsOpen(false);
           onStartPractice();
+        }}
+      />
+
+      {/* Playground Daily Report Modal */}
+      <PlaygroundReportModal
+        isOpen={isPlaygroundReportOpen}
+        onClose={() => setIsPlaygroundReportOpen(false)}
+        onOpenPlayground={() => {
+          setIsPlaygroundReportOpen(false);
+          if (onOpenPlayground) {
+            onOpenPlayground();
+          }
+        }}
+      />
+
+      {/* Day-wise Snapshot of Playground Awards Modal */}
+      <PlaygroundAwardsSnapshotModal
+        isOpen={isAwardsSnapshotOpen}
+        onClose={() => setIsAwardsSnapshotOpen(false)}
+        onOpenPlayground={() => {
+          setIsAwardsSnapshotOpen(false);
+          if (onOpenPlayground) {
+            onOpenPlayground();
+          }
         }}
       />
     </div>

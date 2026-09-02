@@ -1,0 +1,185 @@
+import React from 'react';
+import { motion } from 'motion/react';
+import {
+  CheckCircle2,
+  Flame,
+  Users,
+  Compass,
+  Music,
+  ArrowRight,
+} from 'lucide-react';
+import {
+  getSheekoJourney,
+  getPlaygroundData,
+  SheekoJourney,
+  PlaygroundPlan,
+} from '../../utils/playgroundManager';
+
+interface PlanConfirmationViewProps {
+  onGoToPlayground: () => void;
+}
+
+export const PlanConfirmationView: React.FC<PlanConfirmationViewProps> = ({
+  onGoToPlayground,
+}) => {
+  const journey: SheekoJourney | null = getSheekoJourney();
+  const plan: PlaygroundPlan = getPlaygroundData();
+
+  const journeyLength = journey ? journey.journeyLength : 3;
+  const currentDay = journey ? journey.currentDay : 1;
+  const journeyPercent = Math.min(100, Math.round((currentDay / journeyLength) * 100));
+
+  const totalActivities =
+    (plan.buddyTargetCount || 0) +
+    (plan.bytesTargetCount || 0) +
+    (plan.rockRollTargetCount || 0);
+
+  return (
+    <div className="w-full flex-1 flex flex-col justify-between text-zinc-100 min-h-screen relative bg-[#0d1117] select-none font-sans">
+      {/* Subtle minimalist ambient lighting */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <div className="absolute -top-32 -right-32 w-80 h-80 bg-emerald-500/5 rounded-full blur-3xl" />
+        <div className="absolute -bottom-32 -left-32 w-80 h-80 bg-amber-500/5 rounded-full blur-3xl" />
+      </div>
+
+      {/* Main Content Container */}
+      <div className="w-full flex-1 flex flex-col justify-between px-5 pt-8 pb-8 relative z-10 max-w-[440px] mx-auto min-h-screen">
+        <div>
+          {/* Top Status Header */}
+          <div className="flex items-center gap-3 mb-6 pb-4 border-b border-zinc-800/80">
+            <div className="w-10 h-10 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 shrink-0">
+              <CheckCircle2 className="w-5 h-5" />
+            </div>
+            <div>
+              <h1 className="text-base font-semibold text-white tracking-tight">
+                Daily Schedule Confirmed
+              </h1>
+              <p className="text-xs text-zinc-400 mt-0.5">
+                Your customized practice plan is ready to begin
+              </p>
+            </div>
+          </div>
+
+          {/* Sheeko Journey Milestone Card */}
+          <div className="w-full bg-zinc-900/90 border border-zinc-800 rounded-2xl p-4 shadow-sm mb-4">
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400">
+                  <Flame className="w-4 h-4" />
+                </div>
+                <div>
+                  <span className="text-xs font-semibold text-white block">
+                    Sheeko Speaking Journey
+                  </span>
+                  <span className="text-xs text-zinc-400">
+                    Day {currentDay} of {journeyLength} ({journeyLength}-day commitment)
+                  </span>
+                </div>
+              </div>
+              <span className="text-xs font-bold text-amber-400">
+                {journeyPercent}%
+              </span>
+            </div>
+
+            <div className="w-full bg-zinc-800/80 rounded-full h-1.5 overflow-hidden mt-2">
+              <motion.div
+                initial={{ width: 0 }}
+                animate={{ width: `${journeyPercent}%` }}
+                transition={{ duration: 0.6, ease: 'easeOut' }}
+                className="h-full bg-amber-500 rounded-full"
+              />
+            </div>
+          </div>
+
+          {/* Today's Activities Section */}
+          <div className="space-y-2">
+            <div className="text-xs font-semibold text-zinc-400 tracking-wide px-1 mb-1">
+              Scheduled Practice Modules
+            </div>
+
+            {/* Buddy */}
+            <div className="w-full bg-zinc-900/90 border border-zinc-800 rounded-2xl px-4 py-3 flex items-center justify-between shadow-sm">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400">
+                  <Users className="w-4 h-4" />
+                </div>
+                <div>
+                  <span className="text-xs font-semibold text-white block">
+                    AI Buddy Practice
+                  </span>
+                  <span className="text-[11px] text-zinc-400">
+                    Live speaking roleplays
+                  </span>
+                </div>
+              </div>
+              <span className="text-xs font-semibold text-zinc-300 bg-zinc-800 px-2.5 py-1 rounded-lg border border-zinc-700/60">
+                {plan.buddyTargetCount || 1} {plan.buddyTargetCount === 1 ? 'session' : 'sessions'}
+              </span>
+            </div>
+
+            {/* Bytes */}
+            <div className="w-full bg-zinc-900/90 border border-zinc-800 rounded-2xl px-4 py-3 flex items-center justify-between shadow-sm">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
+                  <Compass className="w-4 h-4" />
+                </div>
+                <div>
+                  <span className="text-xs font-semibold text-white block">
+                    Daily Bytes Lessons
+                  </span>
+                  <span className="text-[11px] text-zinc-400">
+                    Micro-lessons & idioms
+                  </span>
+                </div>
+              </div>
+              <span className="text-xs font-semibold text-zinc-300 bg-zinc-800 px-2.5 py-1 rounded-lg border border-zinc-700/60">
+                {plan.bytesTargetCount || 2} {plan.bytesTargetCount === 1 ? 'lesson' : 'lessons'}
+              </span>
+            </div>
+
+            {/* Rock & Roll */}
+            <div className="w-full bg-zinc-900/90 border border-zinc-800 rounded-2xl px-4 py-3 flex items-center justify-between shadow-sm">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400">
+                  <Music className="w-4 h-4" />
+                </div>
+                <div>
+                  <span className="text-xs font-semibold text-white block">
+                    Scenario Speed Drills
+                  </span>
+                  <span className="text-[11px] text-zinc-400">
+                    Reflex challenge rounds
+                  </span>
+                </div>
+              </div>
+              <span className="text-xs font-semibold text-zinc-300 bg-zinc-800 px-2.5 py-1 rounded-lg border border-zinc-700/60">
+                {plan.rockRollTargetCount || 1} {plan.rockRollTargetCount === 1 ? 'drill' : 'drills'}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom Section */}
+        <div className="mt-4 space-y-2.5">
+          <div className="w-full bg-zinc-900/90 border border-zinc-800 rounded-xl px-4 py-2.5 flex items-center justify-between">
+            <span className="text-xs font-medium text-zinc-400">
+              Total Planned Today
+            </span>
+            <span className="text-xs font-bold text-amber-400">
+              {totalActivities} Activities
+            </span>
+          </div>
+
+          <button
+            onClick={onGoToPlayground}
+            className="w-full py-3 px-5 rounded-xl bg-amber-500 hover:bg-amber-400 text-zinc-950 font-semibold text-xs sm:text-sm transition-colors flex items-center justify-center gap-2 cursor-pointer"
+          >
+            <span>Enter Daily Playground</span>
+            <ArrowRight className="w-4 h-4" />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
