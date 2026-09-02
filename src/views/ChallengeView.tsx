@@ -154,6 +154,10 @@ export const ChallengeView: React.FC<ChallengeViewProps> = ({
       {/* VIEW 1: CAROUSEL */}
       {subView === 'carousel' && (
         <main className="relative z-20 w-full max-w-lg mx-auto flex-1 flex flex-col justify-between py-2 px-3 sm:px-4">
+          <div className="text-center pt-2 pb-1">
+            <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">Choose Days</h1>
+            <p className="text-xs text-zinc-400 mt-0.5">Select your challenge duration sprint</p>
+          </div>
           <div
             onTouchStart={onTouchStart}
             onTouchMove={onTouchMove}
@@ -272,101 +276,72 @@ export const ChallengeView: React.FC<ChallengeViewProps> = ({
           {/* Header Title replacement matching Apple Watch Discover reference */}
           <div className="px-1 pt-1">
             <div className="flex items-center gap-3">
-              <span className={`w-3 h-3 rounded-full ${activeChallenge.isStarted ? 'bg-emerald-400 shadow-[0_0_8px_#34d399]' : 'bg-red-500 shadow-[0_0_8px_#ef4444]'}`} />
-              <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight">
+              <span className={`w-3.5 h-3.5 rounded-full ${activeChallenge.isStarted ? 'bg-emerald-400 shadow-[0_0_10px_#34d399]' : 'bg-red-500 shadow-[0_0_10px_#ef4444]'}`} />
+              <h1 className="text-4xl sm:text-6xl font-black text-white tracking-tight">
                 {selectedPlan.days} Days
               </h1>
             </div>
-            <p className="text-xs font-semibold text-zinc-400 mt-1 pl-6">
-              Talk to me Roadmap & Tracker
-            </p>
           </div>
 
-          {/* Active Talk to me Card Summary */}
-          <div className="bg-[#12131a] border border-zinc-800/80 rounded-3xl p-4 sm:p-5 shadow-xl">
-            <div className="flex items-center justify-between pb-3 border-b border-zinc-800">
+          {/* Active Talk to me Card Summary - Sleek & Lightweight */}
+          <div className="bg-[#12131a]/80 backdrop-blur-md border border-white/[0.06] rounded-3xl p-5 shadow-2xl">
+            <div className="flex items-center justify-between pb-3 mb-3 border-b border-white/[0.06]">
+              <span className="text-xs font-bold uppercase tracking-widest text-zinc-400">
+                Daily Progress Overview
+              </span>
               <div className="flex items-center gap-2">
-                <span className="text-xs font-black uppercase tracking-wider text-zinc-300">
-                  Daily Progress Overview
+                <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-[11px] font-bold text-emerald-400">
+                  {currentDoneActivities} Completed
+                </span>
+                <span className="px-2.5 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-[11px] font-bold text-amber-400">
+                  {Math.max(0, totalTargetActivities - currentDoneActivities)} Pending
                 </span>
               </div>
             </div>
 
-            {/* 3 Quick Metric Boxes (Enlarged & Prominent) */}
-            <div className="grid grid-cols-3 gap-3 py-3.5 border-b border-zinc-800 text-center">
-              <div className="p-3.5 rounded-2xl bg-black/40 border border-zinc-800 shadow-inner">
-                <span className="text-[11px] font-extrabold uppercase tracking-wider text-zinc-600 block">
-                  Completed
-                </span>
-                <span className="text-xl sm:text-2xl font-black text-zinc-500 mt-1 block">
-                  {currentDoneActivities}
-                </span>
-                <span className="text-[11px] text-zinc-700 block mt-0.5">Activities</span>
-              </div>
+            {/* Linear Daily Programs Overview */}
+            <div className="pt-2 pb-1">
+              {/* Linear Track container */}
+              <div className="relative px-2 py-3">
+                {/* Connecting background line */}
+                <div className="absolute top-1/2 left-4 right-4 -translate-y-1/2 h-1 bg-white/[0.06] rounded-full z-0" />
 
-              <div className="p-3.5 rounded-2xl bg-black/40 border border-zinc-800 shadow-inner">
-                <span className="text-[11px] font-extrabold uppercase tracking-wider text-zinc-600 block">
-                  Target
-                </span>
-                <span className="text-xl sm:text-2xl font-black text-zinc-500 mt-1 block">
-                  {totalTargetActivities}
-                </span>
-                <span className="text-[11px] text-zinc-700 block mt-0.5">Activities</span>
-              </div>
+                <div className="relative z-10 flex items-center justify-between">
+                  {activeChallenge.dailyProgress.slice(0, selectedPlan.days).map((dayItem) => {
+                    const isDone = dayItem.isCompleted;
+                    const isCurrent = dayItem.isCurrent;
 
-              <div className="p-3.5 rounded-2xl bg-black/40 border border-zinc-800 shadow-inner">
-                <span className="text-[11px] font-extrabold uppercase tracking-wider text-zinc-600 block">
-                  Time Left
-                </span>
-                <span className="text-xl sm:text-2xl font-black text-zinc-500 mt-1 block">
-                  {Math.max(1, selectedPlan.days - (activeChallenge.currentDay || 1) + 1)}
-                </span>
-                <span className="text-[11px] text-zinc-700 block mt-0.5">Days Left</span>
-              </div>
-            </div>
-
-            {/* Dots for Each Day */}
-            <div className="pt-5 pb-1">
-              <div className="flex items-center justify-between mb-4">
-                <span className="text-[11px] font-extrabold uppercase tracking-wider text-zinc-500">
-                  Daily Progress Roadmap
-                </span>
-                <span className="text-[10px] text-zinc-600">Tap a day to view log</span>
-              </div>
-
-              <div className="flex justify-center gap-4">
-                {activeChallenge.dailyProgress.slice(0, selectedPlan.days).map((dayItem) => {
-                  const isDone = dayItem.isCompleted;
-                  const isCurrent = dayItem.isCurrent;
-                  
-                  return (
-                    <button
-                      key={dayItem.day}
-                      type="button"
-                      onClick={() => setSelectedDayDetail(dayItem)}
-                      className="flex flex-col items-center gap-2"
-                    >
-                      <div
-                        className={`w-5 h-5 rounded-full border-2 ${
-                          isDone
-                            ? 'bg-zinc-700 border-zinc-700'
-                            : isCurrent
-                            ? 'bg-zinc-500 border-zinc-500'
-                            : 'bg-transparent border-zinc-800'
-                        }`}
-                      />
-                      <span className={`text-[10px] font-extrabold ${isCurrent ? 'text-zinc-500' : 'text-zinc-700'}`}>
-                        D{dayItem.day}
-                      </span>
-                    </button>
-                  );
-                })}
+                    return (
+                      <button
+                        key={dayItem.day}
+                        type="button"
+                        onClick={() => setSelectedDayDetail(dayItem)}
+                        className="flex flex-col items-center gap-2 group cursor-pointer"
+                      >
+                        <div
+                          className={`w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold border transition-all ${
+                            isDone
+                              ? 'bg-emerald-500/20 border-emerald-500 text-emerald-400 shadow-[0_0_12px_rgba(16,185,129,0.3)]'
+                              : isCurrent
+                              ? 'bg-amber-500/20 border-amber-500 text-amber-400 shadow-[0_0_15px_rgba(245,158,11,0.4)] animate-pulse'
+                              : 'bg-white/[0.04] border-white/10 text-zinc-500 group-hover:border-white/20'
+                          }`}
+                        >
+                          {isDone ? '✓' : dayItem.day}
+                        </div>
+                        <span className={`text-[11px] font-medium ${isCurrent ? 'text-amber-400 font-semibold' : isDone ? 'text-emerald-400' : 'text-zinc-500'}`}>
+                          Day {dayItem.day}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
             </div>
           </div>
 
           {/* Get More From Your Talk to me Section: Practice Action Card - Moved Down */}
-          <div className="space-y-3 pt-8">
+          <div className="space-y-3 pt-6">
             <motion.button
               whileHover={{ scale: 1.01 }}
               whileTap={{ scale: 0.98 }}
@@ -398,79 +373,80 @@ export const ChallengeView: React.FC<ChallengeViewProps> = ({
 
       {/* VIEW 3: TWO OVERLAPPING WATCH CARDS (DAY STORIES & PATTERNS) */}
       {subView === 'training_options' && (
-        <main className="relative z-20 w-full max-w-sm mx-auto flex-1 flex flex-col py-3 px-3 space-y-4">
-          <div className="px-1 pt-1">
+        <main className="relative z-20 w-full max-w-sm mx-auto flex-1 flex flex-col py-3 px-3 space-y-4 justify-center">
+          <div className="px-1 pt-1 text-center">
             <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
               Day {activeChallenge.currentDay || 1} Training
             </h1>
             <p className="text-xs font-semibold text-zinc-400 mt-0.5">
-              Select practice module & explore patterns
+              Select module to practice
             </p>
           </div>
 
           {/* Two Overlapping V-shape Watches Container */}
-          <div className="relative w-full py-4 flex flex-col items-center">
-            {/* Card 1: Black V-Shape Overlapping Watch Card (Patterns & Grammar Library) */}
+          <div className="relative w-full py-2 flex flex-col items-center space-y-2">
+            {/* Card 1: Drills Card with Smart Progress Linear */}
             <motion.div
               whileHover={{ scale: 1.02, y: -2 }}
               onClick={() => {
-                setSubView('patterns_page');
+                if (onStartDrill) {
+                  onStartDrill();
+                } else if (onStartPracticeQuestion) {
+                  onStartPracticeQuestion(PRACTICE_QUESTIONS[0]);
+                }
               }}
-              className="w-full rounded-[32px] bg-gradient-to-b from-[#14151b] via-[#0d0e12] to-[#07080a] border border-zinc-800 p-5 shadow-[0_25px_60px_rgba(0,0,0,0.9)] cursor-pointer relative z-25 flex flex-col justify-between group backdrop-blur-xl"
+              className="w-full rounded-[28px] bg-gradient-to-b from-[#14151b] via-[#0d0e12] to-[#07080a] border border-zinc-800 p-5 shadow-2xl cursor-pointer relative z-25 flex flex-col justify-between group backdrop-blur-xl"
             >
-              <div className="flex items-center justify-between">
-                <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-sky-500/30 to-teal-500/20 border border-sky-500/40 flex items-center justify-center text-sky-300 shadow-md">
-                  <Sparkles className="w-6 h-6" />
+              <div className="flex items-center justify-between mb-3">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-sky-500/30 to-teal-500/20 border border-sky-500/40 flex items-center justify-center text-sky-300 shadow-md">
+                  <Sparkles className="w-5 h-5" />
                 </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-full bg-zinc-900 text-sky-300 border border-zinc-800">
-                    Open Page
-                  </span>
-                </div>
-              </div>
-
-              <div className="mt-4">
-                <h3 className="text-xl font-black text-white tracking-tight group-hover:text-sky-300 transition-colors">
-                  Patterns & Grammar Library
-                </h3>
-                <p className="text-xs text-zinc-400 mt-1 leading-relaxed">
-                  Master essential conversational formulas with interactive practice questions and reference guides.
-                </p>
-              </div>
-
-              <div className="mt-4 pt-3 border-t border-zinc-800/80 flex items-center justify-between text-xs font-bold text-sky-300">
-                <span>Explore Patterns</span>
-                <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </div>
-            </motion.div>
-
-            {/* Card 2: Grey Watch Card (Day Stories) */}
-            <motion.div
-              whileHover={{ scale: 1.02, y: -2 }}
-              onClick={onStartMyDay}
-              className="w-[92%] -mt-6 rounded-[32px] bg-gradient-to-br from-[#272832] via-[#1a1b24] to-[#121319] border border-zinc-700/80 p-5 shadow-[0_20px_50px_rgba(0,0,0,0.8)] cursor-pointer relative z-10 flex flex-col justify-between group"
-            >
-              <div className="flex items-center justify-between">
-                <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-purple-500/30 to-indigo-500/20 border border-purple-500/40 flex items-center justify-center text-purple-300 shadow-md">
-                  <BookOpen className="w-6 h-6" />
-                </div>
-                <span className="text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-full bg-zinc-800/80 text-purple-300 border border-zinc-700">
-                  Story Mode
+                <span className="text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-full bg-zinc-900 text-sky-300 border border-zinc-800">
+                  {currentDoneActivities} / {totalTargetActivities} Done
                 </span>
               </div>
 
-              <div className="mt-4">
-                <h3 className="text-xl font-black text-white tracking-tight group-hover:text-purple-300 transition-colors">
-                  Day Stories & Narratives
+              <div>
+                <h3 className="text-xl font-black text-white tracking-tight group-hover:text-sky-300 transition-colors">
+                  Drills
                 </h3>
-                <p className="text-xs text-zinc-300 mt-1 leading-relaxed">
-                  Read and record immersive workplace stories, scenarios, and reflections.
-                </p>
               </div>
 
-              <div className="mt-4 pt-3 border-t border-zinc-700/60 flex items-center justify-between text-xs font-bold text-purple-300">
-                <span>Start Reading</span>
-                <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              {/* Smart Progress Linear Bar */}
+              <div className="mt-4 space-y-1.5">
+                <div className="flex justify-between text-[11px] text-zinc-400 font-bold">
+                  <span>Smart Progress</span>
+                  <span>{Math.round((currentDoneActivities / Math.max(1, totalTargetActivities)) * 100)}%</span>
+                </div>
+                <div className="w-full h-2 bg-zinc-800 rounded-full overflow-hidden">
+                  <motion.div
+                    initial={{ width: 0 }}
+                    animate={{ width: `${Math.min(100, (currentDoneActivities / Math.max(1, totalTargetActivities)) * 100)}%` }}
+                    className="h-full bg-gradient-to-r from-sky-500 to-teal-400 rounded-full"
+                  />
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Card 2: Day Story Card */}
+            <motion.div
+              whileHover={{ scale: 1.02, y: -2 }}
+              onClick={onStartMyDay}
+              className="w-[92%] -mt-4 rounded-[28px] bg-gradient-to-br from-[#272832] via-[#1a1b24] to-[#121319] border border-zinc-700/80 p-5 shadow-2xl cursor-pointer relative z-10 flex flex-col justify-between group"
+            >
+              <div className="flex items-center justify-between mb-3">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-purple-500/30 to-indigo-500/20 border border-purple-500/40 flex items-center justify-center text-purple-300 shadow-md">
+                  <BookOpen className="w-5 h-5" />
+                </div>
+                <span className="text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-full bg-zinc-800/80 text-purple-300 border border-zinc-700">
+                  Active
+                </span>
+              </div>
+
+              <div>
+                <h3 className="text-xl font-black text-white tracking-tight group-hover:text-purple-300 transition-colors">
+                  Day story
+                </h3>
               </div>
             </motion.div>
           </div>

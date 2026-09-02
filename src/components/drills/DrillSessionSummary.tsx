@@ -55,6 +55,33 @@ export const DrillSessionSummary: React.FC<DrillSessionSummaryProps> = ({
         </p>
       </div>
 
+      {/* Overall Drill Score Hero Banner */}
+      <div className="mb-4 bg-gradient-to-br from-zinc-900 via-zinc-950 to-zinc-900 border border-zinc-800 rounded-2xl p-5 text-white shadow-lg relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-28 h-28 bg-sky-500/10 rounded-full blur-xl pointer-events-none" />
+        <div className="relative z-10 flex items-center justify-between">
+          <div>
+            <div className="text-[11px] font-bold text-sky-400 uppercase tracking-wider mb-1">
+              Drill Session Score
+            </div>
+            <div className="text-sm font-semibold text-zinc-200">
+              {scores.accuracyRating} Performance
+            </div>
+            <div className="mt-2 inline-flex items-center gap-1 text-[11px] font-bold text-emerald-400 bg-emerald-950/80 border border-emerald-500/30 px-2.5 py-0.5 rounded-full">
+              <span>Overall Accuracy</span>
+            </div>
+          </div>
+          <div className="flex flex-col items-end">
+            <div className="text-4xl font-black text-white tracking-tight flex items-baseline">
+              <span>{scores.overallAccuracy}</span>
+              <span className="text-base font-bold text-zinc-400 ml-0.5">%</span>
+            </div>
+            <span className="text-[10px] text-zinc-400 uppercase tracking-wider mt-0.5">
+              Calculated Score
+            </span>
+          </div>
+        </div>
+      </div>
+
       {/* 1. Today's Practice (The actual target provided by the existing system) */}
       <div className="w-full bg-white border border-zinc-200/80 rounded-2xl p-4 shadow-sm mb-4">
         <div className="flex items-center gap-2 mb-2">
@@ -89,9 +116,10 @@ export const DrillSessionSummary: React.FC<DrillSessionSummaryProps> = ({
         <div className="grid grid-cols-3 gap-2.5">
           {/* Accuracy */}
           <div className="flex flex-col items-center justify-center p-3 rounded-xl bg-zinc-50/80 border border-zinc-100 text-center">
-            <span className="text-xs text-zinc-500 font-medium mb-1.5">Accuracy</span>
+            <span className="text-[11px] text-zinc-500 font-medium mb-1">Accuracy</span>
+            <span className="text-lg font-black text-zinc-950 mb-1">{scores.targetAccuracy}%</span>
             <span
-              className={`inline-block px-2.5 py-1 rounded-full text-xs font-bold border ${getRatingBadgeColor(
+              className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-bold border ${getRatingBadgeColor(
                 scores.accuracyRating
               )}`}
             >
@@ -101,9 +129,10 @@ export const DrillSessionSummary: React.FC<DrillSessionSummaryProps> = ({
 
           {/* Speaking */}
           <div className="flex flex-col items-center justify-center p-3 rounded-xl bg-zinc-50/80 border border-zinc-100 text-center">
-            <span className="text-xs text-zinc-500 font-medium mb-1.5">Speaking</span>
+            <span className="text-[11px] text-zinc-500 font-medium mb-1">Speaking</span>
+            <span className="text-lg font-black text-zinc-950 mb-1">{scores.sentenceMakingAccuracy}%</span>
             <span
-              className={`inline-block px-2.5 py-1 rounded-full text-xs font-bold border ${getRatingBadgeColor(
+              className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-bold border ${getRatingBadgeColor(
                 scores.speakingRating
               )}`}
             >
@@ -113,9 +142,10 @@ export const DrillSessionSummary: React.FC<DrillSessionSummaryProps> = ({
 
           {/* Confidence */}
           <div className="flex flex-col items-center justify-center p-3 rounded-xl bg-zinc-50/80 border border-zinc-100 text-center">
-            <span className="text-xs text-zinc-500 font-medium mb-1.5">Confidence</span>
+            <span className="text-[11px] text-zinc-500 font-medium mb-1">Confidence</span>
+            <span className="text-lg font-black text-zinc-950 mb-1">{scores.firstAttemptAccuracy}%</span>
             <span
-              className={`inline-block px-2.5 py-1 rounded-full text-xs font-bold border ${getRatingBadgeColor(
+              className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-bold border ${getRatingBadgeColor(
                 scores.confidenceRating
               )}`}
             >

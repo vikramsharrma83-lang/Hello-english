@@ -377,98 +377,85 @@ export const DrillEngineView: React.FC<DrillEngineViewProps> = ({
   };
 
   return (
-    <div className="w-full flex-1 flex flex-col px-4 pt-4 pb-20 text-zinc-100 max-w-[480px] mx-auto font-sans min-h-[calc(100vh-80px)]">
-      {/* Top Bar with Target Pill and Close/Stop Button */}
-      <div className="w-full flex items-center justify-between py-2 mb-3">
-        <div className="flex items-center gap-2">
-          <div className="w-7 h-7 rounded-xl bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-sky-400">
-            <Target className="w-4 h-4" />
-          </div>
-          <div>
-            <div className="text-[10px] font-bold text-sky-400 uppercase tracking-wider">
-              Engine 2 • Drills
-            </div>
-            <div className="text-xs font-semibold text-zinc-200 line-clamp-1 max-w-[210px]">
-              {target.title}
-            </div>
-          </div>
-        </div>
-
-        {/* Early Exit / End Session */}
+    <div className="w-full flex-1 flex flex-col justify-between px-6 pt-6 pb-24 text-white max-w-[480px] mx-auto font-sans min-h-[calc(100vh-80px)] bg-gradient-to-b from-[#161722] via-[#0d0e14] to-[#07080b]">
+      {/* Top Header Navigation */}
+      <div className="w-full flex items-center justify-between py-2">
+        {/* Early Exit / Menu */}
         <button
           onClick={handleEarlyExit}
-          className="px-3 py-1.5 rounded-full bg-zinc-800/80 hover:bg-zinc-700 text-zinc-400 hover:text-zinc-200 text-xs font-semibold border border-zinc-700/60 transition-colors flex items-center gap-1.5"
+          className="p-2.5 rounded-full bg-white/[0.06] hover:bg-white/[0.1] text-zinc-300 transition-colors border border-white/[0.08]"
+          title="End Drill"
         >
-          <X className="w-3.5 h-3.5" />
-          <span>End</span>
+          <X className="w-5 h-5" />
+        </button>
+
+        {/* Question Counter Pill */}
+        <div className="px-3.5 py-1 rounded-full bg-white/[0.06] border border-white/[0.08] text-xs font-bold tracking-wider text-zinc-300">
+          Q {Math.min(TOTAL_TARGET_QUESTIONS, currentQuestionIndex + 1)} / {TOTAL_TARGET_QUESTIONS}
+        </div>
+
+        {/* Audio Speaker */}
+        <button
+          onClick={() => currentQuestion && speakText(currentQuestion.question)}
+          className={`p-2.5 rounded-full bg-white/[0.06] hover:bg-white/[0.1] text-zinc-300 transition-colors border border-white/[0.08] ${
+            isAudioPlaying ? 'text-sky-400 animate-pulse' : ''
+          }`}
+          title="Listen to question"
+        >
+          <Volume2 className="w-5 h-5" />
         </button>
       </div>
 
-      {/* Progress Bar (5–7 Questions) */}
-      <div className="w-full bg-[#14151c] border border-zinc-800/90 rounded-2xl p-3 mb-4 shadow-md flex flex-col gap-2">
-        <div className="flex items-center justify-between text-xs">
-          <span className="font-bold text-zinc-200">
-            Question {Math.min(TOTAL_TARGET_QUESTIONS, currentQuestionIndex + 1)} of {TOTAL_TARGET_QUESTIONS}
-          </span>
-          <span className="text-[11px] text-zinc-400">
-            {currentQuestionIndex >= TOTAL_TARGET_QUESTIONS
-              ? 'Complete'
-              : `${TOTAL_TARGET_QUESTIONS - currentQuestionIndex} remaining`}
-          </span>
-        </div>
-        <div className="w-full grid grid-cols-5 gap-1.5">
-          {[1, 2, 3, 4, 5].map((num) => {
-            const isDone = num <= currentQuestionIndex;
-            const isCurrent = num === currentQuestionIndex + 1;
-            return (
-              <div
-                key={num}
-                className={`h-1.5 rounded-full transition-all duration-300 ${
-                  isDone
-                    ? 'bg-sky-400 shadow-[0_0_8px_rgba(56,189,248,0.5)]'
-                    : isCurrent
-                    ? 'bg-sky-500/50 animate-pulse'
-                    : 'bg-zinc-800'
-                }`}
-              />
-            );
-          })}
+      {/* Main Question Display (Inspired by reference screenshot) */}
+      <div className="w-full my-auto py-8 flex flex-col items-center text-center">
+        <AnimatePresence mode="wait">
+          {currentQuestion && (
+            <motion.div
+              key={currentQuestion.question}
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -15 }}
+              className="w-full flex flex-col items-center"
+            >
+              <span className="text-xs font-bold text-sky-400 uppercase tracking-widest mb-4 bg-sky-500/10 px-3 py-1 rounded-full border border-sky-500/20">
+                {currentQuestion.context || target.title}
+              </span>
+              <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight leading-snug">
+                "{currentQuestion.question}"
+              </h2>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Audio Visualizer Waves (Inspired by reference screenshot) */}
+        <div className="w-full py-10 flex items-center justify-center gap-1.5 h-32">
+          {[
+            12, 24, 18, 36, 48, 30, 20, 56, 72, 45, 30, 60, 85, 95, 65, 40, 75, 55, 30, 65, 45, 25, 50, 35, 20
+          ].map((h, i) => (
+            <motion.div
+              key={i}
+              animate={
+                isRecording
+                  ? { height: [h * 0.4, h * (1 + Math.random() * 0.6), h * 0.4] }
+                  : { height: h * 0.5 }
+              }
+              transition={
+                isRecording
+                  ? { repeat: Infinity, duration: 0.6 + (i % 5) * 0.1, ease: 'easeInOut' }
+                  : { duration: 0.3 }
+              }
+              className={`w-1 rounded-full ${
+                i % 2 === 0
+                  ? 'bg-gradient-to-t from-rose-500 to-purple-500'
+                  : 'bg-gradient-to-t from-purple-500 to-sky-400'
+              }`}
+              style={{ height: `${h * 0.6}px` }}
+            />
+          ))}
         </div>
       </div>
 
-      {/* Question Card */}
-      <AnimatePresence mode="wait">
-        {currentQuestion && (
-          <motion.div
-            key={currentQuestion.question}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            className="w-full bg-gradient-to-b from-[#1a1b24] to-[#14151c] border border-zinc-800/90 rounded-2xl p-4 shadow-lg mb-4 flex flex-col gap-2"
-          >
-            <div className="flex items-center justify-between">
-              <span className="text-[11px] font-bold text-sky-400 bg-sky-500/10 px-2.5 py-0.5 rounded-full border border-sky-500/20">
-                {currentQuestion.context || 'Practical Situation'}
-              </span>
-              <button
-                onClick={() => speakText(currentQuestion.question)}
-                className={`p-1.5 rounded-lg text-zinc-400 hover:text-zinc-200 bg-zinc-800/60 hover:bg-zinc-700/60 transition-colors ${
-                  isAudioPlaying ? 'text-sky-400 animate-pulse' : ''
-                }`}
-                title="Listen to question"
-              >
-                <Volume2 className="w-4 h-4" />
-              </button>
-            </div>
-
-            <p className="text-base font-semibold text-zinc-100 leading-snug mt-1">
-              "{currentQuestion.question}"
-            </p>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Evaluation / Retry Banner */}
+      {/* Evaluation / Retry Prompt if needed */}
       {showRetryPrompt && lastEvaluation && (
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
@@ -503,64 +490,54 @@ export const DrillEngineView: React.FC<DrillEngineViewProps> = ({
         </motion.div>
       )}
 
-      {/* Learner Speech/Input Area */}
-      <div className="w-full flex-1 flex flex-col justify-end gap-3 mt-auto">
-        {/* Live Transcript / Input Display / Chat Box */}
-        <div className="w-full bg-[#12131a] border border-zinc-800 rounded-2xl p-3.5 flex flex-col justify-between">
-          <div className="text-xs text-zinc-400 mb-1 flex items-center justify-between">
-            <span>Your Response {attemptNumberForCurrent > 1 ? `(Retry ${attemptNumberForCurrent - 1})` : ''}</span>
-            {isRecording && (
-              <span className="inline-flex items-center gap-1 text-emerald-400 font-bold animate-pulse text-[11px]">
-                <span className="w-2 h-2 rounded-full bg-emerald-400" />
-                Listening...
-              </span>
-            )}
+      {/* Bottom Interactive Area (Mic Button & Language Labels) */}
+      <div className="w-full flex flex-col items-center gap-6 mt-auto pt-4">
+        {/* Live Transcript / Optional Manual Input */}
+        {(transcript || manualText) && (
+          <div className="w-full bg-white/[0.04] border border-white/10 rounded-2xl p-3 text-center">
+            <span className="text-[11px] text-zinc-400 block mb-1">Your response:</span>
+            <span className="text-sm font-semibold text-white">"{transcript || manualText}"</span>
+          </div>
+        )}
+
+        <div className="w-full flex items-center justify-between px-4">
+          <div className="text-left">
+            <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider block">Listening</span>
+            <span className="text-xs font-extrabold text-sky-400 tracking-wider">ENGLISH</span>
           </div>
 
-          <textarea
-            value={transcript || manualText}
-            onChange={(e) => {
-              setManualText(e.target.value);
-              setTranscript(e.target.value);
-            }}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                handleSubmitAnswer();
-              }
-            }}
-            placeholder="Type your answer here or tap 'Speak Answer'..."
-            className="w-full bg-transparent text-sm text-zinc-100 font-medium leading-relaxed resize-none focus:outline-none min-h-[70px]"
-            rows={2}
-          />
-        </div>
-
-        {/* Controls */}
-        <div className="flex items-center gap-3">
-          {/* Big Mic Button */}
-          <button
+          {/* Glowing Circular Record Button */}
+          <motion.button
+            whileTap={{ scale: 0.92 }}
             onClick={toggleRecording}
             disabled={isProcessing}
-            className={`flex-1 py-3.5 px-4 rounded-2xl font-bold text-sm flex items-center justify-center gap-2 transition-all shadow-md ${
+            className={`relative w-20 h-20 rounded-full flex items-center justify-center cursor-pointer transition-all ${
               isRecording
-                ? 'bg-rose-500 text-white animate-pulse shadow-rose-500/30'
-                : 'bg-sky-500 hover:bg-sky-400 text-zinc-950 shadow-sky-500/20'
+                ? 'bg-rose-500 text-white shadow-[0_0_30px_rgba(244,63,94,0.6)] animate-pulse'
+                : 'bg-gradient-to-b from-[#1e202d] to-[#121319] border-2 border-sky-500/60 shadow-[0_0_25px_rgba(56,189,248,0.25)] hover:border-sky-400'
             }`}
           >
-            {isRecording ? <MicOff className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
-            <span>{isRecording ? 'Stop Speaking' : 'Speak Answer'}</span>
-          </button>
+            <div className="absolute inset-1 rounded-full border border-white/10" />
+            {isRecording ? <MicOff className="w-8 h-8 text-white" /> : <Mic className="w-8 h-8 text-sky-400" />}
+          </motion.button>
 
-          {/* Submit Answer Button */}
+          <div className="text-right">
+            <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider block">Target</span>
+            <span className="text-xs font-extrabold text-purple-400 tracking-wider">PRACTICE</span>
+          </div>
+        </div>
+
+        {/* Submit / Check Answer action */}
+        {(transcript || manualText) && (
           <button
             onClick={handleSubmitAnswer}
-            disabled={isProcessing || (!transcript.trim() && !manualText.trim())}
-            className="py-3.5 px-5 rounded-2xl bg-zinc-800 hover:bg-zinc-700 disabled:opacity-40 disabled:hover:bg-zinc-800 text-zinc-100 font-bold text-sm transition-colors flex items-center gap-2 border border-zinc-700/70"
+            disabled={isProcessing}
+            className="w-full py-3.5 px-6 rounded-2xl bg-gradient-to-r from-sky-500 to-teal-500 text-zinc-950 font-extrabold text-sm shadow-lg flex items-center justify-center gap-2"
           >
-            <span>{isProcessing ? 'Checking...' : 'Check'}</span>
+            <span>{isProcessing ? 'Evaluating with AI...' : 'Submit & Check Answer'}</span>
             <ArrowRight className="w-4 h-4" />
           </button>
-        </div>
+        )}
       </div>
     </div>
   );

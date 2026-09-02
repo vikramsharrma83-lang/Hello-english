@@ -22,14 +22,8 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
       </div>
 
-      {/* Right side controls: Streak pill, Notification Bell & Avatar */}
+      {/* Right side controls: Notification Bell & Avatar */}
       <div className="flex items-center gap-2">
-        {/* Streak Pill */}
-        <div className="flex items-center gap-1 bg-gradient-to-r from-[#FFF1F2] to-[#FFEDD5] border border-[#FDBA74] px-2.5 py-1 rounded-full shadow-2xs">
-          <Flame className="w-3.5 h-3.5 text-[#EA580C] fill-[#EA580C]" />
-          <span className="text-xs font-black text-[#C2410C]">{streakDays}d</span>
-        </div>
-
         {/* Notification Bell */}
         <button
           className="w-9 h-9 rounded-full bg-white/95 border border-[#E9D5FF] flex items-center justify-center text-[#6B21A8] hover:bg-[#FAF5FF] hover:border-[#D8B4FE] transition-colors relative shadow-2xs cursor-pointer"

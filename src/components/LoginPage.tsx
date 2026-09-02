@@ -27,17 +27,17 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
     const trimmedPass = password.trim();
 
     if (!trimmedUser || !trimmedPass) {
-      setError('Please enter both User ID and Password.');
+      setError('कृपया User ID और Password दोनों दर्ज करें।');
       return;
     }
 
     if (!VALID_USER_IDS.includes(trimmedUser)) {
-      setError('Invalid User ID. Please check your credentials.');
+      setError('अमान्य User ID। कृपया अपने credentials की जाँच करें।');
       return;
     }
 
     if (trimmedPass !== 'Hello123') {
-      setError('Incorrect password. Please try again.');
+      setError('गलत Password। कृपया पुनः प्रयास करें।');
       return;
     }
 
@@ -65,7 +65,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
             HELLO ENGLISH
           </h1>
           <p className="text-xs uppercase tracking-[0.2em] text-neutral-400 font-medium">
-            Testing Access Portal
+            टेस्टिंग एक्सेस पोर्टल
           </p>
         </div>
 
@@ -84,7 +84,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
               type="text"
               value={userId}
               onChange={(e) => setUserId(e.target.value)}
-              placeholder="Enter your user ID"
+              placeholder="अपना User ID दर्ज करें"
               autoComplete="off"
               className="w-full h-12 px-4 rounded-xl bg-neutral-50 border border-neutral-200 text-black text-sm font-medium focus:outline-none focus:border-black focus:bg-white transition-all"
             />
@@ -103,7 +103,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="Enter password"
+              placeholder="पासवर्ड दर्ज करें"
               className="w-full h-12 px-4 rounded-xl bg-neutral-50 border border-neutral-200 text-black text-sm font-medium focus:outline-none focus:border-black focus:bg-white transition-all"
             />
           </div>
@@ -124,14 +124,14 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
             className="w-full h-12 mt-3 rounded-xl bg-black text-white font-semibold text-xs uppercase tracking-[0.25em] hover:bg-neutral-800 active:scale-[0.99] transition-all flex items-center justify-center cursor-pointer shadow-lg shadow-black/10 disabled:opacity-50"
             style={{ fontFamily: "'Syncopate', sans-serif" }}
           >
-            {isLoading ? 'Verifying...' : 'Login'}
+            {isLoading ? 'जाँच हो रही है...' : 'Login'}
           </button>
         </form>
 
         {/* Footer note */}
         <div className="mt-8 text-center">
           <span className="text-[11px] uppercase tracking-[0.15em] text-neutral-400">
-            Authorized testing credentials required
+            अधिकृत टेस्टिंग credentials आवश्यक हैं
           </span>
         </div>
       </div>

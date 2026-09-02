@@ -12,8 +12,10 @@ import {
   Truck,
   Users,
   X,
+  Globe,
 } from 'lucide-react';
 import { ConversationTurn, PracticeHistoryItem, DayMap, UserProgress } from '../../types';
+import { getTranslation } from '../../lib/translations';
 
 interface HomePageProps {
   onStart: () => void;
@@ -40,16 +42,17 @@ export const HomePage: React.FC<HomePageProps> = ({
   onOpenRolePicker,
   progress,
   language = 'en',
+  onToggleLanguage,
 }) => {
   const [greeting, setGreeting] = useState('');
   const [showActionMenu, setShowActionMenu] = useState(false);
 
   useEffect(() => {
     const hours = new Date().getHours();
-    if (hours < 12) setGreeting('Good Morning');
-    else if (hours < 17) setGreeting('Good Afternoon');
-    else setGreeting('Good Evening');
-  }, []);
+    if (hours < 12) setGreeting(getTranslation(language, 'good_morning'));
+    else if (hours < 17) setGreeting(getTranslation(language, 'good_afternoon'));
+    else setGreeting(getTranslation(language, 'good_evening'));
+  }, [language]);
 
   const currentRole = progress?.targetRole || 'Hotels';
 
@@ -58,19 +61,29 @@ export const HomePage: React.FC<HomePageProps> = ({
       {/* Header */}
       <div className="w-full flex items-center justify-between gap-2 mb-6">
         <div>
-          <h1 className="text-xl font-light text-zinc-400 uppercase tracking-widest">
-            {greeting} {progress?.userName?.toUpperCase() || 'VIKRAM'}!
-          </h1>
-          {onOpenRolePicker && (
-            <button
-              onClick={onOpenRolePicker}
-              className="flex items-center gap-1.5 mt-1 px-2.5 py-0.5 rounded-full bg-zinc-900 border border-zinc-800 hover:border-zinc-700 text-[11px] text-cyan-400 hover:text-cyan-300 transition-colors cursor-pointer"
-            >
-              <Briefcase className="w-3 h-3 text-cyan-400" />
-              <span>{currentRole}</span>
-              <span className="text-[9px] text-zinc-500 font-bold">CHANGE</span>
-            </button>
-          )}
+          <div className="flex items-center gap-2">
+            <h1 className="text-xl font-light text-zinc-400 uppercase tracking-widest">
+              {greeting} {progress?.userName?.toUpperCase() || 'VIKRAM'}!
+            </h1>
+            {onOpenRolePicker && (
+              <button
+                onClick={onOpenRolePicker}
+                className="w-6 h-6 rounded-md bg-zinc-900 border border-zinc-800 hover:border-cyan-500/50 flex items-center justify-center text-cyan-400 transition-all cursor-pointer shadow-sm"
+                title={`Industry: ${currentRole}. Click to change.`}
+              >
+                <Briefcase className="w-3 h-3" />
+              </button>
+            )}
+            {onToggleLanguage && (
+              <button
+                onClick={onToggleLanguage}
+                className="w-6 h-6 rounded-md bg-zinc-900 border border-zinc-800 hover:border-amber-500/50 flex items-center justify-center text-amber-400 transition-all cursor-pointer shadow-sm"
+                title={`Language: ${language === 'hi' ? 'Hindi (हिंदी)' : 'English'}. Click to switch.`}
+              >
+                <Globe className="w-3 h-3" />
+              </button>
+            )}
+          </div>
         </div>
 
         <div className="relative">
@@ -181,7 +194,7 @@ export const HomePage: React.FC<HomePageProps> = ({
       <div className="w-full mb-6">
         {/* Weekly Tracker Card */}
         <div className="bg-zinc-900/60 rounded-2xl p-3 border border-zinc-800">
-          <span className="text-[9px] text-zinc-500 uppercase mb-2 block">This Week</span>
+          <span className="text-[9px] text-zinc-500 uppercase mb-2 block">{language === 'hi' ? 'इस सप्ताह' : 'This Week'}</span>
           <div className="flex justify-between gap-1">
             {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((day, index) => (
               <div key={`${day}-${index}`} className="flex flex-col items-center gap-0.5">
@@ -197,34 +210,36 @@ export const HomePage: React.FC<HomePageProps> = ({
       <div className="w-full bg-zinc-900/60 rounded-2xl p-5 border border-zinc-800 mb-8">
         <div className="flex justify-between items-center mb-3">
           <div className="flex items-center gap-2">
-            <span className="text-lg font-bold">Beginner</span>
+            <span className="text-lg font-bold">{language === 'hi' ? 'शुरुआती (Beginner)' : 'Beginner'}</span>
             <HelpCircle className="w-4 h-4 text-zinc-500" />
           </div>
-          <span className="text-zinc-400">0 Points</span>
+          <span className="text-zinc-400">{language === 'hi' ? '0 अंक' : '0 Points'}</span>
         </div>
         <div className="w-full h-2 bg-zinc-800 rounded-full overflow-hidden">
           <div className="w-[10%] h-full bg-zinc-600"></div>
         </div>
         <div className="flex justify-between text-xs text-zinc-500 mt-2">
-          <span>Level 1</span>
-          <span>100 POINTS TO LEVEL 2</span>
+          <span>{language === 'hi' ? 'स्तर 1' : 'Level 1'}</span>
+          <span>{language === 'hi' ? 'स्तर 2 के लिए 100 अंक' : '100 POINTS TO LEVEL 2'}</span>
         </div>
       </div>
 
       {/* Featured Challenge Card */}
       <div className="w-screen -mx-6 px-6 relative group mt-2">
-        <div className="w-full bg-gradient-to-b from-[#14151b] via-[#0d0e12] to-[#07080a] border-2 border-purple-900/50 rounded-[32px] p-6 flex flex-col items-center text-center relative z-10 shadow-[0_25px_60px_rgba(0,0,0,0.9)]">
+        <div 
+          onClick={onOpenChallenge || onStart}
+          className="w-full bg-gradient-to-b from-[#14151b] via-[#0d0e12] to-[#07080a] border-2 border-purple-900/50 rounded-[32px] p-6 flex flex-col items-center text-center relative z-10 shadow-[0_25px_60px_rgba(0,0,0,0.9)] cursor-pointer hover:border-purple-500 transition-all active:scale-[0.99]"
+        >
           <div className="absolute inset-0 bg-gradient-to-b from-purple-900/20 to-transparent rounded-[32px]"></div>
-          <span className="bg-zinc-900/80 text-zinc-300 text-xs px-3 py-1 rounded-full mb-4 relative z-20 border border-zinc-700">+25 Points</span>
-          <h3 className="text-4xl font-semibold mb-2 relative z-20 text-transparent bg-clip-text bg-gradient-to-r from-white to-purple-400">Talk to Me</h3>
-          <p className="text-zinc-400 mb-8 max-w-[200px] relative z-20">Pitch it. Defend it. Win them over.</p>
+          <span className="bg-zinc-900/80 text-zinc-300 text-xs px-3 py-1 rounded-full mb-4 relative z-20 border border-zinc-700">{language === 'hi' ? '+25 अंक' : '+25 Points'}</span>
+          <h3 className="text-4xl font-semibold mb-2 relative z-20 text-transparent bg-clip-text bg-gradient-to-r from-white to-purple-400">{getTranslation(language, 'lets_learn')}</h3>
+          <p className="text-zinc-400 mb-8 max-w-[200px] relative z-20">{getTranslation(language, 'pitch_defend')}</p>
           
-          <button 
-            onClick={onOpenChallenge || onStart}
-            className="w-full py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold rounded-2xl hover:bg-white transition-colors relative z-20"
+          <div 
+            className="w-full py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold rounded-2xl transition-colors relative z-20 flex items-center justify-center shadow-lg shadow-purple-900/30"
           >
-            Start
-          </button>
+            {getTranslation(language, 'start')}
+          </div>
         </div>
       </div>
     </div>

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { SplashScreen } from './components/SplashScreen';
+import { AppPurposeScreen } from './components/AppPurposeScreen';
 import { LoginPage } from './components/LoginPage';
 import { RolePicker } from './components/RolePicker';
 import { QuestionScreen } from './views/QuestionScreen';
@@ -23,6 +24,7 @@ type PracticeStep = 'question' | 'speak' | 'result';
 
 export default function App() {
   const [showSplash, setShowSplash] = useState<boolean>(true);
+  const [showPurpose, setShowPurpose] = useState<boolean>(true);
   const [showLogin, setShowLogin] = useState<boolean>(() => {
     return !localStorage.getItem('hello_english_logged_in');
   });
@@ -283,7 +285,13 @@ export default function App() {
       </AnimatePresence>
 
       <AnimatePresence>
-        {!showSplash && showLogin && (
+        {!showSplash && showPurpose && (
+          <AppPurposeScreen onContinue={() => setShowPurpose(false)} />
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {!showSplash && !showPurpose && showLogin && (
           <LoginPage
             onLoginSuccess={(userId) => {
               localStorage.setItem('hello_english_logged_in', userId);
@@ -357,7 +365,9 @@ export default function App() {
                 onNavigateTab={(tab) => {
                   if (tab === 'practice') {
                     handleStartPractice();
-                  } else if (tab === 'home' || tab === 'fitness' || tab === 'dashboard') {
+                  } else if (tab === 'fitness' || tab === 'dashboard') {
+                    setActiveTab('dashboard');
+                  } else if (tab === 'home' || tab === 'sheeko' || tab === 'myday') {
                     setActiveTab('sheeko');
                   } else {
                     setActiveTab(tab as any);
@@ -425,6 +435,7 @@ export default function App() {
                 progress={progress}
                 onStartPractice={(q) => handleStartPractice(q, 'sheeko')}
                 onOpenMyDay={() => setActiveTab('sheeko')}
+                onBack={() => setActiveTab('sheeko')}
               />
             </motion.div>
           )}
@@ -485,12 +496,8 @@ export default function App() {
 
         {(activeTab !== 'practice' &&
           activeTab !== 'drill' &&
-          activeTab !== 'buddy' &&
-          activeTab !== 'course' &&
           activeTab !== 'challenge' &&
           (activeTab !== 'sheeko' || myDayStep === '1_HOME') &&
-          activeTab !== 'dashboard' &&
-          activeTab !== 'fitness' &&
           !showRolePicker &&
           !((activeTab === 'sheeko') && (myDayStep === '2_CHAT_INPUT' || myDayStep === '4_CHATBOT_CONVERSATION'))) && (
           <BottomDockNav

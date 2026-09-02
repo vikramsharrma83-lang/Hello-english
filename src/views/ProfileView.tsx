@@ -83,52 +83,6 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
         </h1>
       </div>
 
-      {/* Streak Highlight Card */}
-      <div className="rounded-3xl p-5 bg-gradient-to-br from-[#FFFBEB] via-[#FFF1F2] to-[#FAF5FF] border border-[#FED7AA] pastel-card-shadow relative overflow-hidden mb-5">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#EA580C] to-[#F97316] text-white flex items-center justify-center shadow-md shadow-[#EA580C]/25">
-              <Flame className="w-7 h-7 fill-white" />
-            </div>
-            <div>
-              <span className="text-2xl font-black text-slate-900">
-                {progress.streakDays} Day Streak!
-              </span>
-              <p className="text-xs font-semibold text-[#C2410C]">
-                Daily English Practice Habit
-              </p>
-            </div>
-          </div>
-          <span className="text-xs font-bold px-3 py-1 rounded-full bg-white/90 text-[#EA580C] border border-[#FED7AA]">
-            🔥 Active
-          </span>
-        </div>
-
-        {/* Weekly Day Tracker */}
-        <div className="grid grid-cols-7 gap-1.5 mt-4 pt-3 border-t border-[#FED7AA]/60">
-          {daysOfWeek.map((day, idx) => {
-            const isCompleted = idx < (progress.streakDays % 7 || 5);
-            return (
-              <div
-                key={day}
-                className={`flex flex-col items-center py-2 rounded-xl text-center ${
-                  isCompleted
-                    ? 'bg-gradient-to-b from-white to-[#FFF7ED] text-[#EA580C] font-bold shadow-2xs border border-[#FED7AA]'
-                    : 'bg-white/50 text-slate-400'
-                }`}
-              >
-                <span className="text-[10px] uppercase font-bold">{day}</span>
-                {isCompleted ? (
-                  <CheckCircle2 className="w-4 h-4 text-[#EA580C] mt-1" />
-                ) : (
-                  <div className="w-4 h-4 rounded-full border border-slate-300 mt-1" />
-                )}
-              </div>
-            );
-          })}
-        </div>
-      </div>
-
       {/* Quick Metrics Grid */}
       <div className="grid grid-cols-3 gap-2.5 mb-5">
         <div className="p-3.5 rounded-2xl bg-white border border-[#E9D5FF] pastel-card-shadow">

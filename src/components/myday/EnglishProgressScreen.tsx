@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   ArrowLeft,
@@ -20,6 +20,8 @@ import {
   EnglishConfidenceSummary,
 } from '../../utils/confidenceMetrics';
 import { ConversationTurn, PracticeHistoryItem, DayMap, UserProgress } from '../../types';
+import { getDrillSessionRecords } from '../../utils/drillScoringEngine';
+import { DrillSessionRecord } from '../../types/drillTypes';
 
 interface EnglishProgressScreenProps {
   isOpen: boolean;
@@ -41,10 +43,23 @@ export const EnglishProgressScreen: React.FC<EnglishProgressScreenProps> = ({
   onStartPractice,
 }) => {
   const [activeTabIdx, setActiveTabIdx] = useState<number>(0); // 0: Usage, 1: Performance, 2: Core Skills & Summary
+  const [drillRecords, setDrillRecords] = React.useState<DrillSessionRecord[]>([]);
 
-  if (!isOpen) return null;
+  React.useEffect(() => {
+    if (isOpen) {
+      setDrillRecords(getDrillSessionRecords());
+    }
+  }, [isOpen]);
 
-  const hasData = (progress && progress.totalPracticed > 0) || turns.length > 0 || practiceHistory.length > 0;
+  const liveDrillsCount = drillRecords.length;
+  const liveAvgAccuracy = liveDrillsCount > 0
+    ? Math.round(drillRecords.reduce((acc, r) => acc + r.scores.overallAccuracy, 0) / liveDrillsCount)
+    : 85;
+  const liveSentenceAccuracy = liveDrillsCount > 0
+    ? Math.round(drillRecords.reduce((acc, r) => acc + r.scores.sentenceMakingAccuracy, 0) / liveDrillsCount)
+    : 82;
+
+  const hasData = (progress && progress.totalPracticed > 0) || turns.length > 0 || practiceHistory.length > 0 || liveDrillsCount > 0;
 
   const streakCount = progress?.streakDays || 5;
   const daysPracticed = progress?.daysPracticed || 5;
@@ -97,68 +112,69 @@ export const EnglishProgressScreen: React.FC<EnglishProgressScreenProps> = ({
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-0 sm:p-4 overflow-y-auto">
-        {/* Backdrop */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          onClick={onClose}
-          className="fixed inset-0 bg-black/80 backdrop-blur-sm cursor-pointer"
-        />
+      {isOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-0 sm:p-4 overflow-hidden">
+          {/* Backdrop */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={onClose}
+            className="fixed inset-0 bg-black/85 backdrop-blur-md cursor-pointer z-0"
+          />
 
-        {/* Modal Container */}
-        <motion.div
-          initial={{ opacity: 0, y: 30, scale: 0.98 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          exit={{ opacity: 0, y: 30, scale: 0.98 }}
-          transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-          className="relative w-full max-w-xl min-h-screen sm:min-h-[auto] sm:max-h-[90vh] bg-[#121318] border-0 sm:border border-zinc-800/80 sm:rounded-[32px] overflow-hidden flex flex-col text-zinc-100 shadow-2xl z-10 select-none"
-        >
-          {/* Header */}
-          <div className="sticky top-0 bg-[#121318]/95 backdrop-blur-md z-30 pt-4 pb-3 px-4 sm:px-6 border-b border-zinc-800/60 flex items-center justify-between gap-2">
-            <button
-              onClick={onClose}
-              className="flex items-center gap-2 text-xs font-bold text-amber-300 bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/50 px-3.5 py-2.5 rounded-xl transition-all cursor-pointer active:scale-95 shrink-0 shadow-lg shadow-amber-500/10"
-              aria-label="Back to Sheeko"
-            >
-              <ArrowLeft className="w-4 h-4 text-amber-400" />
-              <span>Back</span>
-            </button>
+          {/* Modal Container */}
+          <motion.div
+            initial={{ opacity: 0, y: 30, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 30, scale: 0.98 }}
+            transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+            className="relative w-full max-w-xl h-full sm:h-[90vh] sm:max-h-[850px] bg-[#121318] border-0 sm:border border-zinc-800/80 sm:rounded-[32px] overflow-hidden flex flex-col text-zinc-100 shadow-2xl z-10 select-none"
+          >
+            {/* Pinned Top Navigation Header */}
+            <div className="sticky top-0 bg-[#121318] z-30 pt-4 pb-3 px-3.5 sm:px-6 border-b border-zinc-800/80 flex items-center justify-between gap-2 shadow-md">
+              <button
+                onClick={onClose}
+                className="flex items-center gap-1.5 text-xs font-bold text-amber-300 bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/50 px-3 py-2 rounded-xl transition-all cursor-pointer active:scale-95 shrink-0 shadow-sm"
+                aria-label="Back to Summary"
+              >
+                <ArrowLeft className="w-4 h-4 text-amber-400" />
+                <span>Back</span>
+              </button>
 
-            {/* Tab Navigators */}
-            <div className="flex items-center gap-1 bg-zinc-900/90 p-1 rounded-2xl border border-zinc-800/80">
-              {tabs.map((tab, idx) => {
-                const Icon = tab.icon;
-                const isActive = activeTabIdx === idx;
-                return (
-                  <button
-                    key={tab.id}
-                    onClick={() => setActiveTabIdx(idx)}
-                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
-                      isActive
-                        ? 'bg-zinc-800 text-white shadow-sm border border-zinc-700/50'
-                        : 'text-zinc-400 hover:text-zinc-200'
-                    }`}
-                  >
-                    <Icon className={`w-3.5 h-3.5 ${isActive ? tab.color : 'text-zinc-500'}`} />
-                    <span className="hidden sm:inline">{tab.label}</span>
-                  </button>
-                );
-              })}
+              {/* Tab Navigators */}
+              <div className="flex items-center gap-1 bg-zinc-900/90 p-1 rounded-2xl border border-zinc-800/80 max-w-[240px] sm:max-w-none overflow-x-auto">
+                {tabs.map((tab, idx) => {
+                  const Icon = tab.icon;
+                  const isActive = activeTabIdx === idx;
+                  return (
+                    <button
+                      key={tab.id}
+                      onClick={() => setActiveTabIdx(idx)}
+                      className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer whitespace-nowrap ${
+                        isActive
+                          ? 'bg-zinc-800 text-white shadow-sm border border-zinc-700/50'
+                          : 'text-zinc-400 hover:text-zinc-200'
+                      }`}
+                    >
+                      <Icon className={`w-3.5 h-3.5 ${isActive ? tab.color : 'text-zinc-500'}`} />
+                      <span className="text-[11px] sm:text-xs">{tab.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+
+              <button
+                onClick={onClose}
+                className="w-8 h-8 rounded-full bg-zinc-900 border border-zinc-800 flex items-center justify-center text-zinc-400 hover:text-white cursor-pointer transition-colors shrink-0 active:scale-95"
+                aria-label="Close"
+              >
+                <X className="w-4 h-4" />
+              </button>
             </div>
 
-            <button
-              onClick={onClose}
-              className="w-8 h-8 rounded-full bg-zinc-900 border border-zinc-800 flex items-center justify-center text-zinc-400 hover:text-white cursor-pointer transition-colors shrink-0"
-              aria-label="Close"
-            >
-              <X className="w-4 h-4" />
-            </button>
-          </div>
-
-          {/* Swipeable Viewport */}
-          <div className="flex-1 overflow-y-auto overflow-x-hidden p-4 sm:p-6 relative">
+            {/* Swipeable / Scrollable Viewport */}
+            <div className="flex-1 overflow-y-auto overflow-x-hidden p-4 sm:p-6 relative pb-28">
             {!hasData ? (
               <div className="flex flex-col items-center justify-center py-20 text-center space-y-3">
                 <div className="w-16 h-16 rounded-3xl bg-zinc-900 border border-zinc-800 flex items-center justify-center text-zinc-500">
@@ -206,70 +222,12 @@ export const EnglishProgressScreen: React.FC<EnglishProgressScreenProps> = ({
                       <span className="text-[10px] text-zinc-500 font-mono">Swipe left or right ↔</span>
                     </div>
 
-                    {/* Streak Card */}
-                    <div className="rounded-3xl p-4 sm:p-5 bg-[#171613] border border-amber-900/30 relative overflow-hidden shadow-lg">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <div className="w-11 h-11 rounded-2xl bg-amber-950/60 border border-amber-800/40 text-amber-400 flex items-center justify-center shadow-inner">
-                            <Flame className="w-5 h-5" />
-                          </div>
-                          <div>
-                            <span className="text-xl sm:text-2xl font-black text-zinc-100">
-                              {streakCount} Day Streak
-                            </span>
-                            <p className="text-[11px] text-amber-300/80 font-medium">
-                              Consistent Daily English Habit Active
-                            </p>
-                          </div>
-                        </div>
-                        <span className="text-[10px] font-bold px-2.5 py-1 rounded-full bg-amber-950/50 text-amber-300 border border-amber-800/40">
-                          🔥 Active Habit
-                        </span>
-                      </div>
-
-                      {/* Weekly Tracker */}
-                      <div className="grid grid-cols-7 gap-1.5 mt-3 pt-2.5 border-t border-amber-950/60">
-                        {daysOfWeek.map((day, idx) => {
-                          const isCompleted = idx < (streakCount % 7 || 5);
-                          return (
-                            <div
-                              key={day}
-                              className={`flex flex-col items-center py-1.5 rounded-xl text-center ${
-                                isCompleted
-                                  ? 'bg-amber-950/40 text-amber-200 border border-amber-800/30'
-                                  : 'bg-zinc-900/40 text-zinc-600 border border-zinc-800/40'
-                              }`}
-                            >
-                              <span className="text-[9px] uppercase font-bold">{day}</span>
-                              {isCompleted ? (
-                                <CheckCircle2 className="w-3.5 h-3.5 text-amber-400/80 mt-0.5" />
-                              ) : (
-                                <div className="w-3 h-3 rounded-full border border-zinc-700/60 mt-0.5" />
-                              )}
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </div>
-
                     {/* Usage Grid */}
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                       <div className="p-3.5 rounded-2xl bg-[#15161c] border border-zinc-800/80">
                         <span className="text-[10px] uppercase font-bold text-zinc-500">Days Practiced</span>
                         <h4 className="text-xl font-black text-amber-300 mt-1">{daysPracticed} Days</h4>
                         <p className="text-[10px] text-zinc-400 mt-0.5">Active login days</p>
-                      </div>
-
-                      <div className="p-3.5 rounded-2xl bg-[#15161c] border border-zinc-800/80">
-                        <span className="text-[10px] uppercase font-bold text-zinc-500">Current Streak</span>
-                        <h4 className="text-xl font-black text-amber-400 mt-1">{streakCount} Days</h4>
-                        <p className="text-[10px] text-zinc-400 mt-0.5">Current run</p>
-                      </div>
-
-                      <div className="p-3.5 rounded-2xl bg-[#15161c] border border-zinc-800/80">
-                        <span className="text-[10px] uppercase font-bold text-zinc-500">Longest Streak</span>
-                        <h4 className="text-xl font-black text-amber-200 mt-1">{longestStreak} Days</h4>
-                        <p className="text-[10px] text-zinc-400 mt-0.5">Personal record</p>
                       </div>
 
                       <div className="p-3.5 rounded-2xl bg-[#15161c] border border-zinc-800/80">
@@ -441,14 +399,14 @@ export const EnglishProgressScreen: React.FC<EnglishProgressScreenProps> = ({
 
                       <div className="space-y-2.5">
                         {[
-                          { name: 'Grammar Accuracy', score: 64, change: '↑ 8%' },
-                          { name: 'Sentence Formation', score: 75, change: '↑ 5%' },
-                          { name: 'Vocabulary Range', score: 68, change: '↑ 6%' },
-                          { name: 'Communication Clarity', score: 82, change: '↑ 12%' },
-                          { name: 'Conversation Ability', score: 78, change: '↑ 10%' },
-                          { name: 'Activity / Workplace English', score: 80, change: '↑ 7%' },
-                          { name: 'Improvement & Self-Correction', score: 70, change: '↑ 9%' },
-                          { name: 'Overall English Confidence', score: confidenceData.overallScore, change: '↑ 11%' },
+                          { name: 'Grammar Accuracy', score: liveAvgAccuracy > 0 ? Math.max(50, liveAvgAccuracy - 6) : 64, change: '↑ 8%' },
+                          { name: 'Sentence Formation', score: liveSentenceAccuracy, change: '↑ 5%' },
+                          { name: 'Vocabulary Range', score: liveAvgAccuracy > 0 ? Math.max(50, liveAvgAccuracy - 3) : 68, change: '↑ 6%' },
+                          { name: 'Communication Clarity', score: liveAvgAccuracy, change: '↑ 12%' },
+                          { name: 'Conversation Ability', score: liveAvgAccuracy > 0 ? Math.min(98, liveAvgAccuracy + 1) : 78, change: '↑ 10%' },
+                          { name: 'Activity / Workplace English', score: liveAvgAccuracy, change: '↑ 7%' },
+                          { name: 'Improvement & Self-Correction', score: liveDrillsCount > 0 ? Math.min(95, 70 + liveDrillsCount * 2) : 70, change: '↑ 9%' },
+                          { name: 'Overall English Confidence', score: liveAvgAccuracy > 0 ? liveAvgAccuracy : confidenceData.overallScore, change: '↑ 11%' },
                         ].map((skill, i) => (
                           <div key={i} className="p-2.5 rounded-2xl bg-zinc-900/60 border border-zinc-800 flex items-center justify-between">
                             <span className="text-xs font-semibold text-zinc-200">{skill.name}</span>
@@ -467,8 +425,32 @@ export const EnglishProgressScreen: React.FC<EnglishProgressScreenProps> = ({
               </motion.div>
             )}
           </div>
+
+          {/* Sticky Bottom Action Bar */}
+          <div className="sticky bottom-0 z-30 p-3 sm:p-4 bg-[#121318]/95 backdrop-blur-md border-t border-zinc-800/80 flex items-center justify-between gap-3 shadow-2xl">
+            <button
+              onClick={onClose}
+              className="flex-1 py-3 px-4 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-700/70 text-zinc-200 font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all active:scale-[0.98] cursor-pointer shadow-md"
+            >
+              <ArrowLeft className="w-4 h-4 text-amber-400" />
+              <span>Back to Summary</span>
+            </button>
+            {onStartPractice && (
+              <button
+                onClick={() => {
+                  onClose();
+                  onStartPractice();
+                }}
+                className="py-3 px-4 sm:px-6 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-500 hover:brightness-110 text-zinc-950 font-black text-xs sm:text-sm flex items-center justify-center gap-1.5 transition-all active:scale-[0.98] cursor-pointer shadow-md"
+              >
+                <Sparkles className="w-4 h-4 text-zinc-950" />
+                <span>Practice</span>
+              </button>
+            )}
+          </div>
         </motion.div>
       </div>
-    </AnimatePresence>
+    )}
+  </AnimatePresence>
   );
 };

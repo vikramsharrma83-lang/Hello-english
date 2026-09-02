@@ -7,6 +7,7 @@ import {
   Volume2,
   Trash2,
   ArrowRight,
+  ArrowLeft,
   Sparkles,
   CheckCircle2,
   TrendingUp,
@@ -26,6 +27,7 @@ interface ProgressViewProps {
   onSelectSavedPhrase: (phrase: SavedPhrase) => void;
   onRemoveSavedPhrase: (id: string) => void;
   onStartPractice: () => void;
+  onBack?: () => void;
 }
 
 export const ProgressView: React.FC<ProgressViewProps> = ({
@@ -33,6 +35,7 @@ export const ProgressView: React.FC<ProgressViewProps> = ({
   onSelectSavedPhrase,
   onRemoveSavedPhrase,
   onStartPractice,
+  onBack,
 }) => {
   const [playingId, setPlayingId] = useState<string | null>(null);
 
@@ -52,26 +55,36 @@ export const ProgressView: React.FC<ProgressViewProps> = ({
   const daysOfWeek = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
   // Computed smart analytics numbers
-  const streakDays = progress.streakDays || 5;
   const spokenWordsCount = Math.max(140, progress.totalPracticed * 24);
   const sentencesCount = progress.totalPracticed || 18;
   const totalMins = progress.totalMinutes || 24;
   const savedCount = progress.savedPhrases.length || 2;
   const completedTasksCount = progress.myDayCompletedTasks?.length || 2;
   const completionRate = Math.min(98, Math.max(65, Math.round((sentencesCount / 25) * 100)));
-  const fluencyScore = Math.min(99, Math.max(70, Math.round(85 + (totalMins * 0.3) + (streakDays * 1.2))));
+  const fluencyScore = Math.min(99, Math.max(70, Math.round(85 + (totalMins * 0.3))));
 
   return (
     <div className="w-full min-h-screen bg-[#09090b] text-white pb-32 pt-5 px-4 sm:px-6 max-w-4xl mx-auto">
       {/* Header */}
-      <div className="mb-6 flex items-center justify-between">
-        <div>
-          <span className="text-[10px] font-extrabold uppercase tracking-widest text-emerald-400 bg-emerald-950/60 px-2.5 py-1 rounded-full border border-emerald-800/50">
-            Performance Analytics & Insights
-          </span>
-          <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight mt-1.5">
-            Learner Progress Dashboard
-          </h1>
+      <div className="mb-6 flex items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          {onBack && (
+            <button
+              onClick={onBack}
+              className="p-2.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-300 hover:text-white transition-all cursor-pointer active:scale-95 shadow-sm"
+              aria-label="Back"
+            >
+              <ArrowLeft className="w-4 h-4" />
+            </button>
+          )}
+          <div>
+            <span className="text-[10px] font-extrabold uppercase tracking-widest text-emerald-400 bg-emerald-950/60 px-2.5 py-1 rounded-full border border-emerald-800/50">
+              Performance Analytics & Insights
+            </span>
+            <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight mt-1.5">
+              Learner Progress Dashboard
+            </h1>
+          </div>
         </div>
         <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-2xl bg-zinc-900 border border-zinc-800 text-xs font-bold text-zinc-300">
           <Sparkles className="w-4 h-4 text-emerald-400" />
@@ -80,54 +93,8 @@ export const ProgressView: React.FC<ProgressViewProps> = ({
       </div>
 
       {/* Bento Grid Analytics */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 mb-6">
-        {/* Streak & Habit Card (Col 1) */}
-        <div className="rounded-3xl p-5 bg-gradient-to-br from-[#121318] to-[#181920] border border-zinc-800/80 shadow-xl flex flex-col justify-between">
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-2.5">
-              <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-orange-500 to-amber-500 text-white flex items-center justify-center shadow-lg shadow-orange-500/20">
-                <Flame className="w-6 h-6 fill-white" />
-              </div>
-              <div>
-                <span className="text-xl sm:text-2xl font-black text-white">
-                  {streakDays} Days
-                </span>
-                <p className="text-[11px] font-semibold text-orange-400">
-                  Active Practice Streak
-                </p>
-              </div>
-            </div>
-            <span className="text-[10px] font-bold px-2.5 py-1 rounded-full bg-orange-950/80 text-orange-300 border border-orange-800/60">
-              🔥 On Fire
-            </span>
-          </div>
-
-          {/* Weekly Day Tracker */}
-          <div className="grid grid-cols-7 gap-1 pt-2 border-t border-zinc-800/60 mt-2">
-            {daysOfWeek.map((day, idx) => {
-              const isCompleted = idx < (streakDays % 7 || 5);
-              return (
-                <div
-                  key={day}
-                  className={`flex flex-col items-center py-1.5 rounded-xl text-center ${
-                    isCompleted
-                      ? 'bg-orange-500/15 text-orange-400 font-bold border border-orange-500/30'
-                      : 'bg-zinc-900/50 text-zinc-600'
-                  }`}
-                >
-                  <span className="text-[9px] uppercase font-bold">{day}</span>
-                  {isCompleted ? (
-                    <CheckCircle2 className="w-3.5 h-3.5 text-orange-400 mt-1" />
-                  ) : (
-                    <div className="w-3.5 h-3.5 rounded-full border border-zinc-700 mt-1" />
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Time & Spoken Volume (Col 2) */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 mb-6">
+        {/* Time & Spoken Volume (Col 1) */}
         <div className="rounded-3xl p-5 bg-gradient-to-br from-[#121318] to-[#181920] border border-zinc-800/80 shadow-xl flex flex-col justify-between">
           <div className="flex items-center justify-between mb-2">
             <span className="text-xs font-bold uppercase tracking-wider text-zinc-400">
