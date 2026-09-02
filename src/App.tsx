@@ -23,7 +23,7 @@ import { recordChallengePractice } from './utils/challengeManager';
 type PracticeStep = 'question' | 'speak' | 'result';
 
 export default function App() {
-  const [showSplash, setShowSplash] = useState<boolean>(false);
+  const [showSplash, setShowSplash] = useState<boolean>(true);
   const [showPurpose, setShowPurpose] = useState<boolean>(false);
   const [showLogin, setShowLogin] = useState<boolean>(false);
   // Industry Role Picker State
