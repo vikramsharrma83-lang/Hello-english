@@ -15,13 +15,15 @@ import {
   TrendingUp,
   MapPin,
   ChevronRight,
+  Gamepad2,
 } from 'lucide-react';
 import { ConversationTurn, PracticeHistoryItem, DayMap, UserProgress } from '../../types';
 import { getTranslation } from '../../lib/translations';
-import { isPlaygroundActiveAndIncomplete } from '../../utils/playgroundManager';
+import { isPlaygroundActiveAndIncomplete, getPlaygroundData } from '../../utils/playgroundManager';
 
 interface HomePageProps {
   onStart: () => void;
+  onOpenPlayground?: () => void;
   onOpenPatternLibrary: () => void;
   onOpenInspector: () => void;
   onOpenChallenge?: () => void;
@@ -41,6 +43,7 @@ interface HomePageProps {
 
 export const HomePage: React.FC<HomePageProps> = ({
   onStart,
+  onOpenPlayground,
   onOpenChallenge,
   onOpenRockRoll,
   onOpenHelpRoadmap,
@@ -52,6 +55,7 @@ export const HomePage: React.FC<HomePageProps> = ({
   const [showActionMenu, setShowActionMenu] = useState(false);
   const [showStatsDrawer, setShowStatsDrawer] = useState(false);
   const [hasIncompletePlayground, setHasIncompletePlayground] = useState<boolean>(() => isPlaygroundActiveAndIncomplete());
+  const hasConfirmedPlayground = getPlaygroundData().planConfirmed;
 
   useEffect(() => {
     setHasIncompletePlayground(isPlaygroundActiveAndIncomplete());
@@ -297,7 +301,7 @@ export const HomePage: React.FC<HomePageProps> = ({
             onClick={onStart}
             whileHover={{ scale: 1.04, y: -2 }}
             whileTap={{ scale: 0.96 }}
-            className="inline-flex items-center gap-3 px-6 py-3.5 rounded-full bg-[#181a20]/90 hover:bg-[#20232b] border border-slate-700/80 hover:border-slate-500 text-white font-semibold text-sm sm:text-base shadow-2xl transition-all cursor-pointer backdrop-blur-xl group shadow-black/80 relative"
+            className="inline-flex items-center gap-3 px-6 py-3.5 rounded-full bg-[#181a20]/90 hover:bg-[#20232b] border border-amber-500/40 hover:border-amber-400 text-white font-semibold text-sm sm:text-base shadow-2xl transition-all cursor-pointer backdrop-blur-xl group shadow-black/80 relative"
           >
             <div className="relative flex items-center justify-center">
               <Sparkles className="w-4 h-4 text-amber-400 fill-amber-400 drop-shadow-[0_0_6px_rgba(245,158,11,0.8)]" />
@@ -311,7 +315,7 @@ export const HomePage: React.FC<HomePageProps> = ({
             <span className="tracking-wide">
               {language === 'hi' ? 'Din ki suruat' : 'Start My Day'}
             </span>
-            <ArrowRight className="w-4 h-4 text-slate-300 group-hover:translate-x-1 transition-transform" />
+            <ArrowRight className="w-4 h-4 text-amber-400 group-hover:translate-x-1 transition-transform" />
           </motion.button>
         </div>
       </div>

@@ -441,10 +441,9 @@ export const AppPurposeScreen: React.FC<AppPurposeScreenProps> = ({ onContinue, 
                         rotate: isHighlighted ? [0, -3, 3, 0] : 0,
                       }}
                       transition={{
-                        type: 'spring',
-                        stiffness: 450,
-                        damping: 20,
-                        mass: 0.6,
+                        scale: { type: 'spring', stiffness: 450, damping: 20, mass: 0.6 },
+                        y: { type: 'spring', stiffness: 450, damping: 20, mass: 0.6 },
+                        rotate: { duration: 0.4, ease: 'easeInOut' },
                       }}
                       className={`relative w-16 h-16 sm:w-18 sm:h-18 rounded-2xl flex items-center justify-center transition-all duration-200 group-hover:scale-105 ${
                         isHighlighted ? `${item.activeIconBoxBg} ${item.activeRing}` : item.iconBoxBg

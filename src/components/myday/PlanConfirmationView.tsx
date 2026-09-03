@@ -52,10 +52,10 @@ export const PlanConfirmationView: React.FC<PlanConfirmationViewProps> = ({
             </div>
             <div>
               <h1 className="text-base font-semibold text-white tracking-tight">
-                Daily Schedule Confirmed
+                Your Playground is Created!
               </h1>
               <p className="text-xs text-zinc-400 mt-0.5">
-                Your customized practice plan is ready to begin
+                Whenever you want, come here, play, and complete your tasks.
               </p>
             </div>
           </div>
@@ -172,9 +172,9 @@ export const PlanConfirmationView: React.FC<PlanConfirmationViewProps> = ({
 
           <button
             onClick={onGoToPlayground}
-            className="w-full py-3 px-5 rounded-xl bg-amber-500 hover:bg-amber-400 text-zinc-950 font-semibold text-xs sm:text-sm transition-colors flex items-center justify-center gap-2 cursor-pointer"
+            className="w-full py-3 px-5 rounded-xl bg-amber-500 hover:bg-amber-400 text-zinc-950 font-semibold text-xs sm:text-sm transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-amber-500/20"
           >
-            <span>Enter Daily Playground</span>
+            <span>Enter Daily Playground • प्लेग्राउंड में जाएं</span>
             <ArrowRight className="w-4 h-4" />
           </button>
         </div>

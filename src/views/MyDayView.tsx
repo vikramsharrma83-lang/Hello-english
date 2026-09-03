@@ -415,14 +415,10 @@ export const MyDayView: React.FC<MyDayViewProps> = ({
         {step === '1_HOME' && (
           <HomePage
             onStart={() => {
-              const plan = getPlaygroundData();
-              if (isStartMyDayDoneToday() && plan.planConfirmed) {
-                setStep('PLAYGROUND');
-              } else if (!isStartMyDayDoneToday()) {
-                setStep('START_MY_DAY_WARMUP');
-              } else {
-                setStep('DAILY_PLANNING');
-              }
+              setStep('START_MY_DAY_WARMUP');
+            }}
+            onOpenPlayground={() => {
+              setStep('PLAYGROUND');
             }}
             onOpenPatternLibrary={() => setStep('PATTERNS_HUB')}
             onOpenChallenge={() => setStep('CHALLENGE')}
@@ -695,7 +691,7 @@ export const MyDayView: React.FC<MyDayViewProps> = ({
         {/* 2. DAILY PLANNING FLOW (Sheeko Journey + Daily Activities) */}
         {step === 'DAILY_PLANNING' && (
           <DailyPlanningView
-            onPlanCreated={() => setStep('1_HOME')}
+            onPlanCreated={() => setStep('PLAN_CONFIRMATION')}
             onExit={() => setStep('1_HOME')}
           />
         )}

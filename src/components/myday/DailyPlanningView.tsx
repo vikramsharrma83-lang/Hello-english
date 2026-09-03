@@ -102,10 +102,10 @@ export const DailyPlanningView: React.FC<DailyPlanningViewProps> = ({
           {/* Section Heading */}
           <div className="mb-4">
             <h1 className="text-base font-semibold text-white tracking-tight">
-              Design Today's Routine
+              Choose Today's Targets • आज का लक्ष्य
             </h1>
             <p className="text-xs text-zinc-400 mt-0.5">
-              Set target session counts across spoken dialogue, lessons, and speed drills.
+              Choose how many Buddy chats, Bytes lessons, and Scenario practices you will do today.
             </p>
           </div>
 
@@ -300,10 +300,10 @@ export const DailyPlanningView: React.FC<DailyPlanningViewProps> = ({
           {/* Confirm Button */}
           <button
             onClick={handleSubmitPlan}
-            className="w-full py-3 px-5 rounded-xl bg-amber-500 hover:bg-amber-400 text-zinc-950 font-semibold text-xs sm:text-sm transition-colors flex items-center justify-center gap-2 cursor-pointer"
+            className="w-full py-3 px-5 rounded-xl bg-amber-500 hover:bg-amber-400 text-zinc-950 font-semibold text-xs sm:text-sm transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-amber-500/20"
           >
             <Check className="w-4 h-4 text-zinc-950 stroke-[2.5]" />
-            <span>Confirm Daily Plan</span>
+            <span>Submit & Create Playground • प्लेग्राउंड बनाएं</span>
           </button>
         </div>
       </div>

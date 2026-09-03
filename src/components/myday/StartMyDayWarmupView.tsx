@@ -4,6 +4,7 @@ import {
   Mic,
   MicOff,
   Volume2,
+  VolumeX,
   X,
   CheckCircle2,
   ArrowRight,
@@ -12,6 +13,10 @@ import {
   BookOpen,
   Keyboard,
   Send,
+  SkipForward,
+  Target,
+  Gamepad2,
+  Flame,
 } from 'lucide-react';
 import { markStartMyDayDoneToday } from '../../utils/playgroundManager';
 import { PRACTICE_QUESTIONS } from '../../data/questions';
@@ -49,6 +54,38 @@ interface StartMyDayWarmupViewProps {
   onExit: () => void;
 }
 
+function getGreetingData() {
+  const hours = new Date().getHours();
+  if (hours >= 4 && hours < 12) {
+    return {
+      timeOfDay: 'morning' as const,
+      enGreeting: 'Good Morning!',
+      hiGreeting: 'शुभ प्रभात!',
+      hiWish: 'शुभ प्रभात',
+      enSubtitle: 'Start your morning with focus & confidence',
+      badge: 'Morning Routine • सुबह का रूटीन',
+    };
+  } else if (hours >= 12 && hours < 17) {
+    return {
+      timeOfDay: 'afternoon' as const,
+      enGreeting: 'Good Afternoon!',
+      hiGreeting: 'शुभ दोपहर!',
+      hiWish: 'शुभ दोपहर',
+      enSubtitle: 'Power up your afternoon with practical speaking practice',
+      badge: 'Afternoon Routine • दोपहर का रूटीन',
+    };
+  } else {
+    return {
+      timeOfDay: 'evening' as const,
+      enGreeting: 'Good Evening!',
+      hiGreeting: 'शुभ संध्या!',
+      hiWish: 'शुभ संध्या',
+      enSubtitle: 'Wrap up your day with confidence & consistency',
+      badge: 'Evening Routine • शाम का रूटीन',
+    };
+  }
+}
+
 export const StartMyDayWarmupView: React.FC<StartMyDayWarmupViewProps> = ({
   onCompleteWarmup,
   onExit,
@@ -60,6 +97,8 @@ export const StartMyDayWarmupView: React.FC<StartMyDayWarmupViewProps> = ({
   });
   const totalQuestions = 5;
 
+  const greetingData = getGreetingData();
+
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [attemptCount, setAttemptCount] = useState<number>(1);
   const [isRecording, setIsRecording] = useState<boolean>(false);
@@ -69,12 +108,14 @@ export const StartMyDayWarmupView: React.FC<StartMyDayWarmupViewProps> = ({
   const [isEvaluating, setIsEvaluating] = useState<boolean>(false);
   const [isAudioPlaying, setIsAudioPlaying] = useState<boolean>(false);
   
+  // Debrief State (Starts before Question 1)
+  const [stage, setStage] = useState<'DEBRIEF' | 'QUESTION' | 'COMPLETE'>('DEBRIEF');
+  const [isDebriefSpeaking, setIsDebriefSpeaking] = useState<boolean>(false);
+  const [debriefCompleted, setDebriefCompleted] = useState<boolean>(false);
+
   // Stats
   const [correctCount, setCorrectCount] = useState<number>(0);
   const [learnedCount, setLearnedCount] = useState<number>(0);
-
-  // Screen state: 'QUESTION' or 'COMPLETE'
-  const [stage, setStage] = useState<'QUESTION' | 'COMPLETE'>('QUESTION');
 
   // Question Feedback
   const [feedback, setFeedback] = useState<{
@@ -88,7 +129,60 @@ export const StartMyDayWarmupView: React.FC<StartMyDayWarmupViewProps> = ({
 
   const currentQ = questions[currentIndex] || questions[0];
 
+  // Natural spoken Hindi text for female coach TTS
+  const debriefHindiSpeech = `नमस्ते! ${greetingData.hiWish}! चलिए आज का रूटीन शुरू करते हैं। पहले हम पाँच आसान सवालों के साथ वॉर्म-अप करेंगे। उसके बाद, आज का टारगेट चुनेंगे—कि आप कितने बडी चैट्स, कितने बाइट्स और कितने सिनेरियो प्रैक्टिस करेंगे। सबमिट करते ही आपका प्लेग्राउंड तैयार हो जाएगा। दिन में जब भी चाहें, यहाँ आकर खेलें और अपने टास्क पूरे करें। चलिए शुरू करते हैं!`;
+
+  // Auto-play Coach briefing speech in Hindi (Female)
+  const playDebriefSpeech = async () => {
+    setIsDebriefSpeaking(true);
+    await audioSpeakText(debriefHindiSpeech, 'hi-IN', 0.94, () => {
+      setIsDebriefSpeaking(false);
+      setDebriefCompleted(true);
+    });
+  };
+
+  const toggleDebriefSpeech = () => {
+    if (isDebriefSpeaking) {
+      stopSpeaking();
+      setIsDebriefSpeaking(false);
+    } else {
+      playDebriefSpeech();
+    }
+  };
+
+  // Run Hindi speech automatically when entering DEBRIEF
   useEffect(() => {
+    if (stage === 'DEBRIEF') {
+      const timer = setTimeout(() => {
+        playDebriefSpeech();
+      }, 350);
+
+      return () => {
+        clearTimeout(timer);
+        stopSpeaking();
+        setIsDebriefSpeaking(false);
+      };
+    }
+  }, [stage]);
+
+  // Transition from Debrief to Questions
+  const handleStartWarmupFromDebrief = () => {
+    stopSpeaking();
+    setIsDebriefSpeaking(false);
+    setStage('QUESTION');
+    setTimeout(() => {
+      speakText(questions[0]?.questionEn || '');
+    }, 250);
+  };
+
+  const handleSkipDebrief = () => {
+    handleStartWarmupFromDebrief();
+  };
+
+  // Question Speech Recognition & Auto-speak logic (only in QUESTION stage)
+  useEffect(() => {
+    if (stage !== 'QUESTION') return;
+
     const SpeechRecognition =
       (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     if (SpeechRecognition) {
@@ -117,7 +211,7 @@ export const StartMyDayWarmupView: React.FC<StartMyDayWarmupViewProps> = ({
       recognitionRef.current = recognition;
     }
 
-    // Auto speak question
+    // Auto speak question in English
     speakText(currentQ.questionEn);
 
     return () => {
@@ -126,7 +220,7 @@ export const StartMyDayWarmupView: React.FC<StartMyDayWarmupViewProps> = ({
       }
       stopSpeaking();
     };
-  }, [currentIndex]);
+  }, [currentIndex, stage]);
 
   const speakText = async (text: string) => {
     if (!text) return;
@@ -285,6 +379,155 @@ export const StartMyDayWarmupView: React.FC<StartMyDayWarmupViewProps> = ({
         <div className="absolute inset-0 bg-gradient-to-b from-[#0c0a09]/80 via-[#0c0a09]/65 to-[#0c0a09]/90" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_rgba(245,158,11,0.12),_transparent_70%)]" />
       </div>
+
+      {/* STAGE 0: COACH GREETING & ROUTINE DEBRIEF (Before Question 1) */}
+      {stage === 'DEBRIEF' && (
+        <div className="w-full flex-1 flex flex-col justify-between px-5 pt-6 pb-8 relative z-10 max-w-[440px] mx-auto min-h-screen">
+          {/* Top Header Bar: Exit + Coach Badge + Skip Button */}
+          <div className="w-full flex items-center justify-between pb-3 border-b border-stone-800/80 mb-2">
+            <button
+              onClick={onExit}
+              className="p-2 rounded-full text-stone-400 hover:text-white hover:bg-stone-800/50 transition-colors cursor-pointer"
+              title="Exit to Home"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-stone-900/90 border border-amber-500/30 shadow-[0_0_12px_rgba(245,158,11,0.12)]">
+              <span className={`w-2 h-2 rounded-full ${isDebriefSpeaking ? 'bg-emerald-400 ring-2 ring-emerald-400/30 animate-pulse' : 'bg-stone-500'}`} />
+              <span className="text-[11px] font-bold text-amber-400 uppercase tracking-wider">
+                Coach Neha
+              </span>
+            </div>
+
+            <button
+              onClick={handleSkipDebrief}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-stone-900/90 hover:bg-stone-800 text-stone-300 hover:text-white border border-stone-700/80 text-xs font-semibold transition-all cursor-pointer group shadow-sm"
+              title="Skip briefing and start questions"
+            >
+              <span>Skip</span>
+              <SkipForward className="w-3.5 h-3.5 text-amber-400 group-hover:translate-x-0.5 transition-transform" />
+            </button>
+          </div>
+
+          {/* Central Animated Character Stage with Realistic Lip-Movement */}
+          <div className="my-auto flex flex-col items-center justify-center text-center space-y-6">
+            {/* Ambient Radial Glow Behind Character */}
+            <div className="relative">
+              <div
+                className={`absolute -inset-6 rounded-full transition-all duration-700 blur-2xl ${
+                  isDebriefSpeaking
+                    ? 'bg-amber-500/25 scale-110'
+                    : 'bg-amber-500/10 scale-95'
+                }`}
+              />
+
+              {/* Character Avatar Frame */}
+              <div className="relative w-44 h-44 sm:w-52 sm:h-52 rounded-full p-1 bg-gradient-to-b from-amber-400/80 via-amber-600/40 to-stone-800 shadow-[0_0_35px_rgba(245,158,11,0.25)]">
+                <div className="w-full h-full rounded-full overflow-hidden relative bg-stone-950 border-2 border-stone-900">
+                  {/* Base Character Image */}
+                  <img
+                    src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400&q=80"
+                    alt="Coach Neha"
+                    referrerPolicy="no-referrer"
+                    className="w-full h-full object-cover object-top filter brightness-[1.02] contrast-[1.05]"
+                  />
+
+                  {/* Character Lip-Movement Simulation Overlay */}
+                  {isDebriefSpeaking && (
+                    <div
+                      className="absolute inset-0 pointer-events-none flex items-center justify-center"
+                      style={{ transform: 'translateY(16%)' }}
+                    >
+                      {/* Realistic dynamic mouth lip-shape modulation */}
+                      <div className="relative flex items-center justify-center">
+                        <span className="w-5 h-2.5 bg-[#8b3a3a] rounded-full opacity-90 animate-ping [animation-duration:450ms]" />
+                        <span className="absolute w-4 h-2 bg-[#702e2e] rounded-full animate-pulse [animation-duration:320ms]" />
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Gentle subtle speaking breathing/nod movement */}
+                  {isDebriefSpeaking && (
+                    <div className="absolute inset-0 pointer-events-none border-2 border-amber-400/20 rounded-full animate-pulse [animation-duration:900ms]" />
+                  )}
+                </div>
+
+                {/* Speaker Floating Pulse Indicator */}
+                <button
+                  onClick={toggleDebriefSpeech}
+                  className="absolute bottom-1 right-2 w-10 h-10 rounded-full bg-amber-500 hover:bg-amber-400 text-stone-950 flex items-center justify-center border-2 border-stone-950 shadow-lg cursor-pointer transition-transform hover:scale-105 active:scale-95"
+                  title={isDebriefSpeaking ? 'Pause voice' : 'Replay voice'}
+                >
+                  {isDebriefSpeaking ? (
+                    <Volume2 className="w-5 h-5 animate-pulse" />
+                  ) : (
+                    <VolumeX className="w-5 h-5" />
+                  )}
+                </button>
+              </div>
+            </div>
+
+            {/* Speaking Status / Greeting Title Only (NO written script) */}
+            <div className="space-y-1.5">
+              <h2 className="text-xl sm:text-2xl font-bold text-white tracking-tight">
+                {greetingData.enGreeting}
+              </h2>
+
+              {isDebriefSpeaking ? (
+                <div className="flex items-center justify-center gap-1.5 text-amber-400 font-medium text-xs">
+                  <div className="flex items-center gap-1">
+                    <span className="w-1 h-3 bg-amber-400 rounded-full animate-bounce [animation-delay:-0.3s]" />
+                    <span className="w-1 h-4 bg-amber-400 rounded-full animate-bounce [animation-delay:-0.15s]" />
+                    <span className="w-1 h-2.5 bg-amber-400 rounded-full animate-bounce" />
+                  </div>
+                  <span>Coach Neha is speaking...</span>
+                </div>
+              ) : debriefCompleted ? (
+                <p className="text-xs text-emerald-400 font-medium flex items-center justify-center gap-1">
+                  <CheckCircle2 className="w-3.5 h-3.5" />
+                  <span>Routine briefing completed</span>
+                </p>
+              ) : (
+                <button
+                  onClick={playDebriefSpeech}
+                  className="text-xs text-stone-400 hover:text-amber-400 transition-colors inline-flex items-center gap-1 cursor-pointer"
+                >
+                  <Volume2 className="w-3.5 h-3.5" />
+                  <span>Tap to listen in Hindi</span>
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* Bottom Action Section: Continue Button activates when she completes */}
+          <div className="mt-4 space-y-2">
+            {debriefCompleted || !isDebriefSpeaking ? (
+              <motion.button
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={handleStartWarmupFromDebrief}
+                className="w-full py-3.5 px-6 rounded-full bg-amber-500 hover:bg-amber-400 text-stone-950 font-bold text-sm uppercase tracking-wider shadow-[0_4px_24px_rgba(245,158,11,0.35)] flex items-center justify-center gap-2 cursor-pointer transition-all"
+              >
+                <span>Continue</span>
+                <ArrowRight className="w-4 h-4" />
+              </motion.button>
+            ) : (
+              /* While speaking: show listening status and skip option */
+              <div className="space-y-2">
+                <button
+                  onClick={handleSkipDebrief}
+                  className="w-full py-3 px-6 rounded-full bg-stone-900/90 hover:bg-stone-800 text-stone-300 hover:text-white border border-stone-800 text-xs font-semibold tracking-wide transition-all cursor-pointer flex items-center justify-center gap-2"
+                >
+                  <span>Skip & Continue to Question 1</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* STAGE 1: QUESTION CARDS (Screenshots 1, 2, 3) */}
       {stage === 'QUESTION' && (
