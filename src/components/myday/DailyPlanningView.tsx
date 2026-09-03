@@ -20,6 +20,7 @@ import {
   PlaygroundPlan,
   getPlaygroundData,
 } from '../../utils/playgroundManager';
+import { ReminderSetupModal } from './ReminderSetupModal';
 
 interface DailyPlanningViewProps {
   onPlanCreated: () => void;
@@ -43,6 +44,9 @@ export const DailyPlanningView: React.FC<DailyPlanningViewProps> = ({
   const [bytesCount, setBytesCount] = useState<number>(currentDailyPlan.bytesTargetCount || 2);
   const [rockRollCount, setRockRollCount] = useState<number>(currentDailyPlan.rockRollTargetCount || 1);
 
+  // Reminder prompt step after plan submission
+  const [showReminderPrompt, setShowReminderPrompt] = useState(false);
+
   const totalActivities = buddyCount + bytesCount + rockRollCount;
 
   const handleSubmitPlan = () => {
@@ -59,7 +63,17 @@ export const DailyPlanningView: React.FC<DailyPlanningViewProps> = ({
       planConfirmed: true,
     });
 
-    // Close window / finish planning
+    // Directly open the Reminder prompt step
+    setShowReminderPrompt(true);
+  };
+
+  const handleReminderDone = () => {
+    setShowReminderPrompt(false);
+    onPlanCreated();
+  };
+
+  const handleReminderSkip = () => {
+    setShowReminderPrompt(false);
     onPlanCreated();
   };
 
@@ -307,6 +321,14 @@ export const DailyPlanningView: React.FC<DailyPlanningViewProps> = ({
           </button>
         </div>
       </div>
+
+      {/* Reminder Setup Modal */}
+      {showReminderPrompt && (
+        <ReminderSetupModal
+          onComplete={handleReminderDone}
+          onSkip={handleReminderSkip}
+        />
+      )}
     </div>
   );
 };

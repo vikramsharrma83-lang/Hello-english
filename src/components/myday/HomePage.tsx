@@ -16,10 +16,17 @@ import {
   MapPin,
   ChevronRight,
   Gamepad2,
+  Bell,
 } from 'lucide-react';
 import { ConversationTurn, PracticeHistoryItem, DayMap, UserProgress } from '../../types';
 import { getTranslation } from '../../lib/translations';
 import { isPlaygroundActiveAndIncomplete, getPlaygroundData } from '../../utils/playgroundManager';
+import {
+  DailyReminder,
+  getTodayReminders,
+  saveTodayReminders,
+  triggerSystemNotification,
+} from '../../utils/reminderManager';
 
 interface HomePageProps {
   onStart: () => void;
@@ -55,10 +62,51 @@ export const HomePage: React.FC<HomePageProps> = ({
   const [showActionMenu, setShowActionMenu] = useState(false);
   const [showStatsDrawer, setShowStatsDrawer] = useState(false);
   const [hasIncompletePlayground, setHasIncompletePlayground] = useState<boolean>(() => isPlaygroundActiveAndIncomplete());
-  const hasConfirmedPlayground = getPlaygroundData().planConfirmed;
+  const [hasConfirmedPlayground, setHasConfirmedPlayground] = useState<boolean>(() => getPlaygroundData().planConfirmed);
+  const playgroundData = getPlaygroundData();
+
+  // Due reminder banner state
+  const [activeDueReminder, setActiveDueReminder] = useState<DailyReminder | null>(null);
 
   useEffect(() => {
     setHasIncompletePlayground(isPlaygroundActiveAndIncomplete());
+    setHasConfirmedPlayground(getPlaygroundData().planConfirmed);
+
+    // Interval to check due reminders and trigger notification
+    const checkReminders = () => {
+      const reminders = getTodayReminders();
+      const now = Date.now();
+      let triggeredAny = false;
+
+      const updated = reminders.map((rem) => {
+        if (rem.enabled && !rem.triggered && now >= rem.targetTimestamp) {
+          triggerSystemNotification(rem);
+          triggeredAny = true;
+          return { ...rem, triggered: true };
+        }
+        return rem;
+      });
+
+      if (triggeredAny) {
+        saveTodayReminders(updated);
+      }
+
+      // Show banner if a reminder is active and within 2 hours
+      const due = updated.find(
+        (r) => r.enabled && r.triggered && now - r.targetTimestamp < 2 * 60 * 60 * 1000
+      );
+      setActiveDueReminder(due || null);
+    };
+
+    checkReminders();
+    const interval = setInterval(checkReminders, 10000); // Check every 10s
+    window.addEventListener('reminder-updated', checkReminders);
+    window.addEventListener('storage', checkReminders);
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener('reminder-updated', checkReminders);
+      window.removeEventListener('storage', checkReminders);
+    };
   }, []);
 
   useEffect(() => {
@@ -74,6 +122,99 @@ export const HomePage: React.FC<HomePageProps> = ({
 
   return (
     <div className="w-full flex-1 flex flex-col justify-between text-slate-100 min-h-screen relative overflow-hidden bg-[#0a0c10] select-none">
+      {/* Apple Glass Reminder Notification Banner (Floats over the screen, never shifts layout) */}
+      <AnimatePresence>
+        {activeDueReminder && (
+          <div className="fixed top-4 sm:top-5 inset-x-0 z-50 flex justify-center px-4 pointer-events-none">
+            <motion.div
+              drag="y"
+              dragConstraints={{ top: -100, bottom: 0 }}
+              dragElastic={0.2}
+              onDragEnd={(_, info) => {
+                if (info.offset.y < -25) {
+                  setActiveDueReminder(null);
+                }
+              }}
+              initial={{ opacity: 0, y: -50, scale: 0.94 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -40, scale: 0.94 }}
+              transition={{ type: 'spring', damping: 26, stiffness: 320 }}
+              className="w-full max-w-[390px] rounded-[24px] bg-white/85 dark:bg-[#1c1d22]/85 backdrop-blur-2xl border border-white/60 dark:border-white/15 shadow-[0_20px_45px_rgba(0,0,0,0.45),0_1px_2px_rgba(0,0,0,0.2)] p-3.5 sm:p-4 pointer-events-auto text-zinc-900 dark:text-white select-none"
+            >
+              {/* Header row: Apple Glass Icon (Blue) + App Name + Time */}
+              <div className="flex items-center justify-between gap-2 mb-2">
+                <div className="flex items-center gap-2">
+                  {/* Apple Glass Blue Icon */}
+                  <div className="relative w-6 h-6 rounded-[7px] bg-gradient-to-b from-[#38a0ff] via-[#007aff] to-[#0051d5] shadow-[inset_0_1px_1px_rgba(255,255,255,0.7),0_2px_5px_rgba(0,113,227,0.35)] flex items-center justify-center overflow-hidden shrink-0">
+                    {/* Top glass reflection arc */}
+                    <div className="absolute inset-x-0 top-0 h-[45%] bg-gradient-to-b from-white/40 to-transparent pointer-events-none" />
+                    <Bell className="w-3.5 h-3.5 text-white drop-shadow-[0_1px_1px_rgba(0,0,0,0.3)] relative z-10" />
+                  </div>
+                  <span className="text-[11px] font-semibold text-zinc-600 dark:text-zinc-300 tracking-wider uppercase">
+                    HELLO ENGLISH
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-1.5">
+                  <span className="text-[11px] font-normal text-zinc-400 dark:text-zinc-500">
+                    now
+                  </span>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setActiveDueReminder(null);
+                    }}
+                    className="p-1 rounded-full text-zinc-400 hover:text-zinc-700 dark:hover:text-white transition-colors cursor-pointer"
+                    title="Dismiss"
+                    aria-label="Dismiss notification"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Notification Body (Exact requested text & items) */}
+              <div
+                onClick={onStart}
+                className="cursor-pointer"
+              >
+                <h4 className="text-[14px] sm:text-[15px] font-semibold text-zinc-900 dark:text-white tracking-tight leading-snug">
+                  Your reminder is here
+                </h4>
+                <p className="text-[12.5px] sm:text-[13px] text-zinc-600 dark:text-zinc-200 mt-0.5 leading-snug">
+                  You planned to practise at {activeDueReminder.timeStr}.
+                </p>
+                {hasIncompletePlayground && (
+                  <p className="text-[11.5px] sm:text-[12px] text-sky-600 dark:text-sky-300 mt-1 font-medium">
+                    You have activities waiting in your Playground.
+                  </p>
+                )}
+              </div>
+
+              {/* Action Buttons */}
+              <div className="mt-3 flex items-center justify-between gap-2 pt-2.5 border-t border-zinc-200/60 dark:border-white/10">
+                <button
+                  onClick={onStart}
+                  className="px-3.5 py-1.5 rounded-full bg-[#0071e3] hover:bg-[#0077ed] text-white font-medium text-xs transition-transform active:scale-95 flex items-center gap-1.5 cursor-pointer shadow-sm shadow-blue-500/25"
+                >
+                  <span>Continue Playing</span>
+                  <ArrowRight className="w-3 h-3" />
+                </button>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setActiveDueReminder(null);
+                  }}
+                  className="px-2.5 py-1.5 rounded-full text-zinc-500 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-white text-xs font-medium cursor-pointer transition-colors"
+                >
+                  Dismiss
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
       {/* 1. Full-Bleed Dark Atmospheric Background with Headphones & Ambient Glow Pins */}
       <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
         {/* Cinematic dark desk & headphones photography */}
@@ -301,21 +442,39 @@ export const HomePage: React.FC<HomePageProps> = ({
             onClick={onStart}
             whileHover={{ scale: 1.04, y: -2 }}
             whileTap={{ scale: 0.96 }}
-            className="inline-flex items-center gap-3 px-6 py-3.5 rounded-full bg-[#181a20]/90 hover:bg-[#20232b] border border-amber-500/40 hover:border-amber-400 text-white font-semibold text-sm sm:text-base shadow-2xl transition-all cursor-pointer backdrop-blur-xl group shadow-black/80 relative"
+            className={`inline-flex items-center gap-3 px-6 py-3.5 rounded-full font-semibold text-sm sm:text-base shadow-2xl transition-all cursor-pointer backdrop-blur-xl group shadow-black/80 relative ${
+              hasConfirmedPlayground
+                ? 'bg-emerald-950/85 hover:bg-emerald-900/90 border border-emerald-500/80 hover:border-emerald-400 text-emerald-100 shadow-[0_0_25px_rgba(16,185,129,0.3)]'
+                : 'bg-[#181a20]/90 hover:bg-[#20232b] border border-amber-500/40 hover:border-amber-400 text-white'
+            }`}
           >
             <div className="relative flex items-center justify-center">
-              <Sparkles className="w-4 h-4 text-amber-400 fill-amber-400 drop-shadow-[0_0_6px_rgba(245,158,11,0.8)]" />
+              <Sparkles
+                className={`w-4 h-4 transition-colors ${
+                  hasConfirmedPlayground
+                    ? 'text-emerald-400 fill-emerald-400 drop-shadow-[0_0_6px_rgba(16,185,129,0.8)]'
+                    : 'text-amber-400 fill-amber-400 drop-shadow-[0_0_6px_rgba(245,158,11,0.8)]'
+                }`}
+              />
               {hasIncompletePlayground && (
                 <span 
-                  className="absolute -top-1.5 -right-1.5 w-2.5 h-2.5 rounded-full bg-rose-500 ring-2 ring-[#181a20] shadow-[0_0_8px_rgba(244,63,94,0.95)] animate-pulse" 
-                  title="Daily Playground incomplete"
+                  className={`absolute -top-1.5 -right-1.5 w-2.5 h-2.5 rounded-full animate-pulse ${
+                    hasConfirmedPlayground
+                      ? 'bg-emerald-400 ring-2 ring-emerald-950 shadow-[0_0_8px_rgba(52,211,153,0.95)]'
+                      : 'bg-rose-500 ring-2 ring-[#181a20] shadow-[0_0_8px_rgba(244,63,94,0.95)]'
+                  }`} 
+                  title="Daily Playground"
                 />
               )}
             </div>
             <span className="tracking-wide">
               {language === 'hi' ? 'Din ki suruat' : 'Start My Day'}
             </span>
-            <ArrowRight className="w-4 h-4 text-amber-400 group-hover:translate-x-1 transition-transform" />
+            <ArrowRight
+              className={`w-4 h-4 group-hover:translate-x-1 transition-transform ${
+                hasConfirmedPlayground ? 'text-emerald-400' : 'text-amber-400'
+              }`}
+            />
           </motion.button>
         </div>
       </div>

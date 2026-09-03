@@ -22,6 +22,7 @@ import {
   SheekoJourney,
   PlaygroundPlan,
 } from '../../utils/playgroundManager';
+import { PlaygroundRemindersWidget } from './PlaygroundRemindersWidget';
 
 interface PlaygroundViewProps {
   onExit: () => void;
@@ -368,6 +369,9 @@ export const PlaygroundView: React.FC<PlaygroundViewProps> = ({
               );
             })()}
           </div>
+
+          {/* Today's Reminders Management Widget */}
+          <PlaygroundRemindersWidget />
         </div>
 
         {/* Footer info note */}

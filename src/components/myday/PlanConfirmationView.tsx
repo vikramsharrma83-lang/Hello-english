@@ -14,6 +14,8 @@ import {
   SheekoJourney,
   PlaygroundPlan,
 } from '../../utils/playgroundManager';
+import { getTodayReminders } from '../../utils/reminderManager';
+import { Bell } from 'lucide-react';
 
 interface PlanConfirmationViewProps {
   onGoToPlayground: () => void;
@@ -24,6 +26,7 @@ export const PlanConfirmationView: React.FC<PlanConfirmationViewProps> = ({
 }) => {
   const journey: SheekoJourney | null = getSheekoJourney();
   const plan: PlaygroundPlan = getPlaygroundData();
+  const reminders = getTodayReminders();
 
   const journeyLength = journey ? journey.journeyLength : 3;
   const currentDay = journey ? journey.currentDay : 1;
@@ -45,18 +48,48 @@ export const PlanConfirmationView: React.FC<PlanConfirmationViewProps> = ({
       {/* Main Content Container */}
       <div className="w-full flex-1 flex flex-col justify-between px-5 pt-8 pb-8 relative z-10 max-w-[440px] mx-auto min-h-screen">
         <div>
-          {/* Top Status Header */}
+          {/* Top Status Header: "Your plan is ready!" */}
           <div className="flex items-center gap-3 mb-6 pb-4 border-b border-zinc-800/80">
             <div className="w-10 h-10 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 shrink-0">
               <CheckCircle2 className="w-5 h-5" />
             </div>
             <div>
               <h1 className="text-base font-semibold text-white tracking-tight">
-                Your Playground is Created!
+                Your plan is ready!
               </h1>
               <p className="text-xs text-zinc-400 mt-0.5">
                 Whenever you want, come here, play, and complete your tasks.
               </p>
+            </div>
+          </div>
+
+          {/* Quick Metrics Bar: Today's Activities | Sheeko | Reminders */}
+          <div className="grid grid-cols-3 gap-2 mb-4">
+            <div className="bg-zinc-900/90 border border-zinc-800 rounded-xl p-2.5 text-center">
+              <span className="text-[10px] text-zinc-400 uppercase tracking-wide block">
+                Today's Activities
+              </span>
+              <span className="text-sm font-bold text-amber-400 mt-0.5 block">
+                {totalActivities}
+              </span>
+            </div>
+
+            <div className="bg-zinc-900/90 border border-zinc-800 rounded-xl p-2.5 text-center">
+              <span className="text-[10px] text-zinc-400 uppercase tracking-wide block">
+                Sheeko Journey
+              </span>
+              <span className="text-sm font-bold text-white mt-0.5 block">
+                Day {currentDay} of {journeyLength}
+              </span>
+            </div>
+
+            <div className="bg-zinc-900/90 border border-zinc-800 rounded-xl p-2.5 text-center">
+              <span className="text-[10px] text-zinc-400 uppercase tracking-wide block">
+                Reminders
+              </span>
+              <span className="text-sm font-bold text-emerald-400 mt-0.5 block">
+                {reminders.length} set
+              </span>
             </div>
           </div>
 

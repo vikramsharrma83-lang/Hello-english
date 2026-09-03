@@ -415,7 +415,14 @@ export const MyDayView: React.FC<MyDayViewProps> = ({
         {step === '1_HOME' && (
           <HomePage
             onStart={() => {
-              setStep('START_MY_DAY_WARMUP');
+              const plan = getPlaygroundData();
+              if (plan.planConfirmed) {
+                setStep('PLAYGROUND');
+              } else if (isStartMyDayDoneToday()) {
+                setStep('DAILY_PLANNING');
+              } else {
+                setStep('START_MY_DAY_WARMUP');
+              }
             }}
             onOpenPlayground={() => {
               setStep('PLAYGROUND');
