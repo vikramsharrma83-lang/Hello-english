@@ -1369,6 +1369,7 @@ app.post("/api/tts", async (req, res) => {
       return res.json({
         success: true,
         audioData: `data:audio/wav;base64,${data.audios[0]}`,
+        audioBase64: data.audios[0],
       });
     }
 

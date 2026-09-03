@@ -1,0 +1,74 @@
+{
+  "industry": "Supply Chain",
+  "bucketId": "qc_damaged_missing",
+  "theme": "📦 DAMAGED / MISSING",
+  "themeDescription": "Leaking milk, crushed bread & missing items",
+  "challenges": [
+    {
+      "id": "QC-DMG-01",
+      "industry": "Supply Chain",
+      "bucketId": "qc_damaged_missing",
+      "title": "Milk packet leaked and soaked bakery items in grocery bag",
+      "shortDescription": "Handle an angry shopper who opened delivery bag to find punctured milk pouch and ruined bread.",
+      "staffRole": "quality & logistics associate",
+      "guestRole": "frustrated customer",
+      "mission": "Express immediate sincere regret, verify damaged items via quick photo or order id, and trigger instant replacement or full credit.",
+      "scenarioContext": {
+        "startingSituation": "I just took the bag from your delivery boy, and milk was leaking everywhere! My bread and eggs are completely ruined. What kind of packing is this?"
+      },
+      "guestProfile": {
+        "personality": "irritated and disgusted",
+        "approximateAgeGroup": "adult 20–55",
+        "communicationStyle": "sharp, expressive",
+        "emotionalState": "annoyed",
+        "whatTheGuestCaresAboutMost": "clean replacement or instant refund without return hassle"
+      },
+      "levels": {
+        "level1": {
+          "name": "HANDLE",
+          "customerMood": "irritated",
+          "resistance": "medium",
+          "pressure": "high",
+          "guestBehaviour": "Demands why dairy and bakery are packed together without separator bag.",
+          "hiddenObjectives": ["Apologize for packing failure", "Process instant ₹180 wallet refund", "Log packer coaching ticket"],
+          "possibleSolutions": ["Instant wallet credit in 60 seconds", "Express re-order dispatch with dedicated packaging"],
+          "acceptableOutcomes": ["CUSTOMER_HAPPY", "CUSTOMER_ACCEPTED"],
+          "unacceptablePromises": ["Do not ask customer to clean and return leaking milk pouch."]
+        }
+      }
+    },
+    {
+      "id": "QC-DMG-02",
+      "industry": "Supply Chain",
+      "bucketId": "qc_damaged_missing",
+      "title": "Essential item missing from sealed 10-minute grocery bag",
+      "shortDescription": "Resolve an issue where a 1kg basmati rice bag was billed but omitted during dark store bag sealing.",
+      "staffRole": "dark store inventory auditor",
+      "guestRole": "dinner host",
+      "mission": "Verify picking invoice, apologize for the missing staple, and initiate immediate separate courier bike dispatch.",
+      "scenarioContext": {
+        "startingSituation": "Hello, I checked my delivery bag and the 1kg Basmati rice packet is missing, but it is charged on my invoice. My guests are arriving in 20 minutes!"
+      },
+      "guestProfile": {
+        "personality": "anxious host",
+        "approximateAgeGroup": "adult 28–50",
+        "communicationStyle": "direct and time-conscious",
+        "emotionalState": "stressed",
+        "whatTheGuestCaresAboutMost": "getting the rice delivered right now"
+      },
+      "levels": {
+        "level1": {
+          "name": "HANDLE",
+          "customerMood": "stressed",
+          "resistance": "medium",
+          "pressure": "high",
+          "guestBehaviour": "Explains that refund alone won't solve tonight's dinner; needs item delivered immediately.",
+          "hiddenObjectives": ["Verify invoice line item", "Arrange emergency priority runner", "Confirm 8-minute delivery"],
+          "possibleSolutions": ["Emergency hot-dispatch runner", "Immediate full item refund plus compensation voucher"],
+          "acceptableOutcomes": ["CUSTOMER_HAPPY", "CUSTOMER_ACCEPTED"],
+          "unacceptablePromises": ["Do not tell customer to wait 24 hours for internal investigation."]
+        }
+      }
+    }
+  ]
+}

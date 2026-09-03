@@ -81,7 +81,8 @@ const ThemeCard: React.FC<ThemeCardProps> = ({ theme, onSelect }) => {
 export const RetailDashboardView: React.FC<{
   onBack: () => void;
   onSelectTheme: (theme: any) => void;
-}> = ({ onBack, onSelectTheme }) => {
+  onChangeProfile?: () => void;
+}> = ({ onBack, onSelectTheme, onChangeProfile }) => {
   const data = [
     retailGussa,
     retailSamjho,
@@ -99,13 +100,23 @@ export const RetailDashboardView: React.FC<{
 
       <div className="relative z-10 flex flex-col w-full">
         <div className="flex justify-between items-center mb-5">
-          <button
-            onClick={onBack}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-zinc-900/85 backdrop-blur-md border border-white/10 rounded-full text-zinc-300 hover:text-white text-xs font-medium cursor-pointer transition-colors"
-          >
-            <ArrowLeft className="w-3.5 h-3.5" />
-            <span>Back</span>
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={onBack}
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-zinc-900/85 backdrop-blur-md border border-white/10 rounded-full text-zinc-300 hover:text-white text-xs font-medium cursor-pointer transition-colors"
+            >
+              <ArrowLeft className="w-3.5 h-3.5" />
+              <span>Back</span>
+            </button>
+            {onChangeProfile && (
+              <button
+                onClick={onChangeProfile}
+                className="flex items-center gap-1 px-3 py-1.5 bg-zinc-900/85 backdrop-blur-md border border-white/10 rounded-full text-zinc-300 hover:text-white text-xs font-medium cursor-pointer transition-colors"
+              >
+                <span>Tracks</span>
+              </button>
+            )}
+          </div>
         </div>
 
         <div className="mb-5">

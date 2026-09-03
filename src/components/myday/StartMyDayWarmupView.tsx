@@ -16,6 +16,7 @@ import {
 import { markStartMyDayDoneToday } from '../../utils/playgroundManager';
 import { PRACTICE_QUESTIONS } from '../../data/questions';
 import { Question } from '../../types';
+import { speakText as audioSpeakText, stopSpeaking } from '../../utils/audio';
 
 interface WarmUpQuestion {
   id: string;
@@ -123,48 +124,17 @@ export const StartMyDayWarmupView: React.FC<StartMyDayWarmupViewProps> = ({
       if (recognitionRef.current) {
         try { recognitionRef.current.abort(); } catch (e) {}
       }
-      if (audioRef.current) {
-        audioRef.current.pause();
-      }
+      stopSpeaking();
     };
   }, [currentIndex]);
 
   const speakText = async (text: string) => {
     if (!text) return;
-    try {
-      setIsAudioPlaying(true);
-      const response = await fetch('/api/tts', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text }),
-      });
-      const data = await response.json();
-      if (data.audioBase64) {
-        const audio = new Audio(`data:audio/mp3;base64,${data.audioBase64}`);
-        audioRef.current = audio;
-        audio.onended = () => setIsAudioPlaying(false);
-        audio.onerror = () => fallbackSpeak(text);
-        await audio.play();
-      } else {
-        fallbackSpeak(text);
-      }
-    } catch (e) {
-      fallbackSpeak(text);
-    }
-  };
-
-  const fallbackSpeak = (text: string) => {
-    if ('speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = 'en-IN';
-      utterance.rate = 0.95;
-      utterance.onend = () => setIsAudioPlaying(false);
-      utterance.onerror = () => setIsAudioPlaying(false);
-      window.speechSynthesis.speak(utterance);
-    } else {
+    setIsAudioPlaying(true);
+    const isHindi = /[\u0900-\u097F]/.test(text);
+    await audioSpeakText(text, isHindi ? 'hi-IN' : 'en-IN', 0.93, () => {
       setIsAudioPlaying(false);
-    }
+    });
   };
 
   const toggleRecording = () => {

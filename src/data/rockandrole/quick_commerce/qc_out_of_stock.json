@@ -1,0 +1,41 @@
+{
+  "industry": "Supply Chain",
+  "bucketId": "qc_out_of_stock",
+  "theme": "🔄 STOCKOUT & REPLACEMENT",
+  "themeDescription": "Dark store stockouts, item substitutions & inventory sync",
+  "challenges": [
+    {
+      "id": "QC-OOS-01",
+      "industry": "Supply Chain",
+      "bucketId": "qc_out_of_stock",
+      "title": "Favorite coffee brand went out of stock during active checkout",
+      "shortDescription": "Negotiate an agreeable premium replacement for a morning coffee lover whose selection ran out at local micro-fulfillment center.",
+      "staffRole": "dark store inventory representative",
+      "guestRole": "caffeine-deprived customer",
+      "mission": "Suggest equivalent roast, offer complimentary upgrade difference, or split dispatch from neighboring dark store.",
+      "scenarioContext": {
+        "startingSituation": "I specifically chose your app because it showed 4 jars of Colombian roast in stock. Right after payment, you texted me saying it's out of stock! My morning is ruined."
+      },
+      "guestProfile": {
+        "personality": "particular and irritable without morning coffee",
+        "approximateAgeGroup": "adult 24–45",
+        "communicationStyle": "sharp and impatient",
+        "emotionalState": "cranky",
+        "whatTheGuestCaresAboutMost": "getting quality coffee delivered immediately"
+      },
+      "levels": {
+        "level1": {
+          "name": "HANDLE",
+          "customerMood": "cranky",
+          "resistance": "medium",
+          "pressure": "moderate",
+          "guestBehaviour": "Reluctant to accept generic chicory blend substitute.",
+          "hiddenObjectives": ["Offer equal or superior single-origin alternative", "Waive price difference", "Dispatch on express bike"],
+          "possibleSolutions": ["Free premium brand upgrade", "Inter-store transfer within 20 mins"],
+          "acceptableOutcomes": ["CUSTOMER_HAPPY", "CUSTOMER_ACCEPTED"],
+          "unacceptablePromises": ["Do not substitute without customer approval."]
+        }
+      }
+    }
+  ]
+}

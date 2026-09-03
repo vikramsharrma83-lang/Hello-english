@@ -14,6 +14,7 @@ import {
   Volume2
 } from 'lucide-react';
 import { DottedWaveBackground } from './DottedWaveBackground';
+import { getBestFemaleVoice } from '../utils/audio';
 
 interface AppPurposeScreenProps {
   onContinue: () => void;
@@ -92,47 +93,7 @@ export const AppPurposeScreen: React.FC<AppPurposeScreenProps> = ({ onContinue, 
   };
 
   const getBestVoice = useCallback(() => {
-    if (typeof window === 'undefined' || !('speechSynthesis' in window)) return null;
-    const voices = window.speechSynthesis.getVoices();
-    if (!voices || voices.length === 0) return null;
-
-    // 1. Prefer Hindi voice
-    const hindiVoice = voices.find(
-      (v) =>
-        v.lang === 'hi-IN' ||
-        v.lang.startsWith('hi') ||
-        v.name.toLowerCase().includes('hindi') ||
-        v.name.toLowerCase().includes('swara') ||
-        v.name.toLowerCase().includes('madhur') ||
-        v.name.toLowerCase().includes('kalpana') ||
-        v.name.toLowerCase().includes('hemant')
-    );
-    if (hindiVoice) return hindiVoice;
-
-    // 2. Prefer Indian English voice
-    const indianVoice = voices.find(
-      (v) =>
-        v.lang === 'en-IN' ||
-        v.name.toLowerCase().includes('india') ||
-        v.name.toLowerCase().includes('indian') ||
-        v.name.toLowerCase().includes('heera') ||
-        v.name.toLowerCase().includes('ravi') ||
-        v.name.toLowerCase().includes('neha') ||
-        v.name.toLowerCase().includes('priya')
-    );
-    if (indianVoice) return indianVoice;
-
-    // 3. Fallback to any natural or English voice
-    return (
-      voices.find(
-        (v) =>
-          v.lang.startsWith('en') &&
-          (v.name.toLowerCase().includes('natural') ||
-            v.name.toLowerCase().includes('female') ||
-            v.name.toLowerCase().includes('google') ||
-            v.name.toLowerCase().includes('samantha'))
-      ) || voices[0] || null
-    );
+    return getBestFemaleVoice('hi-IN');
   }, []);
 
   const playSegment = useCallback((index: number) => {
@@ -162,8 +123,8 @@ export const AppPurposeScreen: React.FC<AppPurposeScreenProps> = ({ onContinue, 
 
     const utterance = new SpeechSynthesisUtterance(segment.text);
     utterance.lang = 'hi-IN';
-    utterance.rate = 0.94; // Clear, comfortable conversational cadence
-    utterance.pitch = 1.02; // Warm and friendly tone
+    utterance.rate = 0.93; // Clear, comfortable instructional cadence
+    utterance.pitch = 1.08; // Warm, natural feminine pitch (no male timbre)
 
     const voice = getBestVoice();
     if (voice) utterance.voice = voice;

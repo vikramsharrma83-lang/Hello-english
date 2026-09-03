@@ -5,9 +5,10 @@ import { DottedWaveBackground } from '../components/DottedWaveBackground';
 export const RockAndRollProfilesView: React.FC<{ 
   onSelectHospitality: () => void; 
   onSelectRetail: () => void;
+  onSelectSupplyChain: () => void;
   onSelectDummy: (profileName: string) => void; 
   onBack: () => void 
-}> = ({ onSelectHospitality, onSelectRetail, onSelectDummy, onBack }) => {
+}> = ({ onSelectHospitality, onSelectRetail, onSelectSupplyChain, onSelectDummy, onBack }) => {
   const profiles = [
     {
       id: 'Hospitality',
@@ -25,7 +26,7 @@ export const RockAndRollProfilesView: React.FC<{
       id: 'Supply Chain',
       name: 'Supply Chain',
       image: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=600&auto=format&fit=crop&q=80',
-      action: 'dummy'
+      action: 'supply-chain'
     },
     {
       id: 'Services',
@@ -40,6 +41,8 @@ export const RockAndRollProfilesView: React.FC<{
       onSelectHospitality();
     } else if (profile.action === 'retail') {
       onSelectRetail();
+    } else if (profile.action === 'supply-chain') {
+      onSelectSupplyChain();
     } else {
       onSelectDummy(profile.name);
     }

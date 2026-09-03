@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { Question } from '../types';
 import { PRACTICE_QUESTIONS } from '../data/questions';
+import { speakText } from '../utils/audio';
 
 interface CourseViewProps {
   onStartPractice: (question?: Question) => void;
@@ -275,8 +276,7 @@ export const CourseView: React.FC<CourseViewProps> = ({ onStartPractice }) => {
               <div className="flex items-center justify-center gap-3 mb-6">
                 <button 
                   onClick={() => {
-                    const utterance = new SpeechSynthesisUtterance(activeSubModule.sentences[cardIndex].english);
-                    window.speechSynthesis.speak(utterance);
+                    speakText(activeSubModule.sentences[cardIndex].english, 'en-IN', 0.92);
                   }}
                   className="px-5 py-3 rounded-2xl bg-zinc-900 border border-zinc-700 text-white text-xs font-bold flex items-center gap-2 hover:bg-zinc-800 transition-all cursor-pointer shadow"
                 >

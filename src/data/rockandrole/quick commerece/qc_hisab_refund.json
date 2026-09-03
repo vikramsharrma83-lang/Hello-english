@@ -1,0 +1,74 @@
+{
+  "industry": "Supply Chain",
+  "bucketId": "qc_hisab_refund",
+  "theme": "💳 BILLING & REFUND",
+  "themeDescription": "Double UPI charges, surge fee disputes & bank settlement delays",
+  "challenges": [
+    {
+      "id": "QC-HISAB-01",
+      "industry": "Supply Chain",
+      "bucketId": "qc_hisab_refund",
+      "title": "Double deduction on Google Pay for 10-minute order",
+      "shortDescription": "De-escalate an anxious customer whose bank account was debited ₹640 twice due to a payment gateway timeout.",
+      "staffRole": "payments & settlement escalation officer",
+      "guestRole": "alarmed young customer",
+      "mission": "Verify gateway RRN number, reassure customer with clear RBI reversal timeline, and credit instant app wallet balance if requested.",
+      "scenarioContext": {
+        "startingSituation": "Your app crashed while processing my payment, but ₹640 got deducted twice from my HDFC bank account! I only received one order. Where is my other ₹640?"
+      },
+      "guestProfile": {
+        "personality": "financially cautious and panicky",
+        "approximateAgeGroup": "adult 20–35",
+        "communicationStyle": "anxious and insistent",
+        "emotionalState": "panicked",
+        "whatTheGuestCaresAboutMost": "getting their money safely back into their bank"
+      },
+      "levels": {
+        "level1": {
+          "name": "HANDLE",
+          "customerMood": "panicked",
+          "resistance": "medium",
+          "pressure": "high",
+          "guestBehaviour": "Fears having been scammed by app glitch.",
+          "hiddenObjectives": ["Confirm 1st order active and 2nd transaction auto-voided", "Provide bank reference UTR number", "Explain 2-4 hour auto-refund cycle"],
+          "possibleSolutions": ["Provide official bank reversal UTR number", "Offer instant app wallet credit if they don't want to wait for bank"],
+          "acceptableOutcomes": ["CUSTOMER_HAPPY", "CUSTOMER_ACCEPTED"],
+          "unacceptablePromises": ["Do not claim instant bank account deposit if inter-bank NEFT/IMPS takes hours."]
+        }
+      }
+    },
+    {
+      "id": "QC-HISAB-02",
+      "industry": "Supply Chain",
+      "bucketId": "qc_hisab_refund",
+      "title": "Dispute over unannounced rain surge delivery fee",
+      "shortDescription": "Explain sudden ₹45 bad-weather delivery partner surcharge on a midnight order.",
+      "staffRole": "pricing transparency associate",
+      "guestRole": "price-conscious shopper",
+      "mission": "Transparently explain rider safety incentive during monsoon downpour while preserving customer trust.",
+      "scenarioContext": {
+        "startingSituation": "Why is there an extra ₹45 added to my bill as 'Rain Surge'? It is barely drizzling outside! This is pure price gouging."
+      },
+      "guestProfile": {
+        "personality": "argumentative and skeptical",
+        "approximateAgeGroup": "adult 25–50",
+        "communicationStyle": "confrontational",
+        "emotionalState": "skeptical",
+        "whatTheGuestCaresAboutMost": "fair pricing and knowing where the extra money goes"
+      },
+      "levels": {
+        "level1": {
+          "name": "HANDLE",
+          "customerMood": "skeptical",
+          "resistance": "medium",
+          "pressure": "moderate",
+          "guestBehaviour": "Argues that competitors don't charge surge right now.",
+          "hiddenObjectives": ["Explain 100% surge pass-through to hard-working delivery partners", "Highlight rain gear safety", "Offer one-time waiver if first-time user"],
+          "possibleSolutions": ["Rider welfare policy explanation", "One-time courtesy goodwill waiver"],
+          "acceptableOutcomes": ["CUSTOMER_HAPPY", "CUSTOMER_ACCEPTED"],
+          "unacceptablePromises": ["Do not say company pockets the delivery surge fees."]
+        }
+      }
+    }
+  ]
+}

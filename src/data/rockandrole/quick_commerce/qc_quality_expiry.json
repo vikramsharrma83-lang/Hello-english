@@ -1,0 +1,74 @@
+{
+  "industry": "Supply Chain",
+  "bucketId": "qc_quality_expiry",
+  "theme": "🥦 QUALITY & FRESHNESS",
+  "themeDescription": "Bruised vegetables, near-expiry dairy & stale bakery",
+  "challenges": [
+    {
+      "id": "QC-QUAL-01",
+      "industry": "Supply Chain",
+      "bucketId": "qc_quality_expiry",
+      "title": "Fresh tomatoes received severely bruised and unhygienic",
+      "shortDescription": "Resolve quality complaint for fresh farm produce damaged during careless bike commute.",
+      "staffRole": "fresh produce category supervisor",
+      "guestRole": "health-conscious homemaker",
+      "mission": "Acknowledge produce grade lapse, issue 100% no-questions-asked refund, and feedback to dark store procurement.",
+      "scenarioContext": {
+        "startingSituation": "Look at these tomatoes! They are squished, oozing juice, and completely rotten. You advertise farm-fresh quality, but this is unfit for human consumption!"
+      },
+      "guestProfile": {
+        "personality": "exacting and health-conscious",
+        "approximateAgeGroup": "adult 28–60",
+        "communicationStyle": "articulate, stern",
+        "emotionalState": "disgusted",
+        "whatTheGuestCaresAboutMost": "clean hygiene standards and immediate compensation"
+      },
+      "levels": {
+        "level1": {
+          "name": "HANDLE",
+          "customerMood": "disgusted",
+          "resistance": "medium",
+          "pressure": "moderate",
+          "guestBehaviour": "Mentions ordering from competitor next time if quality control is this careless.",
+          "hiddenObjectives": ["Validate photo", "Offer instant ₹95 refund to UPI/wallet", "Add ₹50 fresh apology coupon"],
+          "possibleSolutions": ["Instant zero-hassle refund", "Fresh handpicked organic basket redelivery"],
+          "acceptableOutcomes": ["CUSTOMER_HAPPY", "CUSTOMER_ACCEPTED"],
+          "unacceptablePromises": ["Do not argue about acceptable produce bruising."]
+        }
+      }
+    },
+    {
+      "id": "QC-QUAL-02",
+      "industry": "Supply Chain",
+      "bucketId": "qc_quality_expiry",
+      "title": "Artisan sandwich bread delivered with same-day expiration date",
+      "shortDescription": "Handle a customer who bought 3 loaves of multi-grain bread only to discover they expire in 4 hours.",
+      "staffRole": "inventory FIFO compliance manager",
+      "guestRole": "frustrated family shopper",
+      "mission": "Explain dark store shelf-life promise failure, arrange fresh morning batch replacement, and credit customer.",
+      "scenarioContext": {
+        "startingSituation": "I bought 3 packets of brown bread for the week, and every single packet has today's date stamped as Best Before! How can a family eat 3 loaves in 4 hours?"
+      },
+      "guestProfile": {
+        "personality": "practical and budget-minded",
+        "approximateAgeGroup": "adult 30–50",
+        "communicationStyle": "sarcastic and questioning",
+        "emotionalState": "annoyed",
+        "whatTheGuestCaresAboutMost": "fresh stock with minimum 3-day shelf life"
+      },
+      "levels": {
+        "level1": {
+          "name": "HANDLE",
+          "customerMood": "annoyed",
+          "resistance": "low",
+          "pressure": "moderate",
+          "guestBehaviour": "Points out that the app promised 'Baked Today' freshness.",
+          "hiddenObjectives": ["Verify batch expiration", "Issue full refund for all 3 loaves", "Flag dark store inventory FIFO breach"],
+          "possibleSolutions": ["Full refund + free replacement from tomorrow's early bake", "Wallet credit"],
+          "acceptableOutcomes": ["CUSTOMER_HAPPY", "CUSTOMER_ACCEPTED"],
+          "unacceptablePromises": ["Do not suggest freezing expired bread as a remedy."]
+        }
+      }
+    }
+  ]
+}

@@ -81,12 +81,196 @@ export const soundFx = new SoundFx();
 
 // Global active audio playback element
 let currentAudioElement: HTMLAudioElement | null = null;
+let activeUtterance: SpeechSynthesisUtterance | null = null;
+
+/**
+ * Strict male keyword blacklist to prevent robotic or male voices
+ */
+const STRICT_MALE_KEYWORDS = [
+  'male',
+  'ravi',
+  'rishi',
+  'madhur',
+  'hemant',
+  'david',
+  'mark',
+  'george',
+  'guy',
+  'ryan',
+  'christopher',
+  'eric',
+  'stefan',
+  'pradeep',
+  'anand',
+  'amit',
+  'rahul',
+  'karan',
+  'vikram',
+  'suresh',
+  'mahesh',
+  'james',
+  'john',
+  'robert',
+  'michael',
+  'william',
+  'daniel',
+  'paul',
+  'charles',
+  'alex',
+  'fred',
+  'oliver',
+  'thomas',
+  'arthur',
+  'brian',
+  'richard',
+  'joseph',
+  'stephen',
+  'andrew',
+  'kevin',
+  'jason',
+  'justin',
+  'brandon',
+];
+
+/**
+ * Checks if a SpeechSynthesisVoice is definitely or likely male
+ */
+export function isDefinitiveMaleVoice(v: SpeechSynthesisVoice): boolean {
+  const name = (v.name || '').toLowerCase();
+  const uri = (v.voiceURI || '').toLowerCase();
+
+  // If explicitly labeled female, it is definitely not male
+  if (name.includes('female') || uri.includes('female')) {
+    return false;
+  }
+
+  // Exclude any known male voice names
+  return STRICT_MALE_KEYWORDS.some((kw) => name.includes(kw) || uri.includes(kw));
+}
+
+/**
+ * Female voice preference selector:
+ * Strictly selects clear, natural female voices with priority on Indian English/Hindi
+ */
+export function getBestFemaleVoice(
+  targetLang: 'en-IN' | 'hi-IN' | 'en-US' = 'en-IN'
+): SpeechSynthesisVoice | null {
+  if (typeof window === 'undefined' || !('speechSynthesis' in window)) return null;
+  const voices = window.speechSynthesis.getVoices();
+  if (!voices || voices.length === 0) return null;
+
+  const isHindi = targetLang.startsWith('hi');
+
+  // Filter out all male voices first
+  const nonMaleVoices = voices.filter((v) => !isDefinitiveMaleVoice(v));
+  const pool = nonMaleVoices.length > 0 ? nonMaleVoices : voices;
+
+  if (isHindi) {
+    // 1. High-priority natural female Hindi voices (Swara, Kalpana, Lekha, Google Hindi Female)
+    const naturalHindiFemale = pool.find((v) => {
+      const n = v.name.toLowerCase();
+      const l = v.lang.toLowerCase();
+      const isHi = l.startsWith('hi') || n.includes('hindi');
+      return (
+        isHi &&
+        (n.includes('swara') ||
+          n.includes('kalpana') ||
+          n.includes('lekha') ||
+          n.includes('female') ||
+          n.includes('google हिन्दी'))
+      );
+    });
+    if (naturalHindiFemale) return naturalHindiFemale;
+
+    // 2. Any non-male Hindi voice
+    const anyHindi = pool.find(
+      (v) =>
+        !isDefinitiveMaleVoice(v) &&
+        (v.lang.toLowerCase().startsWith('hi') || v.name.toLowerCase().includes('hindi'))
+    );
+    if (anyHindi) return anyHindi;
+
+    // 3. Fallback: Indian English female voice (pronounces Hinglish with natural Indian cadence)
+    const indianFemale = pool.find((v) => {
+      const n = v.name.toLowerCase();
+      const l = v.lang.toLowerCase();
+      const isInd = l === 'en-in' || l.includes('in') || n.includes('india');
+      return (
+        isInd &&
+        (n.includes('heera') ||
+          n.includes('neha') ||
+          n.includes('priya') ||
+          n.includes('veena') ||
+          n.includes('female'))
+      );
+    });
+    if (indianFemale) return indianFemale;
+  } else {
+    // English Target
+    // 1. Natural Indian English Female voices (Top priority: Heera, Neha, Priya, Veena, Lekha)
+    const indianFemale = pool.find((v) => {
+      const n = v.name.toLowerCase();
+      const l = v.lang.toLowerCase();
+      const isInd = l === 'en-in' || l.includes('in') || n.includes('india');
+      return (
+        isInd &&
+        (n.includes('heera') ||
+          n.includes('neha') ||
+          n.includes('priya') ||
+          n.includes('veena') ||
+          n.includes('lekha') ||
+          n.includes('female'))
+      );
+    });
+    if (indianFemale) return indianFemale;
+
+    // 2. Any Indian English voice that is verified non-male
+    const anyIndianNonMale = pool.find((v) => {
+      const l = v.lang.toLowerCase();
+      const n = v.name.toLowerCase();
+      return (
+        !isDefinitiveMaleVoice(v) &&
+        (l === 'en-in' || (n.includes('india') && l.startsWith('en')))
+      );
+    });
+    if (anyIndianNonMale) return anyIndianNonMale;
+
+    // 3. World-class natural, clear female voices (Jenny, Aria, Ava, Samantha, Zira, Serena)
+    const topGlobalFemale = pool.find((v) => {
+      const n = v.name.toLowerCase();
+      return (
+        n.includes('jenny') ||
+        n.includes('aria') ||
+        n.includes('ava') ||
+        n.includes('samantha') ||
+        n.includes('zira') ||
+        n.includes('serena') ||
+        n.includes('karen') ||
+        n.includes('victoria') ||
+        n.includes('female')
+      );
+    });
+    if (topGlobalFemale) return topGlobalFemale;
+  }
+
+  // 4. Any voice with 'female' in its descriptor
+  const anyExplicitFemale = pool.find((v) => v.name.toLowerCase().includes('female'));
+  if (anyExplicitFemale) return anyExplicitFemale;
+
+  // 5. Any language-matching non-male candidate
+  const anyMatch = pool.find(
+    (v) => !isDefinitiveMaleVoice(v) && v.lang.toLowerCase().startsWith(isHindi ? 'hi' : 'en')
+  );
+  if (anyMatch) return anyMatch;
+
+  return pool[0] || null;
+}
 
 // Speech Synthesis & Natural Audio Helper
 export async function speakText(
   text: string,
   lang: 'en-IN' | 'en-US' | 'hi-IN' = 'en-IN',
-  rate: number = 0.92,
+  rate: number = 0.93,
   onEnd?: () => void
 ): Promise<boolean> {
   // Stop any active audio / speech first
@@ -100,7 +284,7 @@ export async function speakText(
   const isHindiText = /[\u0900-\u097F]/.test(text) || lang.startsWith('hi');
   const targetLang = isHindiText ? 'hi-IN' : 'en-IN';
 
-  // Attempt 1: Try natural backend TTS for high quality human-like Indian voice
+  // Attempt 1: Try natural backend TTS (using Sarvam Indian female speaker "meera")
   try {
     const res = await fetch('/api/tts', {
       method: 'POST',
@@ -108,14 +292,15 @@ export async function speakText(
       body: JSON.stringify({
         text,
         lang: targetLang,
-        voice: isHindiText ? 'Kore' : 'Zephyr',
+        speaker: 'meera', // Female Indian speaker
       }),
     });
 
     if (res.ok) {
       const data = await res.json();
-      if (data.audioData && data.success) {
-        const audio = new Audio(data.audioData);
+      const audioSource = data.audioData || (data.audioBase64 ? `data:audio/wav;base64,${data.audioBase64}` : null);
+      if (audioSource && (data.success || data.audioData || data.audioBase64)) {
+        const audio = new Audio(audioSource);
         currentAudioElement = audio;
         audio.playbackRate = rate;
 
@@ -137,15 +322,15 @@ export async function speakText(
     // Gracefully fallback to browser speech synthesis
   }
 
-  // Attempt 2: Fallback to high-quality browser SpeechSynthesis with Indian voices
+  // Attempt 2: Fallback to high-quality browser SpeechSynthesis with female Indian voices
   return fallbackBrowserSpeak(text, targetLang, rate, onEnd);
 }
 
-// Fallback browser speech synthesis with Indian accent prioritization
+// Fallback browser speech synthesis with strict female voice and warm natural pitch
 function fallbackBrowserSpeak(
   text: string,
   lang: 'en-IN' | 'hi-IN' | 'en-US',
-  rate: number = 0.92,
+  rate: number = 0.93,
   onEnd?: () => void
 ): boolean {
   if (!('speechSynthesis' in window)) {
@@ -156,63 +341,30 @@ function fallbackBrowserSpeak(
 
   window.speechSynthesis.cancel();
 
-  const utterance = new SpeechSynthesisUtterance(text);
-  utterance.rate = rate;
-  utterance.pitch = 1.02; // Warm, natural friendly pitch
-
-  const voices = window.speechSynthesis.getVoices();
   const isHindi = lang.startsWith('hi') || /[\u0900-\u097F]/.test(text);
+  const targetLang = isHindi ? 'hi-IN' : 'en-IN';
 
-  if (isHindi) {
-    utterance.lang = 'hi-IN';
-    const hindiVoice = voices.find(
-      (v) =>
-        v.lang === 'hi-IN' ||
-        v.lang.startsWith('hi') ||
-        v.name.toLowerCase().includes('hindi') ||
-        v.name.toLowerCase().includes('swara') ||
-        v.name.toLowerCase().includes('madhur') ||
-        v.name.toLowerCase().includes('kalpana') ||
-        v.name.toLowerCase().includes('hemant')
-    );
-    if (hindiVoice) utterance.voice = hindiVoice;
-  } else {
-    utterance.lang = 'en-IN';
-    // Prioritize natural Indian English voices
-    const indianVoice = voices.find(
-      (v) =>
-        v.lang === 'en-IN' ||
-        v.lang.toLowerCase().includes('en-in') ||
-        v.name.toLowerCase().includes('india') ||
-        v.name.toLowerCase().includes('indian') ||
-        v.name.toLowerCase().includes('heera') ||
-        v.name.toLowerCase().includes('ravi') ||
-        v.name.toLowerCase().includes('neha') ||
-        v.name.toLowerCase().includes('priya') ||
-        v.name.toLowerCase().includes('rishi') ||
-        v.name.toLowerCase().includes('lekha') ||
-        v.name.toLowerCase().includes('veena')
-    );
-    const naturalVoice = voices.find(
-      (v) =>
-        v.lang.startsWith('en') &&
-        (v.name.toLowerCase().includes('natural') ||
-          v.name.toLowerCase().includes('female') ||
-          v.name.toLowerCase().includes('samantha') ||
-          v.name.toLowerCase().includes('zira'))
-    );
-    if (indianVoice) {
-      utterance.voice = indianVoice;
-    } else if (naturalVoice) {
-      utterance.voice = naturalVoice;
-    }
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.lang = targetLang;
+  utterance.rate = rate || 0.93; // Clear, comfortable instructional cadence
+  utterance.pitch = 1.08; // Warm, natural, bright female vocal pitch (no deep male timbre)
+
+  // Strictly select female voice
+  const femaleVoice = getBestFemaleVoice(targetLang);
+  if (femaleVoice) {
+    utterance.voice = femaleVoice;
   }
 
+  // Prevent Chrome garbage-collection bug
+  activeUtterance = utterance;
+
   utterance.onend = () => {
+    activeUtterance = null;
     if (onEnd) onEnd();
   };
 
   utterance.onerror = (e) => {
+    activeUtterance = null;
     console.warn('Speech synthesis error:', e);
     if (onEnd) onEnd();
   };

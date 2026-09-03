@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { RockAndRollProfilesView } from './RockAndRollProfilesView';
 import { RockAndRollDashboardView } from './RockAndRollDashboardView';
 import { RetailDashboardView } from './RetailDashboardView';
+import { SupplyChainDashboardView } from './SupplyChainDashboardView';
 import { RockAndRollSituationsView } from './RockAndRollSituationsView';
 import { RockAndRollChatView } from './RockAndRollChatView';
 import { RockAndRollSummaryView } from './RockAndRollSummaryView';
@@ -11,10 +12,10 @@ import { RockAndRollSession } from '../types/rockAndRollTypes';
 
 export const RockAndRollContainer: React.FC<{ 
   onBack: () => void;
-  initialView?: 'dashboard' | 'retail-dashboard' | 'dummy';
+  initialView?: 'profiles' | 'dashboard' | 'retail-dashboard' | 'supply-dashboard' | 'dummy';
   initialDummyName?: string;
-}> = ({ onBack, initialView = 'dashboard', initialDummyName = 'Retail' }) => {
-  const [view, setView] = useState<'dashboard' | 'retail-dashboard' | 'situations' | 'chat' | 'summary' | 'stats' | 'dummy'>(initialView);
+}> = ({ onBack, initialView = 'profiles', initialDummyName = 'Retail' }) => {
+  const [view, setView] = useState<'profiles' | 'dashboard' | 'retail-dashboard' | 'supply-dashboard' | 'situations' | 'chat' | 'summary' | 'stats' | 'dummy'>(initialView);
   const [selectedTheme, setSelectedTheme] = useState<any | null>(null);
   const [selectedChallenge, setSelectedChallenge] = useState<any | null>(null);
   const [dummyProfileName, setDummyProfileName] = useState<string>(initialDummyName);
@@ -54,32 +55,85 @@ export const RockAndRollContainer: React.FC<{
     setView('summary');
   };
 
+  const returnToActiveDashboard = () => {
+    if (selectedTheme?.bucketId?.startsWith('retail_')) {
+      setView('retail-dashboard');
+    } else if (selectedTheme?.bucketId?.startsWith('qc_') || selectedTheme?.industry === 'Supply Chain') {
+      setView('supply-dashboard');
+    } else {
+      setView('dashboard');
+    }
+  };
+
   return (
     <div className="w-full min-h-full bg-black flex flex-col">
+      {view === 'profiles' && (
+        <RockAndRollProfilesView 
+          onSelectHospitality={() => setView('dashboard')}
+          onSelectRetail={() => setView('retail-dashboard')}
+          onSelectSupplyChain={() => setView('supply-dashboard')}
+          onSelectDummy={(name) => {
+            setDummyProfileName(name);
+            setView('dummy');
+          }}
+          onBack={onBack}
+        />
+      )}
       {view === 'dummy' && (
         <RockAndRollDummyView 
           profileName={dummyProfileName} 
-          onBack={onBack} 
+          onBack={() => setView('profiles')} 
         />
       )}
-      {view === 'dashboard' && <RockAndRollDashboardView onBack={onBack} onSelectTheme={handleSelectTheme} onOpenDashboard={() => setView('stats')} />}
-      {view === 'retail-dashboard' && <RetailDashboardView onBack={onBack} onSelectTheme={handleSelectTheme} />}
-      {view === 'stats' && <RockAndRollDashboard onBack={() => setView('dashboard')} sessions={sessions} />}
-      {view === 'situations' && <RockAndRollSituationsView theme={selectedTheme} onBack={() => {
-        if (selectedTheme?.bucketId?.startsWith('retail_')) {
-          setView('retail-dashboard');
-        } else {
-          setView('dashboard');
-        }
-      }} onSelectChallenge={handleSelectChallenge} />}
-      {view === 'chat' && <RockAndRollChatView challenge={selectedChallenge} onComplete={handleChatComplete} onBack={() => setView('situations')} />}
-      {view === 'summary' && <RockAndRollSummaryView challenge={selectedChallenge} summary={completedSummary} onBack={() => {
-        if (selectedTheme?.bucketId?.startsWith('retail_')) {
-          setView('retail-dashboard');
-        } else {
-          setView('dashboard');
-        }
-      }} />}
+      {view === 'dashboard' && (
+        <RockAndRollDashboardView 
+          onBack={() => setView('profiles')} 
+          onChangeProfile={() => setView('profiles')}
+          onSelectTheme={handleSelectTheme} 
+          onOpenDashboard={() => setView('stats')} 
+        />
+      )}
+      {view === 'retail-dashboard' && (
+        <RetailDashboardView 
+          onBack={() => setView('profiles')} 
+          onChangeProfile={() => setView('profiles')}
+          onSelectTheme={handleSelectTheme} 
+        />
+      )}
+      {view === 'supply-dashboard' && (
+        <SupplyChainDashboardView 
+          onBack={() => setView('profiles')} 
+          onChangeProfile={() => setView('profiles')}
+          onSelectTheme={handleSelectTheme} 
+        />
+      )}
+      {view === 'stats' && (
+        <RockAndRollDashboard 
+          onBack={() => setView('dashboard')} 
+          sessions={sessions} 
+        />
+      )}
+      {view === 'situations' && (
+        <RockAndRollSituationsView 
+          theme={selectedTheme} 
+          onBack={returnToActiveDashboard} 
+          onSelectChallenge={handleSelectChallenge} 
+        />
+      )}
+      {view === 'chat' && (
+        <RockAndRollChatView 
+          challenge={selectedChallenge} 
+          onComplete={handleChatComplete} 
+          onBack={() => setView('situations')} 
+        />
+      )}
+      {view === 'summary' && (
+        <RockAndRollSummaryView 
+          challenge={selectedChallenge} 
+          summary={completedSummary} 
+          onBack={returnToActiveDashboard} 
+        />
+      )}
     </div>
   );
 };

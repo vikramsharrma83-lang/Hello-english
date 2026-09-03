@@ -1,0 +1,74 @@
+{
+  "industry": "Supply Chain",
+  "bucketId": "qc_jaldi_delay",
+  "theme": "⏱️ 10-MIN DELAY",
+  "themeDescription": "Late deliveries, rider delays & traffic bottlenecks",
+  "challenges": [
+    {
+      "id": "QC-DELAY-01",
+      "industry": "Supply Chain",
+      "bucketId": "qc_jaldi_delay",
+      "title": "Grocery order delayed beyond promised 10-minute window",
+      "shortDescription": "De-escalate an upset customer waiting for urgent cooking ingredients during heavy evening rain.",
+      "staffRole": "quick commerce support specialist",
+      "guestRole": "frustrated home cook",
+      "mission": "Track rider location, explain weather impact politely, set realistic updated ETA, and offer appropriate delay credit.",
+      "scenarioContext": {
+        "startingSituation": "Excuse me! It has been 28 minutes since I placed my urgent 10-minute grocery order. The food on my stove is burning because I am waiting for cooking oil!"
+      },
+      "guestProfile": {
+        "personality": "impatient and stressed",
+        "approximateAgeGroup": "adult 25–45",
+        "communicationStyle": "urgent, direct, demanding",
+        "emotionalState": "angry and panicked",
+        "whatTheGuestCaresAboutMost": "exact remaining minutes and immediate arrival"
+      },
+      "levels": {
+        "level1": {
+          "name": "HANDLE",
+          "customerMood": "angry",
+          "resistance": "medium",
+          "pressure": "high",
+          "guestBehaviour": "Complains about false 10-minute marketing promises and asks if rider has even left dark store.",
+          "hiddenObjectives": ["Acknowledge cooking urgency", "Check rider GPS", "Provide precise 4-5 min ETA", "Offer courtesy delay waiver"],
+          "possibleSolutions": ["Priority direct rider call", "Waive delivery fee", "Apply ₹50 delay compensation coupon"],
+          "acceptableOutcomes": ["CUSTOMER_HAPPY", "CUSTOMER_ACCEPTED"],
+          "unacceptablePromises": ["Do not promise rider will arrive in 30 seconds when GPS shows 1.5 km away."]
+        }
+      }
+    },
+    {
+      "id": "QC-DELAY-02",
+      "industry": "Supply Chain",
+      "bucketId": "qc_jaldi_delay",
+      "title": "Order stuck at dark store packing queue during evening surge",
+      "shortDescription": "Guide a customer inquiring why order status has remained on 'Packing' for 15 minutes.",
+      "staffRole": "fulfillment operations lead",
+      "guestRole": "concerned working professional",
+      "mission": "Check dark store batch queue, expedite order picking, and reassure customer with transparent timeline.",
+      "scenarioContext": {
+        "startingSituation": "Hi, your app says my order is still being packed for the last 15 minutes. Did the dark store forget my order?"
+      },
+      "guestProfile": {
+        "personality": "analytical and cautious",
+        "approximateAgeGroup": "adult 22–40",
+        "communicationStyle": "polite but firm",
+        "emotionalState": "concerned",
+        "whatTheGuestCaresAboutMost": "transparency on packing status"
+      },
+      "levels": {
+        "level1": {
+          "name": "HANDLE",
+          "customerMood": "concerned",
+          "resistance": "low",
+          "pressure": "moderate",
+          "guestBehaviour": "Asks if specific items are taking longer to pick.",
+          "hiddenObjectives": ["Confirm inventory is picked", "Assign priority picker", "Share rider handover status"],
+          "possibleSolutions": ["Fast-track dispatch", "Reassign to rapid bike rider"],
+          "acceptableOutcomes": ["CUSTOMER_HAPPY", "CUSTOMER_ACCEPTED"],
+          "unacceptablePromises": ["Do not cancel order without explicit customer consent."]
+        }
+      }
+    }
+  ]
+}

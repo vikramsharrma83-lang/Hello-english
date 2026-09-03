@@ -24,6 +24,7 @@ import { LlamaDrillEvalResult, LlamaNextQuestionResult } from '../../../server/s
 import { calculateDrillScores, saveDrillSessionRecord } from '../../utils/drillScoringEngine';
 import { PRACTICE_QUESTIONS } from '../../data/questions';
 import { Question } from '../../types';
+import { speakText as audioSpeakText, stopSpeaking } from '../../utils/audio';
 
 interface DrillEngineViewProps {
   target: DrillTarget;
@@ -131,51 +132,17 @@ export const DrillEngineView: React.FC<DrillEngineViewProps> = ({
       if (recognitionRef.current) {
         recognitionRef.current.abort();
       }
-      if (audioRef.current) {
-        audioRef.current.pause();
-      }
+      stopSpeaking();
     };
   }, []);
 
-  // Natural TTS
+  // Natural Female TTS
   const speakText = async (text: string) => {
     if (!text) return;
-    try {
-      setIsAudioPlaying(true);
-      const response = await fetch('/api/tts', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text }),
-      });
-      const data = await response.json();
-      if (data.audioBase64) {
-        const audio = new Audio(`data:audio/mp3;base64,${data.audioBase64}`);
-        audioRef.current = audio;
-        audio.onended = () => setIsAudioPlaying(false);
-        audio.onerror = () => {
-          fallbackBrowserSpeak(text);
-        };
-        await audio.play();
-      } else {
-        fallbackBrowserSpeak(text);
-      }
-    } catch (e) {
-      fallbackBrowserSpeak(text);
-    }
-  };
-
-  const fallbackBrowserSpeak = (text: string) => {
-    if ('speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = 'en-IN';
-      utterance.rate = 0.95;
-      utterance.onend = () => setIsAudioPlaying(false);
-      utterance.onerror = () => setIsAudioPlaying(false);
-      window.speechSynthesis.speak(utterance);
-    } else {
+    setIsAudioPlaying(true);
+    await audioSpeakText(text, 'en-IN', 0.93, () => {
       setIsAudioPlaying(false);
-    }
+    });
   };
 
   const toggleRecording = () => {

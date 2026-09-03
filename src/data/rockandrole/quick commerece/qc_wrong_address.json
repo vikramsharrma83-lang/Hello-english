@@ -1,0 +1,74 @@
+{
+  "industry": "Supply Chain",
+  "bucketId": "qc_wrong_address",
+  "theme": "📍 LOCATION & ACCESS",
+  "themeDescription": "Rider lost, gate security denial & wrong apartment",
+  "challenges": [
+    {
+      "id": "QC-LOC-01",
+      "industry": "Supply Chain",
+      "bucketId": "qc_wrong_address",
+      "title": "Delivery partner stopped by society security guard without entry OTP",
+      "shortDescription": "Coordinate between a confused delivery rider and a customer whose gated society requires MyGate security clearance.",
+      "staffRole": "last-mile dispatch supervisor",
+      "guestRole": "apartment resident",
+      "mission": "Explain the society gate barrier calmly, obtain digital approval or entry code, and guide rider directly to tower elevator.",
+      "scenarioContext": {
+        "startingSituation": "Why has my rider been standing outside Tower C gate for 8 minutes? The guard says the delivery boy doesn't have the society entry code!"
+      },
+      "guestProfile": {
+        "personality": "busy resident",
+        "approximateAgeGroup": "adult 25–45",
+        "communicationStyle": "practical, hurried",
+        "emotionalState": "impatient",
+        "whatTheGuestCaresAboutMost": "getting the bag to the 7th floor doorstep"
+      },
+      "levels": {
+        "level1": {
+          "name": "HANDLE",
+          "customerMood": "impatient",
+          "resistance": "low",
+          "pressure": "moderate",
+          "guestBehaviour": "Offers to provide society pass code or call guard directly.",
+          "hiddenObjectives": ["Collect entry code or gate name", "Relay instructions to delivery partner", "Confirm doorstep delivery"],
+          "possibleSolutions": ["Direct intercom authorization", "Rider companion phone connect"],
+          "acceptableOutcomes": ["CUSTOMER_HAPPY", "CUSTOMER_ACCEPTED"],
+          "unacceptablePromises": ["Do not advise rider to jump society gate or argue with security."]
+        }
+      }
+    },
+    {
+      "id": "QC-LOC-02",
+      "industry": "Supply Chain",
+      "bucketId": "qc_wrong_address",
+      "title": "Order marked 'Delivered' but bag placed on wrong flat doorstep",
+      "shortDescription": "Assist a resident who received delivery notification photo showing unfamiliar blue doormat.",
+      "staffRole": "rider operations controller",
+      "guestRole": "confused shopper",
+      "mission": "Check delivery proof photo, identify floor error (Flat 402 vs 502), and retrieve bag before neighbor consumes items.",
+      "scenarioContext": {
+        "startingSituation": "Your app sent an SMS saying 'Delivered', but my doorstep is empty! The delivery photo shows a brown wooden door with a brass bell, which is definitely not my flat!"
+      },
+      "guestProfile": {
+        "personality": "baffled and frustrated",
+        "approximateAgeGroup": "adult 30–60",
+        "communicationStyle": "incredulous",
+        "emotionalState": "annoyed",
+        "whatTheGuestCaresAboutMost": "locating their groceries before perishable items spoil"
+      },
+      "levels": {
+        "level1": {
+          "name": "HANDLE",
+          "customerMood": "annoyed",
+          "resistance": "medium",
+          "pressure": "high",
+          "guestBehaviour": "Wonders if rider stole order or dropped at wrong wing.",
+          "hiddenObjectives": ["Recall rider immediately", "Locate correct doorstep within 5 mins", "Re-deliver or auto-reorder"],
+          "possibleSolutions": ["Rider immediate doorstep turnaround", "Auto re-dispatch identical basket from dark store"],
+          "acceptableOutcomes": ["CUSTOMER_HAPPY", "CUSTOMER_ACCEPTED"],
+          "unacceptablePromises": ["Do not ask customer to go search every floor of the building alone."]
+        }
+      }
+    }
+  ]
+}
