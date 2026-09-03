@@ -76,8 +76,7 @@ const ThemeCard: React.FC<ThemeCardProps> = ({ theme, onSelect }) => {
 export const SupplyChainDashboardView: React.FC<{
   onBack: () => void;
   onSelectTheme: (theme: any) => void;
-  onChangeProfile?: () => void;
-}> = ({ onBack, onSelectTheme, onChangeProfile }) => {
+}> = ({ onBack, onSelectTheme }) => {
   const data = [
     qcDelay,
     qcDamagedMissing,
@@ -100,16 +99,6 @@ export const SupplyChainDashboardView: React.FC<{
             <ArrowLeft className="w-3.5 h-3.5" />
             <span>Back</span>
           </button>
-
-          {onChangeProfile && (
-            <button
-              onClick={onChangeProfile}
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-zinc-900/85 backdrop-blur-md border border-white/10 rounded-full text-zinc-300 hover:text-white text-xs font-medium cursor-pointer transition-colors"
-            >
-              <RefreshCw className="w-3 h-3 text-zinc-400" />
-              <span>Change Track</span>
-            </button>
-          )}
         </div>
 
         <div className="mb-5">

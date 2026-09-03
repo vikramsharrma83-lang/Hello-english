@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { RockAndRollProfilesView } from './RockAndRollProfilesView';
 import { RockAndRollDashboardView } from './RockAndRollDashboardView';
 import { RetailDashboardView } from './RetailDashboardView';
 import { SupplyChainDashboardView } from './SupplyChainDashboardView';
@@ -12,10 +11,10 @@ import { RockAndRollSession } from '../types/rockAndRollTypes';
 
 export const RockAndRollContainer: React.FC<{ 
   onBack: () => void;
-  initialView?: 'profiles' | 'dashboard' | 'retail-dashboard' | 'supply-dashboard' | 'dummy';
+  initialView?: 'dashboard' | 'retail-dashboard' | 'supply-dashboard' | 'dummy';
   initialDummyName?: string;
-}> = ({ onBack, initialView = 'profiles', initialDummyName = 'Retail' }) => {
-  const [view, setView] = useState<'profiles' | 'dashboard' | 'retail-dashboard' | 'supply-dashboard' | 'situations' | 'chat' | 'summary' | 'stats' | 'dummy'>(initialView);
+}> = ({ onBack, initialView = 'dashboard', initialDummyName = 'Retail' }) => {
+  const [view, setView] = useState<'dashboard' | 'retail-dashboard' | 'supply-dashboard' | 'situations' | 'chat' | 'summary' | 'stats' | 'dummy'>(initialView);
   const [selectedTheme, setSelectedTheme] = useState<any | null>(null);
   const [selectedChallenge, setSelectedChallenge] = useState<any | null>(null);
   const [dummyProfileName, setDummyProfileName] = useState<string>(initialDummyName);
@@ -67,43 +66,28 @@ export const RockAndRollContainer: React.FC<{
 
   return (
     <div className="w-full min-h-full bg-black flex flex-col">
-      {view === 'profiles' && (
-        <RockAndRollProfilesView 
-          onSelectHospitality={() => setView('dashboard')}
-          onSelectRetail={() => setView('retail-dashboard')}
-          onSelectSupplyChain={() => setView('supply-dashboard')}
-          onSelectDummy={(name) => {
-            setDummyProfileName(name);
-            setView('dummy');
-          }}
-          onBack={onBack}
-        />
-      )}
       {view === 'dummy' && (
         <RockAndRollDummyView 
           profileName={dummyProfileName} 
-          onBack={() => setView('profiles')} 
+          onBack={onBack} 
         />
       )}
       {view === 'dashboard' && (
         <RockAndRollDashboardView 
-          onBack={() => setView('profiles')} 
-          onChangeProfile={() => setView('profiles')}
+          onBack={onBack} 
           onSelectTheme={handleSelectTheme} 
           onOpenDashboard={() => setView('stats')} 
         />
       )}
       {view === 'retail-dashboard' && (
         <RetailDashboardView 
-          onBack={() => setView('profiles')} 
-          onChangeProfile={() => setView('profiles')}
+          onBack={onBack} 
           onSelectTheme={handleSelectTheme} 
         />
       )}
       {view === 'supply-dashboard' && (
         <SupplyChainDashboardView 
-          onBack={() => setView('profiles')} 
-          onChangeProfile={() => setView('profiles')}
+          onBack={onBack} 
           onSelectTheme={handleSelectTheme} 
         />
       )}

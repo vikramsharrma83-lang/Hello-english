@@ -2,38 +2,47 @@
   "industry": "Supply Chain",
   "bucketId": "qc_wrong_address",
   "theme": "📍 LOCATION & ACCESS",
-  "themeDescription": "Rider lost, gate security denial & wrong apartment",
+  "themeDescription": "Society security barriers, wrong doorstep delivery & GPS pins",
   "challenges": [
     {
       "id": "QC-LOC-01",
       "industry": "Supply Chain",
       "bucketId": "qc_wrong_address",
-      "title": "Delivery partner stopped by society security guard without entry OTP",
-      "shortDescription": "Coordinate between a confused delivery rider and a customer whose gated society requires MyGate security clearance.",
-      "staffRole": "last-mile dispatch supervisor",
-      "guestRole": "apartment resident",
-      "mission": "Explain the society gate barrier calmly, obtain digital approval or entry code, and guide rider directly to tower elevator.",
+      "title": "Gated Society Guard Refuses Entry Without OTP",
+      "shortDescription": "Facilitate quick communication between delivery partner and customer to clear gate pass OTP or lobby drop-off.",
+      "staffRole": "rider and customer liaison",
+      "guestRole": "resident in tower 14 on 18th floor",
+      "mission": "Bridge the communication gap between strict society security guard, delivery rider, and customer quickly.",
       "scenarioContext": {
-        "startingSituation": "Why has my rider been standing outside Tower C gate for 8 minutes? The guard says the delivery boy doesn't have the society entry code!"
+        "startingSituation": "The rider keeps calling me saying the main security gate won't let him in without an entry code. I already approved him on MyGate app! He refuses to talk to the guard! What is the problem?"
       },
       "guestProfile": {
-        "personality": "busy resident",
-        "approximateAgeGroup": "adult 25–45",
-        "communicationStyle": "practical, hurried",
-        "emotionalState": "impatient",
-        "whatTheGuestCaresAboutMost": "getting the bag to the 7th floor doorstep"
+        "personality": "busy apartment dweller",
+        "approximateAgeGroup": "adult 26–45",
+        "communicationStyle": "impatient, tech-reliant",
+        "emotionalState": "Mildly Irritated",
+        "whatTheGuestCaresAboutMost": "doorstep delivery without walking down 18 floors"
       },
       "levels": {
         "level1": {
           "name": "HANDLE",
-          "customerMood": "impatient",
+          "customerMood": "irritated",
           "resistance": "low",
           "pressure": "moderate",
-          "guestBehaviour": "Offers to provide society pass code or call guard directly.",
-          "hiddenObjectives": ["Collect entry code or gate name", "Relay instructions to delivery partner", "Confirm doorstep delivery"],
-          "possibleSolutions": ["Direct intercom authorization", "Rider companion phone connect"],
-          "acceptableOutcomes": ["CUSTOMER_HAPPY", "CUSTOMER_ACCEPTED"],
-          "unacceptablePromises": ["Do not advise rider to jump society gate or argue with security."]
+          "guestBehaviour": "Wants customer support to guide the delivery partner directly.",
+          "hiddenObjectives": [
+            "Verify society visitor entry protocol",
+            "Call rider on 3-way conference to confirm MyGate passcode 4821",
+            "Ensure rider is permitted elevator access to 18th floor"
+          ],
+          "possibleSolutions": [
+            "Direct security gate clearance coordination",
+            "Doorstep delivery confirmed"
+          ],
+          "acceptableOutcomes": [
+            "CUSTOMER_HAPPY",
+            "CUSTOMER_ACCEPTED"
+          ]
         }
       }
     },
@@ -41,32 +50,125 @@
       "id": "QC-LOC-02",
       "industry": "Supply Chain",
       "bucketId": "qc_wrong_address",
-      "title": "Order marked 'Delivered' but bag placed on wrong flat doorstep",
-      "shortDescription": "Assist a resident who received delivery notification photo showing unfamiliar blue doormat.",
-      "staffRole": "rider operations controller",
-      "guestRole": "confused shopper",
-      "mission": "Check delivery proof photo, identify floor error (Flat 402 vs 502), and retrieve bag before neighbor consumes items.",
+      "title": "Delivered Notification But Left at Wrong Flat",
+      "shortDescription": "Check doorstep photo proof, direct delivery partner to retrieve bag promptly, or dispatch fresh basket.",
+      "staffRole": "quick commerce escalation agent",
+      "guestRole": "customer with empty doorstep",
+      "mission": "Check delivery drop-off photo, identify floor/flat mismatch (Flat 402 vs 502), and retrieve parcel or re-dispatch.",
       "scenarioContext": {
-        "startingSituation": "Your app sent an SMS saying 'Delivered', but my doorstep is empty! The delivery photo shows a brown wooden door with a brass bell, which is definitely not my flat!"
+        "startingSituation": "My phone just dinged saying 'Order Delivered' with a photo of a blue doormat. I live in Flat 502 and my doormat is brown coir! Someone else in my building probably has my grocery bag right now!"
       },
       "guestProfile": {
-        "personality": "baffled and frustrated",
-        "approximateAgeGroup": "adult 30–60",
-        "communicationStyle": "incredulous",
-        "emotionalState": "annoyed",
-        "whatTheGuestCaresAboutMost": "locating their groceries before perishable items spoil"
+        "personality": "thorough and bewildered",
+        "approximateAgeGroup": "adult 24–50",
+        "communicationStyle": "confused, proactive",
+        "emotionalState": "Baffled & Annoyed",
+        "whatTheGuestCaresAboutMost": "getting their groceries before neighbor opens them"
       },
       "levels": {
         "level1": {
           "name": "HANDLE",
-          "customerMood": "annoyed",
-          "resistance": "medium",
+          "customerMood": "confused",
+          "resistance": "low",
           "pressure": "high",
-          "guestBehaviour": "Wonders if rider stole order or dropped at wrong wing.",
-          "hiddenObjectives": ["Recall rider immediately", "Locate correct doorstep within 5 mins", "Re-deliver or auto-reorder"],
-          "possibleSolutions": ["Rider immediate doorstep turnaround", "Auto re-dispatch identical basket from dark store"],
-          "acceptableOutcomes": ["CUSTOMER_HAPPY", "CUSTOMER_ACCEPTED"],
-          "unacceptablePromises": ["Do not ask customer to go search every floor of the building alone."]
+          "guestBehaviour": "Looks into corridor and confirms bag is not outside door.",
+          "hiddenObjectives": [
+            "Inspect rider drop-off photo metadata",
+            "Call rider immediately before leaving building complex",
+            "Rider retrieves bag from 402 and places at 502 with apology"
+          ],
+          "possibleSolutions": [
+            "Rider door correction within 3 minutes",
+            "Fresh basket re-dispatch if compromised"
+          ],
+          "acceptableOutcomes": [
+            "CUSTOMER_HAPPY",
+            "CUSTOMER_ACCEPTED"
+          ]
+        }
+      }
+    },
+    {
+      "id": "QC-LOC-03",
+      "industry": "Supply Chain",
+      "bucketId": "qc_wrong_address",
+      "title": "Rider Pinned to Locked Back Gate of Tech Park",
+      "shortDescription": "Guide rider to active 24/7 security reception gate and coordinate desk handover.",
+      "staffRole": "location support guide",
+      "guestRole": "night shift tech employee",
+      "mission": "Correct GPS map pin discrepancy, direct delivery partner to Gate 1 Visitor Desk, and ensure delivery handover.",
+      "scenarioContext": {
+        "startingSituation": "Your rider is stranded at the rear service gate of Manyata Tech Park which has been locked since 8 PM! I gave clear delivery notes to enter via Gate 1! Can you please guide him to the front entrance?"
+      },
+      "guestProfile": {
+        "personality": "busy software engineer",
+        "approximateAgeGroup": "adult 23–35",
+        "communicationStyle": "logical, precise, helpful",
+        "emotionalState": "Exasperated by GPS Error",
+        "whatTheGuestCaresAboutMost": "hot dinner delivery before midnight code deploy"
+      },
+      "levels": {
+        "level1": {
+          "name": "HANDLE",
+          "customerMood": "exasperated",
+          "resistance": "low",
+          "pressure": "moderate",
+          "guestBehaviour": "Shares precise navigation landmarks (turn left near HP petrol pump).",
+          "hiddenObjectives": [
+            "Patch clear route instructions to rider app",
+            "Call rider and confirm he is turning around to Gate 1",
+            "Coordinate reception security drop-off"
+          ],
+          "possibleSolutions": [
+            "Direct rider phone guidance",
+            "Updated landmark tag on profile"
+          ],
+          "acceptableOutcomes": [
+            "CUSTOMER_HAPPY",
+            "CUSTOMER_ACCEPTED"
+          ]
+        }
+      }
+    },
+    {
+      "id": "QC-LOC-04",
+      "industry": "Supply Chain",
+      "bucketId": "qc_wrong_address",
+      "title": "Customer Ordered to Home Instead of Office Address",
+      "shortDescription": "Check if delivery partner has left dark store, reroute if within delivery radius, or handle cancellation gracefully.",
+      "staffRole": "order routing specialist",
+      "guestRole": "rushed corporate worker",
+      "mission": "Assess delivery status immediately, evaluate whether address rerouting is technically feasible, and offer solutions.",
+      "scenarioContext": {
+        "startingSituation": "Oh no! In my hurry I placed my lunch order with my default Home address instead of my Office address 6 km away! The rider just got assigned—can you change the destination to Cyber City?!"
+      },
+      "guestProfile": {
+        "personality": "contrite and embarrassed",
+        "approximateAgeGroup": "adult 24–40",
+        "communicationStyle": "apologetic, eager, hoping for flexibility",
+        "emotionalState": "Embarrassed & Urgent",
+        "whatTheGuestCaresAboutMost": "not losing money on food delivered to an empty house"
+      },
+      "levels": {
+        "level1": {
+          "name": "HANDLE",
+          "customerMood": "apologetic",
+          "resistance": "low",
+          "pressure": "high",
+          "guestBehaviour": "Admits the mistake honestly and asks for assistance.",
+          "hiddenObjectives": [
+            "Check dark store dispatch radius",
+            "Explain 10-minute micro-fulfillment cluster limits kindly",
+            "Cancel order before packing with full zero-fee refund so user can reorder from Cyber City hub"
+          ],
+          "possibleSolutions": [
+            "Zero-penalty cancellation with immediate wallet credit",
+            "Assisted reorder to correct office hub"
+          ],
+          "acceptableOutcomes": [
+            "CUSTOMER_HAPPY",
+            "CUSTOMER_ACCEPTED"
+          ]
         }
       }
     }

@@ -46,7 +46,7 @@ export const RockAndRollSituationsView: React.FC<{
             className="flex items-center gap-1.5 px-3 py-1.5 bg-zinc-900/85 backdrop-blur-md border border-white/10 rounded-full text-zinc-300 hover:text-white text-xs font-medium cursor-pointer transition-colors"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
-            <span>Back to Tracks</span>
+            <span>Back to Themes</span>
           </button>
         </div>
 

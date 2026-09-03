@@ -92,8 +92,8 @@ export const MyDayView: React.FC<MyDayViewProps> = ({
   const [completedTopics, setCompletedTopics] = useState<string[]>([]);
   const [latestAnalysis, setLatestAnalysis] = useState<DeepAnalysis | undefined>(undefined);
   const [lastCompletionSummary, setLastCompletionSummary] = useState<string | undefined>(undefined);
-  const [rockRollInitialView, setRockRollInitialView] = useState<'profiles' | 'dashboard' | 'retail-dashboard' | 'dummy'>('profiles');
-  const [rockRollDummyName, setRockRollDummyName] = useState<string>('Retail');
+  const [rockRollInitialView, setRockRollInitialView] = useState<'dashboard' | 'retail-dashboard' | 'supply-dashboard' | 'dummy'>('dashboard');
+  const [rockRollDummyName, setRockRollDummyName] = useState<string>('Services');
 
   const [isLoading, setIsLoading] = useState(false);
   const [voiceEnabled, setVoiceEnabled] = useState(true);
@@ -432,13 +432,12 @@ export const MyDayView: React.FC<MyDayViewProps> = ({
               } else if (sector === 'retail') {
                 setRockRollInitialView('retail-dashboard');
               } else if (sector === 'supply-chain') {
-                setRockRollInitialView('dummy');
-                setRockRollDummyName('Supply Chain');
+                setRockRollInitialView('supply-dashboard');
               } else if (sector === 'services') {
                 setRockRollInitialView('dummy');
                 setRockRollDummyName('Services');
               } else {
-                setRockRollInitialView('profiles');
+                setRockRollInitialView('dashboard');
               }
               setStep('ROCK_ROLL');
             }}
