@@ -14,6 +14,8 @@ import {
   Send,
 } from 'lucide-react';
 import { markStartMyDayDoneToday } from '../../utils/playgroundManager';
+import { PRACTICE_QUESTIONS } from '../../data/questions';
+import { Question } from '../../types';
 
 interface WarmUpQuestion {
   id: string;
@@ -23,22 +25,23 @@ interface WarmUpQuestion {
   acceptableKeywords: string[];
 }
 
-const WARMUP_QUESTIONS: WarmUpQuestion[] = [
-  {
-    id: 'warmup-1',
-    questionEn: 'What time did you wake up today?',
-    questionHi: 'आप आज कितने बजे उठे?',
-    modelAnswer: 'I woke up at 6:30 AM today.',
-    acceptableKeywords: ['woke', 'wake', 'am', 'pm', 'clock', 'morning', 'at', 'today', 'up', 'time', 'early', '6', '7', '8', '5'],
-  },
-  {
-    id: 'warmup-2',
-    questionEn: 'How are you feeling this morning?',
-    questionHi: 'आज सुबह आप कैसा महसूस कर रहे हैं?',
-    modelAnswer: 'I am feeling great and ready to learn.',
-    acceptableKeywords: ['feeling', 'feel', 'great', 'good', 'happy', 'ready', 'fine', 'energetic', 'fresh', 'well', 'morning', 'learn'],
-  },
-];
+function mapQuestionToWarmup(q: Question): WarmUpQuestion {
+  const modelAnswer = q.samplePhrases?.[0] || q.sampleLearnerSpoken || q.hintEn;
+  const words = (modelAnswer + ' ' + q.questionEn)
+    .toLowerCase()
+    .replace(/[^a-z0-9\s]/g, '')
+    .split(/\s+/)
+    .filter((w) => w.length > 2);
+  const acceptableKeywords = Array.from(new Set(words));
+
+  return {
+    id: q.id,
+    questionEn: q.questionEn,
+    questionHi: q.questionHi,
+    modelAnswer,
+    acceptableKeywords,
+  };
+}
 
 interface StartMyDayWarmupViewProps {
   onCompleteWarmup: (stats: { questions: number; correct: number; learned: number }) => void;
@@ -49,6 +52,13 @@ export const StartMyDayWarmupView: React.FC<StartMyDayWarmupViewProps> = ({
   onCompleteWarmup,
   onExit,
 }) => {
+  // Select 5 random questions from the entire 150 questions pool
+  const [questions] = useState<WarmUpQuestion[]>(() => {
+    const shuffled = [...PRACTICE_QUESTIONS].sort(() => 0.5 - Math.random());
+    return shuffled.slice(0, 5).map(mapQuestionToWarmup);
+  });
+  const totalQuestions = 5;
+
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [attemptCount, setAttemptCount] = useState<number>(1);
   const [isRecording, setIsRecording] = useState<boolean>(false);
@@ -75,8 +85,7 @@ export const StartMyDayWarmupView: React.FC<StartMyDayWarmupViewProps> = ({
   const recognitionRef = useRef<any>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  const currentQ = WARMUP_QUESTIONS[currentIndex] || WARMUP_QUESTIONS[0];
-  const totalQuestions = WARMUP_QUESTIONS.length;
+  const currentQ = questions[currentIndex] || questions[0];
 
   useEffect(() => {
     const SpeechRecognition =
@@ -326,7 +335,7 @@ export const StartMyDayWarmupView: React.FC<StartMyDayWarmupViewProps> = ({
               </span>
               {/* Dot Indicators */}
               <div className="flex items-center gap-1.5 mt-1">
-                {WARMUP_QUESTIONS.map((_, idx) => (
+                {questions.map((_, idx) => (
                   <div
                     key={idx}
                     className={`h-1.5 rounded-full transition-all duration-300 ${

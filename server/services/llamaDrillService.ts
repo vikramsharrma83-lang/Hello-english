@@ -38,6 +38,8 @@ export interface LlamaNextQuestionResult {
   question: string;
   context: string;
   hintsOrScenario: string;
+  sampleAnswer?: string;
+  hindiText?: string;
 }
 
 const GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions";

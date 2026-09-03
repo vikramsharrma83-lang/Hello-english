@@ -22,6 +22,8 @@ import {
 } from '../../types/drillTypes';
 import { LlamaDrillEvalResult, LlamaNextQuestionResult } from '../../../server/services/llamaDrillService';
 import { calculateDrillScores, saveDrillSessionRecord } from '../../utils/drillScoringEngine';
+import { PRACTICE_QUESTIONS } from '../../data/questions';
+import { Question } from '../../types';
 
 interface DrillEngineViewProps {
   target: DrillTarget;
@@ -38,6 +40,12 @@ export const DrillEngineView: React.FC<DrillEngineViewProps> = ({
 }) => {
   // Target 5 core questions (strictly not more than 5)
   const TOTAL_TARGET_QUESTIONS = 5;
+
+  // Select 5 random questions from the entire 150 questions pool on session start
+  const [selectedQuestions] = useState<Question[]>(() => {
+    const shuffled = [...PRACTICE_QUESTIONS].sort(() => 0.5 - Math.random());
+    return shuffled.slice(0, TOTAL_TARGET_QUESTIONS);
+  });
 
   // Session state
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0);
@@ -61,6 +69,30 @@ export const DrillEngineView: React.FC<DrillEngineViewProps> = ({
 
   const recognitionRef = useRef<any>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  // Load question from the randomly selected 5 questions
+  const loadQuestionAtIndex = (index: number) => {
+    setIsProcessing(true);
+    setLastEvaluation(null);
+    setShowRetryPrompt(false);
+    setTranscript('');
+    setManualText('');
+    setAttemptNumberForCurrent(1);
+    setCurrentQuestionAttempts([]);
+
+    const q = selectedQuestions[index] || selectedQuestions[0];
+    const qData: LlamaNextQuestionResult = {
+      question: q.questionEn,
+      context: `${q.categoryLabel || q.category} • ${q.level}`,
+      hintsOrScenario: q.hintEn,
+      sampleAnswer: q.samplePhrases?.[0] || q.sampleLearnerSpoken || '',
+      hindiText: q.questionHi,
+    };
+    setCurrentQuestion(qData);
+    setQuestionHistory((prev) => [...prev, qData.question]);
+    speakText(qData.question);
+    setIsProcessing(false);
+  };
 
   // Initialize Speech Recognition
   useEffect(() => {
@@ -93,7 +125,7 @@ export const DrillEngineView: React.FC<DrillEngineViewProps> = ({
     }
 
     // Load Question 1
-    fetchNextQuestion(1, []);
+    loadQuestionAtIndex(0);
 
     return () => {
       if (recognitionRef.current) {
@@ -104,47 +136,6 @@ export const DrillEngineView: React.FC<DrillEngineViewProps> = ({
       }
     };
   }, []);
-
-  // Fetch contextual question from API
-  const fetchNextQuestion = async (qNum: number, pastQuestions: string[]) => {
-    setIsProcessing(true);
-    setLastEvaluation(null);
-    setShowRetryPrompt(false);
-    setTranscript('');
-    setManualText('');
-    setAttemptNumberForCurrent(1);
-    setCurrentQuestionAttempts([]);
-
-    try {
-      const res = await fetch('/api/drill/question', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          target,
-          questionNumber: qNum,
-          previousQuestions: pastQuestions,
-        }),
-      });
-      const data = await res.json();
-      setCurrentQuestion(data);
-      setQuestionHistory((prev) => [...prev, data.question]);
-
-      // Play question via TTS
-      speakText(data.question);
-    } catch (err) {
-      console.error('Failed to load drill question:', err);
-      const fallback = {
-        question: `How would you describe your main goal or task for today?`,
-        context: 'Daily focus',
-        hintsOrScenario: 'General practice',
-      };
-      setCurrentQuestion(fallback);
-      setQuestionHistory((prev) => [...prev, fallback.question]);
-      speakText(fallback.question);
-    } finally {
-      setIsProcessing(false);
-    }
-  };
 
   // Natural TTS
   const speakText = async (text: string) => {
@@ -330,7 +321,7 @@ export const DrillEngineView: React.FC<DrillEngineViewProps> = ({
       finishSession(newScoredQuestions, allAccAttempts, 'COMPLETED');
     } else {
       setCurrentQuestionIndex(nextIndex);
-      fetchNextQuestion(nextIndex + 1, questionHistory);
+      loadQuestionAtIndex(nextIndex);
     }
   };
 
@@ -423,6 +414,11 @@ export const DrillEngineView: React.FC<DrillEngineViewProps> = ({
               <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight leading-snug">
                 "{currentQuestion.question}"
               </h2>
+              {currentQuestion.hindiText && (
+                <p className="text-sm font-medium text-zinc-400 mt-3 max-w-sm">
+                  {currentQuestion.hindiText}
+                </p>
+              )}
             </motion.div>
           )}
         </AnimatePresence>

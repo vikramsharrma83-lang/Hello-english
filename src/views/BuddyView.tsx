@@ -16,9 +16,11 @@ import {
   ArrowRight,
   RotateCcw,
   TrendingUp,
-  Check
+  Check,
+  FileText,
 } from 'lucide-react';
 import { speakText, soundFx } from '../utils/audio';
+import { EnglishProgressScreen } from '../components/myday/EnglishProgressScreen';
 
 interface BuddyMessage {
   id: string;
@@ -79,6 +81,7 @@ export const BuddyView: React.FC<BuddyViewProps> = ({ onStartPractice, onBack, l
   const [isSummaryView, setIsSummaryView] = useState(false);
   const [summaryData, setSummaryData] = useState<BuddySummary | null>(null);
   const [isLoadingSummary, setIsLoadingSummary] = useState(false);
+  const [isProgressScreenOpen, setIsProgressScreenOpen] = useState(false);
   const [voiceEnabled, setVoiceEnabled] = useState(true);
   const [playingId, setPlayingId] = useState<string | null>(null);
   const [shortAnswerError, setShortAnswerError] = useState(false);
@@ -305,9 +308,13 @@ export const BuddyView: React.FC<BuddyViewProps> = ({ onStartPractice, onBack, l
           </button>
         </div>
 
-        {/* Large Overall Confidence Hero Banner */}
+        {/* Large Overall Confidence Hero Banner (Clickable to open 30-Day Graph) */}
         {summaryData.detailedScores && (
-          <div className="mb-5 bg-gradient-to-br from-zinc-900 via-zinc-950 to-zinc-900 border border-zinc-800 rounded-3xl p-6 text-white shadow-xl relative overflow-hidden">
+          <div 
+            onClick={() => setIsProgressScreenOpen(true)}
+            className="mb-5 bg-gradient-to-br from-zinc-900 via-zinc-950 to-zinc-900 border border-zinc-800 hover:border-amber-500/50 rounded-3xl p-6 text-white shadow-xl relative overflow-hidden cursor-pointer active:scale-[0.99] transition-all group"
+            title="Click to view 30-Day Confidence History"
+          >
             <div className="absolute top-0 right-0 w-36 h-36 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none" />
             <div className="absolute bottom-0 left-0 w-36 h-36 bg-blue-500/10 rounded-full blur-2xl pointer-events-none" />
 
@@ -323,9 +330,14 @@ export const BuddyView: React.FC<BuddyViewProps> = ({ onStartPractice, onBack, l
                   {summaryData.detailedScores.overallScore >= 85 ? 'High Confidence & Fluency' :
                    summaryData.detailedScores.overallScore >= 70 ? 'Clear & Capable Speaking' : 'Steady Progress & Building'}
                 </div>
-                <div className="mt-3 inline-flex items-center gap-1.5 text-[11px] font-semibold text-emerald-400 bg-emerald-950/60 border border-emerald-500/30 px-2.5 py-1 rounded-full w-fit">
-                  <TrendingUp className="w-3 h-3" />
-                  <span>Rating: {summaryData.detailedScores.overallScore >= 85 ? 'Great' : summaryData.detailedScores.overallScore >= 70 ? 'Good' : 'Getting Better'}</span>
+                <div className="mt-3 flex items-center gap-2">
+                  <div className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-emerald-400 bg-emerald-950/60 border border-emerald-500/30 px-2.5 py-1 rounded-full w-fit">
+                    <TrendingUp className="w-3 h-3" />
+                    <span>Rating: {summaryData.detailedScores.overallScore >= 85 ? 'Great' : summaryData.detailedScores.overallScore >= 70 ? 'Good' : 'Getting Better'}</span>
+                  </div>
+                  <span className="text-[11px] text-zinc-400 group-hover:text-amber-400 flex items-center gap-1 font-semibold transition-colors">
+                    View 30-Day Graph <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+                  </span>
                 </div>
               </div>
 
@@ -466,6 +478,13 @@ export const BuddyView: React.FC<BuddyViewProps> = ({ onStartPractice, onBack, l
             </div>
           </div>
         </div>
+
+        {/* 30-Day Confidence History Modal */}
+        <EnglishProgressScreen
+          isOpen={isProgressScreenOpen}
+          onClose={() => setIsProgressScreenOpen(false)}
+          initialTab={0}
+        />
       </motion.div>
     );
   }
@@ -488,18 +507,37 @@ export const BuddyView: React.FC<BuddyViewProps> = ({ onStartPractice, onBack, l
             <Bot className="w-6 h-6 text-white" />
           </div>
           <div>
-            <h1 className="text-lg font-black tracking-tight">Buddy Chat (Engine 3)</h1>
-            <span className="text-xs text-zinc-400">Exchange {exchangeCount} of ~15</span>
+            <h1 className="text-lg font-black tracking-tight">Buddy Chat</h1>
           </div>
         </div>
 
-        <button
-          onClick={() => fetchSummary(messages)}
-          disabled={exchangeCount === 0 || isLoadingSummary}
-          className="px-3.5 py-1.5 rounded-xl bg-zinc-900 border border-zinc-800 text-xs font-bold text-zinc-300 hover:text-white hover:bg-zinc-800 transition-colors disabled:opacity-40 cursor-pointer"
-        >
-          {isLoadingSummary ? 'Generating Summary...' : 'End & See Summary'}
-        </button>
+        {/* Action Controls: Chat Number & Summary Report Icon */}
+        <div className="flex items-center gap-2">
+          {/* Chat Numbers (eg 0/15) */}
+          <div 
+            className="px-3 py-1.5 rounded-xl bg-zinc-900/90 border border-zinc-800 text-xs font-bold text-sky-400 flex items-center gap-1.5 shadow-xs"
+            title={`Completed Exchanges: ${exchangeCount} of 15`}
+          >
+            <MessageSquare className="w-3.5 h-3.5 text-sky-400" />
+            <span>{exchangeCount}/15</span>
+          </div>
+
+          {/* Icon for summary report */}
+          <button
+            onClick={() => fetchSummary(messages)}
+            disabled={isLoadingSummary || messages.length === 0}
+            className="h-9 px-3 rounded-xl bg-sky-600/20 hover:bg-sky-600/30 border border-sky-500/50 hover:border-sky-400 flex items-center gap-1.5 text-sky-300 hover:text-white transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed active:scale-95 shadow-xs"
+            title="Open Summary Report"
+            aria-label="Summary Report"
+          >
+            {isLoadingSummary ? (
+              <div className="w-3.5 h-3.5 border-2 border-sky-400 border-t-transparent rounded-full animate-spin" />
+            ) : (
+              <FileText className="w-4 h-4 text-sky-400" />
+            )}
+            <span className="text-xs font-bold hidden sm:inline">Report</span>
+          </button>
+        </div>
       </div>
 
       {/* Chat Messages */}
@@ -613,6 +651,13 @@ export const BuddyView: React.FC<BuddyViewProps> = ({ onStartPractice, onBack, l
           </button>
         </div>
       </div>
+
+      {/* 30-Day Confidence History Modal */}
+      <EnglishProgressScreen
+        isOpen={isProgressScreenOpen}
+        onClose={() => setIsProgressScreenOpen(false)}
+        initialTab={0}
+      />
     </div>
   );
 };

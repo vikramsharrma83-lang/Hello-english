@@ -14,6 +14,7 @@ import {
 import { DayMap, ConversationTurn, DeepAnalysis } from '../../types';
 import { speakText, stopSpeaking } from '../../utils/audio';
 import { synthesizeNaturalEnglishStory, applySheekoGrammarCorrections } from '../../data/sheekoEngine';
+import { EnglishProgressScreen } from './EnglishProgressScreen';
 
 interface DayStorySessionReportProps {
   dayMap: DayMap;
@@ -86,6 +87,7 @@ export const DayStorySessionReport: React.FC<DayStorySessionReportProps> = ({
     Array<{ original: string; natural: string; id: string }>
   >([]);
   const [isRefiningPairs, setIsRefiningPairs] = useState(false);
+  const [isProgressModalOpen, setIsProgressModalOpen] = useState(false);
 
   // 1. Gather all actual discrete learner utterances
   const discreteLearnerUtterances = useMemo(() => {
@@ -526,8 +528,12 @@ export const DayStorySessionReport: React.FC<DayStorySessionReportProps> = ({
         </div>
       </div>
 
-      {/* Large Overall Confidence Hero Banner */}
-      <div className="mb-5 bg-gradient-to-br from-zinc-900 via-zinc-950 to-zinc-900 border border-zinc-800 rounded-3xl p-6 text-white shadow-xl relative overflow-hidden">
+      {/* Large Overall Confidence Hero Banner (Clickable to open 30-Day Graph) */}
+      <div
+        onClick={() => setIsProgressModalOpen(true)}
+        className="mb-5 bg-gradient-to-br from-zinc-900 via-zinc-950 to-zinc-900 border border-zinc-800 hover:border-amber-500/50 rounded-3xl p-6 text-white shadow-xl relative overflow-hidden cursor-pointer active:scale-[0.99] transition-all group"
+        title="Click to view 30-Day Confidence History"
+      >
         <div className="absolute top-0 right-0 w-36 h-36 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none" />
         <div className="absolute bottom-0 left-0 w-36 h-36 bg-blue-500/10 rounded-full blur-2xl pointer-events-none" />
 
@@ -542,9 +548,14 @@ export const DayStorySessionReport: React.FC<DayStorySessionReportProps> = ({
             <div className="text-xs text-zinc-400 font-medium">
               {metricsCalculation.confidenceTierText}
             </div>
-            <div className="mt-3 inline-flex items-center gap-1.5 text-[11px] font-semibold text-emerald-400 bg-emerald-950/60 border border-emerald-500/30 px-2.5 py-1 rounded-full w-fit">
-              <TrendingUp className="w-3 h-3" />
-              <span>Rating: {metricsCalculation.confidenceRating}</span>
+            <div className="mt-3 flex items-center gap-2">
+              <div className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-emerald-400 bg-emerald-950/60 border border-emerald-500/30 px-2.5 py-1 rounded-full w-fit">
+                <TrendingUp className="w-3 h-3" />
+                <span>Rating: {metricsCalculation.confidenceRating}</span>
+              </div>
+              <span className="text-[11px] text-zinc-400 group-hover:text-amber-400 flex items-center gap-1 font-semibold transition-colors">
+                View 30-Day Graph <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+              </span>
             </div>
           </div>
 
@@ -743,6 +754,15 @@ export const DayStorySessionReport: React.FC<DayStorySessionReportProps> = ({
           Review Full Conversation Transcript
         </button>
       </div>
+
+      {/* 30-Day Confidence Progress Modal */}
+      <EnglishProgressScreen
+        isOpen={isProgressModalOpen}
+        onClose={() => setIsProgressModalOpen(false)}
+        turns={turns}
+        dayMap={dayMap}
+        initialTab={0}
+      />
     </div>
   );
 };

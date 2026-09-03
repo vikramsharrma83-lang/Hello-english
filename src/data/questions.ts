@@ -1,7 +1,7 @@
 import { Question } from '../types';
 
 export const PRACTICE_QUESTIONS: Question[] = [
-  // =========================================================================
+// =========================================================================
   // 1. WORKPLACE (Workplace, Shifts, Logistics, Supervisors, Duties)
   // =========================================================================
   // Level 1: Short Words
@@ -833,6 +833,2058 @@ export const PRACTICE_QUESTIONS: Question[] = [
     sampleLearnerSpoken: 'Morning my bike punctured and rain came, but evening company announced promotion for our team.',
     cardColor: 'from-[#D1FAE5] to-[#A7F3D0]',
     iconType: 'sparkles'
+  },
+  {
+    id: 'logistics-level1-what-is-the-delivery-otp--1',
+    category: 'logistics',
+    categoryLabel: 'Logistics',
+    categoryHindi: 'लॉजिस्टिक्स',
+    questionEn: "What is the delivery OTP for this parcel?",
+    questionHi: "इस पार्सल के लिए डिलीवरी ओटीपी क्या है?",
+    hintEn: "Say: \"Sir, please share the 4-digit OTP sent on your SMS.\"",
+    hintHi: "कहें: \"सर, कृपया अपने एसएमएस पर आया 4 अंकों का ओटीपी साझा करें।\"",
+    level: 'Level 1',
+    samplePhrases: [
+          "OTP is 5821 sir.",
+          "Please check SMS on registered phone.",
+          "OTP verified, here is your package."
+    ],
+    sampleLearnerSpoken: "Please share 4 digit OTP for parcel.",
+    cardColor: 'from-[#FFF1DE] to-[#FFE3CB]',
+    iconType: 'package'
+  },
+  {
+    id: 'logistics-level1-where-should-i-unload-the-1',
+    category: 'logistics',
+    categoryLabel: 'Logistics',
+    categoryHindi: 'लॉजिस्टिक्स',
+    questionEn: "Where should I unload these 10 heavy cartons?",
+    questionHi: "मुझे ये 10 भारी कार्टन कहाँ उतारने चाहिए?",
+    hintEn: "Say: \"Please stack them near Bay 3 on wooden pallets.\"",
+    hintHi: "कहें: \"कृपया इन्हें लकड़ी के पैलेट पर बे 3 के पास रखें।\"",
+    level: 'Level 1',
+    samplePhrases: [
+          "Keep near bay three.",
+          "Stack on wooden pallet.",
+          "Move to storage shelf B."
+    ],
+    sampleLearnerSpoken: "Stack 10 boxes near bay three pallet.",
+    cardColor: 'from-[#EDF6FF] to-[#D8ECFE]',
+    iconType: 'truck'
+  },
+  {
+    id: 'logistics-level1-is-the-delivery-vehicle-f-1',
+    category: 'logistics',
+    categoryLabel: 'Logistics',
+    categoryHindi: 'लॉजिस्टिक्स',
+    questionEn: "Is the delivery vehicle fuel tank full for today's route?",
+    questionHi: "क्या आज के रूट के लिए डिलीवरी वाहन का फ्यूल टैंक फुल है?",
+    hintEn: "Say: \"Yes, filled diesel at Indian Oil pump this morning.\"",
+    hintHi: "कहें: \"हाँ, आज सुबह पेट्रोल पंप पर डीजल भरवा लिया था।\"",
+    level: 'Level 1',
+    samplePhrases: [
+          "Full tank diesel filled.",
+          "Fuel is at 80 percent.",
+          "Receipt attached in logbook."
+    ],
+    sampleLearnerSpoken: "Full tank fuel filled morning time.",
+    cardColor: 'from-[#F0FDF4] to-[#DCFCE7]',
+    iconType: 'truck'
+  },
+  {
+    id: 'logistics-level2-how-will-you-explain-a-30-1',
+    category: 'logistics',
+    categoryLabel: 'Logistics',
+    categoryHindi: 'लॉजिस्टिक्स',
+    questionEn: "How will you explain a 30-minute delivery delay caused by waterlogging?",
+    questionHi: "जलभराव के कारण हुई 30-मिनट की देरी की जानकारी कैसे देंगे?",
+    hintEn: "Say: \"Sir, underpass was waterlogged after heavy downpour, reaching your location in 20 minutes.\"",
+    hintHi: "कहें: \"सर, बारिश से अंडरपास में पानी भर गया था, 20 मिनट में पहुँच रहा हूँ।\"",
+    level: 'Level 2',
+    samplePhrases: [
+          "Heavy rain caused road blockage on main flyover.",
+          "Took bypass route to deliver parcel safely.",
+          "Reaching your apartment gate in fifteen minutes."
+    ],
+    sampleLearnerSpoken: "Underpass waterlogged sir, taking diversion, reaching shortly.",
+    cardColor: 'from-[#FAF5FF] to-[#EDE9FE]',
+    iconType: 'umbrella'
+  },
+  {
+    id: 'logistics-level2-what-procedure-do-you-fol-1',
+    category: 'logistics',
+    categoryLabel: 'Logistics',
+    categoryHindi: 'लॉजिस्टिक्स',
+    questionEn: "What procedure do you follow when barcode scanner stops reading labels?",
+    questionHi: "जब बारकोड स्कैनर लेबल पढ़ना बंद कर देता है तो आप क्या प्रक्रिया अपनाते हैं?",
+    hintEn: "Say: \"Clean scanner lens, type 12-digit airway bill manually, and report to IT support desk.\"",
+    hintHi: "कहें: \"लेंस साफ करें, 12 अंकों का बिल नंबर हाथ से टाइप करें और सपोर्ट को बताएं।\"",
+    level: 'Level 2',
+    samplePhrases: [
+          "Wipe camera lens with clean microfiber cloth.",
+          "Type tracking consignment number manually on touchpad.",
+          "Switch to spare scanner kept at charging station."
+    ],
+    sampleLearnerSpoken: "Clean lens and type 12 digit tracking number manually.",
+    cardColor: 'from-[#FEF2F2] to-[#FEE2E2]',
+    iconType: 'smartphone'
+  },
+  {
+    id: 'logistics-level3-how-do-you-coordinate-wit-1',
+    category: 'logistics',
+    categoryLabel: 'Logistics',
+    categoryHindi: 'लॉजिस्टिक्स',
+    questionEn: "How do you coordinate with the night shift supervisor during parcel handoff?",
+    questionHi: "पार्सल हैंडऑफ के दौरान नाइट शिफ्ट सुपरवाइजर के साथ तालमेल कैसे बिठाते हैं?",
+    hintEn: "Review dispatch manifests, tally physical carton count, flag return orders, and sign handover sheet.",
+    hintHi: "लिस्ट देखें, कार्टन गिनें, रिटर्न पार्सल अलग करें और हस्ताक्षर करें।",
+    level: 'Level 3',
+    samplePhrases: [
+          "We physically verify total count of 350 parcels against the system manifest.",
+          "Damaged items and pending OTP orders are highlighted in red ink.",
+          "Both shift supervisors sign the official handover register before departure."
+    ],
+    sampleLearnerSpoken: "Verify 350 boxes count, check return parcels, sign handover register.",
+    cardColor: 'from-[#FFFBEB] to-[#FEF3C7]',
+    iconType: 'file-text'
+  },
+  {
+    id: 'workplace-level1-can-you-print-five-copies-1',
+    category: 'workplace',
+    categoryLabel: 'Workplace',
+    categoryHindi: 'कार्यस्थल',
+    questionEn: "Can you print five copies of today's shift schedule?",
+    questionHi: "क्या आप आज के शिफ्ट शेड्यूल की पांच प्रतियां प्रिंट कर सकते हैं?",
+    hintEn: "Say: \"Sure, printing them on printer 2 right now.\"",
+    hintHi: "कहें: \"ज़रूर, प्रिंटर 2 से अभी प्रिंट निकालता हूँ।\"",
+    level: 'Level 1',
+    samplePhrases: [
+          "Printing five copies now.",
+          "Printout is ready at front desk.",
+          "Here are your schedule copies."
+    ],
+    sampleLearnerSpoken: "Yes sir, printing 5 copies right now.",
+    cardColor: 'from-[#FFF1DE] to-[#FFE3CB]',
+    iconType: 'printer'
+  },
+  {
+    id: 'workplace-level1-where-are-the-spare-therm-1',
+    category: 'workplace',
+    categoryLabel: 'Workplace',
+    categoryHindi: 'कार्यस्थल',
+    questionEn: "Where are the spare thermal paper rolls kept?",
+    questionHi: "स्पेयर थर्मल पेपर रोल कहाँ रखे हैं?",
+    hintEn: "Say: \"They are in cabinet number 4 under the billing desk.\"",
+    hintHi: "कहें: \"वे बिलिंग डेस्क के नीचे कैबिनेट नंबर 4 में हैं।\"",
+    level: 'Level 1',
+    samplePhrases: [
+          "Inside cabinet number four.",
+          "Underneath the POS computer.",
+          "Two boxes are left in storage."
+    ],
+    sampleLearnerSpoken: "In cabinet 4 under billing counter.",
+    cardColor: 'from-[#EDF6FF] to-[#D8ECFE]',
+    iconType: 'file'
+  },
+  {
+    id: 'workplace-level2-how-do-you-politely-ask-a-1',
+    category: 'workplace',
+    categoryLabel: 'Workplace',
+    categoryHindi: 'कार्यस्थल',
+    questionEn: "How do you politely ask a coworker to speak softly during a client call?",
+    questionHi: "क्लाइंट कॉल के दौरान साथी से धीरे बोलने के लिए विनम्रता से कैसे कहेंगे?",
+    hintEn: "Say: \"Excuse me brother, I am on an urgent client audio call, could you speak a little softer please?\"",
+    hintHi: "कहें: \"क्षमा करें भाई, मेरी क्लाइंट कॉल चल रही है, क्या थोड़ा धीरे बोल सकते हैं?\"",
+    level: 'Level 2',
+    samplePhrases: [
+          "Could you please lower voice for five minutes?",
+          "I am on client discussion line.",
+          "Thank you so much for understanding brother."
+    ],
+    sampleLearnerSpoken: "Brother please talk little soft, client on call.",
+    cardColor: 'from-[#F0FDF4] to-[#DCFCE7]',
+    iconType: 'volume-x'
+  },
+  {
+    id: 'workplace-level2-what-will-you-say-when-as-1',
+    category: 'workplace',
+    categoryLabel: 'Workplace',
+    categoryHindi: 'कार्यस्थल',
+    questionEn: "What will you say when asking your manager for a salary slip certificate?",
+    questionHi: "मैनेजर से सैलरी स्लिप सर्टिफिकेट मांगते समय क्या कहेंगे?",
+    hintEn: "Say: \"Good morning sir, I need my last 3 months stamped salary slips for a bank loan application.\"",
+    hintHi: "कहें: \"नमस्ते सर, बैंक लोन के लिए पिछले 3 महीने की सैलरी स्लिप चाहिए।\"",
+    level: 'Level 2',
+    samplePhrases: [
+          "Sir, could HR please email last three months pay slips?",
+          "Need signed salary slips for bike loan approval.",
+          "Submitted formal request on employee portal."
+    ],
+    sampleLearnerSpoken: "Sir please email last 3 months stamped salary slips.",
+    cardColor: 'from-[#FAF5FF] to-[#EDE9FE]',
+    iconType: 'file-text'
+  },
+  {
+    id: 'workplace-level3-how-do-you-welcome-and-on-1',
+    category: 'workplace',
+    categoryLabel: 'Workplace',
+    categoryHindi: 'कार्यस्थल',
+    questionEn: "How do you welcome and onboard a newly joined team member on their first morning?",
+    questionHi: "काम के पहले दिन नए जुड़े साथी का स्वागत और मार्गदर्शन कैसे करेंगे?",
+    hintEn: "Introduce yourself warmly, show locker room, biometric punch machine, water dispenser, and shift buddies.",
+    hintHi: "गर्मजोशी से स्वागत करें, लॉकर, हाजिरी मशीन और टीम से परिचय कराएं।",
+    level: 'Level 3',
+    samplePhrases: [
+          "Welcome to our logistics center Rahul, let me show you where our team sits.",
+          "Here is our attendance fingerprint scanner and tea break area.",
+          "Feel free to ask me any questions throughout your initial training week."
+    ],
+    sampleLearnerSpoken: "Welcome to team Rahul, I show lockers, biometric and work process.",
+    cardColor: 'from-[#FEF2F2] to-[#FEE2E2]',
+    iconType: 'user-plus'
+  },
+  {
+    id: 'qsr_retail-level1-do-you-need-a-carry-bag-f-1',
+    category: 'qsr_retail',
+    categoryLabel: 'Retail & Store',
+    categoryHindi: 'रिटेल स्टोर',
+    questionEn: "Do you need a carry bag for these purchases?",
+    questionHi: "क्या आपको इन सामानों के लिए कैरी बैग चाहिए?",
+    hintEn: "Say: \"Small cloth bag is 7 rupees and large is 12 rupees.\"",
+    hintHi: "कहें: \"छोटा कपड़ा बैग 7 रुपये का है और बड़ा 12 रुपये का।\"",
+    level: 'Level 1',
+    samplePhrases: [
+          "Do you want carry bag sir?",
+          "Small cloth bag is seven rupees.",
+          "I have brought my own bag."
+    ],
+    sampleLearnerSpoken: "Need carry bag sir? Seven rupees cloth bag.",
+    cardColor: 'from-[#FFFBEB] to-[#FEF3C7]',
+    iconType: 'shopping-bag'
+  },
+  {
+    id: 'qsr_retail-level1-where-can-i-find-cooking--1',
+    category: 'qsr_retail',
+    categoryLabel: 'Retail & Store',
+    categoryHindi: 'रिटेल स्टोर',
+    questionEn: "Where can I find cooking oil and basmati rice?",
+    questionHi: "मुझे कुकिंग ऑयल और बासमती चावल कहाँ मिलेंगे?",
+    hintEn: "Say: \"Cooking oils are in Aisle 2 and rice bags are in Aisle 3.\"",
+    hintHi: "कहें: \"कुकिंग ऑयल आइल 2 में हैं और चावल के बैग आइल 3 में हैं।\"",
+    level: 'Level 1',
+    samplePhrases: [
+          "Cooking oil is in aisle two.",
+          "Rice packets are right behind you.",
+          "Follow the grocery signboard."
+    ],
+    sampleLearnerSpoken: "Oil in aisle 2 and basmati rice in aisle 3.",
+    cardColor: 'from-[#FFF1DE] to-[#FFE3CB]',
+    iconType: 'search'
+  },
+  {
+    id: 'qsr_retail-level2-how-do-you-inform-a-shopp-1',
+    category: 'qsr_retail',
+    categoryLabel: 'Retail & Store',
+    categoryHindi: 'रिटेल स्टोर',
+    questionEn: "How do you inform a shopper that their card transaction was declined?",
+    questionHi: "ग्राहक को कैसे बताएंगे कि उनका कार्ड पेमेंट फेल हो गया है?",
+    hintEn: "Politely say: \"Sir, machine shows bank server timed out. Could we try inserting card again or scan UPI?\"",
+    hintHi: "कहें: \"सर, बैंक सर्वर टाइमआउट हुआ है। क्या दोबारा कार्ड लगाएं या यूपीआई करें?\"",
+    level: 'Level 2',
+    samplePhrases: [
+          "Card transaction did not go through, sir.",
+          "Please check if international or online swipe is active.",
+          "Would you like to scan our PhonePe QR stand?"
+    ],
+    sampleLearnerSpoken: "Sir transaction declined by bank, please try UPI or retry card.",
+    cardColor: 'from-[#EDF6FF] to-[#D8ECFE]',
+    iconType: 'credit-card'
+  },
+  {
+    id: 'qsr_retail-level2-a-customer-is-asking-for--1',
+    category: 'qsr_retail',
+    categoryLabel: 'Retail & Store',
+    categoryHindi: 'रिटेल स्टोर',
+    questionEn: "A customer is asking for a discount on a fixed price branded item. How do you respond?",
+    questionHi: "ग्राहक फिक्स्ड प्राइस ब्रांडेड सामान पर छूट मांग रहा है। आप क्या जवाब देंगे?",
+    hintEn: "Say: \"Sir, prices are computer fixed by brand, but you earn 5% loyalty reward points on your mobile number.\"",
+    hintHi: "कहें: \"सर, रेट फिक्स हैं, लेकिन आपको नंबर पर 5% रिवॉर्ड पॉइंट मिलेंगे।\"",
+    level: 'Level 2',
+    samplePhrases: [
+          "Sir, these are system-locked brand prices.",
+          "We have buy one get one offer on rack three.",
+          "You will get 50 rupees cashback on our membership app."
+    ],
+    sampleLearnerSpoken: "Sir prices system fixed, but you get membership points.",
+    cardColor: 'from-[#F0FDF4] to-[#DCFCE7]',
+    iconType: 'percent'
+  },
+  {
+    id: 'qsr_retail-level3-describe-how-you-maintain-1',
+    category: 'qsr_retail',
+    categoryLabel: 'Retail & Store',
+    categoryHindi: 'रिटेल स्टोर',
+    questionEn: "Describe how you maintain food hygiene and cleanliness at a fast-food serving station.",
+    questionHi: "फास्ट-फूड सर्विंग स्टेशन पर खाद्य स्वच्छता और सफाई कैसे बनाए रखते हैं?",
+    hintEn: "Mention wearing fresh gloves and hairnets, sanitizing counters every 30 minutes, and checking food thermometer temps.",
+    hintHi: "दस्ताने, हेयरनेट, हर 30 मिनट में काउंटर सैनिटाइजेशन और तापमान की जांच बताएं।",
+    level: 'Level 3',
+    samplePhrases: [
+          "We sanitize food preparation slabs every half hour with food-grade disinfectant.",
+          "Staff strictly wear disposable hairnets, aprons, and nitrile gloves.",
+          "Hot food is maintained above 65 degrees Celsius to guarantee safety."
+    ],
+    sampleLearnerSpoken: "Wear hairnet and gloves, clean counters every 30 min, check hot food temp.",
+    cardColor: 'from-[#FAF5FF] to-[#EDE9FE]',
+    iconType: 'shield-check'
+  },
+  {
+    id: 'daily_routine-level1-how-much-is-the-auto-rick-1',
+    category: 'daily_routine',
+    categoryLabel: 'Daily Routine',
+    categoryHindi: 'दैनिक जीवन',
+    questionEn: "How much is the auto rickshaw fare to the railway station by meter?",
+    questionHi: "मीटर से रेलवे स्टेशन तक का ऑटो किराया कितना है?",
+    hintEn: "Say: \"Meter fare will be around 70 to 80 rupees.\"",
+    hintHi: "कहें: \"मीटर का किराया लगभग 70 से 80 रुपये होगा।\"",
+    level: 'Level 1',
+    samplePhrases: [
+          "Please turn on the meter bhaiya.",
+          "Meter shows 75 rupees.",
+          "Here is exact eighty rupees."
+    ],
+    sampleLearnerSpoken: "Please run meter bhaiya, around 75 rupees.",
+    cardColor: 'from-[#FEF2F2] to-[#FEE2E2]',
+    iconType: 'navigation'
+  },
+  {
+    id: 'daily_routine-level1-did-you-lock-the-kitchen--1',
+    category: 'daily_routine',
+    categoryLabel: 'Daily Routine',
+    categoryHindi: 'दैनिक जीवन',
+    questionEn: "Did you lock the kitchen balcony door before leaving home?",
+    questionHi: "क्या आपने घर से निकलने से पहले किचन बालकनी का दरवाजा बंद किया था?",
+    hintEn: "Say: \"Yes, I double-locked both balcony and front door latch.\"",
+    hintHi: "कहें: \"हाँ, मैंने बालकनी और मुख्य दरवाजा दोनों अच्छी तरह बंद किए।\"",
+    level: 'Level 1',
+    samplePhrases: [
+          "Yes, balcony door is locked.",
+          "Latched all windows tightly.",
+          "Double checked lock before leaving."
+    ],
+    sampleLearnerSpoken: "Yes, balcony door locked properly.",
+    cardColor: 'from-[#FFFBEB] to-[#FEF3C7]',
+    iconType: 'lock'
+  },
+  {
+    id: 'daily_routine-level2-how-do-you-navigate-a-cro-1',
+    category: 'daily_routine',
+    categoryLabel: 'Daily Routine',
+    categoryHindi: 'दैनिक जीवन',
+    questionEn: "How do you navigate a crowded metro interchange station like Rajiv Chowk?",
+    questionHi: "राजीव चौक जैसे भीड़भाड़ वाले मेट्रो स्टेशन पर आप कैसे रास्ता तय करते हैं?",
+    hintEn: "Say: \"Follow yellow floor stickers towards Yellow Line Platform 2 and keep left on escalators.\"",
+    hintHi: "कहें: \"येलो लाइन के पीले निशानों का पालन करें और एस्केलेटर पर बाईं ओर रहें।\"",
+    level: 'Level 2',
+    samplePhrases: [
+          "Follow the overhead signboards carefully.",
+          "Walk on left side of staircases to avoid stampede.",
+          "Listen to station announcements for train arrival."
+    ],
+    sampleLearnerSpoken: "Follow yellow line signage, walk left on escalator.",
+    cardColor: 'from-[#FFF1DE] to-[#FFE3CB]',
+    iconType: 'compass'
+  },
+  {
+    id: 'daily_routine-level2-explain-how-you-budget-yo-1',
+    category: 'daily_routine',
+    categoryLabel: 'Daily Routine',
+    categoryHindi: 'दैनिक जीवन',
+    questionEn: "Explain how you budget your monthly salary between rent, groceries, and savings.",
+    questionHi: "बताएं कि आप किराए, राशन और बचत के बीच अपनी तनख्वाह का बजट कैसे बनाते हैं।",
+    hintEn: "Say: \"40% goes for house rent and electricity, 30% for food and commute, and 30% goes directly into recurring deposit savings.\"",
+    hintHi: "कहें: \"40% किराया, 30% खाना व आवागमन, और 30% बैंक बचत में जाता है।\"",
+    level: 'Level 2',
+    samplePhrases: [
+          "I transfer savings amount on the day salary credits.",
+          "Keep strict limit on online food orders.",
+          "Use UPI passbook to track small daily spends."
+    ],
+    sampleLearnerSpoken: "40% rent, 30% food and travel, 30% bank savings.",
+    cardColor: 'from-[#EDF6FF] to-[#D8ECFE]',
+    iconType: 'pie-chart'
+  },
+  {
+    id: 'daily_routine-level3-describe-your-sunday-morn-1',
+    category: 'daily_routine',
+    categoryLabel: 'Daily Routine',
+    categoryHindi: 'दैनिक जीवन',
+    questionEn: "Describe your Sunday morning routine when you have a full day off with family.",
+    questionHi: "रविवार की सुबह की अपनी दिनचर्या बताएं जब परिवार के साथ पूरी छुट्टी होती है।",
+    hintEn: "Wake up without alarm, prepare special breakfast like aloo parathas, clean rooms, and wash scooter together.",
+    hintHi: "आराम से उठना, आलू पराठे बनाना, कमरे साफ करना और मिलकर काम करना।",
+    level: 'Level 3',
+    samplePhrases: [
+          "Sunday morning starts with hot aloo parathas and homemade curd.",
+          "I wash my motorcycle and do laundry while listening to old Hindi songs.",
+          "Afterwards, the whole family sits together to plan grocery shopping."
+    ],
+    sampleLearnerSpoken: "Wake late, make hot paratha breakfast, clean bike, spend time family.",
+    cardColor: 'from-[#F0FDF4] to-[#DCFCE7]',
+    iconType: 'smile'
+  },
+  {
+    id: 'friends-level1-what-street-food-snack-wo-1',
+    category: 'friends',
+    categoryLabel: 'Friends',
+    categoryHindi: 'दोस्त',
+    questionEn: "What street food snack would you like to eat today?",
+    questionHi: "आज आप कौन सा स्ट्रीट फूड स्नैक खाना चाहेंगे?",
+    hintEn: "Say: \"Let us eat crispy pani puri with spicy mint water.\"",
+    hintHi: "कहें: \"चलो तीखे पुदीना पानी के साथ पानी पूरी खाते हैं।\"",
+    level: 'Level 1',
+    samplePhrases: [
+          "Let us eat pani puri.",
+          "Hot samosa and jalebi.",
+          "One plate pav bhaji please."
+    ],
+    sampleLearnerSpoken: "Crispy pani puri with spicy water please.",
+    cardColor: 'from-[#FAF5FF] to-[#EDE9FE]',
+    iconType: 'coffee'
+  },
+  {
+    id: 'friends-level1-are-you-free-to-play-badm-1',
+    category: 'friends',
+    categoryLabel: 'Friends',
+    categoryHindi: 'दोस्त',
+    questionEn: "Are you free to play badminton in the society park this evening?",
+    questionHi: "क्या आज शाम आप पार्क में बैडमिंटन खेलने के लिए खाली हैं?",
+    hintEn: "Say: \"Yes! Let us meet at the court at 5:30 PM.\"",
+    hintHi: "कहें: \"हाँ! चलो शाम 5:30 बजे कोर्ट पर मिलते हैं।\"",
+    level: 'Level 1',
+    samplePhrases: [
+          "Yes, I am free at 5:30.",
+          "Bring your racket along.",
+          "Let us play 3 sets."
+    ],
+    sampleLearnerSpoken: "Yes free, meet at badminton court 5:30 PM.",
+    cardColor: 'from-[#FEF2F2] to-[#FEE2E2]',
+    iconType: 'activity'
+  },
+  {
+    id: 'friends-level2-how-do-you-invite-your-ap-1',
+    category: 'friends',
+    categoryLabel: 'Friends',
+    categoryHindi: 'दोस्त',
+    questionEn: "How do you invite your apartment neighbors for Diwali sweets exchange?",
+    questionHi: "अपार्टमेंट के पड़ोसियों को दिवाली की मिठाई के लिए कैसे आमंत्रित करेंगे?",
+    hintEn: "Say: \"Namaste uncle, wishing you a happy Diwali! Please visit our flat this evening for sweets and snacks.\"",
+    hintHi: "कहें: \"नमस्ते अंकल, दिवाली की शुभकामनाएं! शाम को मिठाई के लिए घर पधारें।\"",
+    level: 'Level 2',
+    samplePhrases: [
+          "Happy Diwali to your entire family uncle!",
+          "Please come over for homemade kaju katli.",
+          "Looking forward to celebrating festival together."
+    ],
+    sampleLearnerSpoken: "Happy Diwali uncle, please come our home evening for sweets.",
+    cardColor: 'from-[#FFFBEB] to-[#FEF3C7]',
+    iconType: 'sparkles'
+  },
+  {
+    id: 'friends-level2-your-friend-is-nervous-ab-1',
+    category: 'friends',
+    categoryLabel: 'Friends',
+    categoryHindi: 'दोस्त',
+    questionEn: "Your friend is nervous about their driving license test. How do you motivate them?",
+    questionHi: "दोस्त ड्राइविंग लाइसेंस टेस्ट को लेकर घबराया हुआ है। उसका हौसला कैसे बढ़ाएंगे?",
+    hintEn: "Say: \"Relax brother, you practiced parallel parking well; just check mirrors, use indicators, and stay calm.\"",
+    hintHi: "कहें: \"शांत रहो भाई, तुमने अच्छी प्रैक्टिस की है; शीशे और इंडिकेटर सही रखना।\"",
+    level: 'Level 2',
+    samplePhrases: [
+          "Take deep breaths, you are an excellent driver.",
+          "Keep speed steady and wear seatbelt first.",
+          "You will clear the track test easily brother!"
+    ],
+    sampleLearnerSpoken: "Relax bhai, you practiced well, drive slow and check mirrors.",
+    cardColor: 'from-[#FFF1DE] to-[#FFE3CB]',
+    iconType: 'thumbs-up'
+  },
+  {
+    id: 'friends-level3-how-would-you-organize-a--1',
+    category: 'friends',
+    categoryLabel: 'Friends',
+    categoryHindi: 'दोस्त',
+    questionEn: "How would you organize a surprise birthday treat for your roommate on a small budget?",
+    questionHi: "कम बजट में अपने रूममेट के लिए सरप्राइज बर्थडे ट्रीट कैसे आयोजित करेंगे?",
+    hintEn: "Bake or buy a small pastry, decorate room with balloons, invite two close friends, and play acoustic guitar music.",
+    hintHi: "पेस्ट्री, गुब्बारे, दो करीबी दोस्त और गाने बजाकर सरप्राइज देना।",
+    level: 'Level 3',
+    samplePhrases: [
+          "We pooled 200 rupees each for chocolate truffle cake and streamers.",
+          "Turned off room lights and greeted him with birthday song at midnight.",
+          "Simple heartfelt celebrations create deeper memories than expensive parties."
+    ],
+    sampleLearnerSpoken: "Pooled money for cake, decorated room, midnight surprise birthday song.",
+    cardColor: 'from-[#EDF6FF] to-[#D8ECFE]',
+    iconType: 'gift'
+  },
+  {
+    id: 'supervisors-level1-have-you-verified-all-ret-1',
+    category: 'supervisors',
+    categoryLabel: 'Supervisor Talk',
+    categoryHindi: 'सुपरवाइजर बातचीत',
+    questionEn: "Have you verified all return items in the computer system?",
+    questionHi: "क्या आपने कंप्यूटर सिस्टम में सभी रिटर्न सामान सत्यापित कर लिए हैं?",
+    hintEn: "Say: \"Yes sir, updated all 8 return items in portal.\"",
+    hintHi: "कहें: \"हाँ सर, पोर्टल में सभी 8 रिटर्न आइटम अपडेट कर दिए हैं।\"",
+    level: 'Level 1',
+    samplePhrases: [
+          "Yes sir, system updated.",
+          "All eight items logged.",
+          "Printout attached to folder."
+    ],
+    sampleLearnerSpoken: "Yes sir, all return items verified in system.",
+    cardColor: 'from-[#F0FDF4] to-[#DCFCE7]',
+    iconType: 'check-circle'
+  },
+  {
+    id: 'supervisors-level1-can-you-work-the-early-mo-1',
+    category: 'supervisors',
+    categoryLabel: 'Supervisor Talk',
+    categoryHindi: 'सुपरवाइजर बातचीत',
+    questionEn: "Can you work the early morning 6 AM shift tomorrow?",
+    questionHi: "क्या आप कल सुबह 6 बजे की शिफ्ट में आ सकते हैं?",
+    hintEn: "Say: \"Yes sir, I will report at 5:45 AM sharp.\"",
+    hintHi: "कहें: \"हाँ सर, मैं ठीक 5:45 बजे रिपोर्ट करूँगा।\"",
+    level: 'Level 1',
+    samplePhrases: [
+          "Yes sir, I will arrive on time.",
+          "Will report at 5:45 AM.",
+          "Available for early shift."
+    ],
+    sampleLearnerSpoken: "Yes sir, reporting 5:45 AM morning.",
+    cardColor: 'from-[#FAF5FF] to-[#EDE9FE]',
+    iconType: 'clock'
+  },
+  {
+    id: 'supervisors-level2-how-do-you-report-a-stock-1',
+    category: 'supervisors',
+    categoryLabel: 'Supervisor Talk',
+    categoryHindi: 'सुपरवाइजर बातचीत',
+    questionEn: "How do you report a stock discrepancy of five missing jackets to your supervisor?",
+    questionHi: "पांच जैकेटों की कमी की सूचना सुपरवाइजर को कैसे देंगे?",
+    hintEn: "Say: \"Sir, during evening audit, physical count shows 45 jackets but inventory software shows 50. I am rechecking Rack 2.\"",
+    hintHi: "कहें: \"सर, स्टॉक में 45 जैकेट हैं लेकिन सिस्टम में 50। मैं रैक 2 दोबारा चेक कर रहा हूँ।\"",
+    level: 'Level 2',
+    samplePhrases: [
+          "Found difference of five pieces during shelf audit.",
+          "Checking billing logs to see if dispatched without scan.",
+          "Will cross verify with dispatch counter security CCTV."
+    ],
+    sampleLearnerSpoken: "Sir physical count 45 but system shows 50, rechecking rack.",
+    cardColor: 'from-[#FEF2F2] to-[#FEE2E2]',
+    iconType: 'alert-triangle'
+  },
+  {
+    id: 'supervisors-level2-in-a-job-interview-how-do-1',
+    category: 'supervisors',
+    categoryLabel: 'Supervisor Talk',
+    categoryHindi: 'सुपरवाइजर बातचीत',
+    questionEn: "In a job interview, how do you answer: \"Why do you want to join our company?\"",
+    questionHi: "इंटरव्यू में जवाब कैसे देंगे: \"आप हमारी कंपनी में क्यों शामिल होना चाहते हैं?\"",
+    hintEn: "Highlight company growth, learning professional logistics systems, disciplined culture, and long-term career growth.",
+    hintHi: "कंपनी की प्रगति, सीखने के अवसर और करियर की उन्नति बताएं।",
+    level: 'Level 2',
+    samplePhrases: [
+          "Your company is recognized as an industry leader in logistics innovation.",
+          "I want to build my career here because you value punctuality and hard work.",
+          "This role matches my experience in warehouse management perfectly."
+    ],
+    sampleLearnerSpoken: "Your company has good reputation and growth, I want long term career here.",
+    cardColor: 'from-[#FFFBEB] to-[#FEF3C7]',
+    iconType: 'award'
+  },
+  {
+    id: 'supervisors-level3-how-do-you-discuss-with-y-1',
+    category: 'supervisors',
+    categoryLabel: 'Supervisor Talk',
+    categoryHindi: 'सुपरवाइजर बातचीत',
+    questionEn: "How do you discuss with your manager about wanting promotion to Assistant Shift Supervisor?",
+    questionHi: "असिस्टेंट शिफ्ट सुपरवाइजर पद पर प्रमोशन के लिए मैनेजर से बात कैसे करेंगे?",
+    hintEn: "Highlight 2 years zero-error record, training 10 junior pickers, managing attendance logs, and readiness for leadership.",
+    hintHi: "2 साल का बेदाग रिकॉर्ड, नए लड़कों को सिखाना और जिम्मेदारी लेने की इच्छा बताएं।",
+    level: 'Level 3',
+    samplePhrases: [
+          "Sir, over the past two years, I have maintained zero dispatch errors and trained ten new packers.",
+          "I am eager to take on higher shift management responsibilities as Assistant Supervisor.",
+          "I would be grateful for the opportunity to demonstrate my leadership skills."
+    ],
+    sampleLearnerSpoken: "Sir, 2 years zero errors and trained team, ready for Assistant Supervisor role.",
+    cardColor: 'from-[#FFF1DE] to-[#FFE3CB]',
+    iconType: 'trending-up'
+  },
+  {
+    id: 'customer-level1-what-is-your-registered-m-1',
+    category: 'customer',
+    categoryLabel: 'Customer Care',
+    categoryHindi: 'ग्राहक सेवा',
+    questionEn: "What is your registered mobile number for bill invoice?",
+    questionHi: "बिल इनवॉइस के लिए आपका रजिस्टर्ड मोबाइल नंबर क्या है?",
+    hintEn: "Say: \"My 10-digit mobile number is 9 8 7 6 5 4 3 2 1 0.\"",
+    hintHi: "कहें: \"मेरा 10 अंकों का मोबाइल नंबर 9876543210 है।\"",
+    level: 'Level 1',
+    samplePhrases: [
+          "Please tell mobile number.",
+          "Invoice sent via WhatsApp.",
+          "Number entered in system."
+    ],
+    sampleLearnerSpoken: "My mobile number is 9876543210 sir.",
+    cardColor: 'from-[#EDF6FF] to-[#D8ECFE]',
+    iconType: 'phone'
+  },
+  {
+    id: 'customer-level1-do-you-want-the-bill-rece-1',
+    category: 'customer',
+    categoryLabel: 'Customer Care',
+    categoryHindi: 'ग्राहक सेवा',
+    questionEn: "Do you want the bill receipt on WhatsApp or printed paper?",
+    questionHi: "क्या आपको बिल रसीद व्हाट्सएप पर चाहिए या प्रिंट पेपर पर?",
+    hintEn: "Say: \"Please send green e-bill on my WhatsApp.\"",
+    hintHi: "कहें: \"कृपया मेरे व्हाट्सएप पर ई-बिल भेज दीजिए।\"",
+    level: 'Level 1',
+    samplePhrases: [
+          "WhatsApp e-bill please.",
+          "Paper printout needed.",
+          "Eco-friendly message received."
+    ],
+    sampleLearnerSpoken: "WhatsApp e-bill is good sir.",
+    cardColor: 'from-[#F0FDF4] to-[#DCFCE7]',
+    iconType: 'message-square'
+  },
+  {
+    id: 'customer-level2-how-do-you-handle-a-custo-1',
+    category: 'customer',
+    categoryLabel: 'Customer Care',
+    categoryHindi: 'ग्राहक सेवा',
+    questionEn: "How do you handle a customer claiming they were charged twice for one bottle of shampoo?",
+    questionHi: "ग्राहक का कहना है कि एक शैम्पू के दो बार पैसे कट गए। आप इसे कैसे सुलझाएंगे?",
+    hintEn: "Say: \"Let me check invoice copy on POS system, cross check payment gateway, and process immediate cash refund if doubled.\"",
+    hintHi: "कहें: \"सिस्टम में बिल चेक करता हूँ, अगर डबल कटा है तो तुरंत रिफंड करूँगा।\"",
+    level: 'Level 2',
+    samplePhrases: [
+          "Let me inspect your printed bill and system log.",
+          "Apologies sir, scanner beeped twice by mistake, processing refund right away.",
+          "Here is fifty rupees cash refund and corrected tax invoice."
+    ],
+    sampleLearnerSpoken: "Let me check bill sir, if double scanned, refunding immediately.",
+    cardColor: 'from-[#FAF5FF] to-[#EDE9FE]',
+    iconType: 'repeat'
+  },
+  {
+    id: 'customer-level2-how-do-you-explain-warran-1',
+    category: 'customer',
+    categoryLabel: 'Customer Care',
+    categoryHindi: 'ग्राहक सेवा',
+    questionEn: "How do you explain warranty terms for an electronic kettle to a buyer?",
+    questionHi: "इलेक्ट्रिक केतली की वारंटी शर्तें खरीदार को कैसे समझाएंगे?",
+    hintEn: "Say: \"This product carries 1-year replacement warranty for heating element. Keep this stamped bill safely.\"",
+    hintHi: "कहें: \"इस पर हीटिंग एलिमेंट की 1 साल की वारंटी है, स्टैम्प्ड बिल संभाल कर रखें।\"",
+    level: 'Level 2',
+    samplePhrases: [
+          "One year manufacturer warranty included.",
+          "Covers heating coil defects.",
+          "Keep invoice slip for free service at authorized center."
+    ],
+    sampleLearnerSpoken: "One year warranty on coil, keep stamped bill for service.",
+    cardColor: 'from-[#FEF2F2] to-[#FEE2E2]',
+    iconType: 'shield'
+  },
+  {
+    id: 'customer-level3-a-customer-is-upset-becau-1',
+    category: 'customer',
+    categoryLabel: 'Customer Care',
+    categoryHindi: 'ग्राहक सेवा',
+    questionEn: "A customer is upset because home delivery arrived 2 hours after their birthday party started. How do you resolve this?",
+    questionHi: "ग्राहक नाराज है क्योंकि जन्मदिन पार्टी शुरू होने के 2 घंटे बाद डिलीवरी पहुंची। आप इसे कैसे संभालेंगे?",
+    hintEn: "Listen without arguing, apologize sincerely, waive delivery fee, offer complimentary dessert voucher, and update delivery logs.",
+    hintHi: "बिना बहस सुने, दिल से माफी मांगें, डिलीवरी फीस माफ करें और कूपन दें।",
+    level: 'Level 3',
+    samplePhrases: [
+          "I understand completely how upsetting this delay was for your party celebration.",
+          "We are waiving your delivery fee and issuing a 200 rupee voucher for your next order.",
+          "I am personally taking steps with our dispatch team so this never recurs."
+    ],
+    sampleLearnerSpoken: "So sorry for party delay sir, waiving delivery fee and giving discount voucher.",
+    cardColor: 'from-[#FFFBEB] to-[#FEF3C7]',
+    iconType: 'smile'
+  },
+  {
+    id: 'sheeko-level1-what-did-you-buy-with-you-1',
+    category: 'sheeko',
+    categoryLabel: 'Sheeko Stories',
+    categoryHindi: 'कहानियां',
+    questionEn: "What did you buy with your very first festival Diwali bonus?",
+    questionHi: "दिवाली के पहले बोनस से आपने क्या खरीदा था?",
+    hintEn: "Say: \"I bought a new ceiling fan for my parents' bedroom.\"",
+    hintHi: "कहें: \"मैंने माता-पिता के कमरे के लिए नया पंखा खरीदा।\"",
+    level: 'Level 1',
+    samplePhrases: [
+          "Bought sweets and clothes.",
+          "Purchased mixer grinder for home.",
+          "Gave bonus cash to father."
+    ],
+    sampleLearnerSpoken: "Bought new ceiling fan for parents room.",
+    cardColor: 'from-[#FFF1DE] to-[#FFE3CB]',
+    iconType: 'gift'
+  },
+  {
+    id: 'sheeko-level1-which-is-your-favorite-st-1',
+    category: 'sheeko',
+    categoryLabel: 'Sheeko Stories',
+    categoryHindi: 'कहानियां',
+    questionEn: "Which is your favorite street in your hometown and why?",
+    questionHi: "आपके शहर की पसंदीदा सड़क कौन सी है और क्यों?",
+    hintEn: "Say: \"Gandhi Chowk market road because of the fresh samosas and book stalls.\"",
+    hintHi: "कहें: \"गांधी चौक मार्केट रोड, क्योंकि वहाँ समोसे और किताबों की दुकानें हैं।\"",
+    level: 'Level 1',
+    samplePhrases: [
+          "Market road near clock tower.",
+          "Peaceful temple street.",
+          "Main bazaar filled with lights."
+    ],
+    sampleLearnerSpoken: "Gandhi Chowk market because best samosa and books.",
+    cardColor: 'from-[#EDF6FF] to-[#D8ECFE]',
+    iconType: 'map'
+  },
+  {
+    id: 'sheeko-level2-tell-the-story-of-how-you-1',
+    category: 'sheeko',
+    categoryLabel: 'Sheeko Stories',
+    categoryHindi: 'कहानियां',
+    questionEn: "Tell the story of how you learned to ride a geared motorcycle.",
+    questionHi: "गियर वाली मोटरसाइकिल चलाना सीखने की कहानी बताएं।",
+    hintEn: "Describe elder brother teaching clutch balance, engine stalling on slope, and gaining confidence after one week.",
+    hintHi: "बड़े भाई का सिखाना, क्लच का संतुलन, ढलान पर बंद होना और 1 हफ्ते में सीखना।",
+    level: 'Level 2',
+    samplePhrases: [
+          "My uncle taught me clutch balance in open playground.",
+          "Motorcycle engine stopped five times initially.",
+          "Within ten days, I was riding smoothly in highway traffic."
+    ],
+    sampleLearnerSpoken: "Elder brother taught clutch balance, stalled early, then rode smoothly.",
+    cardColor: 'from-[#F0FDF4] to-[#DCFCE7]',
+    iconType: 'compass'
+  },
+  {
+    id: 'sheeko-level2-narrate-a-day-when-a-sudd-1',
+    category: 'sheeko',
+    categoryLabel: 'Sheeko Stories',
+    categoryHindi: 'कहानियां',
+    questionEn: "Narrate a day when a sudden rainstorm forced everyone to seek shelter under a chai tapri.",
+    questionHi: "उस दिन का वर्णन करें जब अचानक आई बारिश ने सबको चाय की टपरी पर रुकने को मजबूर किया।",
+    hintEn: "Describe stranger office workers and delivery boys drinking hot tea together, laughing at thunder.",
+    hintHi: "डिलीवरी लड़कों और दफ्तर के लोगों का साथ चाय पीना और बादलों की गड़गड़ाहट पर हंसना।",
+    level: 'Level 2',
+    samplePhrases: [
+          "Sudden monsoon shower drenched everyone on main road.",
+          "Twenty people crowded under small blue tin shed.",
+          "Shared hot ginger tea and pakoras while waiting for rain to stop."
+    ],
+    sampleLearnerSpoken: "Heavy sudden rain, all strangers under chai tapri drinking hot tea.",
+    cardColor: 'from-[#FAF5FF] to-[#EDE9FE]',
+    iconType: 'coffee'
+  },
+  {
+    id: 'sheeko-level3-describe-an-inspiring-inc-1',
+    category: 'sheeko',
+    categoryLabel: 'Sheeko Stories',
+    categoryHindi: 'कहानियां',
+    questionEn: "Describe an inspiring incident where your village community came together to solve a crisis.",
+    questionHi: "उस प्रेरक घटना का वर्णन करें जब आपके गांव वालों ने मिलकर किसी संकट का समाधान किया।",
+    hintEn: "Explain broken irrigation canal or village road repair where youth and elders worked together without waiting for contractors.",
+    hintHi: "नहर या सड़क टूटने पर युवाओं और बुजुर्गों का मिलकर खुद मरम्मत करना।",
+    level: 'Level 3',
+    samplePhrases: [
+          "When monsoon flood washed away our wooden bridge, the youth mobilized sandbags.",
+          "Every family contributed bamboo poles and tools to restore school connectivity.",
+          "It proved that united teamwork can overcome any obstacle without waiting."
+    ],
+    sampleLearnerSpoken: "Village flood broke pathway, all families brought sandbags and rebuilt bridge.",
+    cardColor: 'from-[#FEF2F2] to-[#FEE2E2]',
+    iconType: 'users'
+  },
+  {
+    id: 'logistics-level1-what-is-the-delivery-otp--2',
+    category: 'logistics',
+    categoryLabel: 'Logistics',
+    categoryHindi: 'लॉजिस्टिक्स',
+    questionEn: "What is the delivery OTP for this parcel?",
+    questionHi: "इस पार्सल के लिए डिलीवरी ओटीपी क्या है?",
+    hintEn: "Say: \"Sir, please share the 4-digit OTP sent on your SMS.\"",
+    hintHi: "कहें: \"सर, कृपया अपने एसएमएस पर आया 4 अंकों का ओटीपी साझा करें।\"",
+    level: 'Level 1',
+    samplePhrases: [
+          "OTP is 5821 sir.",
+          "Please check SMS on registered phone.",
+          "OTP verified, here is your package."
+    ],
+    sampleLearnerSpoken: "Please share 4 digit OTP for parcel.",
+    cardColor: 'from-[#FFFBEB] to-[#FEF3C7]',
+    iconType: 'package'
+  },
+  {
+    id: 'logistics-level1-where-should-i-unload-the-2',
+    category: 'logistics',
+    categoryLabel: 'Logistics',
+    categoryHindi: 'लॉजिस्टिक्स',
+    questionEn: "Where should I unload these 10 heavy cartons?",
+    questionHi: "मुझे ये 10 भारी कार्टन कहाँ उतारने चाहिए?",
+    hintEn: "Say: \"Please stack them near Bay 3 on wooden pallets.\"",
+    hintHi: "कहें: \"कृपया इन्हें लकड़ी के पैलेट पर बे 3 के पास रखें।\"",
+    level: 'Level 1',
+    samplePhrases: [
+          "Keep near bay three.",
+          "Stack on wooden pallet.",
+          "Move to storage shelf B."
+    ],
+    sampleLearnerSpoken: "Stack 10 boxes near bay three pallet.",
+    cardColor: 'from-[#FFF1DE] to-[#FFE3CB]',
+    iconType: 'truck'
+  },
+  {
+    id: 'logistics-level1-is-the-delivery-vehicle-f-2',
+    category: 'logistics',
+    categoryLabel: 'Logistics',
+    categoryHindi: 'लॉजिस्टिक्स',
+    questionEn: "Is the delivery vehicle fuel tank full for today's route?",
+    questionHi: "क्या आज के रूट के लिए डिलीवरी वाहन का फ्यूल टैंक फुल है?",
+    hintEn: "Say: \"Yes, filled diesel at Indian Oil pump this morning.\"",
+    hintHi: "कहें: \"हाँ, आज सुबह पेट्रोल पंप पर डीजल भरवा लिया था।\"",
+    level: 'Level 1',
+    samplePhrases: [
+          "Full tank diesel filled.",
+          "Fuel is at 80 percent.",
+          "Receipt attached in logbook."
+    ],
+    sampleLearnerSpoken: "Full tank fuel filled morning time.",
+    cardColor: 'from-[#EDF6FF] to-[#D8ECFE]',
+    iconType: 'truck'
+  },
+  {
+    id: 'logistics-level2-how-will-you-explain-a-30-2',
+    category: 'logistics',
+    categoryLabel: 'Logistics',
+    categoryHindi: 'लॉजिस्टिक्स',
+    questionEn: "How will you explain a 30-minute delivery delay caused by waterlogging?",
+    questionHi: "जलभराव के कारण हुई 30-मिनट की देरी की जानकारी कैसे देंगे?",
+    hintEn: "Say: \"Sir, underpass was waterlogged after heavy downpour, reaching your location in 20 minutes.\"",
+    hintHi: "कहें: \"सर, बारिश से अंडरपास में पानी भर गया था, 20 मिनट में पहुँच रहा हूँ।\"",
+    level: 'Level 2',
+    samplePhrases: [
+          "Heavy rain caused road blockage on main flyover.",
+          "Took bypass route to deliver parcel safely.",
+          "Reaching your apartment gate in fifteen minutes."
+    ],
+    sampleLearnerSpoken: "Underpass waterlogged sir, taking diversion, reaching shortly.",
+    cardColor: 'from-[#F0FDF4] to-[#DCFCE7]',
+    iconType: 'umbrella'
+  },
+  {
+    id: 'logistics-level2-what-procedure-do-you-fol-2',
+    category: 'logistics',
+    categoryLabel: 'Logistics',
+    categoryHindi: 'लॉजिस्टिक्स',
+    questionEn: "What procedure do you follow when barcode scanner stops reading labels?",
+    questionHi: "जब बारकोड स्कैनर लेबल पढ़ना बंद कर देता है तो आप क्या प्रक्रिया अपनाते हैं?",
+    hintEn: "Say: \"Clean scanner lens, type 12-digit airway bill manually, and report to IT support desk.\"",
+    hintHi: "कहें: \"लेंस साफ करें, 12 अंकों का बिल नंबर हाथ से टाइप करें और सपोर्ट को बताएं।\"",
+    level: 'Level 2',
+    samplePhrases: [
+          "Wipe camera lens with clean microfiber cloth.",
+          "Type tracking consignment number manually on touchpad.",
+          "Switch to spare scanner kept at charging station."
+    ],
+    sampleLearnerSpoken: "Clean lens and type 12 digit tracking number manually.",
+    cardColor: 'from-[#FAF5FF] to-[#EDE9FE]',
+    iconType: 'smartphone'
+  },
+  {
+    id: 'logistics-level3-how-do-you-coordinate-wit-2',
+    category: 'logistics',
+    categoryLabel: 'Logistics',
+    categoryHindi: 'लॉजिस्टिक्स',
+    questionEn: "How do you coordinate with the night shift supervisor during parcel handoff?",
+    questionHi: "पार्सल हैंडऑफ के दौरान नाइट शिफ्ट सुपरवाइजर के साथ तालमेल कैसे बिठाते हैं?",
+    hintEn: "Review dispatch manifests, tally physical carton count, flag return orders, and sign handover sheet.",
+    hintHi: "लिस्ट देखें, कार्टन गिनें, रिटर्न पार्सल अलग करें और हस्ताक्षर करें।",
+    level: 'Level 3',
+    samplePhrases: [
+          "We physically verify total count of 350 parcels against the system manifest.",
+          "Damaged items and pending OTP orders are highlighted in red ink.",
+          "Both shift supervisors sign the official handover register before departure."
+    ],
+    sampleLearnerSpoken: "Verify 350 boxes count, check return parcels, sign handover register.",
+    cardColor: 'from-[#FEF2F2] to-[#FEE2E2]',
+    iconType: 'file-text'
+  },
+  {
+    id: 'workplace-level1-can-you-print-five-copies-2',
+    category: 'workplace',
+    categoryLabel: 'Workplace',
+    categoryHindi: 'कार्यस्थल',
+    questionEn: "Can you print five copies of today's shift schedule?",
+    questionHi: "क्या आप आज के शिफ्ट शेड्यूल की पांच प्रतियां प्रिंट कर सकते हैं?",
+    hintEn: "Say: \"Sure, printing them on printer 2 right now.\"",
+    hintHi: "कहें: \"ज़रूर, प्रिंटर 2 से अभी प्रिंट निकालता हूँ।\"",
+    level: 'Level 1',
+    samplePhrases: [
+          "Printing five copies now.",
+          "Printout is ready at front desk.",
+          "Here are your schedule copies."
+    ],
+    sampleLearnerSpoken: "Yes sir, printing 5 copies right now.",
+    cardColor: 'from-[#FFFBEB] to-[#FEF3C7]',
+    iconType: 'printer'
+  },
+  {
+    id: 'workplace-level1-where-are-the-spare-therm-2',
+    category: 'workplace',
+    categoryLabel: 'Workplace',
+    categoryHindi: 'कार्यस्थल',
+    questionEn: "Where are the spare thermal paper rolls kept?",
+    questionHi: "स्पेयर थर्मल पेपर रोल कहाँ रखे हैं?",
+    hintEn: "Say: \"They are in cabinet number 4 under the billing desk.\"",
+    hintHi: "कहें: \"वे बिलिंग डेस्क के नीचे कैबिनेट नंबर 4 में हैं।\"",
+    level: 'Level 1',
+    samplePhrases: [
+          "Inside cabinet number four.",
+          "Underneath the POS computer.",
+          "Two boxes are left in storage."
+    ],
+    sampleLearnerSpoken: "In cabinet 4 under billing counter.",
+    cardColor: 'from-[#FFF1DE] to-[#FFE3CB]',
+    iconType: 'file'
+  },
+  {
+    id: 'workplace-level2-how-do-you-politely-ask-a-2',
+    category: 'workplace',
+    categoryLabel: 'Workplace',
+    categoryHindi: 'कार्यस्थल',
+    questionEn: "How do you politely ask a coworker to speak softly during a client call?",
+    questionHi: "क्लाइंट कॉल के दौरान साथी से धीरे बोलने के लिए विनम्रता से कैसे कहेंगे?",
+    hintEn: "Say: \"Excuse me brother, I am on an urgent client audio call, could you speak a little softer please?\"",
+    hintHi: "कहें: \"क्षमा करें भाई, मेरी क्लाइंट कॉल चल रही है, क्या थोड़ा धीरे बोल सकते हैं?\"",
+    level: 'Level 2',
+    samplePhrases: [
+          "Could you please lower voice for five minutes?",
+          "I am on client discussion line.",
+          "Thank you so much for understanding brother."
+    ],
+    sampleLearnerSpoken: "Brother please talk little soft, client on call.",
+    cardColor: 'from-[#EDF6FF] to-[#D8ECFE]',
+    iconType: 'volume-x'
+  },
+  {
+    id: 'workplace-level2-what-will-you-say-when-as-2',
+    category: 'workplace',
+    categoryLabel: 'Workplace',
+    categoryHindi: 'कार्यस्थल',
+    questionEn: "What will you say when asking your manager for a salary slip certificate?",
+    questionHi: "मैनेजर से सैलरी स्लिप सर्टिफिकेट मांगते समय क्या कहेंगे?",
+    hintEn: "Say: \"Good morning sir, I need my last 3 months stamped salary slips for a bank loan application.\"",
+    hintHi: "कहें: \"नमस्ते सर, बैंक लोन के लिए पिछले 3 महीने की सैलरी स्लिप चाहिए।\"",
+    level: 'Level 2',
+    samplePhrases: [
+          "Sir, could HR please email last three months pay slips?",
+          "Need signed salary slips for bike loan approval.",
+          "Submitted formal request on employee portal."
+    ],
+    sampleLearnerSpoken: "Sir please email last 3 months stamped salary slips.",
+    cardColor: 'from-[#F0FDF4] to-[#DCFCE7]',
+    iconType: 'file-text'
+  },
+  {
+    id: 'workplace-level3-how-do-you-welcome-and-on-2',
+    category: 'workplace',
+    categoryLabel: 'Workplace',
+    categoryHindi: 'कार्यस्थल',
+    questionEn: "How do you welcome and onboard a newly joined team member on their first morning?",
+    questionHi: "काम के पहले दिन नए जुड़े साथी का स्वागत और मार्गदर्शन कैसे करेंगे?",
+    hintEn: "Introduce yourself warmly, show locker room, biometric punch machine, water dispenser, and shift buddies.",
+    hintHi: "गर्मजोशी से स्वागत करें, लॉकर, हाजिरी मशीन और टीम से परिचय कराएं।",
+    level: 'Level 3',
+    samplePhrases: [
+          "Welcome to our logistics center Rahul, let me show you where our team sits.",
+          "Here is our attendance fingerprint scanner and tea break area.",
+          "Feel free to ask me any questions throughout your initial training week."
+    ],
+    sampleLearnerSpoken: "Welcome to team Rahul, I show lockers, biometric and work process.",
+    cardColor: 'from-[#FAF5FF] to-[#EDE9FE]',
+    iconType: 'user-plus'
+  },
+  {
+    id: 'qsr_retail-level1-do-you-need-a-carry-bag-f-2',
+    category: 'qsr_retail',
+    categoryLabel: 'Retail & Store',
+    categoryHindi: 'रिटेल स्टोर',
+    questionEn: "Do you need a carry bag for these purchases?",
+    questionHi: "क्या आपको इन सामानों के लिए कैरी बैग चाहिए?",
+    hintEn: "Say: \"Small cloth bag is 7 rupees and large is 12 rupees.\"",
+    hintHi: "कहें: \"छोटा कपड़ा बैग 7 रुपये का है और बड़ा 12 रुपये का।\"",
+    level: 'Level 1',
+    samplePhrases: [
+          "Do you want carry bag sir?",
+          "Small cloth bag is seven rupees.",
+          "I have brought my own bag."
+    ],
+    sampleLearnerSpoken: "Need carry bag sir? Seven rupees cloth bag.",
+    cardColor: 'from-[#FEF2F2] to-[#FEE2E2]',
+    iconType: 'shopping-bag'
+  },
+  {
+    id: 'qsr_retail-level1-where-can-i-find-cooking--2',
+    category: 'qsr_retail',
+    categoryLabel: 'Retail & Store',
+    categoryHindi: 'रिटेल स्टोर',
+    questionEn: "Where can I find cooking oil and basmati rice?",
+    questionHi: "मुझे कुकिंग ऑयल और बासमती चावल कहाँ मिलेंगे?",
+    hintEn: "Say: \"Cooking oils are in Aisle 2 and rice bags are in Aisle 3.\"",
+    hintHi: "कहें: \"कुकिंग ऑयल आइल 2 में हैं और चावल के बैग आइल 3 में हैं।\"",
+    level: 'Level 1',
+    samplePhrases: [
+          "Cooking oil is in aisle two.",
+          "Rice packets are right behind you.",
+          "Follow the grocery signboard."
+    ],
+    sampleLearnerSpoken: "Oil in aisle 2 and basmati rice in aisle 3.",
+    cardColor: 'from-[#FFFBEB] to-[#FEF3C7]',
+    iconType: 'search'
+  },
+  {
+    id: 'qsr_retail-level2-how-do-you-inform-a-shopp-2',
+    category: 'qsr_retail',
+    categoryLabel: 'Retail & Store',
+    categoryHindi: 'रिटेल स्टोर',
+    questionEn: "How do you inform a shopper that their card transaction was declined?",
+    questionHi: "ग्राहक को कैसे बताएंगे कि उनका कार्ड पेमेंट फेल हो गया है?",
+    hintEn: "Politely say: \"Sir, machine shows bank server timed out. Could we try inserting card again or scan UPI?\"",
+    hintHi: "कहें: \"सर, बैंक सर्वर टाइमआउट हुआ है। क्या दोबारा कार्ड लगाएं या यूपीआई करें?\"",
+    level: 'Level 2',
+    samplePhrases: [
+          "Card transaction did not go through, sir.",
+          "Please check if international or online swipe is active.",
+          "Would you like to scan our PhonePe QR stand?"
+    ],
+    sampleLearnerSpoken: "Sir transaction declined by bank, please try UPI or retry card.",
+    cardColor: 'from-[#FFF1DE] to-[#FFE3CB]',
+    iconType: 'credit-card'
+  },
+  {
+    id: 'qsr_retail-level2-a-customer-is-asking-for--2',
+    category: 'qsr_retail',
+    categoryLabel: 'Retail & Store',
+    categoryHindi: 'रिटेल स्टोर',
+    questionEn: "A customer is asking for a discount on a fixed price branded item. How do you respond?",
+    questionHi: "ग्राहक फिक्स्ड प्राइस ब्रांडेड सामान पर छूट मांग रहा है। आप क्या जवाब देंगे?",
+    hintEn: "Say: \"Sir, prices are computer fixed by brand, but you earn 5% loyalty reward points on your mobile number.\"",
+    hintHi: "कहें: \"सर, रेट फिक्स हैं, लेकिन आपको नंबर पर 5% रिवॉर्ड पॉइंट मिलेंगे।\"",
+    level: 'Level 2',
+    samplePhrases: [
+          "Sir, these are system-locked brand prices.",
+          "We have buy one get one offer on rack three.",
+          "You will get 50 rupees cashback on our membership app."
+    ],
+    sampleLearnerSpoken: "Sir prices system fixed, but you get membership points.",
+    cardColor: 'from-[#EDF6FF] to-[#D8ECFE]',
+    iconType: 'percent'
+  },
+  {
+    id: 'qsr_retail-level3-describe-how-you-maintain-2',
+    category: 'qsr_retail',
+    categoryLabel: 'Retail & Store',
+    categoryHindi: 'रिटेल स्टोर',
+    questionEn: "Describe how you maintain food hygiene and cleanliness at a fast-food serving station.",
+    questionHi: "फास्ट-फूड सर्विंग स्टेशन पर खाद्य स्वच्छता और सफाई कैसे बनाए रखते हैं?",
+    hintEn: "Mention wearing fresh gloves and hairnets, sanitizing counters every 30 minutes, and checking food thermometer temps.",
+    hintHi: "दस्ताने, हेयरनेट, हर 30 मिनट में काउंटर सैनिटाइजेशन और तापमान की जांच बताएं।",
+    level: 'Level 3',
+    samplePhrases: [
+          "We sanitize food preparation slabs every half hour with food-grade disinfectant.",
+          "Staff strictly wear disposable hairnets, aprons, and nitrile gloves.",
+          "Hot food is maintained above 65 degrees Celsius to guarantee safety."
+    ],
+    sampleLearnerSpoken: "Wear hairnet and gloves, clean counters every 30 min, check hot food temp.",
+    cardColor: 'from-[#F0FDF4] to-[#DCFCE7]',
+    iconType: 'shield-check'
+  },
+  {
+    id: 'daily_routine-level1-how-much-is-the-auto-rick-2',
+    category: 'daily_routine',
+    categoryLabel: 'Daily Routine',
+    categoryHindi: 'दैनिक जीवन',
+    questionEn: "How much is the auto rickshaw fare to the railway station by meter?",
+    questionHi: "मीटर से रेलवे स्टेशन तक का ऑटो किराया कितना है?",
+    hintEn: "Say: \"Meter fare will be around 70 to 80 rupees.\"",
+    hintHi: "कहें: \"मीटर का किराया लगभग 70 से 80 रुपये होगा।\"",
+    level: 'Level 1',
+    samplePhrases: [
+          "Please turn on the meter bhaiya.",
+          "Meter shows 75 rupees.",
+          "Here is exact eighty rupees."
+    ],
+    sampleLearnerSpoken: "Please run meter bhaiya, around 75 rupees.",
+    cardColor: 'from-[#FAF5FF] to-[#EDE9FE]',
+    iconType: 'navigation'
+  },
+  {
+    id: 'daily_routine-level1-did-you-lock-the-kitchen--2',
+    category: 'daily_routine',
+    categoryLabel: 'Daily Routine',
+    categoryHindi: 'दैनिक जीवन',
+    questionEn: "Did you lock the kitchen balcony door before leaving home?",
+    questionHi: "क्या आपने घर से निकलने से पहले किचन बालकनी का दरवाजा बंद किया था?",
+    hintEn: "Say: \"Yes, I double-locked both balcony and front door latch.\"",
+    hintHi: "कहें: \"हाँ, मैंने बालकनी और मुख्य दरवाजा दोनों अच्छी तरह बंद किए।\"",
+    level: 'Level 1',
+    samplePhrases: [
+          "Yes, balcony door is locked.",
+          "Latched all windows tightly.",
+          "Double checked lock before leaving."
+    ],
+    sampleLearnerSpoken: "Yes, balcony door locked properly.",
+    cardColor: 'from-[#FEF2F2] to-[#FEE2E2]',
+    iconType: 'lock'
+  },
+  {
+    id: 'daily_routine-level2-how-do-you-navigate-a-cro-2',
+    category: 'daily_routine',
+    categoryLabel: 'Daily Routine',
+    categoryHindi: 'दैनिक जीवन',
+    questionEn: "How do you navigate a crowded metro interchange station like Rajiv Chowk?",
+    questionHi: "राजीव चौक जैसे भीड़भाड़ वाले मेट्रो स्टेशन पर आप कैसे रास्ता तय करते हैं?",
+    hintEn: "Say: \"Follow yellow floor stickers towards Yellow Line Platform 2 and keep left on escalators.\"",
+    hintHi: "कहें: \"येलो लाइन के पीले निशानों का पालन करें और एस्केलेटर पर बाईं ओर रहें।\"",
+    level: 'Level 2',
+    samplePhrases: [
+          "Follow the overhead signboards carefully.",
+          "Walk on left side of staircases to avoid stampede.",
+          "Listen to station announcements for train arrival."
+    ],
+    sampleLearnerSpoken: "Follow yellow line signage, walk left on escalator.",
+    cardColor: 'from-[#FFFBEB] to-[#FEF3C7]',
+    iconType: 'compass'
+  },
+  {
+    id: 'daily_routine-level2-explain-how-you-budget-yo-2',
+    category: 'daily_routine',
+    categoryLabel: 'Daily Routine',
+    categoryHindi: 'दैनिक जीवन',
+    questionEn: "Explain how you budget your monthly salary between rent, groceries, and savings.",
+    questionHi: "बताएं कि आप किराए, राशन और बचत के बीच अपनी तनख्वाह का बजट कैसे बनाते हैं।",
+    hintEn: "Say: \"40% goes for house rent and electricity, 30% for food and commute, and 30% goes directly into recurring deposit savings.\"",
+    hintHi: "कहें: \"40% किराया, 30% खाना व आवागमन, और 30% बैंक बचत में जाता है।\"",
+    level: 'Level 2',
+    samplePhrases: [
+          "I transfer savings amount on the day salary credits.",
+          "Keep strict limit on online food orders.",
+          "Use UPI passbook to track small daily spends."
+    ],
+    sampleLearnerSpoken: "40% rent, 30% food and travel, 30% bank savings.",
+    cardColor: 'from-[#FFF1DE] to-[#FFE3CB]',
+    iconType: 'pie-chart'
+  },
+  {
+    id: 'daily_routine-level3-describe-your-sunday-morn-2',
+    category: 'daily_routine',
+    categoryLabel: 'Daily Routine',
+    categoryHindi: 'दैनिक जीवन',
+    questionEn: "Describe your Sunday morning routine when you have a full day off with family.",
+    questionHi: "रविवार की सुबह की अपनी दिनचर्या बताएं जब परिवार के साथ पूरी छुट्टी होती है।",
+    hintEn: "Wake up without alarm, prepare special breakfast like aloo parathas, clean rooms, and wash scooter together.",
+    hintHi: "आराम से उठना, आलू पराठे बनाना, कमरे साफ करना और मिलकर काम करना।",
+    level: 'Level 3',
+    samplePhrases: [
+          "Sunday morning starts with hot aloo parathas and homemade curd.",
+          "I wash my motorcycle and do laundry while listening to old Hindi songs.",
+          "Afterwards, the whole family sits together to plan grocery shopping."
+    ],
+    sampleLearnerSpoken: "Wake late, make hot paratha breakfast, clean bike, spend time family.",
+    cardColor: 'from-[#EDF6FF] to-[#D8ECFE]',
+    iconType: 'smile'
+  },
+  {
+    id: 'friends-level1-what-street-food-snack-wo-2',
+    category: 'friends',
+    categoryLabel: 'Friends',
+    categoryHindi: 'दोस्त',
+    questionEn: "What street food snack would you like to eat today?",
+    questionHi: "आज आप कौन सा स्ट्रीट फूड स्नैक खाना चाहेंगे?",
+    hintEn: "Say: \"Let us eat crispy pani puri with spicy mint water.\"",
+    hintHi: "कहें: \"चलो तीखे पुदीना पानी के साथ पानी पूरी खाते हैं।\"",
+    level: 'Level 1',
+    samplePhrases: [
+          "Let us eat pani puri.",
+          "Hot samosa and jalebi.",
+          "One plate pav bhaji please."
+    ],
+    sampleLearnerSpoken: "Crispy pani puri with spicy water please.",
+    cardColor: 'from-[#F0FDF4] to-[#DCFCE7]',
+    iconType: 'coffee'
+  },
+  {
+    id: 'friends-level1-are-you-free-to-play-badm-2',
+    category: 'friends',
+    categoryLabel: 'Friends',
+    categoryHindi: 'दोस्त',
+    questionEn: "Are you free to play badminton in the society park this evening?",
+    questionHi: "क्या आज शाम आप पार्क में बैडमिंटन खेलने के लिए खाली हैं?",
+    hintEn: "Say: \"Yes! Let us meet at the court at 5:30 PM.\"",
+    hintHi: "कहें: \"हाँ! चलो शाम 5:30 बजे कोर्ट पर मिलते हैं।\"",
+    level: 'Level 1',
+    samplePhrases: [
+          "Yes, I am free at 5:30.",
+          "Bring your racket along.",
+          "Let us play 3 sets."
+    ],
+    sampleLearnerSpoken: "Yes free, meet at badminton court 5:30 PM.",
+    cardColor: 'from-[#FAF5FF] to-[#EDE9FE]',
+    iconType: 'activity'
+  },
+  {
+    id: 'friends-level2-how-do-you-invite-your-ap-2',
+    category: 'friends',
+    categoryLabel: 'Friends',
+    categoryHindi: 'दोस्त',
+    questionEn: "How do you invite your apartment neighbors for Diwali sweets exchange?",
+    questionHi: "अपार्टमेंट के पड़ोसियों को दिवाली की मिठाई के लिए कैसे आमंत्रित करेंगे?",
+    hintEn: "Say: \"Namaste uncle, wishing you a happy Diwali! Please visit our flat this evening for sweets and snacks.\"",
+    hintHi: "कहें: \"नमस्ते अंकल, दिवाली की शुभकामनाएं! शाम को मिठाई के लिए घर पधारें।\"",
+    level: 'Level 2',
+    samplePhrases: [
+          "Happy Diwali to your entire family uncle!",
+          "Please come over for homemade kaju katli.",
+          "Looking forward to celebrating festival together."
+    ],
+    sampleLearnerSpoken: "Happy Diwali uncle, please come our home evening for sweets.",
+    cardColor: 'from-[#FEF2F2] to-[#FEE2E2]',
+    iconType: 'sparkles'
+  },
+  {
+    id: 'friends-level2-your-friend-is-nervous-ab-2',
+    category: 'friends',
+    categoryLabel: 'Friends',
+    categoryHindi: 'दोस्त',
+    questionEn: "Your friend is nervous about their driving license test. How do you motivate them?",
+    questionHi: "दोस्त ड्राइविंग लाइसेंस टेस्ट को लेकर घबराया हुआ है। उसका हौसला कैसे बढ़ाएंगे?",
+    hintEn: "Say: \"Relax brother, you practiced parallel parking well; just check mirrors, use indicators, and stay calm.\"",
+    hintHi: "कहें: \"शांत रहो भाई, तुमने अच्छी प्रैक्टिस की है; शीशे और इंडिकेटर सही रखना।\"",
+    level: 'Level 2',
+    samplePhrases: [
+          "Take deep breaths, you are an excellent driver.",
+          "Keep speed steady and wear seatbelt first.",
+          "You will clear the track test easily brother!"
+    ],
+    sampleLearnerSpoken: "Relax bhai, you practiced well, drive slow and check mirrors.",
+    cardColor: 'from-[#FFFBEB] to-[#FEF3C7]',
+    iconType: 'thumbs-up'
+  },
+  {
+    id: 'friends-level3-how-would-you-organize-a--2',
+    category: 'friends',
+    categoryLabel: 'Friends',
+    categoryHindi: 'दोस्त',
+    questionEn: "How would you organize a surprise birthday treat for your roommate on a small budget?",
+    questionHi: "कम बजट में अपने रूममेट के लिए सरप्राइज बर्थडे ट्रीट कैसे आयोजित करेंगे?",
+    hintEn: "Bake or buy a small pastry, decorate room with balloons, invite two close friends, and play acoustic guitar music.",
+    hintHi: "पेस्ट्री, गुब्बारे, दो करीबी दोस्त और गाने बजाकर सरप्राइज देना।",
+    level: 'Level 3',
+    samplePhrases: [
+          "We pooled 200 rupees each for chocolate truffle cake and streamers.",
+          "Turned off room lights and greeted him with birthday song at midnight.",
+          "Simple heartfelt celebrations create deeper memories than expensive parties."
+    ],
+    sampleLearnerSpoken: "Pooled money for cake, decorated room, midnight surprise birthday song.",
+    cardColor: 'from-[#FFF1DE] to-[#FFE3CB]',
+    iconType: 'gift'
+  },
+  {
+    id: 'supervisors-level1-have-you-verified-all-ret-2',
+    category: 'supervisors',
+    categoryLabel: 'Supervisor Talk',
+    categoryHindi: 'सुपरवाइजर बातचीत',
+    questionEn: "Have you verified all return items in the computer system?",
+    questionHi: "क्या आपने कंप्यूटर सिस्टम में सभी रिटर्न सामान सत्यापित कर लिए हैं?",
+    hintEn: "Say: \"Yes sir, updated all 8 return items in portal.\"",
+    hintHi: "कहें: \"हाँ सर, पोर्टल में सभी 8 रिटर्न आइटम अपडेट कर दिए हैं।\"",
+    level: 'Level 1',
+    samplePhrases: [
+          "Yes sir, system updated.",
+          "All eight items logged.",
+          "Printout attached to folder."
+    ],
+    sampleLearnerSpoken: "Yes sir, all return items verified in system.",
+    cardColor: 'from-[#EDF6FF] to-[#D8ECFE]',
+    iconType: 'check-circle'
+  },
+  {
+    id: 'supervisors-level1-can-you-work-the-early-mo-2',
+    category: 'supervisors',
+    categoryLabel: 'Supervisor Talk',
+    categoryHindi: 'सुपरवाइजर बातचीत',
+    questionEn: "Can you work the early morning 6 AM shift tomorrow?",
+    questionHi: "क्या आप कल सुबह 6 बजे की शिफ्ट में आ सकते हैं?",
+    hintEn: "Say: \"Yes sir, I will report at 5:45 AM sharp.\"",
+    hintHi: "कहें: \"हाँ सर, मैं ठीक 5:45 बजे रिपोर्ट करूँगा।\"",
+    level: 'Level 1',
+    samplePhrases: [
+          "Yes sir, I will arrive on time.",
+          "Will report at 5:45 AM.",
+          "Available for early shift."
+    ],
+    sampleLearnerSpoken: "Yes sir, reporting 5:45 AM morning.",
+    cardColor: 'from-[#F0FDF4] to-[#DCFCE7]',
+    iconType: 'clock'
+  },
+  {
+    id: 'supervisors-level2-how-do-you-report-a-stock-2',
+    category: 'supervisors',
+    categoryLabel: 'Supervisor Talk',
+    categoryHindi: 'सुपरवाइजर बातचीत',
+    questionEn: "How do you report a stock discrepancy of five missing jackets to your supervisor?",
+    questionHi: "पांच जैकेटों की कमी की सूचना सुपरवाइजर को कैसे देंगे?",
+    hintEn: "Say: \"Sir, during evening audit, physical count shows 45 jackets but inventory software shows 50. I am rechecking Rack 2.\"",
+    hintHi: "कहें: \"सर, स्टॉक में 45 जैकेट हैं लेकिन सिस्टम में 50। मैं रैक 2 दोबारा चेक कर रहा हूँ।\"",
+    level: 'Level 2',
+    samplePhrases: [
+          "Found difference of five pieces during shelf audit.",
+          "Checking billing logs to see if dispatched without scan.",
+          "Will cross verify with dispatch counter security CCTV."
+    ],
+    sampleLearnerSpoken: "Sir physical count 45 but system shows 50, rechecking rack.",
+    cardColor: 'from-[#FAF5FF] to-[#EDE9FE]',
+    iconType: 'alert-triangle'
+  },
+  {
+    id: 'supervisors-level2-in-a-job-interview-how-do-2',
+    category: 'supervisors',
+    categoryLabel: 'Supervisor Talk',
+    categoryHindi: 'सुपरवाइजर बातचीत',
+    questionEn: "In a job interview, how do you answer: \"Why do you want to join our company?\"",
+    questionHi: "इंटरव्यू में जवाब कैसे देंगे: \"आप हमारी कंपनी में क्यों शामिल होना चाहते हैं?\"",
+    hintEn: "Highlight company growth, learning professional logistics systems, disciplined culture, and long-term career growth.",
+    hintHi: "कंपनी की प्रगति, सीखने के अवसर और करियर की उन्नति बताएं।",
+    level: 'Level 2',
+    samplePhrases: [
+          "Your company is recognized as an industry leader in logistics innovation.",
+          "I want to build my career here because you value punctuality and hard work.",
+          "This role matches my experience in warehouse management perfectly."
+    ],
+    sampleLearnerSpoken: "Your company has good reputation and growth, I want long term career here.",
+    cardColor: 'from-[#FEF2F2] to-[#FEE2E2]',
+    iconType: 'award'
+  },
+  {
+    id: 'supervisors-level3-how-do-you-discuss-with-y-2',
+    category: 'supervisors',
+    categoryLabel: 'Supervisor Talk',
+    categoryHindi: 'सुपरवाइजर बातचीत',
+    questionEn: "How do you discuss with your manager about wanting promotion to Assistant Shift Supervisor?",
+    questionHi: "असिस्टेंट शिफ्ट सुपरवाइजर पद पर प्रमोशन के लिए मैनेजर से बात कैसे करेंगे?",
+    hintEn: "Highlight 2 years zero-error record, training 10 junior pickers, managing attendance logs, and readiness for leadership.",
+    hintHi: "2 साल का बेदाग रिकॉर्ड, नए लड़कों को सिखाना और जिम्मेदारी लेने की इच्छा बताएं।",
+    level: 'Level 3',
+    samplePhrases: [
+          "Sir, over the past two years, I have maintained zero dispatch errors and trained ten new packers.",
+          "I am eager to take on higher shift management responsibilities as Assistant Supervisor.",
+          "I would be grateful for the opportunity to demonstrate my leadership skills."
+    ],
+    sampleLearnerSpoken: "Sir, 2 years zero errors and trained team, ready for Assistant Supervisor role.",
+    cardColor: 'from-[#FFFBEB] to-[#FEF3C7]',
+    iconType: 'trending-up'
+  },
+  {
+    id: 'customer-level1-what-is-your-registered-m-2',
+    category: 'customer',
+    categoryLabel: 'Customer Care',
+    categoryHindi: 'ग्राहक सेवा',
+    questionEn: "What is your registered mobile number for bill invoice?",
+    questionHi: "बिल इनवॉइस के लिए आपका रजिस्टर्ड मोबाइल नंबर क्या है?",
+    hintEn: "Say: \"My 10-digit mobile number is 9 8 7 6 5 4 3 2 1 0.\"",
+    hintHi: "कहें: \"मेरा 10 अंकों का मोबाइल नंबर 9876543210 है।\"",
+    level: 'Level 1',
+    samplePhrases: [
+          "Please tell mobile number.",
+          "Invoice sent via WhatsApp.",
+          "Number entered in system."
+    ],
+    sampleLearnerSpoken: "My mobile number is 9876543210 sir.",
+    cardColor: 'from-[#FFF1DE] to-[#FFE3CB]',
+    iconType: 'phone'
+  },
+  {
+    id: 'customer-level1-do-you-want-the-bill-rece-2',
+    category: 'customer',
+    categoryLabel: 'Customer Care',
+    categoryHindi: 'ग्राहक सेवा',
+    questionEn: "Do you want the bill receipt on WhatsApp or printed paper?",
+    questionHi: "क्या आपको बिल रसीद व्हाट्सएप पर चाहिए या प्रिंट पेपर पर?",
+    hintEn: "Say: \"Please send green e-bill on my WhatsApp.\"",
+    hintHi: "कहें: \"कृपया मेरे व्हाट्सएप पर ई-बिल भेज दीजिए।\"",
+    level: 'Level 1',
+    samplePhrases: [
+          "WhatsApp e-bill please.",
+          "Paper printout needed.",
+          "Eco-friendly message received."
+    ],
+    sampleLearnerSpoken: "WhatsApp e-bill is good sir.",
+    cardColor: 'from-[#EDF6FF] to-[#D8ECFE]',
+    iconType: 'message-square'
+  },
+  {
+    id: 'customer-level2-how-do-you-handle-a-custo-2',
+    category: 'customer',
+    categoryLabel: 'Customer Care',
+    categoryHindi: 'ग्राहक सेवा',
+    questionEn: "How do you handle a customer claiming they were charged twice for one bottle of shampoo?",
+    questionHi: "ग्राहक का कहना है कि एक शैम्पू के दो बार पैसे कट गए। आप इसे कैसे सुलझाएंगे?",
+    hintEn: "Say: \"Let me check invoice copy on POS system, cross check payment gateway, and process immediate cash refund if doubled.\"",
+    hintHi: "कहें: \"सिस्टम में बिल चेक करता हूँ, अगर डबल कटा है तो तुरंत रिफंड करूँगा।\"",
+    level: 'Level 2',
+    samplePhrases: [
+          "Let me inspect your printed bill and system log.",
+          "Apologies sir, scanner beeped twice by mistake, processing refund right away.",
+          "Here is fifty rupees cash refund and corrected tax invoice."
+    ],
+    sampleLearnerSpoken: "Let me check bill sir, if double scanned, refunding immediately.",
+    cardColor: 'from-[#F0FDF4] to-[#DCFCE7]',
+    iconType: 'repeat'
+  },
+  {
+    id: 'customer-level2-how-do-you-explain-warran-2',
+    category: 'customer',
+    categoryLabel: 'Customer Care',
+    categoryHindi: 'ग्राहक सेवा',
+    questionEn: "How do you explain warranty terms for an electronic kettle to a buyer?",
+    questionHi: "इलेक्ट्रिक केतली की वारंटी शर्तें खरीदार को कैसे समझाएंगे?",
+    hintEn: "Say: \"This product carries 1-year replacement warranty for heating element. Keep this stamped bill safely.\"",
+    hintHi: "कहें: \"इस पर हीटिंग एलिमेंट की 1 साल की वारंटी है, स्टैम्प्ड बिल संभाल कर रखें।\"",
+    level: 'Level 2',
+    samplePhrases: [
+          "One year manufacturer warranty included.",
+          "Covers heating coil defects.",
+          "Keep invoice slip for free service at authorized center."
+    ],
+    sampleLearnerSpoken: "One year warranty on coil, keep stamped bill for service.",
+    cardColor: 'from-[#FAF5FF] to-[#EDE9FE]',
+    iconType: 'shield'
+  },
+  {
+    id: 'customer-level3-a-customer-is-upset-becau-2',
+    category: 'customer',
+    categoryLabel: 'Customer Care',
+    categoryHindi: 'ग्राहक सेवा',
+    questionEn: "A customer is upset because home delivery arrived 2 hours after their birthday party started. How do you resolve this?",
+    questionHi: "ग्राहक नाराज है क्योंकि जन्मदिन पार्टी शुरू होने के 2 घंटे बाद डिलीवरी पहुंची। आप इसे कैसे संभालेंगे?",
+    hintEn: "Listen without arguing, apologize sincerely, waive delivery fee, offer complimentary dessert voucher, and update delivery logs.",
+    hintHi: "बिना बहस सुने, दिल से माफी मांगें, डिलीवरी फीस माफ करें और कूपन दें।",
+    level: 'Level 3',
+    samplePhrases: [
+          "I understand completely how upsetting this delay was for your party celebration.",
+          "We are waiving your delivery fee and issuing a 200 rupee voucher for your next order.",
+          "I am personally taking steps with our dispatch team so this never recurs."
+    ],
+    sampleLearnerSpoken: "So sorry for party delay sir, waiving delivery fee and giving discount voucher.",
+    cardColor: 'from-[#FEF2F2] to-[#FEE2E2]',
+    iconType: 'smile'
+  },
+  {
+    id: 'sheeko-level1-what-did-you-buy-with-you-2',
+    category: 'sheeko',
+    categoryLabel: 'Sheeko Stories',
+    categoryHindi: 'कहानियां',
+    questionEn: "What did you buy with your very first festival Diwali bonus?",
+    questionHi: "दिवाली के पहले बोनस से आपने क्या खरीदा था?",
+    hintEn: "Say: \"I bought a new ceiling fan for my parents' bedroom.\"",
+    hintHi: "कहें: \"मैंने माता-पिता के कमरे के लिए नया पंखा खरीदा।\"",
+    level: 'Level 1',
+    samplePhrases: [
+          "Bought sweets and clothes.",
+          "Purchased mixer grinder for home.",
+          "Gave bonus cash to father."
+    ],
+    sampleLearnerSpoken: "Bought new ceiling fan for parents room.",
+    cardColor: 'from-[#FFFBEB] to-[#FEF3C7]',
+    iconType: 'gift'
+  },
+  {
+    id: 'sheeko-level1-which-is-your-favorite-st-2',
+    category: 'sheeko',
+    categoryLabel: 'Sheeko Stories',
+    categoryHindi: 'कहानियां',
+    questionEn: "Which is your favorite street in your hometown and why?",
+    questionHi: "आपके शहर की पसंदीदा सड़क कौन सी है और क्यों?",
+    hintEn: "Say: \"Gandhi Chowk market road because of the fresh samosas and book stalls.\"",
+    hintHi: "कहें: \"गांधी चौक मार्केट रोड, क्योंकि वहाँ समोसे और किताबों की दुकानें हैं।\"",
+    level: 'Level 1',
+    samplePhrases: [
+          "Market road near clock tower.",
+          "Peaceful temple street.",
+          "Main bazaar filled with lights."
+    ],
+    sampleLearnerSpoken: "Gandhi Chowk market because best samosa and books.",
+    cardColor: 'from-[#FFF1DE] to-[#FFE3CB]',
+    iconType: 'map'
+  },
+  {
+    id: 'sheeko-level2-tell-the-story-of-how-you-2',
+    category: 'sheeko',
+    categoryLabel: 'Sheeko Stories',
+    categoryHindi: 'कहानियां',
+    questionEn: "Tell the story of how you learned to ride a geared motorcycle.",
+    questionHi: "गियर वाली मोटरसाइकिल चलाना सीखने की कहानी बताएं।",
+    hintEn: "Describe elder brother teaching clutch balance, engine stalling on slope, and gaining confidence after one week.",
+    hintHi: "बड़े भाई का सिखाना, क्लच का संतुलन, ढलान पर बंद होना और 1 हफ्ते में सीखना।",
+    level: 'Level 2',
+    samplePhrases: [
+          "My uncle taught me clutch balance in open playground.",
+          "Motorcycle engine stopped five times initially.",
+          "Within ten days, I was riding smoothly in highway traffic."
+    ],
+    sampleLearnerSpoken: "Elder brother taught clutch balance, stalled early, then rode smoothly.",
+    cardColor: 'from-[#EDF6FF] to-[#D8ECFE]',
+    iconType: 'compass'
+  },
+  {
+    id: 'sheeko-level2-narrate-a-day-when-a-sudd-2',
+    category: 'sheeko',
+    categoryLabel: 'Sheeko Stories',
+    categoryHindi: 'कहानियां',
+    questionEn: "Narrate a day when a sudden rainstorm forced everyone to seek shelter under a chai tapri.",
+    questionHi: "उस दिन का वर्णन करें जब अचानक आई बारिश ने सबको चाय की टपरी पर रुकने को मजबूर किया।",
+    hintEn: "Describe stranger office workers and delivery boys drinking hot tea together, laughing at thunder.",
+    hintHi: "डिलीवरी लड़कों और दफ्तर के लोगों का साथ चाय पीना और बादलों की गड़गड़ाहट पर हंसना।",
+    level: 'Level 2',
+    samplePhrases: [
+          "Sudden monsoon shower drenched everyone on main road.",
+          "Twenty people crowded under small blue tin shed.",
+          "Shared hot ginger tea and pakoras while waiting for rain to stop."
+    ],
+    sampleLearnerSpoken: "Heavy sudden rain, all strangers under chai tapri drinking hot tea.",
+    cardColor: 'from-[#F0FDF4] to-[#DCFCE7]',
+    iconType: 'coffee'
+  },
+  {
+    id: 'sheeko-level3-describe-an-inspiring-inc-2',
+    category: 'sheeko',
+    categoryLabel: 'Sheeko Stories',
+    categoryHindi: 'कहानियां',
+    questionEn: "Describe an inspiring incident where your village community came together to solve a crisis.",
+    questionHi: "उस प्रेरक घटना का वर्णन करें जब आपके गांव वालों ने मिलकर किसी संकट का समाधान किया।",
+    hintEn: "Explain broken irrigation canal or village road repair where youth and elders worked together without waiting for contractors.",
+    hintHi: "नहर या सड़क टूटने पर युवाओं और बुजुर्गों का मिलकर खुद मरम्मत करना।",
+    level: 'Level 3',
+    samplePhrases: [
+          "When monsoon flood washed away our wooden bridge, the youth mobilized sandbags.",
+          "Every family contributed bamboo poles and tools to restore school connectivity.",
+          "It proved that united teamwork can overcome any obstacle without waiting."
+    ],
+    sampleLearnerSpoken: "Village flood broke pathway, all families brought sandbags and rebuilt bridge.",
+    cardColor: 'from-[#FAF5FF] to-[#EDE9FE]',
+    iconType: 'users'
+  },
+  {
+    id: 'logistics-level1-what-is-the-delivery-otp--3',
+    category: 'logistics',
+    categoryLabel: 'Logistics',
+    categoryHindi: 'लॉजिस्टिक्स',
+    questionEn: "What is the delivery OTP for this parcel?",
+    questionHi: "इस पार्सल के लिए डिलीवरी ओटीपी क्या है?",
+    hintEn: "Say: \"Sir, please share the 4-digit OTP sent on your SMS.\"",
+    hintHi: "कहें: \"सर, कृपया अपने एसएमएस पर आया 4 अंकों का ओटीपी साझा करें।\"",
+    level: 'Level 1',
+    samplePhrases: [
+          "OTP is 5821 sir.",
+          "Please check SMS on registered phone.",
+          "OTP verified, here is your package."
+    ],
+    sampleLearnerSpoken: "Please share 4 digit OTP for parcel.",
+    cardColor: 'from-[#FEF2F2] to-[#FEE2E2]',
+    iconType: 'package'
+  },
+  {
+    id: 'logistics-level1-where-should-i-unload-the-3',
+    category: 'logistics',
+    categoryLabel: 'Logistics',
+    categoryHindi: 'लॉजिस्टिक्स',
+    questionEn: "Where should I unload these 10 heavy cartons?",
+    questionHi: "मुझे ये 10 भारी कार्टन कहाँ उतारने चाहिए?",
+    hintEn: "Say: \"Please stack them near Bay 3 on wooden pallets.\"",
+    hintHi: "कहें: \"कृपया इन्हें लकड़ी के पैलेट पर बे 3 के पास रखें।\"",
+    level: 'Level 1',
+    samplePhrases: [
+          "Keep near bay three.",
+          "Stack on wooden pallet.",
+          "Move to storage shelf B."
+    ],
+    sampleLearnerSpoken: "Stack 10 boxes near bay three pallet.",
+    cardColor: 'from-[#FFFBEB] to-[#FEF3C7]',
+    iconType: 'truck'
+  },
+  {
+    id: 'logistics-level1-is-the-delivery-vehicle-f-3',
+    category: 'logistics',
+    categoryLabel: 'Logistics',
+    categoryHindi: 'लॉजिस्टिक्स',
+    questionEn: "Is the delivery vehicle fuel tank full for today's route?",
+    questionHi: "क्या आज के रूट के लिए डिलीवरी वाहन का फ्यूल टैंक फुल है?",
+    hintEn: "Say: \"Yes, filled diesel at Indian Oil pump this morning.\"",
+    hintHi: "कहें: \"हाँ, आज सुबह पेट्रोल पंप पर डीजल भरवा लिया था।\"",
+    level: 'Level 1',
+    samplePhrases: [
+          "Full tank diesel filled.",
+          "Fuel is at 80 percent.",
+          "Receipt attached in logbook."
+    ],
+    sampleLearnerSpoken: "Full tank fuel filled morning time.",
+    cardColor: 'from-[#FFF1DE] to-[#FFE3CB]',
+    iconType: 'truck'
+  },
+  {
+    id: 'logistics-level2-how-will-you-explain-a-30-3',
+    category: 'logistics',
+    categoryLabel: 'Logistics',
+    categoryHindi: 'लॉजिस्टिक्स',
+    questionEn: "How will you explain a 30-minute delivery delay caused by waterlogging?",
+    questionHi: "जलभराव के कारण हुई 30-मिनट की देरी की जानकारी कैसे देंगे?",
+    hintEn: "Say: \"Sir, underpass was waterlogged after heavy downpour, reaching your location in 20 minutes.\"",
+    hintHi: "कहें: \"सर, बारिश से अंडरपास में पानी भर गया था, 20 मिनट में पहुँच रहा हूँ।\"",
+    level: 'Level 2',
+    samplePhrases: [
+          "Heavy rain caused road blockage on main flyover.",
+          "Took bypass route to deliver parcel safely.",
+          "Reaching your apartment gate in fifteen minutes."
+    ],
+    sampleLearnerSpoken: "Underpass waterlogged sir, taking diversion, reaching shortly.",
+    cardColor: 'from-[#EDF6FF] to-[#D8ECFE]',
+    iconType: 'umbrella'
+  },
+  {
+    id: 'logistics-level2-what-procedure-do-you-fol-3',
+    category: 'logistics',
+    categoryLabel: 'Logistics',
+    categoryHindi: 'लॉजिस्टिक्स',
+    questionEn: "What procedure do you follow when barcode scanner stops reading labels?",
+    questionHi: "जब बारकोड स्कैनर लेबल पढ़ना बंद कर देता है तो आप क्या प्रक्रिया अपनाते हैं?",
+    hintEn: "Say: \"Clean scanner lens, type 12-digit airway bill manually, and report to IT support desk.\"",
+    hintHi: "कहें: \"लेंस साफ करें, 12 अंकों का बिल नंबर हाथ से टाइप करें और सपोर्ट को बताएं।\"",
+    level: 'Level 2',
+    samplePhrases: [
+          "Wipe camera lens with clean microfiber cloth.",
+          "Type tracking consignment number manually on touchpad.",
+          "Switch to spare scanner kept at charging station."
+    ],
+    sampleLearnerSpoken: "Clean lens and type 12 digit tracking number manually.",
+    cardColor: 'from-[#F0FDF4] to-[#DCFCE7]',
+    iconType: 'smartphone'
+  },
+  {
+    id: 'logistics-level3-how-do-you-coordinate-wit-3',
+    category: 'logistics',
+    categoryLabel: 'Logistics',
+    categoryHindi: 'लॉजिस्टिक्स',
+    questionEn: "How do you coordinate with the night shift supervisor during parcel handoff?",
+    questionHi: "पार्सल हैंडऑफ के दौरान नाइट शिफ्ट सुपरवाइजर के साथ तालमेल कैसे बिठाते हैं?",
+    hintEn: "Review dispatch manifests, tally physical carton count, flag return orders, and sign handover sheet.",
+    hintHi: "लिस्ट देखें, कार्टन गिनें, रिटर्न पार्सल अलग करें और हस्ताक्षर करें।",
+    level: 'Level 3',
+    samplePhrases: [
+          "We physically verify total count of 350 parcels against the system manifest.",
+          "Damaged items and pending OTP orders are highlighted in red ink.",
+          "Both shift supervisors sign the official handover register before departure."
+    ],
+    sampleLearnerSpoken: "Verify 350 boxes count, check return parcels, sign handover register.",
+    cardColor: 'from-[#FAF5FF] to-[#EDE9FE]',
+    iconType: 'file-text'
+  },
+  {
+    id: 'workplace-level1-can-you-print-five-copies-3',
+    category: 'workplace',
+    categoryLabel: 'Workplace',
+    categoryHindi: 'कार्यस्थल',
+    questionEn: "Can you print five copies of today's shift schedule?",
+    questionHi: "क्या आप आज के शिफ्ट शेड्यूल की पांच प्रतियां प्रिंट कर सकते हैं?",
+    hintEn: "Say: \"Sure, printing them on printer 2 right now.\"",
+    hintHi: "कहें: \"ज़रूर, प्रिंटर 2 से अभी प्रिंट निकालता हूँ।\"",
+    level: 'Level 1',
+    samplePhrases: [
+          "Printing five copies now.",
+          "Printout is ready at front desk.",
+          "Here are your schedule copies."
+    ],
+    sampleLearnerSpoken: "Yes sir, printing 5 copies right now.",
+    cardColor: 'from-[#FEF2F2] to-[#FEE2E2]',
+    iconType: 'printer'
+  },
+  {
+    id: 'workplace-level1-where-are-the-spare-therm-3',
+    category: 'workplace',
+    categoryLabel: 'Workplace',
+    categoryHindi: 'कार्यस्थल',
+    questionEn: "Where are the spare thermal paper rolls kept?",
+    questionHi: "स्पेयर थर्मल पेपर रोल कहाँ रखे हैं?",
+    hintEn: "Say: \"They are in cabinet number 4 under the billing desk.\"",
+    hintHi: "कहें: \"वे बिलिंग डेस्क के नीचे कैबिनेट नंबर 4 में हैं।\"",
+    level: 'Level 1',
+    samplePhrases: [
+          "Inside cabinet number four.",
+          "Underneath the POS computer.",
+          "Two boxes are left in storage."
+    ],
+    sampleLearnerSpoken: "In cabinet 4 under billing counter.",
+    cardColor: 'from-[#FFFBEB] to-[#FEF3C7]',
+    iconType: 'file'
+  },
+  {
+    id: 'workplace-level2-how-do-you-politely-ask-a-3',
+    category: 'workplace',
+    categoryLabel: 'Workplace',
+    categoryHindi: 'कार्यस्थल',
+    questionEn: "How do you politely ask a coworker to speak softly during a client call?",
+    questionHi: "क्लाइंट कॉल के दौरान साथी से धीरे बोलने के लिए विनम्रता से कैसे कहेंगे?",
+    hintEn: "Say: \"Excuse me brother, I am on an urgent client audio call, could you speak a little softer please?\"",
+    hintHi: "कहें: \"क्षमा करें भाई, मेरी क्लाइंट कॉल चल रही है, क्या थोड़ा धीरे बोल सकते हैं?\"",
+    level: 'Level 2',
+    samplePhrases: [
+          "Could you please lower voice for five minutes?",
+          "I am on client discussion line.",
+          "Thank you so much for understanding brother."
+    ],
+    sampleLearnerSpoken: "Brother please talk little soft, client on call.",
+    cardColor: 'from-[#FFF1DE] to-[#FFE3CB]',
+    iconType: 'volume-x'
+  },
+  {
+    id: 'workplace-level2-what-will-you-say-when-as-3',
+    category: 'workplace',
+    categoryLabel: 'Workplace',
+    categoryHindi: 'कार्यस्थल',
+    questionEn: "What will you say when asking your manager for a salary slip certificate?",
+    questionHi: "मैनेजर से सैलरी स्लिप सर्टिफिकेट मांगते समय क्या कहेंगे?",
+    hintEn: "Say: \"Good morning sir, I need my last 3 months stamped salary slips for a bank loan application.\"",
+    hintHi: "कहें: \"नमस्ते सर, बैंक लोन के लिए पिछले 3 महीने की सैलरी स्लिप चाहिए।\"",
+    level: 'Level 2',
+    samplePhrases: [
+          "Sir, could HR please email last three months pay slips?",
+          "Need signed salary slips for bike loan approval.",
+          "Submitted formal request on employee portal."
+    ],
+    sampleLearnerSpoken: "Sir please email last 3 months stamped salary slips.",
+    cardColor: 'from-[#EDF6FF] to-[#D8ECFE]',
+    iconType: 'file-text'
+  },
+  {
+    id: 'workplace-level3-how-do-you-welcome-and-on-3',
+    category: 'workplace',
+    categoryLabel: 'Workplace',
+    categoryHindi: 'कार्यस्थल',
+    questionEn: "How do you welcome and onboard a newly joined team member on their first morning?",
+    questionHi: "काम के पहले दिन नए जुड़े साथी का स्वागत और मार्गदर्शन कैसे करेंगे?",
+    hintEn: "Introduce yourself warmly, show locker room, biometric punch machine, water dispenser, and shift buddies.",
+    hintHi: "गर्मजोशी से स्वागत करें, लॉकर, हाजिरी मशीन और टीम से परिचय कराएं।",
+    level: 'Level 3',
+    samplePhrases: [
+          "Welcome to our logistics center Rahul, let me show you where our team sits.",
+          "Here is our attendance fingerprint scanner and tea break area.",
+          "Feel free to ask me any questions throughout your initial training week."
+    ],
+    sampleLearnerSpoken: "Welcome to team Rahul, I show lockers, biometric and work process.",
+    cardColor: 'from-[#F0FDF4] to-[#DCFCE7]',
+    iconType: 'user-plus'
+  },
+  {
+    id: 'qsr_retail-level1-do-you-need-a-carry-bag-f-3',
+    category: 'qsr_retail',
+    categoryLabel: 'Retail & Store',
+    categoryHindi: 'रिटेल स्टोर',
+    questionEn: "Do you need a carry bag for these purchases?",
+    questionHi: "क्या आपको इन सामानों के लिए कैरी बैग चाहिए?",
+    hintEn: "Say: \"Small cloth bag is 7 rupees and large is 12 rupees.\"",
+    hintHi: "कहें: \"छोटा कपड़ा बैग 7 रुपये का है और बड़ा 12 रुपये का।\"",
+    level: 'Level 1',
+    samplePhrases: [
+          "Do you want carry bag sir?",
+          "Small cloth bag is seven rupees.",
+          "I have brought my own bag."
+    ],
+    sampleLearnerSpoken: "Need carry bag sir? Seven rupees cloth bag.",
+    cardColor: 'from-[#FAF5FF] to-[#EDE9FE]',
+    iconType: 'shopping-bag'
+  },
+  {
+    id: 'qsr_retail-level1-where-can-i-find-cooking--3',
+    category: 'qsr_retail',
+    categoryLabel: 'Retail & Store',
+    categoryHindi: 'रिटेल स्टोर',
+    questionEn: "Where can I find cooking oil and basmati rice?",
+    questionHi: "मुझे कुकिंग ऑयल और बासमती चावल कहाँ मिलेंगे?",
+    hintEn: "Say: \"Cooking oils are in Aisle 2 and rice bags are in Aisle 3.\"",
+    hintHi: "कहें: \"कुकिंग ऑयल आइल 2 में हैं और चावल के बैग आइल 3 में हैं।\"",
+    level: 'Level 1',
+    samplePhrases: [
+          "Cooking oil is in aisle two.",
+          "Rice packets are right behind you.",
+          "Follow the grocery signboard."
+    ],
+    sampleLearnerSpoken: "Oil in aisle 2 and basmati rice in aisle 3.",
+    cardColor: 'from-[#FEF2F2] to-[#FEE2E2]',
+    iconType: 'search'
+  },
+  {
+    id: 'qsr_retail-level2-how-do-you-inform-a-shopp-3',
+    category: 'qsr_retail',
+    categoryLabel: 'Retail & Store',
+    categoryHindi: 'रिटेल स्टोर',
+    questionEn: "How do you inform a shopper that their card transaction was declined?",
+    questionHi: "ग्राहक को कैसे बताएंगे कि उनका कार्ड पेमेंट फेल हो गया है?",
+    hintEn: "Politely say: \"Sir, machine shows bank server timed out. Could we try inserting card again or scan UPI?\"",
+    hintHi: "कहें: \"सर, बैंक सर्वर टाइमआउट हुआ है। क्या दोबारा कार्ड लगाएं या यूपीआई करें?\"",
+    level: 'Level 2',
+    samplePhrases: [
+          "Card transaction did not go through, sir.",
+          "Please check if international or online swipe is active.",
+          "Would you like to scan our PhonePe QR stand?"
+    ],
+    sampleLearnerSpoken: "Sir transaction declined by bank, please try UPI or retry card.",
+    cardColor: 'from-[#FFFBEB] to-[#FEF3C7]',
+    iconType: 'credit-card'
+  },
+  {
+    id: 'qsr_retail-level2-a-customer-is-asking-for--3',
+    category: 'qsr_retail',
+    categoryLabel: 'Retail & Store',
+    categoryHindi: 'रिटेल स्टोर',
+    questionEn: "A customer is asking for a discount on a fixed price branded item. How do you respond?",
+    questionHi: "ग्राहक फिक्स्ड प्राइस ब्रांडेड सामान पर छूट मांग रहा है। आप क्या जवाब देंगे?",
+    hintEn: "Say: \"Sir, prices are computer fixed by brand, but you earn 5% loyalty reward points on your mobile number.\"",
+    hintHi: "कहें: \"सर, रेट फिक्स हैं, लेकिन आपको नंबर पर 5% रिवॉर्ड पॉइंट मिलेंगे।\"",
+    level: 'Level 2',
+    samplePhrases: [
+          "Sir, these are system-locked brand prices.",
+          "We have buy one get one offer on rack three.",
+          "You will get 50 rupees cashback on our membership app."
+    ],
+    sampleLearnerSpoken: "Sir prices system fixed, but you get membership points.",
+    cardColor: 'from-[#FFF1DE] to-[#FFE3CB]',
+    iconType: 'percent'
+  },
+  {
+    id: 'qsr_retail-level3-describe-how-you-maintain-3',
+    category: 'qsr_retail',
+    categoryLabel: 'Retail & Store',
+    categoryHindi: 'रिटेल स्टोर',
+    questionEn: "Describe how you maintain food hygiene and cleanliness at a fast-food serving station.",
+    questionHi: "फास्ट-फूड सर्विंग स्टेशन पर खाद्य स्वच्छता और सफाई कैसे बनाए रखते हैं?",
+    hintEn: "Mention wearing fresh gloves and hairnets, sanitizing counters every 30 minutes, and checking food thermometer temps.",
+    hintHi: "दस्ताने, हेयरनेट, हर 30 मिनट में काउंटर सैनिटाइजेशन और तापमान की जांच बताएं।",
+    level: 'Level 3',
+    samplePhrases: [
+          "We sanitize food preparation slabs every half hour with food-grade disinfectant.",
+          "Staff strictly wear disposable hairnets, aprons, and nitrile gloves.",
+          "Hot food is maintained above 65 degrees Celsius to guarantee safety."
+    ],
+    sampleLearnerSpoken: "Wear hairnet and gloves, clean counters every 30 min, check hot food temp.",
+    cardColor: 'from-[#EDF6FF] to-[#D8ECFE]',
+    iconType: 'shield-check'
+  },
+  {
+    id: 'daily_routine-level1-how-much-is-the-auto-rick-3',
+    category: 'daily_routine',
+    categoryLabel: 'Daily Routine',
+    categoryHindi: 'दैनिक जीवन',
+    questionEn: "How much is the auto rickshaw fare to the railway station by meter?",
+    questionHi: "मीटर से रेलवे स्टेशन तक का ऑटो किराया कितना है?",
+    hintEn: "Say: \"Meter fare will be around 70 to 80 rupees.\"",
+    hintHi: "कहें: \"मीटर का किराया लगभग 70 से 80 रुपये होगा।\"",
+    level: 'Level 1',
+    samplePhrases: [
+          "Please turn on the meter bhaiya.",
+          "Meter shows 75 rupees.",
+          "Here is exact eighty rupees."
+    ],
+    sampleLearnerSpoken: "Please run meter bhaiya, around 75 rupees.",
+    cardColor: 'from-[#F0FDF4] to-[#DCFCE7]',
+    iconType: 'navigation'
+  },
+  {
+    id: 'daily_routine-level1-did-you-lock-the-kitchen--3',
+    category: 'daily_routine',
+    categoryLabel: 'Daily Routine',
+    categoryHindi: 'दैनिक जीवन',
+    questionEn: "Did you lock the kitchen balcony door before leaving home?",
+    questionHi: "क्या आपने घर से निकलने से पहले किचन बालकनी का दरवाजा बंद किया था?",
+    hintEn: "Say: \"Yes, I double-locked both balcony and front door latch.\"",
+    hintHi: "कहें: \"हाँ, मैंने बालकनी और मुख्य दरवाजा दोनों अच्छी तरह बंद किए।\"",
+    level: 'Level 1',
+    samplePhrases: [
+          "Yes, balcony door is locked.",
+          "Latched all windows tightly.",
+          "Double checked lock before leaving."
+    ],
+    sampleLearnerSpoken: "Yes, balcony door locked properly.",
+    cardColor: 'from-[#FAF5FF] to-[#EDE9FE]',
+    iconType: 'lock'
+  },
+  {
+    id: 'daily_routine-level2-how-do-you-navigate-a-cro-3',
+    category: 'daily_routine',
+    categoryLabel: 'Daily Routine',
+    categoryHindi: 'दैनिक जीवन',
+    questionEn: "How do you navigate a crowded metro interchange station like Rajiv Chowk?",
+    questionHi: "राजीव चौक जैसे भीड़भाड़ वाले मेट्रो स्टेशन पर आप कैसे रास्ता तय करते हैं?",
+    hintEn: "Say: \"Follow yellow floor stickers towards Yellow Line Platform 2 and keep left on escalators.\"",
+    hintHi: "कहें: \"येलो लाइन के पीले निशानों का पालन करें और एस्केलेटर पर बाईं ओर रहें।\"",
+    level: 'Level 2',
+    samplePhrases: [
+          "Follow the overhead signboards carefully.",
+          "Walk on left side of staircases to avoid stampede.",
+          "Listen to station announcements for train arrival."
+    ],
+    sampleLearnerSpoken: "Follow yellow line signage, walk left on escalator.",
+    cardColor: 'from-[#FEF2F2] to-[#FEE2E2]',
+    iconType: 'compass'
+  },
+  {
+    id: 'daily_routine-level2-explain-how-you-budget-yo-3',
+    category: 'daily_routine',
+    categoryLabel: 'Daily Routine',
+    categoryHindi: 'दैनिक जीवन',
+    questionEn: "Explain how you budget your monthly salary between rent, groceries, and savings.",
+    questionHi: "बताएं कि आप किराए, राशन और बचत के बीच अपनी तनख्वाह का बजट कैसे बनाते हैं।",
+    hintEn: "Say: \"40% goes for house rent and electricity, 30% for food and commute, and 30% goes directly into recurring deposit savings.\"",
+    hintHi: "कहें: \"40% किराया, 30% खाना व आवागमन, और 30% बैंक बचत में जाता है।\"",
+    level: 'Level 2',
+    samplePhrases: [
+          "I transfer savings amount on the day salary credits.",
+          "Keep strict limit on online food orders.",
+          "Use UPI passbook to track small daily spends."
+    ],
+    sampleLearnerSpoken: "40% rent, 30% food and travel, 30% bank savings.",
+    cardColor: 'from-[#FFFBEB] to-[#FEF3C7]',
+    iconType: 'pie-chart'
+  },
+  {
+    id: 'daily_routine-level3-describe-your-sunday-morn-3',
+    category: 'daily_routine',
+    categoryLabel: 'Daily Routine',
+    categoryHindi: 'दैनिक जीवन',
+    questionEn: "Describe your Sunday morning routine when you have a full day off with family.",
+    questionHi: "रविवार की सुबह की अपनी दिनचर्या बताएं जब परिवार के साथ पूरी छुट्टी होती है।",
+    hintEn: "Wake up without alarm, prepare special breakfast like aloo parathas, clean rooms, and wash scooter together.",
+    hintHi: "आराम से उठना, आलू पराठे बनाना, कमरे साफ करना और मिलकर काम करना।",
+    level: 'Level 3',
+    samplePhrases: [
+          "Sunday morning starts with hot aloo parathas and homemade curd.",
+          "I wash my motorcycle and do laundry while listening to old Hindi songs.",
+          "Afterwards, the whole family sits together to plan grocery shopping."
+    ],
+    sampleLearnerSpoken: "Wake late, make hot paratha breakfast, clean bike, spend time family.",
+    cardColor: 'from-[#FFF1DE] to-[#FFE3CB]',
+    iconType: 'smile'
+  },
+  {
+    id: 'friends-level1-what-street-food-snack-wo-3',
+    category: 'friends',
+    categoryLabel: 'Friends',
+    categoryHindi: 'दोस्त',
+    questionEn: "What street food snack would you like to eat today?",
+    questionHi: "आज आप कौन सा स्ट्रीट फूड स्नैक खाना चाहेंगे?",
+    hintEn: "Say: \"Let us eat crispy pani puri with spicy mint water.\"",
+    hintHi: "कहें: \"चलो तीखे पुदीना पानी के साथ पानी पूरी खाते हैं।\"",
+    level: 'Level 1',
+    samplePhrases: [
+          "Let us eat pani puri.",
+          "Hot samosa and jalebi.",
+          "One plate pav bhaji please."
+    ],
+    sampleLearnerSpoken: "Crispy pani puri with spicy water please.",
+    cardColor: 'from-[#EDF6FF] to-[#D8ECFE]',
+    iconType: 'coffee'
+  },
+  {
+    id: 'friends-level1-are-you-free-to-play-badm-3',
+    category: 'friends',
+    categoryLabel: 'Friends',
+    categoryHindi: 'दोस्त',
+    questionEn: "Are you free to play badminton in the society park this evening?",
+    questionHi: "क्या आज शाम आप पार्क में बैडमिंटन खेलने के लिए खाली हैं?",
+    hintEn: "Say: \"Yes! Let us meet at the court at 5:30 PM.\"",
+    hintHi: "कहें: \"हाँ! चलो शाम 5:30 बजे कोर्ट पर मिलते हैं।\"",
+    level: 'Level 1',
+    samplePhrases: [
+          "Yes, I am free at 5:30.",
+          "Bring your racket along.",
+          "Let us play 3 sets."
+    ],
+    sampleLearnerSpoken: "Yes free, meet at badminton court 5:30 PM.",
+    cardColor: 'from-[#F0FDF4] to-[#DCFCE7]',
+    iconType: 'activity'
+  },
+  {
+    id: 'friends-level2-how-do-you-invite-your-ap-3',
+    category: 'friends',
+    categoryLabel: 'Friends',
+    categoryHindi: 'दोस्त',
+    questionEn: "How do you invite your apartment neighbors for Diwali sweets exchange?",
+    questionHi: "अपार्टमेंट के पड़ोसियों को दिवाली की मिठाई के लिए कैसे आमंत्रित करेंगे?",
+    hintEn: "Say: \"Namaste uncle, wishing you a happy Diwali! Please visit our flat this evening for sweets and snacks.\"",
+    hintHi: "कहें: \"नमस्ते अंकल, दिवाली की शुभकामनाएं! शाम को मिठाई के लिए घर पधारें।\"",
+    level: 'Level 2',
+    samplePhrases: [
+          "Happy Diwali to your entire family uncle!",
+          "Please come over for homemade kaju katli.",
+          "Looking forward to celebrating festival together."
+    ],
+    sampleLearnerSpoken: "Happy Diwali uncle, please come our home evening for sweets.",
+    cardColor: 'from-[#FAF5FF] to-[#EDE9FE]',
+    iconType: 'sparkles'
+  },
+  {
+    id: 'friends-level2-your-friend-is-nervous-ab-3',
+    category: 'friends',
+    categoryLabel: 'Friends',
+    categoryHindi: 'दोस्त',
+    questionEn: "Your friend is nervous about their driving license test. How do you motivate them?",
+    questionHi: "दोस्त ड्राइविंग लाइसेंस टेस्ट को लेकर घबराया हुआ है। उसका हौसला कैसे बढ़ाएंगे?",
+    hintEn: "Say: \"Relax brother, you practiced parallel parking well; just check mirrors, use indicators, and stay calm.\"",
+    hintHi: "कहें: \"शांत रहो भाई, तुमने अच्छी प्रैक्टिस की है; शीशे और इंडिकेटर सही रखना।\"",
+    level: 'Level 2',
+    samplePhrases: [
+          "Take deep breaths, you are an excellent driver.",
+          "Keep speed steady and wear seatbelt first.",
+          "You will clear the track test easily brother!"
+    ],
+    sampleLearnerSpoken: "Relax bhai, you practiced well, drive slow and check mirrors.",
+    cardColor: 'from-[#FEF2F2] to-[#FEE2E2]',
+    iconType: 'thumbs-up'
+  },
+  {
+    id: 'friends-level3-how-would-you-organize-a--3',
+    category: 'friends',
+    categoryLabel: 'Friends',
+    categoryHindi: 'दोस्त',
+    questionEn: "How would you organize a surprise birthday treat for your roommate on a small budget?",
+    questionHi: "कम बजट में अपने रूममेट के लिए सरप्राइज बर्थडे ट्रीट कैसे आयोजित करेंगे?",
+    hintEn: "Bake or buy a small pastry, decorate room with balloons, invite two close friends, and play acoustic guitar music.",
+    hintHi: "पेस्ट्री, गुब्बारे, दो करीबी दोस्त और गाने बजाकर सरप्राइज देना।",
+    level: 'Level 3',
+    samplePhrases: [
+          "We pooled 200 rupees each for chocolate truffle cake and streamers.",
+          "Turned off room lights and greeted him with birthday song at midnight.",
+          "Simple heartfelt celebrations create deeper memories than expensive parties."
+    ],
+    sampleLearnerSpoken: "Pooled money for cake, decorated room, midnight surprise birthday song.",
+    cardColor: 'from-[#FFFBEB] to-[#FEF3C7]',
+    iconType: 'gift'
   }
 ];
 

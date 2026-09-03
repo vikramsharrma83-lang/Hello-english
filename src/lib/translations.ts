@@ -44,6 +44,9 @@ export const translations = {
     recent_activity: 'Recent Activity',
     view_all: 'View All',
     start_session: 'Start Session',
+    start_my_day: 'Start My Day',
+    english_from_everywhere: 'English from everywhere',
+    real_english_sub: 'Real English for real life. Learn, practice and speak with confidence—anytime, anywhere.',
   },
   hi: {
     summary: 'सारांश',
@@ -51,9 +54,9 @@ export const translations = {
     sheeko: 'Sheeko',
     buddy: 'Buddy',
     slide_to_start: 'स्लाइड करके शुरू करें',
-    good_morning: 'शुभ प्रभात',
-    good_afternoon: 'शुभ दोपहर',
-    good_evening: 'शुभ संध्या',
+    good_morning: 'शुभ प्रभात (Good Morning)',
+    good_afternoon: 'शुभ दोपहर (Good Afternoon)',
+    good_evening: 'शुभ संध्या (Good Evening)',
     share_day: 'कोच नेहा के साथ अपना दिन साझा करें',
     voice_practice: 'वॉइस अभ्यास',
     grammar_patterns: 'व्याकरण पैटर्न',
@@ -62,7 +65,7 @@ export const translations = {
     finish: 'समाप्त',
     speak: 'बोलें',
     ai_speaking_partner: 'AI स्पीकिंग पार्टनर',
-    practice_conversation: 'कोच नेहा के साथ स्वाभाविक बातचीत का अभ्यास करें',
+    practice_conversation: 'कोच नेहा के साथ बातचीत का अभ्यास करें',
     ask_anything: 'मुझसे कुछ भी पूछें या अपने बोलने के कौशल का अभ्यास करें...',
     grammar_and_patterns: 'व्याकरण और पैटर्न',
     practice: 'अभ्यास',
@@ -90,6 +93,9 @@ export const translations = {
     recent_activity: 'हाल की गतिविधियां',
     view_all: 'सभी देखें',
     start_session: 'सत्र शुरू करें',
+    start_my_day: 'Din ki suruat',
+    english_from_everywhere: 'English kahin se bhi',
+    real_english_sub: 'Asli zindagi ke liye real English. Seekhein, practice karein aur poore confidence se bolein—kabhi bhi, kahin bhi.',
   }
 };
 

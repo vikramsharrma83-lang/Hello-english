@@ -126,7 +126,7 @@ export const HomePage: React.FC<HomePageProps> = ({
               title={`Language: ${language === 'hi' ? 'Hindi (हिंदी)' : 'English'}`}
             >
               <Globe className="w-3.5 h-3.5 text-slate-300" />
-              <span className="text-[10px] font-bold uppercase">{language}</span>
+              <span className="text-[10px] font-bold uppercase">{language === 'hi' ? 'HI' : 'EN'}</span>
             </button>
           )}
 
@@ -134,10 +134,10 @@ export const HomePage: React.FC<HomePageProps> = ({
             <button
               onClick={onOpenHelpRoadmap}
               className="px-2.5 py-1 rounded-full bg-sky-950/70 border border-sky-500/50 hover:border-sky-400 flex items-center gap-1 text-sky-300 hover:text-sky-100 transition-all cursor-pointer shadow-xs active:scale-95 backdrop-blur-md"
-              title="Roadmap & Guide"
+              title={language === 'hi' ? 'Roadmap aur Guide' : 'Roadmap & Guide'}
             >
               <Bot className="w-3.5 h-3.5 text-sky-300 stroke-[2.2]" />
-              <span className="text-[10px] font-bold">Guide</span>
+              <span className="text-[10px] font-bold">{language === 'hi' ? 'Madad' : 'Guide'}</span>
             </button>
           )}
 
@@ -230,44 +230,68 @@ export const HomePage: React.FC<HomePageProps> = ({
           whileHover={{ x: -3, scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           className="bg-slate-950/85 hover:bg-slate-900 text-slate-200 border-l-2 border-y border-sky-400/80 hover:border-sky-300 pl-2.5 pr-1.5 py-3 rounded-l-2xl shadow-[0_0_20px_rgba(56,189,248,0.35)] flex flex-col items-center gap-1.5 cursor-pointer backdrop-blur-xl transition-colors group"
-          title="Open Progress & Stats"
-          aria-label="Open Progress & Stats"
+          title={language === 'hi' ? 'Pragati aur Stats' : 'Open Progress & Stats'}
+          aria-label={language === 'hi' ? 'Pragati aur Stats' : 'Open Progress & Stats'}
         >
           <TrendingUp className="w-4 h-4 text-sky-400 group-hover:scale-110 transition-transform" />
           <div className="flex items-center text-[10px] font-bold text-sky-300 uppercase tracking-widest [writing-mode:vertical-lr] rotate-180">
-            Stats
+            {language === 'hi' ? 'Pragati' : 'Stats'}
           </div>
         </motion.button>
       </div>
 
       {/* 4. Exact Hero Typography & Call-To-Action (Replicated directly from attachment) */}
       <div className="w-full flex-1 flex flex-col justify-center px-8 sm:px-10 relative z-10 max-w-lg mx-auto pb-24">
-        {/* Large Bold Display Typography */}
-        <div className="flex flex-col mb-2">
-          <h1 className="text-[44px] sm:text-[54px] font-black tracking-tight leading-[1.05] text-white">
-            English
-          </h1>
-          <h1 className="text-[44px] sm:text-[54px] font-black tracking-tight leading-[1.05] text-white">
-            from
-          </h1>
-          <h1 className="text-[44px] sm:text-[54px] font-black tracking-tight leading-[1.05] text-amber-400 drop-shadow-[0_0_20px_rgba(245,158,11,0.45)]">
-            everywhere
-          </h1>
-        </div>
+        {/* Large Bold Display Typography (Nearest Hindi: english kahin se bhi) */}
+        {language === 'hi' ? (
+          <div className="flex flex-col mb-2">
+            <h1 className="text-[44px] sm:text-[54px] font-black tracking-tight leading-[1.05] text-white">
+              English
+            </h1>
+            <h1 className="text-[44px] sm:text-[54px] font-black tracking-tight leading-[1.05] text-white">
+              kahin se
+            </h1>
+            <h1 className="text-[44px] sm:text-[54px] font-black tracking-tight leading-[1.05] text-amber-400 drop-shadow-[0_0_20px_rgba(245,158,11,0.45)]">
+              bhi
+            </h1>
+          </div>
+        ) : (
+          <div className="flex flex-col mb-2">
+            <h1 className="text-[44px] sm:text-[54px] font-black tracking-tight leading-[1.05] text-white">
+              English
+            </h1>
+            <h1 className="text-[44px] sm:text-[54px] font-black tracking-tight leading-[1.05] text-white">
+              from
+            </h1>
+            <h1 className="text-[44px] sm:text-[54px] font-black tracking-tight leading-[1.05] text-amber-400 drop-shadow-[0_0_20px_rgba(245,158,11,0.45)]">
+              everywhere
+            </h1>
+          </div>
+        )}
 
         {/* Small Yellow Accent Line under text */}
         <div className="w-12 h-1 bg-amber-400 rounded-full my-4 shadow-[0_0_10px_rgba(245,158,11,0.8)]" />
 
-        {/* Exact Subtitle Description */}
-        <p className="text-slate-300 text-sm sm:text-base leading-relaxed font-normal max-w-[280px] sm:max-w-xs mb-8 drop-shadow-sm">
-          Real English for real life.
-          <br />
-          Learn, practice and speak with
-          <br />
-          confidence—anytime, anywhere.
-        </p>
+        {/* Subtitle Description */}
+        {language === 'hi' ? (
+          <p className="text-slate-300 text-sm sm:text-base leading-relaxed font-normal max-w-[280px] sm:max-w-xs mb-8 drop-shadow-sm">
+            Asli zindagi ke liye real English.
+            <br />
+            Seekhein, practice karein aur poore
+            <br />
+            confidence se bolein—kabhi bhi, kahin bhi.
+          </p>
+        ) : (
+          <p className="text-slate-300 text-sm sm:text-base leading-relaxed font-normal max-w-[280px] sm:max-w-xs mb-8 drop-shadow-sm">
+            Real English for real life.
+            <br />
+            Learn, practice and speak with
+            <br />
+            confidence—anytime, anywhere.
+          </p>
+        )}
 
-        {/* Exact Start My Day Pill Button */}
+        {/* Start My Day Pill Button (Nearest Hindi: Din ki suruat) */}
         <div>
           <motion.button
             onClick={onStart}
@@ -284,7 +308,9 @@ export const HomePage: React.FC<HomePageProps> = ({
                 />
               )}
             </div>
-            <span className="tracking-wide">Start My Day</span>
+            <span className="tracking-wide">
+              {language === 'hi' ? 'Din ki suruat' : 'Start My Day'}
+            </span>
             <ArrowRight className="w-4 h-4 text-slate-300 group-hover:translate-x-1 transition-transform" />
           </motion.button>
         </div>
@@ -316,7 +342,9 @@ export const HomePage: React.FC<HomePageProps> = ({
               <div className="flex items-center justify-between pb-3 border-b border-slate-800/80">
                 <div className="flex items-center gap-2">
                   <TrendingUp className="w-5 h-5 text-sky-400" />
-                  <span className="font-bold text-white text-base tracking-tight">Your Progress</span>
+                  <span className="font-bold text-white text-base tracking-tight">
+                    {language === 'hi' ? 'Aapki Pragati (Your Progress)' : 'Your Progress'}
+                  </span>
                 </div>
                 <button
                   onClick={() => setShowStatsDrawer(false)}
@@ -332,7 +360,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                   <div className="flex items-center gap-2">
                     <div className="w-2.5 h-2.5 rounded-full bg-sky-400 shadow-[0_0_10px_rgba(56,189,248,0.9)]" />
                     <span className="text-sm font-bold text-white tracking-tight">
-                      Beginner
+                      {language === 'hi' ? 'Beginner (शुरुआती)' : 'Beginner'}
                     </span>
                   </div>
                   <span className="text-xs font-mono font-bold text-sky-300 bg-sky-950 px-2 py-0.5 rounded-md border border-sky-700/60 shadow-xs">
@@ -348,7 +376,9 @@ export const HomePage: React.FC<HomePageProps> = ({
 
                 <div className="flex items-center justify-between text-xs text-slate-300 font-medium">
                   <span className="text-slate-200 font-bold">Lvl 1</span>
-                  <span className="text-slate-400">100 pts to Lvl 2</span>
+                  <span className="text-slate-400">
+                    {language === 'hi' ? 'Level 2 ke liye 100 pts' : '100 pts to Lvl 2'}
+                  </span>
                 </div>
               </div>
 
@@ -356,11 +386,11 @@ export const HomePage: React.FC<HomePageProps> = ({
               <div className="w-full bg-slate-900/85 border border-slate-700/80 rounded-2xl p-4 flex flex-col justify-between shadow-lg backdrop-blur-xl">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-bold text-slate-300 uppercase tracking-wider">
-                    {language === 'hi' ? 'इस सप्ताह' : 'This Week'}
+                    {language === 'hi' ? 'Is Hafte (This Week)' : 'This Week'}
                   </span>
                   <div className="flex items-center gap-1.5 text-sky-300 font-bold text-xs">
                     <Flame className="w-4 h-4 text-sky-400 fill-sky-400/40" />
-                    <span>{progress?.streakDays || 1}d Streak</span>
+                    <span>{progress?.streakDays || 1}{language === 'hi' ? ' din ki Streak' : 'd Streak'}</span>
                   </div>
                 </div>
 

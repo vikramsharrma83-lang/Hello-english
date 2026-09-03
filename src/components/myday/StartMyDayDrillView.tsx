@@ -79,8 +79,12 @@ export const StartMyDayDrillView: React.FC<StartMyDayDrillViewProps> = ({
   onFinishDrill,
   onExit,
 }) => {
-  const questions = LEVEL_1_DRILL_QUESTIONS.length >= 3 ? LEVEL_1_DRILL_QUESTIONS : FALLBACK_QUESTIONS;
-  const TOTAL_QUESTIONS = 3;
+  const TOTAL_QUESTIONS = 5;
+  // Select 5 random questions from the entire 150 questions pool
+  const [questions] = useState<Question[]>(() => {
+    const shuffled = [...PRACTICE_QUESTIONS].sort(() => 0.5 - Math.random());
+    return shuffled.slice(0, TOTAL_QUESTIONS);
+  });
 
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [attemptCount, setAttemptCount] = useState<number>(1); // 1 = 1st attempt, 2 = 2nd attempt, 3 = model answer read

@@ -285,6 +285,7 @@ export default function App() {
     activeTab !== 'drill' &&
     activeTab !== 'challenge' &&
     activeTab !== 'rocknroll' &&
+    activeTab !== 'buddy' &&
     !showRolePicker &&
     !isStartMyDayOrSubScreen;
 

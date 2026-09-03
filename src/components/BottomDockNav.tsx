@@ -147,7 +147,7 @@ export const BottomDockNav: React.FC<BottomDockNavProps> = ({
         {/* Main Dock Navigation */}
         <nav
           aria-label="Main Navigation"
-          className="pointer-events-auto bg-[#18191E]/95 backdrop-blur-2xl rounded-full px-6 py-2.5 border border-zinc-800/90 flex items-center justify-between gap-6 sm:gap-8 shadow-2xl shadow-black/95 relative w-full max-w-sm"
+          className="pointer-events-auto bg-[#101522]/95 backdrop-blur-2xl rounded-full px-6 py-2.5 border border-slate-800/60 flex items-center justify-between gap-6 sm:gap-8 shadow-2xl shadow-black/80 relative w-full max-w-sm"
         >
           {/* 1. Summary */}
           <button
@@ -156,12 +156,14 @@ export const BottomDockNav: React.FC<BottomDockNavProps> = ({
               onSelectTab('dashboard');
             }}
             className={`flex flex-col items-center gap-1 transition-colors cursor-pointer ${
-              activeTab === 'dashboard' || activeTab === 'fitness' ? 'text-rose-500' : 'text-zinc-400 hover:text-zinc-200'
+              activeTab === 'dashboard' || activeTab === 'fitness'
+                ? 'text-slate-200'
+                : 'text-[#8A92A6] hover:text-slate-200'
             }`}
             title={getTranslation(language, 'summary')}
           >
-            <Activity className="w-5.5 h-5.5 stroke-[2.2]" />
-            <span className="text-[10px] font-bold tracking-tight">{getTranslation(language, 'summary')}</span>
+            <Activity className="w-5.5 h-5.5 stroke-[2]" />
+            <span className="text-[10px] font-medium tracking-tight">{getTranslation(language, 'summary')}</span>
           </button>
 
           {/* 2. Bytes */}
@@ -170,16 +172,15 @@ export const BottomDockNav: React.FC<BottomDockNavProps> = ({
               setIsSheekoOpen(false);
               onSelectTab('snippets');
             }}
-            className={`flex flex-col items-center gap-1 transition-colors cursor-pointer relative ${
-              activeTab === 'snippets' || activeTab === 'profile' || activeTab === 'course' ? 'text-zinc-200' : 'text-zinc-400 hover:text-zinc-200'
+            className={`flex flex-col items-center gap-1 transition-colors cursor-pointer ${
+              activeTab === 'snippets' || activeTab === 'profile' || activeTab === 'course'
+                ? 'text-slate-200'
+                : 'text-[#8A92A6] hover:text-slate-200'
             }`}
             title={getTranslation(language, 'bytes')}
           >
-            <div className="relative">
-              <Compass className="w-5.5 h-5.5 stroke-[2]" />
-              <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-rose-500 shadow-md ring-2 ring-[#18191E]" />
-            </div>
-            <span className="text-[10px] font-bold tracking-tight">{getTranslation(language, 'bytes')}</span>
+            <Compass className="w-5.5 h-5.5 stroke-[2]" />
+            <span className="text-[10px] font-medium tracking-tight">{getTranslation(language, 'bytes')}</span>
           </button>
 
           {/* 3. Big Sheeko Button */}
@@ -190,8 +191,8 @@ export const BottomDockNav: React.FC<BottomDockNavProps> = ({
               onClick={() => setIsSheekoOpen((prev) => !prev)}
               className={`w-14 h-14 rounded-full flex items-center justify-center cursor-pointer transition-all duration-200 shadow-xl relative ${
                 isSheekoOpen
-                  ? 'bg-amber-400 text-slate-950 ring-4 ring-amber-400/40 shadow-[0_0_30px_rgba(245,158,11,0.85)]'
-                  : 'bg-gradient-to-tr from-amber-500 via-amber-400 to-yellow-300 text-slate-950 ring-4 ring-[#18191E] shadow-[0_0_20px_rgba(245,158,11,0.6)]'
+                  ? 'bg-[#F5C453] text-slate-950 ring-4 ring-[#F5C453]/30 shadow-[0_0_25px_rgba(245,196,83,0.5)]'
+                  : 'bg-gradient-to-tr from-[#E2B13C] via-[#F5C453] to-[#FCE38A] text-slate-950 ring-4 ring-[#0B0F19] shadow-[0_0_20px_rgba(245,196,83,0.4)]'
               }`}
               title="Sheeko"
               aria-label="Sheeko Menu"
@@ -202,12 +203,12 @@ export const BottomDockNav: React.FC<BottomDockNavProps> = ({
                 <div className="relative flex items-center justify-center">
                   <Sparkles className="w-7 h-7 stroke-[2.2] fill-amber-950/20" />
                   {isPlaygroundIncomplete && (
-                    <span className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-rose-500 ring-2 ring-[#18191E] shadow-[0_0_8px_rgba(244,63,94,0.9)] animate-pulse" />
+                    <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-[#E2B13C] ring-2 ring-[#0B0F19]" />
                   )}
                 </div>
               )}
             </motion.button>
-            <span className="text-[10px] font-extrabold tracking-tight text-amber-400 mt-1 uppercase">
+            <span className="text-[10px] font-extrabold tracking-tight text-[#F5C453] mt-1 uppercase">
               sheeko
             </span>
           </div>
@@ -219,12 +220,12 @@ export const BottomDockNav: React.FC<BottomDockNavProps> = ({
               onSelectTab('buddy');
             }}
             className={`flex flex-col items-center gap-1 transition-colors cursor-pointer ${
-              activeTab === 'buddy' || activeTab === 'course' ? 'text-cyan-400' : 'text-cyan-400 hover:text-cyan-300'
+              activeTab === 'buddy' ? 'text-slate-200' : 'text-[#8A92A6] hover:text-slate-200'
             }`}
             title="Buddy"
           >
             <Footprints className="w-5.5 h-5.5 stroke-[2]" />
-            <span className="text-[10px] font-bold tracking-tight">buddy</span>
+            <span className="text-[10px] font-medium tracking-tight">buddy</span>
           </button>
         </nav>
       </div>
