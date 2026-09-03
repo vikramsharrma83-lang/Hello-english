@@ -13,6 +13,7 @@ import {
 } from "./src/data/sheekoEngine.ts";
 import { callLlamaConversationStep } from "./server/services/llamaService.ts";
 import { analyzeDrillFeedbackWithLlama } from "./server/services/llamaDrillService.ts";
+import { generateGeminiContent } from "./server/services/geminiService.ts";
 
 const app = express();
 const PORT = 3000;
@@ -188,15 +189,14 @@ You MUST return ONLY a valid JSON object with this exact schema:
 
     if (!result && geminiKey && geminiKey.trim()) {
       try {
-        const { GoogleGenAI } = await import("@google/genai");
-        const ai = new GoogleGenAI({ apiKey: geminiKey.trim() });
-        const response = await ai.models.generateContent({
-          model: "gemini-3.6-flash",
+        const text = await generateGeminiContent({
+          apiKey: geminiKey,
           contents: `${systemPrompt}\n\nContext:\n${userPrompt}`,
-          config: { responseMimeType: "application/json", temperature: 0.6 },
+          responseMimeType: "application/json",
+          temperature: 0.6,
         });
-        if (response.text) {
-          result = parseJSONSafely(response.text);
+        if (text) {
+          result = parseJSONSafely(text);
         }
       } catch (e) {
         console.warn("Gemini buddy chat error:", e);
@@ -307,6 +307,23 @@ Return ONLY a valid JSON object with this exact schema:
         }
       } catch (e) {
         console.warn("Groq summary error:", e);
+      }
+    }
+
+    const geminiKey = process.env.GEMINI_API_KEY;
+    if (!summaryResult && geminiKey && geminiKey.trim()) {
+      try {
+        const text = await generateGeminiContent({
+          apiKey: geminiKey,
+          contents: `${systemPrompt}\n\nUser Context:\n${userPrompt}`,
+          responseMimeType: "application/json",
+          temperature: 0.2,
+        });
+        if (text) {
+          summaryResult = JSON.parse(text.replace(/^```json/, '').replace(/```$/, '').trim());
+        }
+      } catch (e) {
+        console.warn("Gemini summary error:", e);
       }
     }
 
@@ -466,15 +483,14 @@ Rules:
 
     if (!result && geminiKey && geminiKey.trim()) {
       try {
-        const { GoogleGenAI } = await import("@google/genai");
-        const ai = new GoogleGenAI({ apiKey: geminiKey.trim() });
-        const response = await ai.models.generateContent({
-          model: "gemini-3.6-flash",
+        const text = await generateGeminiContent({
+          apiKey: geminiKey,
           contents: `${systemPrompt}\n\nContext:\n${userPayload}`,
-          config: { responseMimeType: "application/json", temperature: 0.6 },
+          responseMimeType: "application/json",
+          temperature: 0.6,
         });
-        if (response.text) {
-          result = parseJSONSafely(response.text);
+        if (text) {
+          result = parseJSONSafely(text);
         }
       } catch (e) {
         console.warn("Gemini Rock&Roll chat error:", e);
@@ -583,15 +599,14 @@ You MUST return ONLY a valid JSON object with this exact schema:
 
     if (!result && geminiKey && geminiKey.trim()) {
       try {
-        const { GoogleGenAI } = await import("@google/genai");
-        const ai = new GoogleGenAI({ apiKey: geminiKey.trim() });
-        const response = await ai.models.generateContent({
-          model: "gemini-3.6-flash",
+        const text = await generateGeminiContent({
+          apiKey: geminiKey,
           contents: `${systemPrompt}\n\nGenerate debrief summary JSON.`,
-          config: { responseMimeType: "application/json", temperature: 0.5 },
+          responseMimeType: "application/json",
+          temperature: 0.5,
         });
-        if (response.text) {
-          result = parseJSONSafely(response.text);
+        if (text) {
+          result = parseJSONSafely(text);
         }
       } catch (e) {
         console.warn("Gemini Rock&Roll summary error:", e);

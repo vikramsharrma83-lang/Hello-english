@@ -8,6 +8,7 @@ import hisab from '../data/rockandrole/hisab.json';
 import kyaHua from '../data/rockandrole/kyaHua.json';
 import vip from '../data/rockandrole/vip.json';
 import { BarChart3, ChevronRight, Sparkles, ArrowLeft } from 'lucide-react';
+import { DottedWaveBackground } from '../components/DottedWaveBackground';
 
 interface ThemeCardProps {
   theme: any;
@@ -90,56 +91,61 @@ export const RockAndRollDashboardView: React.FC<{
   const data = [pikku, chakkar, jaldi, mehmaan, hisab, kyaHua, vip];
 
   return (
-    <div className="w-full bg-black text-white p-4 pt-6 pb-16 flex flex-col min-h-full">
-      {/* Top Header */}
-      <div className="flex justify-between items-center mb-5">
-        <button
-          onClick={onBack}
-          className="flex items-center gap-1.5 px-3 py-1.5 bg-zinc-900 border border-zinc-800 rounded-full text-zinc-300 hover:text-white text-xs font-medium cursor-pointer transition-colors"
-        >
-          <ArrowLeft className="w-3.5 h-3.5" />
-          <span>Back</span>
-        </button>
+    <div className="relative w-full bg-black text-white p-4 pt-6 pb-16 flex flex-col min-h-full overflow-hidden">
+      {/* Black & Slight Grey High-Pixel Dotted Wave Background */}
+      <DottedWaveBackground variant="monochrome" intensity={1.15} />
 
-        <motion.button
-          onClick={onOpenDashboard}
-          className="flex items-center gap-1.5 px-3 py-1.5 bg-zinc-900 border border-zinc-800 rounded-full text-zinc-300 hover:text-white text-xs font-medium cursor-pointer"
-          animate={{
-            scale: [1, 1.03, 1],
-            borderColor: ['rgba(255,255,255,0.1)', 'rgba(168,85,247,0.4)', 'rgba(255,255,255,0.1)'],
-          }}
-          transition={{
-            duration: 2.5,
-            ease: 'easeInOut',
-            repeat: Infinity,
-          }}
-        >
-          <BarChart3 className="w-3.5 h-3.5 text-purple-400" />
-          <span>Stats</span>
-        </motion.button>
-      </div>
+      <div className="relative z-10 flex flex-col w-full">
+        {/* Top Header */}
+        <div className="flex justify-between items-center mb-5">
+          <button
+            onClick={onBack}
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-zinc-900/85 backdrop-blur-md border border-white/10 rounded-full text-zinc-300 hover:text-white text-xs font-medium cursor-pointer transition-colors"
+          >
+            <ArrowLeft className="w-3.5 h-3.5" />
+            <span>Back</span>
+          </button>
 
-      {/* Screen Title */}
-      <div className="mb-5">
-        <div className="flex items-center gap-1.5 mb-1 text-purple-400">
-          <Sparkles className="w-3.5 h-3.5" />
-          <span className="text-[11px] font-bold uppercase tracking-wider">Roleplay Tracks</span>
+          <motion.button
+            onClick={onOpenDashboard}
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-zinc-900/85 backdrop-blur-md border border-white/10 rounded-full text-zinc-300 hover:text-white text-xs font-medium cursor-pointer"
+            animate={{
+              scale: [1, 1.03, 1],
+              borderColor: ['rgba(255,255,255,0.1)', 'rgba(212,212,216,0.4)', 'rgba(255,255,255,0.1)'],
+            }}
+            transition={{
+              duration: 2.5,
+              ease: 'easeInOut',
+              repeat: Infinity,
+            }}
+          >
+            <BarChart3 className="w-3.5 h-3.5 text-zinc-300" />
+            <span>Stats</span>
+          </motion.button>
         </div>
-        <h1 className="text-2xl font-black tracking-tight text-white">Rock & Roll Themes</h1>
-        <p className="text-xs text-zinc-400 mt-0.5">
-          Select a workplace customer track to practice high-pressure conversation handling
-        </p>
-      </div>
 
-      {/* Themes Cards Grid - 3 Column Layout matching reference */}
-      <div className="grid grid-cols-3 gap-2.5">
-        {data.map((d) => (
-          <ThemeCard
-            key={d.bucketId}
-            theme={d}
-            onSelect={() => onSelectTheme(d)}
-          />
-        ))}
+        {/* Screen Title */}
+        <div className="mb-5">
+          <div className="flex items-center gap-1.5 mb-1 text-zinc-400">
+            <Sparkles className="w-3.5 h-3.5 text-zinc-300" />
+            <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-300">Roleplay Tracks</span>
+          </div>
+          <h1 className="text-2xl font-black tracking-tight text-white drop-shadow-sm">Rock & Roll Themes</h1>
+          <p className="text-xs text-zinc-400 mt-0.5">
+            Select a workplace customer track to practice high-pressure conversation handling
+          </p>
+        </div>
+
+        {/* Themes Cards Grid - 3 Column Layout matching reference */}
+        <div className="grid grid-cols-3 gap-2.5">
+          {data.map((d) => (
+            <ThemeCard
+              key={d.bucketId}
+              theme={d}
+              onSelect={() => onSelectTheme(d)}
+            />
+          ))}
+        </div>
       </div>
     </div>
   );

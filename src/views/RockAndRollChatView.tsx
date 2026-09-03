@@ -384,6 +384,10 @@ export const RockAndRollChatView: React.FC<RockAndRollChatViewProps> = ({
   // Complete and package session debrief data
   const handleFinishDebrief = async () => {
     soundFx.playSuccessChime();
+    const learnerWords = messages
+      .filter((m: any) => m.sender === 'learner')
+      .reduce((sum: number, m: any) => sum + (m.text?.split(/\s+/).filter(Boolean).length || 0), 0);
+
     try {
       const response = await fetch('/api/rock-and-roll/summary', {
         method: 'POST',
@@ -395,7 +399,16 @@ export const RockAndRollChatView: React.FC<RockAndRollChatViewProps> = ({
       });
       if (response.ok) {
         const summaryData = await response.json();
-        onComplete(summaryData);
+        onComplete({
+          ...summaryData,
+          turnCount,
+          wordCount: Math.max(learnerWords, turnCount * 14),
+          empathyScore,
+          handlingScore,
+          grammarScore,
+          customerResponse: customerMood === 'happy' || customerMood === 'satisfied' ? 'Satisfied' : 'Neutral',
+          timestamp: Date.now(),
+        });
         return;
       }
     } catch (e) {
@@ -407,6 +420,11 @@ export const RockAndRollChatView: React.FC<RockAndRollChatViewProps> = ({
     onComplete({
       situationName: challenge.title,
       score: Math.min(99, Math.max(68, finalScore)),
+      turnCount,
+      wordCount: Math.max(learnerWords, turnCount * 14),
+      empathyScore,
+      handlingScore,
+      grammarScore,
       isResolved: true,
       howIHandledIt: {
         communication: 'Good',
@@ -426,7 +444,7 @@ export const RockAndRollChatView: React.FC<RockAndRollChatViewProps> = ({
         { learnerSaid: "I will check room right now sir.", betterEnglish: "I will check the room right away, sir.", explanation: "Adding articles and polite timeframe adverbs." }
       ],
       nextTimeGoal: "Confidently state the exact expected timeframe within the first 30 seconds.",
-      customerResponse: customerMood === 'happy' || customerMood === 'satisfied' ? 'Happy' : 'Neutral',
+      customerResponse: customerMood === 'happy' || customerMood === 'satisfied' ? 'Satisfied' : 'Neutral',
       timestamp: Date.now(),
     });
   };
@@ -700,7 +718,7 @@ export const RockAndRollChatView: React.FC<RockAndRollChatViewProps> = ({
           {turnCount >= 1 && (
             <div className="flex items-center justify-between pt-1">
               <div className="flex items-center gap-2 text-[11px] text-zinc-400">
-                <Award className="w-3.5 h-3.5 text-amber-400" />
+                <Award className="w-3.5 h-3.5 text-zinc-400" />
                 <span>Turn {turnCount} of 4</span>
               </div>
 

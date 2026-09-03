@@ -1,4 +1,5 @@
 import React from 'react';
+import { DottedWaveBackground } from '../components/DottedWaveBackground';
 import pikku from '../data/rockandrole/pikku.json';
 import chakkar from '../data/rockandrole/chakkar.json';
 import jaldi from '../data/rockandrole/jaldi.json';
@@ -48,18 +49,23 @@ export const RockAndRollView: React.FC<{ onBack: () => void }> = ({ onBack }) =>
   }));
 
   return (
-    <div className="w-full min-h-screen bg-black text-white p-6 pt-16">
-      <button 
-        onClick={onBack}
-        className="mb-6 p-2 bg-zinc-800 rounded-full cursor-pointer"
-      >
-        Back
-      </button>
-      <h1 className="text-3xl font-bold mb-8">Rock and Roll</h1>
-      <div className="flex flex-col gap-4">
-        {challenges.map((c, i) => (
-          <ChallengeCard key={i} {...c} />
-        ))}
+    <div className="relative w-full min-h-screen bg-black text-white p-6 pt-16 overflow-hidden">
+      {/* Black & Slight Grey High-Pixel Dotted Wave Background */}
+      <DottedWaveBackground variant="monochrome" intensity={1.1} />
+
+      <div className="relative z-10 flex flex-col w-full">
+        <button 
+          onClick={onBack}
+          className="mb-6 p-2 bg-zinc-800/80 backdrop-blur-md rounded-full cursor-pointer self-start"
+        >
+          Back
+        </button>
+        <h1 className="text-3xl font-bold mb-8 drop-shadow-sm">Rock and Roll</h1>
+        <div className="flex flex-col gap-4">
+          {challenges.map((c, i) => (
+            <ChallengeCard key={i} {...c} />
+          ))}
+        </div>
       </div>
     </div>
   );

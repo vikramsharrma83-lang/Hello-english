@@ -24,10 +24,10 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({ onFinish }) => {
       setZoomComplete(true);
     }, 1200);
 
-    // Auto-advance after 3500ms (3.5s)
+    // Auto-advance after 4000ms (4s)
     const autoFinishTimer = setTimeout(() => {
       handleFinish();
-    }, 3500);
+    }, 4000);
 
     return () => {
       clearTimeout(zoomTimer);
@@ -63,7 +63,7 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({ onFinish }) => {
           style={{ fontFamily: "'Syncopate', sans-serif" }}
         >
           <Sparkles className="w-3 h-3 text-sky-400 animate-pulse" />
-          <span>Version 1.0</span>
+          <span>ALL NEW</span>
         </motion.div>
       </div>
 

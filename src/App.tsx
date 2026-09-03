@@ -24,7 +24,7 @@ import { recordChallengePractice } from './utils/challengeManager';
 type PracticeStep = 'question' | 'speak' | 'result';
 
 export default function App() {
-  const [showSplash, setShowSplash] = useState<boolean>(false);
+  const [showSplash, setShowSplash] = useState<boolean>(true);
   const [showPurpose, setShowPurpose] = useState<boolean>(false);
   const [showLogin, setShowLogin] = useState<boolean>(false);
   // Industry Role Picker State
@@ -293,7 +293,12 @@ export default function App() {
     <main className="w-full min-h-screen bg-[#090d16] text-slate-100 flex justify-center selection:bg-cyan-500/30 selection:text-cyan-200">
       <AnimatePresence>
         {showSplash && (
-          <SplashScreen onFinish={() => setShowSplash(false)} />
+          <SplashScreen
+            onFinish={() => {
+              setShowSplash(false);
+              setShowPurpose(true);
+            }}
+          />
         )}
       </AnimatePresence>
 
@@ -302,6 +307,10 @@ export default function App() {
           <AppPurposeScreen 
             onContinue={() => setShowPurpose(false)} 
             onClose={() => setShowPurpose(false)}
+            onReplaySplash={() => {
+              setShowPurpose(false);
+              setShowSplash(true);
+            }}
           />
         )}
       </AnimatePresence>

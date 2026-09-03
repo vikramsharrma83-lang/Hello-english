@@ -8,6 +8,7 @@ import retailHisab from '../data/rockandrole/retail_hisab.json';
 import retailKahan from '../data/rockandrole/retail_kahan.json';
 import retailKhaas from '../data/rockandrole/retail_khaas.json';
 import { ChevronRight, Sparkles, ArrowLeft } from 'lucide-react';
+import { DottedWaveBackground } from '../components/DottedWaveBackground';
 
 interface ThemeCardProps {
   theme: any;
@@ -92,36 +93,41 @@ export const RetailDashboardView: React.FC<{
   ];
 
   return (
-    <div className="w-full bg-black text-white p-4 pt-6 pb-16 flex flex-col min-h-full">
-      <div className="flex justify-between items-center mb-5">
-        <button
-          onClick={onBack}
-          className="flex items-center gap-1.5 px-3 py-1.5 bg-zinc-900 border border-zinc-800 rounded-full text-zinc-300 hover:text-white text-xs font-medium cursor-pointer transition-colors"
-        >
-          <ArrowLeft className="w-3.5 h-3.5" />
-          <span>Back</span>
-        </button>
-      </div>
+    <div className="relative w-full bg-black text-white p-4 pt-6 pb-16 flex flex-col min-h-full overflow-hidden">
+      {/* Black & Slight Grey High-Pixel Dotted Wave Background */}
+      <DottedWaveBackground variant="monochrome" intensity={1.15} />
 
-      <div className="mb-5">
-        <div className="flex items-center gap-1.5 mb-1 text-purple-400">
-          <Sparkles className="w-3.5 h-3.5" />
-          <span className="text-[11px] font-bold uppercase tracking-wider">Retail Sector</span>
+      <div className="relative z-10 flex flex-col w-full">
+        <div className="flex justify-between items-center mb-5">
+          <button
+            onClick={onBack}
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-zinc-900/85 backdrop-blur-md border border-white/10 rounded-full text-zinc-300 hover:text-white text-xs font-medium cursor-pointer transition-colors"
+          >
+            <ArrowLeft className="w-3.5 h-3.5" />
+            <span>Back</span>
+          </button>
         </div>
-        <h1 className="text-2xl font-black tracking-tight text-white">Retail Themes</h1>
-        <p className="text-xs text-zinc-400 mt-0.5">
-          Select a customer scenario track to practice retail communication handling
-        </p>
-      </div>
 
-      <div className="grid grid-cols-3 gap-2.5">
-        {data.map((d) => (
-          <ThemeCard
-            key={d.bucketId}
-            theme={d}
-            onSelect={() => onSelectTheme(d)}
-          />
-        ))}
+        <div className="mb-5">
+          <div className="flex items-center gap-1.5 mb-1 text-zinc-400">
+            <Sparkles className="w-3.5 h-3.5 text-zinc-300" />
+            <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-300">Retail Sector</span>
+          </div>
+          <h1 className="text-2xl font-black tracking-tight text-white drop-shadow-sm">Retail Themes</h1>
+          <p className="text-xs text-zinc-400 mt-0.5">
+            Select a customer scenario track to practice retail communication handling
+          </p>
+        </div>
+
+        <div className="grid grid-cols-3 gap-2.5">
+          {data.map((d) => (
+            <ThemeCard
+              key={d.bucketId}
+              theme={d}
+              onSelect={() => onSelectTheme(d)}
+            />
+          ))}
+        </div>
       </div>
     </div>
   );

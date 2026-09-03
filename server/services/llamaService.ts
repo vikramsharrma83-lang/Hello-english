@@ -296,7 +296,7 @@ async function callGroqWithFallback(systemPrompt: string, userPrompt: string, ap
  */
 async function callGeminiFallback(systemPrompt: string, userPrompt: string, apiKey: string): Promise<LlamaConversationOutput> {
   const ai = new GoogleGenAI({ apiKey: apiKey.trim() });
-  const geminiModels = ['gemini-3.6-flash', 'gemini-2.0-flash', 'gemini-2.5-pro'];
+  const geminiModels = ['gemini-3.1-flash-lite', 'gemini-flash-latest', 'gemini-3.8-flash'];
 
   let lastError: any = null;
   for (const model of geminiModels) {

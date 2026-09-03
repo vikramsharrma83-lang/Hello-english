@@ -1,4 +1,5 @@
 import { GoogleGenAI } from '@google/genai';
+import { generateGeminiContent } from './geminiService.ts';
 import { DrillTarget, QuestionAttempt } from '../../src/types/drillTypes';
 import { generateLocalAnalysis } from '../../src/data/patternEngine';
 
@@ -474,17 +475,13 @@ Return ONLY a valid JSON object matching this schema:
   // 2. Fallback to Gemini
   if (geminiKey && geminiKey.trim()) {
     try {
-      const ai = new GoogleGenAI({ apiKey: geminiKey.trim() });
-      const response = await ai.models.generateContent({
-        model: 'gemini-3.6-flash',
+      const text = await generateGeminiContent({
+        apiKey: geminiKey,
         contents: `${systemPrompt}\n\nInput JSON:\n${userPrompt}`,
-        config: {
-          responseMimeType: 'application/json',
-          temperature: 0.2,
-        },
+        responseMimeType: 'application/json',
+        temperature: 0.2,
       });
 
-      const text = response.text;
       if (text) {
         const parsed = parseJsonSafely(text);
         return normalizeDrillFeedback(parsed, cleanTranscript, questionText, category);

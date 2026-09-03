@@ -1,5 +1,6 @@
 import React from 'react';
 import { ArrowLeft } from 'lucide-react';
+import { DottedWaveBackground } from '../components/DottedWaveBackground';
 
 export const RockAndRollProfilesView: React.FC<{ 
   onSelectHospitality: () => void; 
@@ -45,19 +46,22 @@ export const RockAndRollProfilesView: React.FC<{
   };
 
   return (
-    <div className="w-full min-h-screen bg-black flex flex-col items-center justify-center p-6 relative">
+    <div className="relative w-full min-h-screen bg-black flex flex-col items-center justify-center p-6 overflow-hidden">
+      {/* Black & Slight Grey High-Pixel Dotted Wave Background */}
+      <DottedWaveBackground variant="monochrome" intensity={1.15} />
+
       {/* Top Back Button */}
       <div className="absolute top-6 left-6 z-20">
         <button 
           onClick={onBack}
-          className="flex items-center gap-1.5 text-xs text-zinc-300 hover:text-white uppercase tracking-wider font-bold transition-colors bg-zinc-900 px-3.5 py-2 rounded-full border border-white/10 shadow-lg cursor-pointer"
+          className="flex items-center gap-1.5 text-xs text-zinc-300 hover:text-white uppercase tracking-wider font-bold transition-colors bg-zinc-900/85 backdrop-blur-md px-3.5 py-2 rounded-full border border-white/10 shadow-lg cursor-pointer"
         >
           <ArrowLeft className="w-4 h-4" /> Back
         </button>
       </div>
 
       {/* Center Content */}
-      <div className="w-full max-w-3xl mx-auto text-center flex flex-col items-center justify-center my-auto">
+      <div className="relative z-10 w-full max-w-3xl mx-auto text-center flex flex-col items-center justify-center my-auto">
         {/* HELLOENGLISH Title */}
         <div className="mb-6 select-none">
           <h1 className="text-4xl sm:text-6xl md:text-7xl font-black tracking-wider text-[#E50914] uppercase drop-shadow-[0_4px_16px_rgba(229,9,20,0.6)]">
