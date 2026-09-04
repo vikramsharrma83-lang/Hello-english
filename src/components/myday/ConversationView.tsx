@@ -59,6 +59,7 @@ export const ConversationView: React.FC<ConversationViewProps> = ({
   const [showStoryModal, setShowStoryModal] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
   const recognitionRef = useRef<any>(null);
 
   // Compute live updated Natural English Story
@@ -73,9 +74,16 @@ export const ConversationView: React.FC<ConversationViewProps> = ({
       .filter(Boolean),
   });
 
-  // Auto scroll to bottom
+  // Auto scroll to bottom smoothly without triggering ancestor page bounce
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTo({
+        top: messagesContainerRef.current.scrollHeight,
+        behavior: 'smooth',
+      });
+    } else {
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }
   }, [turns, isLoading]);
 
   // Voice playback on latest system turn if voiceEnabled
@@ -308,7 +316,10 @@ export const ConversationView: React.FC<ConversationViewProps> = ({
       </div>
 
       {/* Main Conversation Stream */}
-      <div className="w-full flex-1 flex flex-col gap-4 overflow-y-auto pb-4">
+      <div 
+        ref={messagesContainerRef}
+        className="w-full flex-1 flex flex-col gap-4 overflow-y-auto overscroll-contain touch-pan-y pb-4"
+      >
         {turns.map((turn, index) => {
           if (turn.speaker === 'system') {
             const probeDirectionLabel = turn.probeDirection

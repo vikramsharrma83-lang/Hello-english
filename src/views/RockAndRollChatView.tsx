@@ -66,6 +66,7 @@ export const RockAndRollChatView: React.FC<RockAndRollChatViewProps> = ({
 
   const recognizerRef = useRef<any>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messagesContainerRef = useRef<HTMLElement>(null);
 
   // Pre-seed first customer opening line based on scenario context
   useEffect(() => {
@@ -98,7 +99,14 @@ export const RockAndRollChatView: React.FC<RockAndRollChatViewProps> = ({
 
   // Scroll to bottom when messages update
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTo({
+        top: messagesContainerRef.current.scrollHeight,
+        behavior: 'smooth',
+      });
+    } else {
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }
   }, [messages, isCustomerTyping]);
 
   // Speech Recognition Handling
@@ -546,7 +554,10 @@ export const RockAndRollChatView: React.FC<RockAndRollChatViewProps> = ({
       </header>
 
       {/* Main Message Stream Container */}
-      <main className="flex-1 w-full max-w-md mx-auto p-4 flex flex-col justify-between overflow-y-auto space-y-3.5">
+      <main 
+        ref={messagesContainerRef}
+        className="flex-1 w-full max-w-md mx-auto p-4 flex flex-col justify-between overflow-y-auto overscroll-contain touch-pan-y space-y-3.5"
+      >
         {/* Scenario Intro Watermark */}
         <div className="text-center my-2">
           <span className="inline-block px-3 py-1 bg-zinc-900/80 border border-white/10 rounded-full text-[10px] font-semibold text-zinc-400 tracking-wider uppercase">

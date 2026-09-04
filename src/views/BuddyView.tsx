@@ -88,6 +88,7 @@ export const BuddyView: React.FC<BuddyViewProps> = ({ onStartPractice, onBack, l
   const [playingId, setPlayingId] = useState<string | null>(null);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
   const recognitionRef = useRef<any>(null);
   const spokenMessageIdsRef = useRef<Set<string>>(new Set());
 
@@ -99,7 +100,14 @@ export const BuddyView: React.FC<BuddyViewProps> = ({ onStartPractice, onBack, l
   }, []);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTo({
+        top: messagesContainerRef.current.scrollHeight,
+        behavior: 'smooth',
+      });
+    } else {
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }
   }, [messages, isThinking]);
 
   // Voice synthesis for latest buddy message - strictly single execution per message
@@ -513,9 +521,9 @@ export const BuddyView: React.FC<BuddyViewProps> = ({ onStartPractice, onBack, l
   }
 
   return (
-    <div className="w-full min-h-screen bg-slate-950 text-white pb-6 pt-4 px-4 sm:px-6 flex flex-col max-w-2xl mx-auto">
+    <div className="w-full h-full min-h-screen sm:min-h-0 flex-1 flex flex-col bg-slate-950 text-white pb-6 pt-4 px-4 sm:px-6 max-w-2xl mx-auto overflow-hidden">
       {/* Header */}
-      <div className="flex items-center justify-between mb-4 pb-3 border-b border-zinc-800">
+      <div className="flex items-center justify-between mb-4 pb-3 border-b border-zinc-800 shrink-0">
         <div className="flex items-center gap-3">
           {onBack && (
             <button
@@ -588,7 +596,10 @@ export const BuddyView: React.FC<BuddyViewProps> = ({ onStartPractice, onBack, l
       </div>
 
       {/* Chat Messages */}
-      <div className="flex-1 space-y-4 mb-4 overflow-y-auto pr-1">
+      <div 
+        ref={messagesContainerRef}
+        className="flex-1 space-y-4 mb-4 overflow-y-auto overscroll-contain pr-1 touch-pan-y"
+      >
         {messages.map((msg) => (
           <motion.div
             key={msg.id}

@@ -390,7 +390,7 @@ export default function App() {
       <div className="w-full max-w-[440px] min-h-screen bg-[#090d16] shadow-2xl relative flex flex-col justify-between overflow-x-hidden border-x border-slate-800/80">
         
         {/* VIEW ROUTING */}
-        <div className="flex-1 overflow-y-auto">
+        <div className={`flex-1 ${activeTab === 'buddy' ? 'flex flex-col min-h-0 overflow-hidden' : 'overflow-y-auto overscroll-contain'}`}>
           <ErrorBoundary
             isSubView
             fallbackTitle="Screen Load Issue"
@@ -404,7 +404,7 @@ export default function App() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.15 }}
-              className="w-full min-h-full"
+              className={`w-full ${activeTab === 'buddy' ? 'h-full flex-1 flex flex-col min-h-0' : 'min-h-full'}`}
             >
               {(() => {
                 switch (activeTab) {
@@ -522,6 +522,7 @@ export default function App() {
                   case 'discover':
                     return (
                       <MyDayPatternsHub
+                        hideNavigation={true}
                         onStartPracticeQuestion={(q) => handleStartPractice(q, 'discover')}
                         onUsePatternForStory={() => {
                           setMyDayInitialMode('story');

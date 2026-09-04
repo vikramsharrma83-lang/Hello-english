@@ -607,6 +607,7 @@ export const MyDayView: React.FC<MyDayViewProps> = ({
         {step === 'PATTERNS_HUB' && (
           <div className="w-full flex-1 flex flex-col">
             <MyDayPatternsHub
+              hideNavigation={true}
               onStartPracticeQuestion={(q) => {
                 if (onStartPractice) {
                   onStartPractice(q);
