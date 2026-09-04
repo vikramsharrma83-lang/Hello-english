@@ -99,16 +99,16 @@ export const DottedWaveBackground: React.FC<DottedWaveBackgroundProps> = ({
         ctx.fillStyle = rightGlow;
         ctx.fillRect(0, 0, width, height);
       } else {
-        // Base background: Deep midnight navy gradient (Color variant)
+        // Base background: Deep dark midnight navy/black gradient (Color variant)
         const bgGrad = ctx.createLinearGradient(0, 0, width * 0.3, height);
-        bgGrad.addColorStop(0, '#060a14');
-        bgGrad.addColorStop(0.35, '#091022');
-        bgGrad.addColorStop(0.7, '#0c152e');
-        bgGrad.addColorStop(1, '#070c1a');
+        bgGrad.addColorStop(0, '#020409');
+        bgGrad.addColorStop(0.35, '#040815');
+        bgGrad.addColorStop(0.7, '#060b1e');
+        bgGrad.addColorStop(1, '#020308');
         ctx.fillStyle = bgGrad;
         ctx.fillRect(0, 0, width, height);
 
-        // Ambient Underglow 1: Vivid red/crimson diffusion under left mountain peak
+        // Ambient Underglow 1: Rich dark crimson/ruby gradient under left mountain peak
         const leftGlow = ctx.createRadialGradient(
           width * 0.22,
           height * 0.72,
@@ -117,14 +117,14 @@ export const DottedWaveBackground: React.FC<DottedWaveBackgroundProps> = ({
           height * 0.72,
           width * 0.55
         );
-        leftGlow.addColorStop(0, `rgba(255, 20, 75, ${0.42 * intensity})`);
-        leftGlow.addColorStop(0.45, `rgba(225, 29, 72, ${0.2 * intensity})`);
-        leftGlow.addColorStop(0.8, 'rgba(180, 10, 50, 0.04)');
+        leftGlow.addColorStop(0, `rgba(220, 16, 62, ${0.22 * intensity})`);
+        leftGlow.addColorStop(0.4, `rgba(160, 12, 48, ${0.11 * intensity})`);
+        leftGlow.addColorStop(0.75, `rgba(90, 6, 28, ${0.03 * intensity})`);
         leftGlow.addColorStop(1, 'rgba(0, 0, 0, 0)');
         ctx.fillStyle = leftGlow;
         ctx.fillRect(0, 0, width, height);
 
-        // Ambient Underglow 2: Violet/cobalt diffusion on right
+        // Ambient Underglow 2: Deep violet/cobalt gradient on right
         const rightGlow = ctx.createRadialGradient(
           width * 0.78,
           height * 0.78,
@@ -133,8 +133,9 @@ export const DottedWaveBackground: React.FC<DottedWaveBackgroundProps> = ({
           height * 0.78,
           width * 0.5
         );
-        rightGlow.addColorStop(0, `rgba(99, 102, 241, ${0.32 * intensity})`);
-        rightGlow.addColorStop(0.5, `rgba(79, 70, 229, ${0.15 * intensity})`);
+        rightGlow.addColorStop(0, `rgba(88, 70, 220, ${0.18 * intensity})`);
+        rightGlow.addColorStop(0.42, `rgba(62, 48, 180, ${0.09 * intensity})`);
+        rightGlow.addColorStop(0.78, `rgba(28, 18, 100, ${0.02 * intensity})`);
         rightGlow.addColorStop(1, 'rgba(0, 0, 0, 0)');
         ctx.fillStyle = rightGlow;
         ctx.fillRect(0, 0, width, height);
@@ -147,8 +148,8 @@ export const DottedWaveBackground: React.FC<DottedWaveBackgroundProps> = ({
         
         // Depth perspective parameters
         const depthY = height * 0.46 + rowProgress * (height * 0.44);
-        const rowAlpha = 0.35 + rowProgress * 0.65;
-        const baseDotSize = 0.85 + rowProgress * 1.05;
+        const rowAlpha = 0.38 + rowProgress * 0.62;
+        const baseDotSize = 0.95 + rowProgress * 1.15;
 
         for (let c = 0; c < COLS_PER_ROW; c++) {
           const colProgress = c / (COLS_PER_ROW - 1); // 0 (left) to 1 (right)

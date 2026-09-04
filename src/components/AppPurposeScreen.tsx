@@ -16,7 +16,6 @@ import {
   ChevronRight,
   Video
 } from 'lucide-react';
-import { DottedWaveBackground } from './DottedWaveBackground';
 import { getBestFemaleVoice, playFixedAudio, stopSpeaking, speakText } from '../utils/audio';
 
 interface AppPurposeScreenProps {
@@ -334,10 +333,30 @@ export const AppPurposeScreen: React.FC<AppPurposeScreenProps> = ({ onContinue, 
 
   return (
     <div
-      className="fixed inset-0 z-50 bg-[#060a14] text-slate-100 flex flex-col items-center justify-between px-4 py-4 sm:py-6 overflow-hidden select-none font-sans"
+      className="fixed inset-0 z-50 bg-black text-slate-100 flex flex-col items-center justify-between px-4 py-4 sm:py-6 overflow-hidden select-none font-sans"
     >
-      {/* High-Pixel Dotted Gradient Wave Background */}
-      <DottedWaveBackground intensity={1.15} />
+      {/* Deep Royal Purple Gradient positioned at Right-Bottom (Dark Moody Aesthetic) */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        {/* Core Right-Bottom Purple Radial Glow */}
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              'radial-gradient(ellipse 90% 75% at 92% 96%, rgba(65, 18, 118, 0.85) 0%, rgba(46, 12, 85, 0.65) 28%, rgba(26, 6, 52, 0.42) 52%, rgba(12, 2, 25, 0.2) 72%, #000000 95%)',
+          }}
+        />
+
+        {/* Ambient Deep Purple Diffusion Orb anchored to the Bottom-Right */}
+        <div
+          className="absolute -bottom-24 -right-24 w-[460px] h-[460px] sm:w-[580px] sm:h-[580px] rounded-full blur-[110px] pointer-events-none opacity-65"
+          style={{
+            background: 'radial-gradient(circle, #581c87 0%, #3b0764 42%, #1e053a 72%, transparent 100%)',
+          }}
+        />
+
+        {/* Cinematic Vignette ensuring top and left regions remain deep pitch-black */}
+        <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-black/35 to-black pointer-events-none" />
+      </div>
 
       {/* Main Container */}
       <div className="w-full max-w-[420px] mx-auto flex-1 flex flex-col justify-between relative z-10 my-auto">
