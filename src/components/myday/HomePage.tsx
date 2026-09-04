@@ -17,6 +17,9 @@ import {
   ChevronRight,
   Gamepad2,
   Bell,
+  BellOff,
+  CheckCircle,
+  Video,
 } from 'lucide-react';
 import { ConversationTurn, PracticeHistoryItem, DayMap, UserProgress } from '../../types';
 import { getTranslation } from '../../lib/translations';
@@ -26,6 +29,8 @@ import {
   getTodayReminders,
   saveTodayReminders,
   triggerSystemNotification,
+  isRemindersMuted,
+  setRemindersMuted,
 } from '../../utils/reminderManager';
 
 interface HomePageProps {
@@ -38,6 +43,7 @@ interface HomePageProps {
   onOpenRolePicker?: () => void;
   onOpenProfile?: () => void;
   onOpenHelpRoadmap?: () => void;
+  onOpenLogin?: () => void;
   onSelectSample?: (sampleText: string) => void;
   onClose?: () => void;
   turns?: ConversationTurn[];
@@ -54,6 +60,7 @@ export const HomePage: React.FC<HomePageProps> = ({
   onOpenChallenge,
   onOpenRockRoll,
   onOpenHelpRoadmap,
+  onOpenLogin,
   progress,
   language = 'en',
   onToggleLanguage,
@@ -65,8 +72,25 @@ export const HomePage: React.FC<HomePageProps> = ({
   const [hasConfirmedPlayground, setHasConfirmedPlayground] = useState<boolean>(() => getPlaygroundData().planConfirmed);
   const playgroundData = getPlaygroundData();
 
-  // Due reminder banner state
+  // Due reminder banner state & mute controls
   const [activeDueReminder, setActiveDueReminder] = useState<DailyReminder | null>(null);
+  const [isMuted, setIsMuted] = useState<boolean>(() => isRemindersMuted());
+  const [muteToast, setMuteToast] = useState<string | null>(null);
+
+  const handleMuteOnScreen = () => {
+    setRemindersMuted(true);
+    setIsMuted(true);
+    setActiveDueReminder(null);
+    setMuteToast('Notifications muted. Reminders will not pop up on screen.');
+    setTimeout(() => setMuteToast(null), 3200);
+  };
+
+  const handleUnmuteOnScreen = () => {
+    setRemindersMuted(false);
+    setIsMuted(false);
+    setMuteToast('On-screen notifications enabled.');
+    setTimeout(() => setMuteToast(null), 2500);
+  };
 
   useEffect(() => {
     setHasIncompletePlayground(isPlaygroundActiveAndIncomplete());
@@ -74,6 +98,11 @@ export const HomePage: React.FC<HomePageProps> = ({
 
     // Interval to check due reminders and trigger notification
     const checkReminders = () => {
+      if (isRemindersMuted()) {
+        setActiveDueReminder(null);
+        return;
+      }
+
       const reminders = getTodayReminders();
       const now = Date.now();
       let triggeredAny = false;
@@ -98,13 +127,25 @@ export const HomePage: React.FC<HomePageProps> = ({
       setActiveDueReminder(due || null);
     };
 
+    const handleMuteToggle = () => {
+      const currentMuted = isRemindersMuted();
+      setIsMuted(currentMuted);
+      if (currentMuted) {
+        setActiveDueReminder(null);
+      } else {
+        checkReminders();
+      }
+    };
+
     checkReminders();
     const interval = setInterval(checkReminders, 10000); // Check every 10s
     window.addEventListener('reminder-updated', checkReminders);
+    window.addEventListener('reminder-mute-updated', handleMuteToggle);
     window.addEventListener('storage', checkReminders);
     return () => {
       clearInterval(interval);
       window.removeEventListener('reminder-updated', checkReminders);
+      window.removeEventListener('reminder-mute-updated', handleMuteToggle);
       window.removeEventListener('storage', checkReminders);
     };
   }, []);
@@ -122,9 +163,30 @@ export const HomePage: React.FC<HomePageProps> = ({
 
   return (
     <div className="w-full flex-1 flex flex-col justify-between text-slate-100 min-h-screen relative overflow-hidden bg-[#0a0c10] select-none">
+      {/* Toast confirmation for mute/unmute */}
+      <AnimatePresence>
+        {muteToast && (
+          <motion.div
+            initial={{ opacity: 0, y: -20, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -15, scale: 0.95 }}
+            className="fixed top-5 inset-x-0 z-[60] flex justify-center px-4 pointer-events-none"
+          >
+            <div className="px-4 py-2 rounded-full bg-zinc-900/95 border border-zinc-700/80 text-zinc-200 text-xs font-medium shadow-2xl backdrop-blur-md flex items-center gap-2 pointer-events-auto">
+              {isMuted ? (
+                <BellOff className="w-3.5 h-3.5 text-amber-400" />
+              ) : (
+                <CheckCircle className="w-3.5 h-3.5 text-emerald-400" />
+              )}
+              <span>{muteToast}</span>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Apple Glass Reminder Notification Banner (Floats over the screen, never shifts layout) */}
       <AnimatePresence>
-        {activeDueReminder && (
+        {activeDueReminder && !isMuted && (
           <div className="fixed top-4 sm:top-5 inset-x-0 z-50 flex justify-center px-4 pointer-events-none">
             <motion.div
               drag="y"
@@ -141,7 +203,7 @@ export const HomePage: React.FC<HomePageProps> = ({
               transition={{ type: 'spring', damping: 26, stiffness: 320 }}
               className="w-full max-w-[390px] rounded-[24px] bg-white/85 dark:bg-[#1c1d22]/85 backdrop-blur-2xl border border-white/60 dark:border-white/15 shadow-[0_20px_45px_rgba(0,0,0,0.45),0_1px_2px_rgba(0,0,0,0.2)] p-3.5 sm:p-4 pointer-events-auto text-zinc-900 dark:text-white select-none"
             >
-              {/* Header row: Apple Glass Icon (Blue) + App Name + Time */}
+              {/* Header row: Apple Glass Icon (Blue) + App Name + Time + Mute & Dismiss */}
               <div className="flex items-center justify-between gap-2 mb-2">
                 <div className="flex items-center gap-2">
                   {/* Apple Glass Blue Icon */}
@@ -159,6 +221,17 @@ export const HomePage: React.FC<HomePageProps> = ({
                   <span className="text-[11px] font-normal text-zinc-400 dark:text-zinc-500">
                     now
                   </span>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleMuteOnScreen();
+                    }}
+                    className="p-1 rounded-full text-zinc-400 hover:text-amber-500 transition-colors cursor-pointer"
+                    title="Mute notifications (Don't show on screen)"
+                    aria-label="Mute notifications"
+                  >
+                    <BellOff className="w-3.5 h-3.5" />
+                  </button>
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
@@ -191,7 +264,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                 )}
               </div>
 
-              {/* Action Buttons */}
+              {/* Action Buttons: Continue Playing + Don't Show Notification (Mute) + Dismiss */}
               <div className="mt-3 flex items-center justify-between gap-2 pt-2.5 border-t border-zinc-200/60 dark:border-white/10">
                 <button
                   onClick={onStart}
@@ -200,15 +273,29 @@ export const HomePage: React.FC<HomePageProps> = ({
                   <span>Continue Playing</span>
                   <ArrowRight className="w-3 h-3" />
                 </button>
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setActiveDueReminder(null);
-                  }}
-                  className="px-2.5 py-1.5 rounded-full text-zinc-500 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-white text-xs font-medium cursor-pointer transition-colors"
-                >
-                  Dismiss
-                </button>
+
+                <div className="flex items-center gap-1.5">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleMuteOnScreen();
+                    }}
+                    className="px-2.5 py-1.5 rounded-full bg-zinc-100 hover:bg-zinc-200 dark:bg-white/10 dark:hover:bg-white/15 text-zinc-700 dark:text-zinc-200 hover:text-amber-600 dark:hover:text-amber-300 text-xs font-medium cursor-pointer transition-colors flex items-center gap-1.5"
+                    title="Mute notifications (Don't show notification on screen)"
+                  >
+                    <BellOff className="w-3 h-3 text-amber-500" />
+                    <span>Don't show notification</span>
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setActiveDueReminder(null);
+                    }}
+                    className="px-2 py-1.5 rounded-full text-zinc-500 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-white text-xs font-medium cursor-pointer transition-colors"
+                  >
+                    Dismiss
+                  </button>
+                </div>
               </div>
             </motion.div>
           </div>
@@ -255,11 +342,34 @@ export const HomePage: React.FC<HomePageProps> = ({
 
       {/* 2. Top Header Utility Bar */}
       <div className="w-full px-6 pt-6 pb-2 relative z-20 flex items-center justify-between max-w-lg mx-auto">
-        {/* User Greeting Tag */}
+        {/* User Greeting Tag & Account Switch & Mute status */}
         <div className="flex items-center gap-2">
-          <span className="text-[11px] font-semibold text-slate-300 tracking-wider uppercase bg-black/40 backdrop-blur-md px-2.5 py-1 rounded-full border border-white/10">
-            {progress?.userName || 'VIKRAM'}
-          </span>
+          {onOpenLogin ? (
+            <button
+              onClick={onOpenLogin}
+              className="flex items-center gap-1.5 text-[11px] font-semibold text-slate-300 hover:text-white tracking-wider uppercase bg-black/40 hover:bg-black/60 backdrop-blur-md px-2.5 py-1 rounded-full border border-white/10 hover:border-white/25 transition-all cursor-pointer shadow-xs active:scale-95"
+              title="Click to switch user or view login screen"
+            >
+              <span>{progress?.userName || 'VIKRAM'}</span>
+              <span className="text-[9px] text-zinc-400 font-normal lowercase">(switch)</span>
+            </button>
+          ) : (
+            <span className="text-[11px] font-semibold text-slate-300 tracking-wider uppercase bg-black/40 backdrop-blur-md px-2.5 py-1 rounded-full border border-white/10">
+              {progress?.userName || 'VIKRAM'}
+            </span>
+          )}
+
+          {/* Mute indicator pill button */}
+          {isMuted && (
+            <button
+              onClick={handleUnmuteOnScreen}
+              className="px-2.5 py-1 rounded-full bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 hover:border-amber-400 flex items-center gap-1.5 text-amber-300 hover:text-amber-200 text-[10px] font-semibold transition-all cursor-pointer backdrop-blur-md shadow-xs active:scale-95"
+              title="Notifications are muted. Click to turn on."
+            >
+              <BellOff className="w-3 h-3 text-amber-400" />
+              <span>Muted (Tap to unmute)</span>
+            </button>
+          )}
         </div>
 
         {/* Controls: Language, Guide, Rock & Roll */}
@@ -279,10 +389,10 @@ export const HomePage: React.FC<HomePageProps> = ({
             <button
               onClick={onOpenHelpRoadmap}
               className="px-2.5 py-1 rounded-full bg-sky-950/70 border border-sky-500/50 hover:border-sky-400 flex items-center gap-1 text-sky-300 hover:text-sky-100 transition-all cursor-pointer shadow-xs active:scale-95 backdrop-blur-md"
-              title={language === 'hi' ? 'Roadmap aur Guide' : 'Roadmap & Guide'}
+              title={language === 'hi' ? 'Video Guide (गाइड देखें)' : 'Video Guide'}
             >
-              <Bot className="w-3.5 h-3.5 text-sky-300 stroke-[2.2]" />
-              <span className="text-[10px] font-bold">{language === 'hi' ? 'Madad' : 'Guide'}</span>
+              <Video className="w-3.5 h-3.5 text-sky-300 stroke-[2.2]" />
+              <span className="text-[10px] font-bold">{language === 'hi' ? 'Guide' : 'Guide'}</span>
             </button>
           )}
 
@@ -368,8 +478,21 @@ export const HomePage: React.FC<HomePageProps> = ({
         </div>
       </div>
 
-      {/* 3. Pull-Out Toggle Button on Right Edge of Screen */}
-      <div className="fixed right-0 top-1/2 -translate-y-1/2 z-30">
+      {/* 3. Pull-Out Controls on Right Edge of Screen: Video Guide & Stats */}
+      <div className="fixed right-0 top-1/2 -translate-y-1/2 z-30 flex flex-col items-end gap-2.5">
+        {onOpenHelpRoadmap && (
+          <motion.button
+            onClick={onOpenHelpRoadmap}
+            whileHover={{ x: -4, scale: 1.08 }}
+            whileTap={{ scale: 0.94 }}
+            className="bg-slate-950/90 hover:bg-slate-900 text-sky-300 border-l-2 border-y border-sky-400/80 hover:border-sky-300 pl-2.5 pr-2 py-2.5 rounded-l-2xl shadow-[0_0_20px_rgba(56,189,248,0.4)] flex items-center justify-center cursor-pointer backdrop-blur-xl transition-all group"
+            title={language === 'hi' ? 'Video Guide (वीडियो गाइड)' : 'Video Guide'}
+            aria-label="Video Guide"
+          >
+            <Video className="w-4 h-4 text-sky-400 group-hover:scale-110 transition-transform" />
+          </motion.button>
+        )}
+
         <motion.button
           onClick={() => setShowStatsDrawer(true)}
           whileHover={{ x: -3, scale: 1.05 }}

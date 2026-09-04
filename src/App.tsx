@@ -23,6 +23,36 @@ import { recordChallengePractice } from './utils/challengeManager';
 
 type PracticeStep = 'question' | 'speak' | 'result';
 
+const DEFAULT_PROGRESS: UserProgress = {
+  userName: 'Vikram',
+  streakDays: 5,
+  totalPracticed: 18,
+  totalMinutes: 24,
+  targetRole: 'Warehouse & Logistics Staff',
+  dailyGoal: 4,
+  completedToday: 2,
+  savedPhrases: [
+    {
+      id: 'sp-1',
+      questionText: 'When you are late for your shift, how would you inform your supervisor?',
+      originalSaid: 'I call supervisor on road when bike running.',
+      improvedSentence: 'I will call my supervisor while I am on my way to work.',
+      hindiTranslation: 'मैं काम पर जाते समय अपने सुपरवाइजर को सूचित करूंगा।',
+      savedAt: Date.now() - 86400000,
+    },
+    {
+      id: 'sp-2',
+      questionText: 'How would you tell your team lead that a received parcel is damaged?',
+      originalSaid: 'This parcel box breaking outside, water coming.',
+      improvedSentence: 'Sir, this parcel box arrived damaged and the contents are leaking.',
+      hindiTranslation: 'सर, यह पार्सल बॉक्स डैमेज स्थिति में मिला है और सामान लीक हो रहा है।',
+      savedAt: Date.now() - 172800000,
+    }
+  ],
+  history: [],
+  myDayCompletedTasks: ['share_day', 'conversation'],
+};
+
 export default function App() {
   const [showSplash, setShowSplash] = useState<boolean>(true);
   const [showPurpose, setShowPurpose] = useState<boolean>(false);
@@ -49,41 +79,21 @@ export default function App() {
 
   // User Progress & Settings (with LocalStorage)
   const [progress, setProgress] = useState<UserProgress>(() => {
-    const saved = localStorage.getItem('hello_english_progress');
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch (e) {}
+    try {
+      const saved = localStorage.getItem('hello_english_progress');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        return {
+          ...DEFAULT_PROGRESS,
+          ...parsed,
+          savedPhrases: Array.isArray(parsed?.savedPhrases) ? parsed.savedPhrases : DEFAULT_PROGRESS.savedPhrases,
+          myDayCompletedTasks: Array.isArray(parsed?.myDayCompletedTasks) ? parsed.myDayCompletedTasks : DEFAULT_PROGRESS.myDayCompletedTasks,
+        };
+      }
+    } catch (e) {
+      console.warn('Failed reading progress from localStorage:', e);
     }
-    return {
-      userName: 'Vikram',
-      streakDays: 5,
-      totalPracticed: 18,
-      totalMinutes: 24,
-      targetRole: 'Warehouse & Logistics Staff',
-      dailyGoal: 4,
-      completedToday: 2,
-      savedPhrases: [
-        {
-          id: 'sp-1',
-          questionText: 'When you are late for your shift, how would you inform your supervisor?',
-          originalSaid: 'I call supervisor on road when bike running.',
-          improvedSentence: 'I will call my supervisor while I am on my way to work.',
-          hindiTranslation: 'मैं काम पर जाते समय अपने सुपरवाइजर को सूचित करूंगा।',
-          savedAt: Date.now() - 86400000,
-        },
-        {
-          id: 'sp-2',
-          questionText: 'How would you tell your team lead that a received parcel is damaged?',
-          originalSaid: 'This parcel box breaking outside, water coming.',
-          improvedSentence: 'Sir, this parcel box arrived damaged and the contents are leaking.',
-          hindiTranslation: 'सर, यह पार्सल बॉक्स डैमेज स्थिति में मिला है और सामान लीक हो रहा है।',
-          savedAt: Date.now() - 172800000,
-        }
-      ],
-      history: [],
-      myDayCompletedTasks: ['share_day', 'conversation'],
-    };
+    return DEFAULT_PROGRESS;
   });
 
   const [voiceSpeed, setVoiceSpeed] = useState<'normal' | 'slow'>('normal');
@@ -281,6 +291,9 @@ export default function App() {
     (activeTab === 'sheeko' || activeTab === 'myday') && myDayStep !== '1_HOME';
 
   const shouldShowBottomNav =
+    !showSplash &&
+    !showPurpose &&
+    !showLogin &&
     activeTab !== 'practice' &&
     activeTab !== 'drill' &&
     activeTab !== 'challenge' &&
@@ -305,8 +318,16 @@ export default function App() {
       <AnimatePresence>
         {!showSplash && showPurpose && (
           <AppPurposeScreen 
-            onContinue={() => setShowPurpose(false)} 
-            onClose={() => setShowPurpose(false)}
+            onContinue={() => {
+              setShowPurpose(false);
+              setShowLogin(false);
+              setActiveTab('myday');
+            }} 
+            onClose={() => {
+              setShowPurpose(false);
+              setShowLogin(false);
+              setActiveTab('myday');
+            }}
             onReplaySplash={() => {
               setShowPurpose(false);
               setShowSplash(true);
@@ -320,6 +341,13 @@ export default function App() {
           <LoginPage
             onLoginSuccess={(userId) => {
               localStorage.setItem('hello_english_logged_in', userId);
+              setProgress((prev) => ({
+                ...prev,
+                userName: userId.toUpperCase(),
+              }));
+              setShowLogin(false);
+            }}
+            onSkip={() => {
               setShowLogin(false);
             }}
           />
@@ -410,9 +438,10 @@ export default function App() {
                 onStepChange={setMyDayStep}
                 onOpenRolePicker={() => setShowRolePicker(true)}
                 onOpenHelpRoadmap={() => setShowPurpose(true)}
+                onOpenLogin={() => setShowLogin(true)}
                 language={language}
                 onToggleLanguage={() => setLanguage((prev) => (prev === 'en' ? 'hi' : 'en'))}
-                onNavigateTab={(tab) => {
+                onNavigateTab={(tab: string) => {
                   if (tab === 'practice') {
                     handleStartPractice();
                   } else if (tab === 'fitness' || tab === 'dashboard') {

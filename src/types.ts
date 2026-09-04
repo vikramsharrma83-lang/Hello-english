@@ -188,7 +188,10 @@ export interface UserProgress {
   completedToday: number;
   savedPhrases: SavedPhrase[];
   history: PracticeHistoryItem[];
-  myDayCompletedTasks?: string[];
+  myDayCompletedTasks: string[];
   challenge?: FiveDayChallenge;
+  daysPracticed?: number;
+  weakAreas?: string[];
+  strongAreas?: string[];
 }
 

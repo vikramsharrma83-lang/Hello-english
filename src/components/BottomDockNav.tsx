@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { getTranslation } from '../lib/translations';
 import { isPlaygroundActiveAndIncomplete } from '../utils/playgroundManager';
 
-export type NavTab = 'sheeko' | 'dashboard' | 'buddy' | 'snippets' | 'myday' | 'fitness' | 'course' | 'profile' | 'challenge' | 'drill' | 'rocknroll';
+export type NavTab = 'sheeko' | 'dashboard' | 'buddy' | 'snippets' | 'myday' | 'fitness' | 'course' | 'profile' | 'challenge' | 'drill' | 'rocknroll' | 'practice' | 'home' | 'progress';
 
 interface BottomDockNavProps {
   activeTab: NavTab;

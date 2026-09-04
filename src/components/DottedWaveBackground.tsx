@@ -50,7 +50,13 @@ export const DottedWaveBackground: React.FC<DottedWaveBackgroundProps> = ({
     const render = () => {
       time += 0.008;
 
-      ctx.clearRect(0, 0, width, height);
+      if (!width || !height || width <= 20 || height <= 20) {
+        animationFrameId = requestAnimationFrame(render);
+        return;
+      }
+
+      try {
+        ctx.clearRect(0, 0, width, height);
       
       if (variant === 'monochrome') {
         // Deep Pitch Black Base Background
@@ -232,6 +238,9 @@ export const DottedWaveBackground: React.FC<DottedWaveBackgroundProps> = ({
             ctx.fill();
           }
         }
+      }
+      } catch (err) {
+        console.warn('Canvas render error suppressed:', err);
       }
 
       animationFrameId = requestAnimationFrame(render);

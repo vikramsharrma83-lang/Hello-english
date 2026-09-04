@@ -13,7 +13,7 @@ export const RockAndRollDashboard: React.FC<RockAndRollDashboardProps> = ({ onBa
   const totalPoints = sessions.reduce((acc, s) => acc + s.score, 0);
   const avgScore = sessions.length > 0 ? Math.round(totalPoints / sessions.length) : 0;
   const completed = sessions.length;
-  const happyPercent = sessions.length > 0 ? Math.round((sessions.filter(s => s.customerResponse === 'Happy' || s.customerResponse === 'Satisfied').length / sessions.length) * 100) : 0;
+  const happyPercent = sessions.length > 0 ? Math.round((sessions.filter(s => s.customerResponse === 'Happy').length / sessions.length) * 100) : 0;
   const resolvedPercent = sessions.length > 0 ? Math.round((sessions.filter(s => s.isResolved).length / sessions.length) * 100) : 0;
   const avgHandling = sessions.length > 0 ? Math.round(sessions.reduce((acc, s) => acc + s.situationHandling, 0) / sessions.length) : 0;
   const avgGrammar = sessions.length > 0 ? Math.round(sessions.reduce((acc, s) => acc + s.englishGrammar, 0) / sessions.length) : 0;

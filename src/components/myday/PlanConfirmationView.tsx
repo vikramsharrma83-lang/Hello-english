@@ -19,10 +19,12 @@ import { Bell } from 'lucide-react';
 
 interface PlanConfirmationViewProps {
   onGoToPlayground: () => void;
+  onExit?: () => void;
 }
 
 export const PlanConfirmationView: React.FC<PlanConfirmationViewProps> = ({
   onGoToPlayground,
+  onExit,
 }) => {
   const journey: SheekoJourney | null = getSheekoJourney();
   const plan: PlaygroundPlan = getPlaygroundData();

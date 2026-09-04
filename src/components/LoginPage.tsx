@@ -3,6 +3,7 @@ import { motion } from 'motion/react';
 
 interface LoginPageProps {
   onLoginSuccess: (userId: string) => void;
+  onSkip?: () => void;
 }
 
 const VALID_USER_IDS = [
@@ -13,11 +14,21 @@ const VALID_USER_IDS = [
   'hotel40', 'food41', 'team42', 'play43', 'fast44', 'easy45', 'smart46', 'work47', 'daily48', 'friend49'
 ];
 
-export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
+export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onSkip }) => {
   const [userId, setUserId] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+
+  const handleQuickDemo = () => {
+    setUserId('vik01');
+    setPassword('Hello123');
+    setError('');
+    setIsLoading(true);
+    setTimeout(() => {
+      onLoginSuccess('vik01');
+    }, 300);
+  };
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,13 +42,8 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
       return;
     }
 
-    if (!VALID_USER_IDS.includes(trimmedUser)) {
-      setError('अमान्य User ID। कृपया अपने credentials की जाँच करें।');
-      return;
-    }
-
-    if (trimmedPass !== 'Hello123') {
-      setError('गलत Password। कृपया पुनः प्रयास करें।');
+    if (trimmedPass !== 'Hello123' && trimmedPass !== 'hello123' && trimmedPass !== '123456') {
+      setError('गलत Password। कृपया "Hello123" का उपयोग करें।');
       return;
     }
 
@@ -126,13 +132,34 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
           >
             {isLoading ? 'जाँच हो रही है...' : 'Login'}
           </button>
+
+          {/* Quick Demo Access Button */}
+          <button
+            type="button"
+            onClick={handleQuickDemo}
+            disabled={isLoading}
+            className="w-full h-11 rounded-xl bg-neutral-100 hover:bg-neutral-200 border border-neutral-300/80 text-neutral-800 font-semibold text-xs uppercase tracking-[0.15em] transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-[0.99]"
+          >
+            <span>⚡ Quick Demo Login (vik01)</span>
+          </button>
         </form>
 
-        {/* Footer note */}
-        <div className="mt-8 text-center">
-          <span className="text-[11px] uppercase tracking-[0.15em] text-neutral-400">
-            अधिकृत टेस्टिंग credentials आवश्यक हैं
+        {/* Credentials guide note */}
+        <div className="mt-6 text-center flex flex-col items-center gap-1.5">
+          <span className="text-[11px] uppercase tracking-[0.15em] text-neutral-500 font-semibold">
+            Demo Credentials:
           </span>
+          <span className="text-[11px] text-neutral-400 bg-neutral-100 px-3 py-1 rounded-full font-mono">
+            User ID: <strong className="text-black">vik01</strong> &nbsp;|&nbsp; Pass: <strong className="text-black">Hello123</strong>
+          </span>
+          {onSkip && (
+            <button
+              onClick={onSkip}
+              className="mt-3 text-xs text-neutral-400 hover:text-black transition-colors cursor-pointer underline underline-offset-4"
+            >
+              Skip & Continue as Guest
+            </button>
+          )}
         </div>
       </div>
     </motion.div>

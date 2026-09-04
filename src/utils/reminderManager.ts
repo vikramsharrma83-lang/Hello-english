@@ -186,10 +186,41 @@ export function createDevTestReminder(seconds: number): DailyReminder {
   };
 }
 
+export const REMINDERS_MUTED_KEY = 'hello_english_reminders_muted';
+
+/**
+ * Checks if on-screen notifications are muted by the user
+ */
+export function isRemindersMuted(): boolean {
+  try {
+    return localStorage.getItem(REMINDERS_MUTED_KEY) === 'true';
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Sets on-screen notifications mute state
+ */
+export function setRemindersMuted(muted: boolean) {
+  try {
+    localStorage.setItem(REMINDERS_MUTED_KEY, muted ? 'true' : 'false');
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('reminder-mute-updated', { detail: { muted } }));
+      window.dispatchEvent(new CustomEvent('reminder-updated'));
+    }
+  } catch (err) {
+    console.error('Failed to set reminder mute state:', err);
+  }
+}
+
 /**
  * Checks if a reminder is currently due or was triggered in the last 60 minutes
  */
 export function getActiveDueReminder(): DailyReminder | null {
+  if (isRemindersMuted()) {
+    return null;
+  }
   const reminders = getTodayReminders();
   const now = Date.now();
   // Find a reminder that is due (timestamp <= now) and was triggered recently (< 2 hours ago)

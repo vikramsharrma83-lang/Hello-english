@@ -15,19 +15,19 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({ onFinish }) => {
     setIsExiting(true);
     setTimeout(() => {
       onFinish();
-    }, 600);
+    }, 300);
   }, [isExiting, onFinish]);
 
   useEffect(() => {
-    // Zoom-in finishes after 1200ms
+    // Zoom-in finishes after 700ms
     const zoomTimer = setTimeout(() => {
       setZoomComplete(true);
-    }, 1200);
+    }, 700);
 
-    // Auto-advance after 4000ms (4s)
+    // Auto-advance after 2200ms
     const autoFinishTimer = setTimeout(() => {
       handleFinish();
-    }, 4000);
+    }, 2200);
 
     return () => {
       clearTimeout(zoomTimer);

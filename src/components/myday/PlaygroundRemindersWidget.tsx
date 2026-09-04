@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   Bell,
+  BellOff,
   Plus,
   Trash2,
   Edit2,
@@ -19,10 +20,13 @@ import {
   getTodayReminders,
   saveTodayReminders,
   parseEnglishReminderText,
+  isRemindersMuted,
+  setRemindersMuted,
 } from '../../utils/reminderManager';
 
 export const PlaygroundRemindersWidget: React.FC = () => {
   const [reminders, setReminders] = useState<DailyReminder[]>(() => getTodayReminders());
+  const [isMuted, setIsMuted] = useState<boolean>(() => isRemindersMuted());
   const [isExpanded, setIsExpanded] = useState(false);
   const [showAddForm, setShowAddForm] = useState(false);
   const [inputText, setInputText] = useState('');
@@ -34,6 +38,9 @@ export const PlaygroundRemindersWidget: React.FC = () => {
 
   useEffect(() => {
     setReminders(getTodayReminders());
+    const handleMute = () => setIsMuted(isRemindersMuted());
+    window.addEventListener('reminder-mute-updated', handleMute);
+    return () => window.removeEventListener('reminder-mute-updated', handleMute);
   }, []);
 
   const handleToggleEnable = (id: string) => {
@@ -178,6 +185,43 @@ export const PlaygroundRemindersWidget: React.FC = () => {
             exit={{ height: 0, opacity: 0 }}
             className="px-4 pb-4 pt-1 border-t border-zinc-800/80 bg-zinc-950/40"
           >
+            {/* On-Screen Reminders Mute / Active Control */}
+            <div className="my-2.5 p-2.5 rounded-xl bg-zinc-900 border border-zinc-800 flex items-center justify-between gap-3">
+              <div className="flex items-center gap-2 min-w-0">
+                <div
+                  className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 ${
+                    isMuted
+                      ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20'
+                      : 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
+                  }`}
+                >
+                  {isMuted ? <BellOff className="w-3.5 h-3.5" /> : <Bell className="w-3.5 h-3.5" />}
+                </div>
+                <div className="min-w-0">
+                  <span className="text-xs font-semibold text-white block">
+                    On-Screen Reminders
+                  </span>
+                  <span className="text-[10px] text-zinc-400 truncate block">
+                    {isMuted ? 'Muted (reminders won\'t show banner)' : 'Active (shows floating reminder banner)'}
+                  </span>
+                </div>
+              </div>
+              <button
+                onClick={() => {
+                  const next = !isMuted;
+                  setIsMuted(next);
+                  setRemindersMuted(next);
+                }}
+                className={`px-3 py-1 rounded-full text-[11px] font-semibold transition-all cursor-pointer ${
+                  isMuted
+                    ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40 hover:bg-amber-500/30'
+                    : 'bg-zinc-800 text-zinc-300 hover:text-white hover:bg-zinc-700'
+                }`}
+              >
+                {isMuted ? 'Muted (Tap to unmute)' : 'Mute'}
+              </button>
+            </div>
+
             {/* List */}
             <div className="space-y-2 mb-3">
               {reminders.length === 0 ? (

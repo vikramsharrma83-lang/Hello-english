@@ -37,6 +37,7 @@ interface MyDayViewProps {
   onStepChange?: (step: string) => void;
   onOpenRolePicker?: () => void;
   onOpenHelpRoadmap?: () => void;
+  onOpenLogin?: () => void;
   language?: 'en' | 'hi';
   onToggleLanguage?: () => void;
 }
@@ -56,6 +57,7 @@ export const MyDayView: React.FC<MyDayViewProps> = ({
   onStepChange,
   onOpenRolePicker,
   onOpenHelpRoadmap,
+  onOpenLogin,
   language = 'en',
   onToggleLanguage,
 }) => {
@@ -465,6 +467,7 @@ export const MyDayView: React.FC<MyDayViewProps> = ({
             language={language}
             onToggleLanguage={onToggleLanguage}
             onOpenHelpRoadmap={onOpenHelpRoadmap}
+            onOpenLogin={onOpenLogin}
           />
         )}
 
@@ -490,6 +493,11 @@ export const MyDayView: React.FC<MyDayViewProps> = ({
                   completedToday: 3,
                   dailyGoal: 5,
                   totalPracticed: 18,
+                  totalMinutes: 24,
+                  targetRole: 'Warehouse & Logistics Staff',
+                  savedPhrases: [],
+                  history: [],
+                  myDayCompletedTasks: ['share_day', 'conversation'],
                   weakAreas: ['Grammar Accuracy'],
                   strongAreas: ['Communication Clarity'],
                   challenge: {
