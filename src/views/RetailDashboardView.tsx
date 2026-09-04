@@ -9,6 +9,7 @@ import retailKahan from '../data/rockandrole/retail_kahan.json';
 import retailKhaas from '../data/rockandrole/retail_khaas.json';
 import { ChevronRight, Sparkles, ArrowLeft } from 'lucide-react';
 import { DottedWaveBackground } from '../components/DottedWaveBackground';
+import { AudioMuteButton } from '../components/AudioMuteButton';
 
 interface ThemeCardProps {
   theme: any;
@@ -106,6 +107,8 @@ export const RetailDashboardView: React.FC<{
             <ArrowLeft className="w-3.5 h-3.5" />
             <span>Back</span>
           </button>
+
+          <AudioMuteButton size="sm" variant="glass" />
         </div>
 
         <div className="mb-5">

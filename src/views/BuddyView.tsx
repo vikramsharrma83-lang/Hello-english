@@ -5,6 +5,7 @@ import {
   MicOff, 
   Send, 
   Volume2, 
+  VolumeX,
   Bot, 
   User, 
   Sparkles, 
@@ -19,7 +20,7 @@ import {
   Check,
   FileText,
 } from 'lucide-react';
-import { speakText, soundFx } from '../utils/audio';
+import { speakText, stopSpeaking, soundFx, getPreferredVoice, setPreferredVoice } from '../utils/audio';
 import { EnglishProgressScreen } from '../components/myday/EnglishProgressScreen';
 
 interface BuddyMessage {
@@ -70,7 +71,7 @@ export const BuddyView: React.FC<BuddyViewProps> = ({ onStartPractice, onBack, l
     {
       id: '1',
       sender: 'buddy',
-      text: "Hello! I'm your English Buddy. How was your day today? Tell me about what you did or what is on your mind.",
+      text: "Hello! I'm your English Buddy 😊 How are you today?",
       timestamp: Date.now()
     }
   ]);
@@ -83,27 +84,47 @@ export const BuddyView: React.FC<BuddyViewProps> = ({ onStartPractice, onBack, l
   const [isLoadingSummary, setIsLoadingSummary] = useState(false);
   const [isProgressScreenOpen, setIsProgressScreenOpen] = useState(false);
   const [voiceEnabled, setVoiceEnabled] = useState(true);
+  const [currentVoice, setCurrentVoice] = useState(getPreferredVoice());
   const [playingId, setPlayingId] = useState<string | null>(null);
-  const [shortAnswerError, setShortAnswerError] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const recognitionRef = useRef<any>(null);
+  const spokenMessageIdsRef = useRef<Set<string>>(new Set());
+
+  // Cleanup audio on unmount
+  useEffect(() => {
+    return () => {
+      stopSpeaking();
+    };
+  }, []);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, isThinking]);
 
-  // Voice synthesis for latest buddy message
+  // Voice synthesis for latest buddy message - strictly single execution per message
   useEffect(() => {
     if (!voiceEnabled || messages.length === 0 || isSummaryView) return;
     const lastMsg = messages[messages.length - 1];
     if (lastMsg.sender === 'buddy') {
+      // Guard against duplicate playback of the same message (e.g. StrictMode, double mount, or state re-evaluation)
+      if (spokenMessageIdsRef.current.has(lastMsg.id)) {
+        return;
+      }
+      spokenMessageIdsRef.current.add(lastMsg.id);
+
       setPlayingId(lastMsg.id);
-      speakText(lastMsg.text, 'en-IN', 0.92, () => {
-        setPlayingId(null);
-      });
+      speakText(
+        lastMsg.text,
+        'en-IN',
+        0.92,
+        () => {
+          setPlayingId(null);
+        },
+        currentVoice
+      );
     }
-  }, [messages.length, voiceEnabled, isSummaryView]);
+  }, [messages, voiceEnabled, isSummaryView, currentVoice]);
 
   // Speech recognition setup
   useEffect(() => {
@@ -157,13 +178,6 @@ export const BuddyView: React.FC<BuddyViewProps> = ({ onStartPractice, onBack, l
     const text = textToSend || inputMessage;
     if (!text.trim() || isThinking) return;
 
-    const words = text.trim().split(/\s+/);
-    if (words.length <= 3) {
-      setShortAnswerError(true);
-      return;
-    }
-    setShortAnswerError(false);
-
     if (isRecording && recognitionRef.current) {
       try {
         recognitionRef.current.stop();
@@ -199,11 +213,16 @@ export const BuddyView: React.FC<BuddyViewProps> = ({ onStartPractice, onBack, l
 
       const data = await response.json();
 
+      let fullText = (data.naturalResponse || "I'm listening and understand you 😊").trim();
+      if (data.nextQuestion && data.nextQuestion.trim() && !fullText.includes(data.nextQuestion.trim())) {
+        fullText = `${fullText} ${data.nextQuestion.trim()}`;
+      }
+
       const buddyMsg: BuddyMessage = {
         id: (Date.now() + 1).toString(),
         sender: 'buddy',
-        text: data.naturalResponse || "That's really interesting!",
-        nextQuestion: data.nextQuestion || "What else did you do?",
+        text: fullText,
+        nextQuestion: data.nextQuestion ? data.nextQuestion.trim() : '',
         subtleRecast: data.subtleRecast || '',
         timestamp: Date.now()
       };
@@ -224,7 +243,9 @@ export const BuddyView: React.FC<BuddyViewProps> = ({ onStartPractice, onBack, l
       const fallbackMsg: BuddyMessage = {
         id: (Date.now() + 1).toString(),
         sender: 'buddy',
-        text: "That's very interesting! Can you tell me a little more about that?",
+        text: "I'm listening and understand you completely 😊 Take your time.",
+        nextQuestion: '',
+        subtleRecast: '',
         timestamp: Date.now()
       };
       setMessages(prev => [...prev, fallbackMsg]);
@@ -262,11 +283,13 @@ export const BuddyView: React.FC<BuddyViewProps> = ({ onStartPractice, onBack, l
   };
 
   const handleRestart = () => {
+    stopSpeaking();
+    spokenMessageIdsRef.current.clear();
     setMessages([
       {
-        id: '1',
+        id: Date.now().toString(),
         sender: 'buddy',
-        text: "Hello! I'm your English Buddy. How was your day today? Tell me about what you did or what is on your mind.",
+        text: "Hello! I'm your English Buddy 😊 How are you today?",
         timestamp: Date.now()
       }
     ]);
@@ -511,8 +534,32 @@ export const BuddyView: React.FC<BuddyViewProps> = ({ onStartPractice, onBack, l
           </div>
         </div>
 
-        {/* Action Controls: Chat Number & Summary Report Icon */}
+        {/* Action Controls: Voice Selector, Chat Number & Summary Report Icon */}
         <div className="flex items-center gap-2">
+          {/* Voice Selector */}
+          <div className="relative">
+            <select
+              value={currentVoice}
+              onChange={(e) => {
+                const newVoice = e.target.value;
+                stopSpeaking();
+                setPlayingId(null);
+                setCurrentVoice(newVoice);
+                setPreferredVoice(newVoice);
+              }}
+              className="h-9 pl-2.5 pr-7 rounded-xl bg-zinc-900 border border-zinc-800 text-xs font-semibold text-zinc-300 hover:text-white hover:border-zinc-700 transition-colors cursor-pointer appearance-none shadow-xs focus:outline-hidden focus:ring-1 focus:ring-sky-500"
+              title="Select Buddy's speaking voice"
+            >
+              <option value="ritu">Ritu (Locked Default)</option>
+              <option value="kavya">Kavya (Calm & Professional)</option>
+              <option value="priya">Priya (Soft Companion)</option>
+              <option value="browser">Browser Native Voice</option>
+            </select>
+            <div className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-zinc-500">
+              <Volume2 className="w-3.5 h-3.5" />
+            </div>
+          </div>
+
           {/* Chat Numbers (eg 0/15) */}
           <div 
             className="px-3 py-1.5 rounded-xl bg-zinc-900/90 border border-zinc-800 text-xs font-bold text-sky-400 flex items-center gap-1.5 shadow-xs"
@@ -557,29 +604,35 @@ export const BuddyView: React.FC<BuddyViewProps> = ({ onStartPractice, onBack, l
               {msg.sender === 'user' ? <User className="w-4 h-4" /> : <Bot className="w-4 h-4" />}
             </div>
 
-            <div className={`max-w-[82%] rounded-2xl p-4 shadow-lg ${
+            <div className={`max-w-[84%] rounded-2xl p-4 shadow-lg ${
               msg.sender === 'user'
                 ? 'bg-purple-600 text-white rounded-tr-xs'
                 : 'bg-zinc-900 border border-zinc-800 text-zinc-100 rounded-tl-xs'
             }`}>
-              <div className="space-y-2">
-                <p className="text-sm sm:text-base leading-relaxed text-zinc-100 font-medium">{msg.text}</p>
-                {msg.nextQuestion && msg.nextQuestion !== msg.text && (
-                  <p className="text-sm sm:text-base leading-relaxed text-sky-200 font-semibold pt-1.5 border-t border-zinc-800/60">
-                    {msg.nextQuestion}
-                  </p>
+              <div className="flex items-start justify-between gap-2.5">
+                <p className="text-sm sm:text-base leading-relaxed text-zinc-100 font-medium whitespace-pre-wrap">{msg.text}</p>
+                {msg.sender === 'buddy' && (
+                  <button
+                    onClick={() => {
+                      if (playingId === msg.id) {
+                        stopSpeaking();
+                        setPlayingId(null);
+                      } else {
+                        setPlayingId(msg.id);
+                        speakText(msg.text, 'en-IN', 0.92, () => setPlayingId(null), currentVoice);
+                      }
+                    }}
+                    className="shrink-0 p-1.5 text-zinc-400 hover:text-sky-300 hover:bg-zinc-800/80 rounded-lg transition-colors cursor-pointer"
+                    title={playingId === msg.id ? "Stop voice" : "Listen to Buddy"}
+                  >
+                    {playingId === msg.id ? (
+                      <VolumeX className="w-4 h-4 text-sky-400 animate-pulse" />
+                    ) : (
+                      <Volume2 className="w-4 h-4" />
+                    )}
+                  </button>
                 )}
               </div>
-
-              {msg.subtleRecast && (
-                <div className="mt-2.5 pt-2.5 border-t border-zinc-800/80 bg-zinc-950/40 rounded-xl p-2.5">
-                  <div className="flex items-center gap-1.5 text-sky-400 text-xs font-bold mb-1">
-                    <Sparkles className="w-3.5 h-3.5" />
-                    <span>Natural Phrasing:</span>
-                  </div>
-                  <p className="text-xs text-zinc-200 italic font-medium">"{msg.subtleRecast}"</p>
-                </div>
-              )}
             </div>
           </motion.div>
         ))}
@@ -614,12 +667,6 @@ export const BuddyView: React.FC<BuddyViewProps> = ({ onStartPractice, onBack, l
 
       {/* Input Bar */}
       <div className="sticky bottom-0 bg-zinc-950/95 backdrop-blur-md pt-3 pb-4 z-30 mt-auto space-y-2">
-        {shortAnswerError && (
-          <div className="px-3 py-2 bg-amber-500/15 border border-amber-500/30 rounded-xl text-amber-300 text-xs font-medium flex items-center justify-between">
-            <span>Please write at least 4 words for a complete answer!</span>
-            <button onClick={() => setShortAnswerError(false)} className="text-amber-400 hover:text-white font-bold ml-2">×</button>
-          </div>
-        )}
         <div className="flex items-center gap-2 bg-zinc-900 border border-zinc-800 rounded-2xl p-2 shadow-2xl">
           <button
             onClick={toggleRecording}

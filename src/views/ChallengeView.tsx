@@ -23,6 +23,7 @@ import {
   startNewChallenge,
 } from '../utils/challengeManager';
 import { MyDayPatternsHub } from '../components/myday/MyDayPatternsHub';
+import { playFixedAudio, stopSpeaking } from '../utils/audio';
 
 interface ChallengeViewProps {
   progress: UserProgress;
@@ -99,6 +100,17 @@ export const ChallengeView: React.FC<ChallengeViewProps> = ({
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [subView]);
+
+  useEffect(() => {
+    if (subView === 'carousel') {
+      playFixedAudio('D_myday_journey.mp3');
+    } else {
+      stopSpeaking();
+    }
+    return () => {
+      stopSpeaking();
+    };
   }, [subView]);
 
   const handleCardClick = (plan: ChallengePlanOption, index: number) => {

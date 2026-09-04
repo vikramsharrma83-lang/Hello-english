@@ -21,7 +21,7 @@ import {
 import { markStartMyDayDoneToday } from '../../utils/playgroundManager';
 import { PRACTICE_QUESTIONS } from '../../data/questions';
 import { Question } from '../../types';
-import { speakText as audioSpeakText, stopSpeaking } from '../../utils/audio';
+import { speakText as audioSpeakText, stopSpeaking, playFixedAudio } from '../../utils/audio';
 
 interface WarmUpQuestion {
   id: string;
@@ -90,12 +90,13 @@ export const StartMyDayWarmupView: React.FC<StartMyDayWarmupViewProps> = ({
   onCompleteWarmup,
   onExit,
 }) => {
-  // Select 5 random questions from the entire 150 questions pool
+  // Select 2 random Level 1 questions from the pool
   const [questions] = useState<WarmUpQuestion[]>(() => {
-    const shuffled = [...PRACTICE_QUESTIONS].sort(() => 0.5 - Math.random());
-    return shuffled.slice(0, 5).map(mapQuestionToWarmup);
+    const level1Questions = PRACTICE_QUESTIONS.filter((q) => q.level === 'Level 1');
+    const shuffled = [...level1Questions].sort(() => 0.5 - Math.random());
+    return shuffled.slice(0, 2).map(mapQuestionToWarmup);
   });
-  const totalQuestions = 5;
+  const totalQuestions = 2;
 
   const greetingData = getGreetingData();
 
@@ -130,15 +131,19 @@ export const StartMyDayWarmupView: React.FC<StartMyDayWarmupViewProps> = ({
   const currentQ = questions[currentIndex] || questions[0];
 
   // Natural spoken Hindi text for female coach TTS
-  const debriefHindiSpeech = `नमस्ते! ${greetingData.hiWish}! चलिए आज का रूटीन शुरू करते हैं। पहले हम पाँच आसान सवालों के साथ वॉर्म-अप करेंगे। उसके बाद, आज का टारगेट चुनेंगे—कि आप कितने बडी चैट्स, कितने बाइट्स और कितने सिनेरियो प्रैक्टिस करेंगे। सबमिट करते ही आपका प्लेग्राउंड तैयार हो जाएगा। दिन में जब भी चाहें, यहाँ आकर खेलें और अपने टास्क पूरे करें। चलिए शुरू करते हैं!`;
+  const debriefHindiSpeech = `नमस्ते! ${greetingData.hiWish}! चलिए आज का रूटीन शुरू करते हैं। पहले हम दो आसान सवालों के साथ वॉर्म-अप करेंगे। उसके बाद, आज का टारगेट चुनेंगे—कि आप कितने बडी चैट्स, कितने बाइट्स और कितने सिनेरियो प्रैक्टिस करेंगे। सबमिट करते ही आपका प्लेग्राउंड तैयार हो जाएगा। दिन में जब भी चाहें, यहाँ आकर खेलें और अपने टास्क पूरे करें। चलिए शुरू करते हैं!`;
 
-  // Auto-play Coach briefing speech in Hindi (Female)
+  // Auto-play pre-recorded briefing speech
   const playDebriefSpeech = async () => {
     setIsDebriefSpeaking(true);
-    await audioSpeakText(debriefHindiSpeech, 'hi-IN', 0.94, () => {
+    const audio = playFixedAudio('A_start_your_day.mp3', undefined, () => {
       setIsDebriefSpeaking(false);
       setDebriefCompleted(true);
     });
+    if (!audio) {
+      setIsDebriefSpeaking(false);
+      setDebriefCompleted(true);
+    }
   };
 
   const toggleDebriefSpeech = () => {
@@ -268,6 +273,13 @@ export const StartMyDayWarmupView: React.FC<StartMyDayWarmupViewProps> = ({
     setIsEvaluating(true);
 
     try {
+      // Calculate ~90% match / word overlap with model answer
+      const cleanStr = (s: string) => s.toLowerCase().replace(/[^a-z0-9\s]/g, '').trim();
+      const modelWords = cleanStr(currentQ.modelAnswer).split(/\s+/);
+      const responseWords = cleanStr(rawResponse).split(/\s+/);
+      const matchingWords = responseWords.filter(w => modelWords.includes(w));
+      const matchRatio = matchingWords.length / Math.max(1, modelWords.length);
+
       // Evaluate via AI
       const res = await fetch('/api/drill/evaluate', {
         method: 'POST',
@@ -286,20 +298,31 @@ export const StartMyDayWarmupView: React.FC<StartMyDayWarmupViewProps> = ({
       });
 
       const evalData = await res.json();
-      const isAIApproved = evalData.communicationSuccessful && (evalData.sentenceClarity >= 60 || evalData.targetSkillDemonstrated);
+      const isAIApproved = evalData.communicationSuccessful && (evalData.sentenceClarity >= 75 || evalData.targetSkillDemonstrated);
+      const isSuccess = matchRatio >= 0.70 || isAIApproved;
 
-      // Check keywords fallback
-      const lower = rawResponse.toLowerCase();
-      const hasKeyword = currentQ.acceptableKeywords.some((kw) => lower.includes(kw.toLowerCase()));
-      const isSuccess = isAIApproved || hasKeyword;
-
-      if (attemptCount === 3 || isSuccess) {
-        // Correct or read & registered model answer!
-        if (attemptCount === 3) {
+      if (attemptCount === 3) {
+        // Attempt 3 (Repeat after viewing model answer)
+        if (isSuccess) {
           setLearnedCount((prev) => prev + 1);
+          setFeedback({
+            status: 'correct',
+            title: 'GREAT! REPEAT SUCCESSFUL',
+            modelCorrection: currentQ.modelAnswer,
+          });
+          speakText('Great! Repeat successful.');
         } else {
-          setCorrectCount((prev) => prev + 1);
+          // Failed repeat -> mark as wrong / incorrect
+          setFeedback({
+            status: 'correct',
+            title: 'MARKED AS WRONG - MOVING ON',
+            modelCorrection: currentQ.modelAnswer,
+          });
+          speakText('Let us move to the next question.');
         }
+      } else if (isSuccess) {
+        // Correct match (~90% or AI approved)
+        setCorrectCount((prev) => prev + 1);
         setFeedback({
           status: 'correct',
           title: 'GREAT!',
@@ -307,7 +330,7 @@ export const StartMyDayWarmupView: React.FC<StartMyDayWarmupViewProps> = ({
         });
         speakText('Great! Correct answer.');
       } else if (attemptCount === 1) {
-        // Attempt 1 incorrect -> Allow Attempt 2
+        // Attempt 1 incorrect -> Allow Attempt 2 (Try again)
         setFeedback({
           status: 'retry',
           title: 'TRY ONCE MORE (ATTEMPT 2)',
@@ -318,20 +341,24 @@ export const StartMyDayWarmupView: React.FC<StartMyDayWarmupViewProps> = ({
         setManualText('');
         speakText('Let\'s try once more. Please speak in English.');
       } else {
-        // Attempt 2 failed -> Show Model Answer (Read & Speak)
+        // Attempt 2 failed -> Show Model Answer on screen bold and clear
         setFeedback({
           status: 'model',
-          title: 'MODEL ANSWER',
+          title: 'CORRECT ANSWER (PLEASE READ & REPEAT)',
           modelCorrection: currentQ.modelAnswer,
         });
         setAttemptCount(3);
         setTranscript('');
         setManualText('');
-        speakText(`Here is the correct sentence: "${currentQ.modelAnswer}". Please read and register.`);
+        speakText(`Here is the correct answer: "${currentQ.modelAnswer}". Please repeat it.`);
       }
     } catch (e) {
       // Offline fallback
-      setCorrectCount((prev) => prev + 1);
+      if (attemptCount === 3) {
+        setLearnedCount((prev) => prev + 1);
+      } else {
+        setCorrectCount((prev) => prev + 1);
+      }
       setFeedback({
         status: 'correct',
         title: 'GREAT!',

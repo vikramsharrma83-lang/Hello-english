@@ -9,6 +9,7 @@ import kyaHua from '../data/rockandrole/kyaHua.json';
 import vip from '../data/rockandrole/vip.json';
 import { BarChart3, ChevronRight, Sparkles, ArrowLeft } from 'lucide-react';
 import { DottedWaveBackground } from '../components/DottedWaveBackground';
+import { AudioMuteButton } from '../components/AudioMuteButton';
 
 interface ThemeCardProps {
   theme: any;
@@ -106,22 +107,25 @@ export const RockAndRollDashboardView: React.FC<{
             <span>Back</span>
           </button>
 
-          <motion.button
-            onClick={onOpenDashboard}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-zinc-900/85 backdrop-blur-md border border-white/10 rounded-full text-zinc-300 hover:text-white text-xs font-medium cursor-pointer"
-            animate={{
-              scale: [1, 1.03, 1],
-              borderColor: ['rgba(255,255,255,0.1)', 'rgba(212,212,216,0.4)', 'rgba(255,255,255,0.1)'],
-            }}
-            transition={{
-              duration: 2.5,
-              ease: 'easeInOut',
-              repeat: Infinity,
-            }}
-          >
-            <BarChart3 className="w-3.5 h-3.5 text-zinc-300" />
-            <span>Stats</span>
-          </motion.button>
+          <div className="flex items-center gap-2">
+            <AudioMuteButton size="sm" variant="glass" />
+            <motion.button
+              onClick={onOpenDashboard}
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-zinc-900/85 backdrop-blur-md border border-white/10 rounded-full text-zinc-300 hover:text-white text-xs font-medium cursor-pointer"
+              animate={{
+                scale: [1, 1.03, 1],
+                borderColor: ['rgba(255,255,255,0.1)', 'rgba(212,212,216,0.4)', 'rgba(255,255,255,0.1)'],
+              }}
+              transition={{
+                duration: 2.5,
+                ease: 'easeInOut',
+                repeat: Infinity,
+              }}
+            >
+              <BarChart3 className="w-3.5 h-3.5 text-zinc-300" />
+              <span>Stats</span>
+            </motion.button>
+          </div>
         </div>
 
         {/* Screen Title */}

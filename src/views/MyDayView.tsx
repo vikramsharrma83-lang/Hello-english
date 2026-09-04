@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { MyDayHeader } from '../components/myday/MyDayHeader';
 import { HomePage } from '../components/myday/HomePage';
@@ -20,6 +20,7 @@ import { PlaygroundView } from '../components/myday/PlaygroundView';
 import { isStartMyDayDoneToday, getPlaygroundData, incrementPlaygroundActivity, resetPlaygroundForRebuild } from '../utils/playgroundManager';
 import { DayMap, ActiveTopic, ConversationTurn, DeepAnalysis, Question, UserProgress } from '../types';
 import { parseLearnerStoryToMeaningRepresentation, extractNaturalEnglishMeaning, synthesizeNaturalEnglishStory } from '../data/sheekoEngine';
+import { playFixedAudio, stopSpeaking } from '../utils/audio';
 
 interface MyDayViewProps {
   userName?: string;
@@ -76,6 +77,11 @@ export const MyDayView: React.FC<MyDayViewProps> = ({
 
   React.useEffect(() => {
     onStepChange?.(step);
+    stopSpeaking();
+
+    return () => {
+      stopSpeaking();
+    };
   }, [step, onStepChange]);
 
   const [dayMap, setDayMap] = useState<DayMap>({
@@ -647,17 +653,24 @@ export const MyDayView: React.FC<MyDayViewProps> = ({
         )}
 
         {/* PAGE 4: Chatbot Conversation Starts (with back button to Page 3) */}
-        {step === '4_CHATBOT_CONVERSATION' && selectedTopic && (
+        {step === '4_CHATBOT_CONVERSATION' && (
           <ConversationView
             dayMap={dayMap}
-            selectedTopic={selectedTopic}
+            selectedTopic={selectedTopic || {
+              pointer: 'Daily Routine & Activities',
+              category: 'ACTIVITY',
+              exploredAspects: {},
+              isCompleted: false,
+              turnCount: 0,
+            }}
             turns={turns}
             onLearnerAnswer={handleLearnerAnswer}
             isLoading={isLoading}
             onGoBackToDayMap={() => setStep('3_SYSTEM_SUMMARIZATION')}
             onChooseAnotherActivity={() => setStep('3_SYSTEM_SUMMARIZATION')}
             onEndChatTopic={() => {
-              setCompletedTopics((prev) => Array.from(new Set([...prev, selectedTopic.pointer])));
+              const ptr = selectedTopic ? selectedTopic.pointer : 'Daily Routine & Activities';
+              setCompletedTopics((prev) => Array.from(new Set([...prev, ptr])));
               setStep('5_TOPIC_COMPLETE');
             }}
             onEndSession={() => setStep('6_SESSION_SUMMARY')}
@@ -670,9 +683,15 @@ export const MyDayView: React.FC<MyDayViewProps> = ({
         )}
 
         {/* PAGE 5: Topic Completion Card */}
-        {step === '5_TOPIC_COMPLETE' && selectedTopic && (
+        {step === '5_TOPIC_COMPLETE' && (
           <TopicCompletionCard
-            topic={selectedTopic}
+            topic={selectedTopic || {
+              pointer: 'Daily Routine & Activities',
+              category: 'ACTIVITY',
+              exploredAspects: {},
+              isCompleted: false,
+              turnCount: 0,
+            }}
             completionSummary={lastCompletionSummary}
             dayMap={dayMap}
             onSelectNextTopic={handleSelectNextTopicFromCompletion}
@@ -738,6 +757,64 @@ export const MyDayView: React.FC<MyDayViewProps> = ({
                 onNavigateTab(tab as any);
               }
             }}
+          />
+        )}
+
+        {/* Guaranteed fallback to HomePage if step state is unknown or initializing */}
+        {!['1_HOME', 'ROCK_ROLL', 'CHALLENGE', 'PATTERNS_HUB', '2_CHAT_INPUT', '3_SYSTEM_SUMMARIZATION', '4_CHATBOT_CONVERSATION', '5_TOPIC_COMPLETE', '6_SESSION_SUMMARY', 'START_MY_DAY_WARMUP', 'DAILY_PLANNING', 'PLAN_CONFIRMATION', 'PLAYGROUND'].includes(step) && (
+          <HomePage
+            onStart={() => {
+              const plan = getPlaygroundData();
+              if (plan.planConfirmed) {
+                setStep('PLAYGROUND');
+              } else if (isStartMyDayDoneToday()) {
+                setStep('DAILY_PLANNING');
+              } else {
+                setStep('START_MY_DAY_WARMUP');
+              }
+            }}
+            onOpenPlayground={() => {
+              setStep('PLAYGROUND');
+            }}
+            onOpenPatternLibrary={() => setStep('PATTERNS_HUB')}
+            onOpenChallenge={() => setStep('CHALLENGE')}
+            onOpenRockRoll={(sector) => {
+              if (sector === 'hospitality') {
+                setRockRollInitialView('dashboard');
+              } else if (sector === 'retail') {
+                setRockRollInitialView('retail-dashboard');
+              } else if (sector === 'supply-chain') {
+                setRockRollInitialView('supply-dashboard');
+              } else if (sector === 'services') {
+                setRockRollInitialView('dummy');
+                setRockRollDummyName('Services');
+              } else {
+                setRockRollInitialView('dashboard');
+              }
+              setStep('ROCK_ROLL');
+            }}
+            onOpenRolePicker={onOpenRolePicker}
+            onOpenInspector={() => setInspectorOpen(true)}
+            onOpenProfile={() => {
+              if (onNavigateTab) {
+                onNavigateTab('profile');
+              }
+            }}
+            onClose={() => {
+              if (onNavigateTab) {
+                onNavigateTab('fitness');
+              }
+            }}
+            onSelectSample={(sampleText) => {
+              handleSubmitInitialStatement(sampleText);
+            }}
+            turns={turns}
+            dayMap={dayMap}
+            progress={progress}
+            language={language}
+            onToggleLanguage={onToggleLanguage}
+            onOpenHelpRoadmap={onOpenHelpRoadmap}
+            onOpenLogin={onOpenLogin}
           />
         )}
       </main>

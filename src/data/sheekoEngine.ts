@@ -1,6 +1,4 @@
 // Interfaces for Sheeko 5 Libraries
-import referencePatternsData from './sheeko/skillgo_my_day_10000_reference_patterns.json';
-import rephraseTemplatesData from './sheeko/skillgo_my_day_10000_rephrase_templates (1).json';
 import meaningIntentData from './sheeko/skillgo_my_day_meaning_intent_library (1).json';
 import timeSequenceData from './sheeko/skillgo_my_day_time_sequence_library (1).json';
 import vocabGrammarData from './sheeko/skillgo_my_day_vocabulary_grammar_library (1).json';
@@ -53,63 +51,20 @@ export interface SheekoVocabularyGrammar {
   usageNote?: string;
 }
 
-const sheekoReferences: SheekoReferencePattern[] = (referencePatternsData as any).records || [];
-const sheekoRephrases: SheekoRephraseTemplate[] = (rephraseTemplatesData as any).records || [];
 const sheekoIntents: SheekoMeaningIntent[] = (meaningIntentData as any).records || [];
 const sheekoTimeSequences: SheekoTimeSequence[] = (timeSequenceData as any).records || [];
 const sheekoGrammars: SheekoVocabularyGrammar[] = (vocabGrammarData as any).records || [];
 
-console.log(`[SHEEKO BROWSER ENGINE] Loaded ${sheekoReferences.length} reference patterns, ${sheekoRephrases.length} rephrase templates, ${sheekoIntents.length} intents, ${sheekoTimeSequences.length} time/sequences, ${sheekoGrammars.length} grammar rules locally.`);
-
 export function getSheekoReferences(): SheekoReferencePattern[] {
-  return sheekoReferences;
+  return [];
 }
 
 export function findSheekoReferenceMatch(text: string, category?: string): SheekoReferencePattern | null {
-  if (!sheekoReferences.length || !text) return null;
-  const clean = text.toLowerCase().trim();
-  const tokens = clean.split(/\s+/).filter(t => t.length > 2);
-
-  let bestMatch: SheekoReferencePattern | null = null;
-  let bestScore = 0;
-
-  const pool = category && category !== 'All'
-    ? sheekoReferences.filter(r => r.category.toLowerCase() === category.toLowerCase())
-    : sheekoReferences;
-
-  for (let i = 0; i < pool.length; i++) {
-    const pat = pool[i];
-    let score = 0;
-    const sent = pat.sentence.toLowerCase();
-    const mean = pat.normalizedMeaning.toLowerCase();
-
-    if (clean === sent) return pat;
-
-    for (const t of tokens) {
-      if (sent.includes(t)) score += 3;
-      if (mean.includes(t)) score += 2;
-    }
-
-    if (pat.activities) {
-      for (const act of pat.activities) {
-        if (clean.includes(act.toLowerCase())) score += 4;
-      }
-    }
-
-    if (score > bestScore) {
-      bestScore = score;
-      bestMatch = pat;
-    }
-  }
-
-  return bestMatch;
+  return null;
 }
 
 export function findSheekoRephraseTemplate(meaningOrText: string): SheekoRephraseTemplate | null {
-  if (!sheekoRephrases.length || !meaningOrText) return null;
-  const clean = meaningOrText.toLowerCase().trim();
-  const match = sheekoRephrases.find(r => r.matchedMeaning.toLowerCase().includes(clean) || clean.includes(r.matchedMeaning.toLowerCase()));
-  return match || sheekoRephrases[0] || null;
+  return null;
 }
 
 export function applySheekoGrammarCorrections(text: string): string {

@@ -1,7 +1,6 @@
 import meaningIntentData from './sheeko/skillgo_my_day_meaning_intent_library (1).json';
 import timeSequenceData from './sheeko/skillgo_my_day_time_sequence_library (1).json';
 import vocabGrammarData from './sheeko/skillgo_my_day_vocabulary_grammar_library (1).json';
-import rephraseTemplatesData from './sheeko/skillgo_my_day_10000_rephrase_templates (1).json';
 
 export interface MeaningIntentRecord {
   id: string;
@@ -197,7 +196,40 @@ export const SHEEKO_PIPELINE_STAGES: PipelineStage[] = [
 export const meaningIntentRecords: MeaningIntentRecord[] = (meaningIntentData as any).records || [];
 export const timeSequenceRecords: TimeSequenceRecord[] = (timeSequenceData as any).records || [];
 export const vocabGrammarRecords: VocabGrammarRecord[] = (vocabGrammarData as any).records || [];
-export const rephraseTemplateRecords: RephraseTemplateRecord[] = ((rephraseTemplatesData as any).records || []).slice(0, 1000);
+export const rephraseTemplateRecords: RephraseTemplateRecord[] = [
+  {
+    id: 'REPHRASE_0001',
+    patternId: 'PAT_0001',
+    category: 'DAILY',
+    matchedMeaning: 'morning routine',
+    rephraseTemplate: 'I woke up in the morning and completed my daily routine.',
+    rephraseMeaning: 'Completed morning routine'
+  },
+  {
+    id: 'REPHRASE_0002',
+    patternId: 'PAT_0002',
+    category: 'WORK',
+    matchedMeaning: 'reach office or warehouse on time',
+    rephraseTemplate: 'I reached work on time and started my assigned tasks.',
+    rephraseMeaning: 'Commuted and started work shift'
+  },
+  {
+    id: 'REPHRASE_0003',
+    patternId: 'PAT_0003',
+    category: 'WORK',
+    matchedMeaning: 'customer or guest communication',
+    rephraseTemplate: 'I assisted the customer and addressed their issue promptly.',
+    rephraseMeaning: 'Handled customer communication'
+  },
+  {
+    id: 'REPHRASE_0004',
+    patternId: 'PAT_0004',
+    category: 'FRIENDS',
+    matchedMeaning: 'meet friends and have tea',
+    rephraseTemplate: 'I met my friends for tea in the evening and had a great conversation.',
+    rephraseMeaning: 'Socialized with friends'
+  }
+];
 export const referencePatternRecords: ReferencePatternRecord[] = [
   {
     id: 'MYDAY_00001',

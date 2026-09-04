@@ -15,7 +15,10 @@ import { FitnessDashboardView } from './views/FitnessDashboardView';
 import { RockAndRollContainer } from './views/RockAndRollContainer';
 import { ChallengeView } from './views/ChallengeView';
 import { DrillView } from './views/DrillView';
+import { MyDayPatternsHub } from './components/myday/MyDayPatternsHub';
 import { BottomDockNav, NavTab } from './components/BottomDockNav';
+import { ErrorBoundary } from './components/ErrorBoundary';
+import { stopSpeaking } from './utils/audio';
 import { AnalysisResult, Question, SavedPhrase, UserProgress } from './types';
 import { PRACTICE_QUESTIONS } from './data/questions';
 import { generateLocalAnalysis } from './data/patternEngine';
@@ -54,7 +57,7 @@ const DEFAULT_PROGRESS: UserProgress = {
 };
 
 export default function App() {
-  const [showSplash, setShowSplash] = useState<boolean>(true);
+  const [showSplash, setShowSplash] = useState<boolean>(false);
   const [showPurpose, setShowPurpose] = useState<boolean>(false);
   const [showLogin, setShowLogin] = useState<boolean>(false);
   // Industry Role Picker State
@@ -309,7 +312,6 @@ export default function App() {
           <SplashScreen
             onFinish={() => {
               setShowSplash(false);
-              setShowPurpose(true);
             }}
           />
         )}
@@ -375,227 +377,199 @@ export default function App() {
         
         {/* VIEW ROUTING */}
         <div className="flex-1 overflow-y-auto">
-          <AnimatePresence mode="wait">
-
-
-          {activeTab === 'challenge' && (
+          <ErrorBoundary
+            isSubView
+            fallbackTitle="Screen Load Issue"
+            onRecover={() => {
+              stopSpeaking();
+              setActiveTab('sheeko');
+            }}
+          >
             <motion.div
-              key="challenge"
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -15 }}
-              transition={{ duration: 0.22 }}
-              className="w-full"
-            >
-              <ChallengeView
-                progress={progress}
-                onBack={() => setActiveTab('sheeko')}
-                onStartMyDay={() => {
-                  setActiveTab('sheeko');
-                  setMyDayStep('2_CHAT_INPUT');
-                }}
-                onStartPracticeQuestion={handleStartPractice}
-                onStartDrill={handleStartDrill}
-                onUpdateProgress={setProgress}
-              />
-            </motion.div>
-          )}
-
-          {activeTab === 'rocknroll' && (
-            <motion.div
-              key="rocknroll"
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -15 }}
-              transition={{ duration: 0.22 }}
-              className="w-full"
-            >
-              <RockAndRollContainer onBack={() => setActiveTab('sheeko')} />
-            </motion.div>
-          )}
-
-          {(activeTab === 'sheeko' || activeTab === 'myday') && (
-            <motion.div
-              key="sheeko"
+              key={activeTab}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.18 }}
-              className="w-full"
+              transition={{ duration: 0.15 }}
+              className="w-full min-h-full"
             >
-              <MyDayView
-                userName={progress.userName || 'Vikram'}
-                onUpdateUserName={handleUpdateUserName}
-                streakDays={progress.streakDays}
-                completedTaskIds={progress.myDayCompletedTasks || ['share_day', 'conversation']}
-                onToggleTaskCompleted={handleToggleMyDayTask}
-                onResetTasks={handleResetMyDayTasks}
-                onStartPractice={handleStartPractice}
-                onStartDrill={handleStartDrill}
-                initialMode={myDayInitialMode}
-                progress={progress}
-                onUpdateProgress={setProgress}
-                onStepChange={setMyDayStep}
-                onOpenRolePicker={() => setShowRolePicker(true)}
-                onOpenHelpRoadmap={() => setShowPurpose(true)}
-                onOpenLogin={() => setShowLogin(true)}
-                language={language}
-                onToggleLanguage={() => setLanguage((prev) => (prev === 'en' ? 'hi' : 'en'))}
-                onNavigateTab={(tab: string) => {
-                  if (tab === 'practice') {
-                    handleStartPractice();
-                  } else if (tab === 'fitness' || tab === 'dashboard') {
-                    setActiveTab('dashboard');
-                  } else if (tab === 'home' || tab === 'sheeko' || tab === 'myday') {
-                    setMyDayInitialMode('story');
-                    setActiveTab('sheeko');
-                  } else {
-                    setActiveTab(tab as any);
-                  }
-                }}
-              />
+              {(() => {
+                switch (activeTab) {
+                  case 'challenge':
+                    return (
+                      <ChallengeView
+                        progress={progress}
+                        onBack={() => setActiveTab('sheeko')}
+                        onStartMyDay={() => {
+                          setActiveTab('sheeko');
+                          setMyDayStep('2_CHAT_INPUT');
+                        }}
+                        onStartPracticeQuestion={handleStartPractice}
+                        onStartDrill={handleStartDrill}
+                        onUpdateProgress={setProgress}
+                      />
+                    );
+
+                  case 'rocknroll':
+                    return <RockAndRollContainer onBack={() => setActiveTab('sheeko')} />;
+
+                  case 'practice':
+                    return (
+                      <div className="w-full">
+                        {practiceStep === 'question' && (
+                          <QuestionScreen
+                            question={currentQuestion}
+                            onBack={() => {
+                              const fallback =
+                                returnTab === 'dashboard' || returnTab === 'fitness' ? 'sheeko' : (returnTab || 'sheeko');
+                              setActiveTab(fallback);
+                            }}
+                            onContinue={() => setPracticeStep('speak')}
+                            onShuffleQuestion={handleShuffleQuestion}
+                          />
+                        )}
+
+                        {practiceStep === 'speak' && (
+                          <SpeakScreen
+                            question={currentQuestion}
+                            onBack={() => setPracticeStep('question')}
+                            onSubmitAnswer={handleSubmitAnswer}
+                            isAnalyzing={isAnalyzing}
+                          />
+                        )}
+
+                        {practiceStep === 'result' && (
+                          analysisResult ? (
+                            <ResultScreen
+                              question={currentQuestion}
+                              result={analysisResult}
+                              onTryAgain={() => setPracticeStep('speak')}
+                              onNextQuestion={handleShuffleQuestion}
+                              onSavePhrase={handleToggleSavePhrase}
+                              isSaved={isCurrentPhraseSaved}
+                            />
+                          ) : (
+                            <QuestionScreen
+                              question={currentQuestion}
+                              onBack={() => {
+                                const fallback =
+                                  returnTab === 'dashboard' || returnTab === 'fitness' ? 'sheeko' : (returnTab || 'sheeko');
+                                setActiveTab(fallback);
+                              }}
+                              onContinue={() => setPracticeStep('speak')}
+                              onShuffleQuestion={handleShuffleQuestion}
+                            />
+                          )
+                        )}
+                      </div>
+                    );
+
+                  case 'dashboard':
+                  case 'fitness':
+                  case 'progress':
+                    return (
+                      <FitnessDashboardView
+                        progress={progress}
+                        onStartPractice={(q) => handleStartPractice(q, 'sheeko')}
+                        onStartDrill={(q) => handleStartDrill(q, 'sheeko')}
+                        onOpenBuddy={() => setActiveTab('buddy')}
+                        onOpenMyDay={() => {
+                          setMyDayInitialMode('story');
+                          setActiveTab('sheeko');
+                        }}
+                        onOpenPlayground={() => {
+                          setMyDayInitialMode('playground');
+                          setActiveTab('sheeko');
+                        }}
+                        onBack={() => {
+                          setMyDayInitialMode('story');
+                          setActiveTab('sheeko');
+                        }}
+                      />
+                    );
+
+                  case 'buddy':
+                  case 'course':
+                    return (
+                      <BuddyView
+                        onStartPractice={() => handleStartPractice()}
+                        onBack={() => setActiveTab('sheeko')}
+                        language={language}
+                      />
+                    );
+
+                  case 'snippets':
+                  case 'profile':
+                    return (
+                      <CourseView
+                        onStartPractice={(q) => handleStartPractice(q, 'snippets')}
+                      />
+                    );
+
+                  case 'discover':
+                    return (
+                      <MyDayPatternsHub
+                        onStartPracticeQuestion={(q) => handleStartPractice(q, 'discover')}
+                        onUsePatternForStory={() => {
+                          setMyDayInitialMode('story');
+                          setActiveTab('sheeko');
+                        }}
+                        onBackToBuddy={() => setActiveTab('sheeko')}
+                      />
+                    );
+
+                  case 'drill':
+                    return (
+                      <DrillView
+                        existingQuestion={currentQuestion}
+                        dayNumber={progress.streakDays || 1}
+                        onExit={() => {
+                          const fallback =
+                            returnTab === 'dashboard' || returnTab === 'fitness' ? 'sheeko' : (returnTab || 'sheeko');
+                          setActiveTab(fallback);
+                        }}
+                      />
+                    );
+
+                  case 'sheeko':
+                  case 'myday':
+                  default:
+                    return (
+                      <MyDayView
+                        userName={progress.userName || 'Vikram'}
+                        onUpdateUserName={handleUpdateUserName}
+                        streakDays={progress.streakDays}
+                        completedTaskIds={progress.myDayCompletedTasks || ['share_day', 'conversation']}
+                        onToggleTaskCompleted={handleToggleMyDayTask}
+                        onResetTasks={handleResetMyDayTasks}
+                        onStartPractice={handleStartPractice}
+                        onStartDrill={handleStartDrill}
+                        initialMode={myDayInitialMode}
+                        progress={progress}
+                        onUpdateProgress={setProgress}
+                        onStepChange={setMyDayStep}
+                        onOpenRolePicker={() => setShowRolePicker(true)}
+                        onOpenHelpRoadmap={() => setShowPurpose(true)}
+                        onOpenLogin={() => setShowLogin(true)}
+                        language={language}
+                        onToggleLanguage={() => setLanguage((prev) => (prev === 'en' ? 'hi' : 'en'))}
+                        onNavigateTab={(tab: string) => {
+                          if (tab === 'practice') {
+                            handleStartPractice();
+                          } else if (tab === 'fitness' || tab === 'dashboard') {
+                            setActiveTab('dashboard');
+                          } else if (tab === 'home' || tab === 'sheeko' || tab === 'myday') {
+                            setMyDayInitialMode('story');
+                            setActiveTab('sheeko');
+                          } else {
+                            setActiveTab(tab as any);
+                          }
+                        }}
+                      />
+                    );
+                }
+              })()}
             </motion.div>
-          )}
-
-          {activeTab === 'practice' && (
-            <motion.div
-              key={`practice-${practiceStep}`}
-              initial={{ opacity: 0, x: 10 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -10 }}
-              transition={{ duration: 0.2 }}
-              className="w-full"
-            >
-              {practiceStep === 'question' && (
-                <QuestionScreen
-                  question={currentQuestion}
-                  onBack={() => {
-                    const fallback = returnTab === 'dashboard' || returnTab === 'fitness' ? 'sheeko' : (returnTab || 'sheeko');
-                    setActiveTab(fallback);
-                  }}
-                  onContinue={() => setPracticeStep('speak')}
-                  onShuffleQuestion={handleShuffleQuestion}
-                />
-              )}
-
-              {practiceStep === 'speak' && (
-                <SpeakScreen
-                  question={currentQuestion}
-                  onBack={() => setPracticeStep('question')}
-                  onSubmitAnswer={handleSubmitAnswer}
-                  isAnalyzing={isAnalyzing}
-                />
-              )}
-
-              {practiceStep === 'result' && (
-                analysisResult ? (
-                  <ResultScreen
-                    question={currentQuestion}
-                    result={analysisResult}
-                    onTryAgain={() => setPracticeStep('speak')}
-                    onNextQuestion={handleShuffleQuestion}
-                    onSavePhrase={handleToggleSavePhrase}
-                    isSaved={isCurrentPhraseSaved}
-                  />
-                ) : (
-                  <QuestionScreen
-                    question={currentQuestion}
-                    onBack={() => {
-                      const fallback = returnTab === 'dashboard' || returnTab === 'fitness' ? 'sheeko' : (returnTab || 'sheeko');
-                      setActiveTab(fallback);
-                    }}
-                    onContinue={() => setPracticeStep('speak')}
-                    onShuffleQuestion={handleShuffleQuestion}
-                  />
-                )
-              )}
-            </motion.div>
-          )}
-
-
-
-          {(activeTab === 'dashboard' || activeTab === 'fitness') && (
-            <motion.div
-              key="dashboard"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.18 }}
-              className="w-full"
-            >
-              <FitnessDashboardView
-                progress={progress}
-                onStartPractice={(q) => handleStartPractice(q, 'sheeko')}
-                onStartDrill={(q) => handleStartDrill(q, 'sheeko')}
-                onOpenBuddy={() => setActiveTab('buddy')}
-                onOpenMyDay={() => {
-                  setMyDayInitialMode('story');
-                  setActiveTab('sheeko');
-                }}
-                onOpenPlayground={() => {
-                  setMyDayInitialMode('playground');
-                  setActiveTab('sheeko');
-                }}
-                onBack={() => {
-                  setMyDayInitialMode('story');
-                  setActiveTab('sheeko');
-                }}
-              />
-            </motion.div>
-          )}
-
-          {(activeTab === 'buddy' || activeTab === 'course') && (
-            <motion.div
-              key="buddy"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.18 }}
-              className="w-full"
-            >
-              <BuddyView
-                onStartPractice={() => handleStartPractice()}
-                onBack={() => setActiveTab('sheeko')}
-                language={language}
-              />
-            </motion.div>
-          )}
-
-          {(activeTab === 'snippets' || activeTab === 'profile') && (
-            <motion.div
-              key="snippets"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.18 }}
-              className="w-full"
-            >
-              <CourseView
-                onStartPractice={(q) => handleStartPractice(q, 'snippets')}
-              />
-            </motion.div>
-          )}
-
-          {activeTab === 'drill' && (
-            <motion.div
-              key="drill"
-              initial={{ opacity: 0, scale: 0.98 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.98 }}
-              transition={{ duration: 0.18 }}
-              className="w-full"
-            >
-              <DrillView
-                existingQuestion={currentQuestion}
-                dayNumber={progress.streakDays || 1}
-                onExit={() => {
-                  const fallback = returnTab === 'dashboard' || returnTab === 'fitness' ? 'sheeko' : (returnTab || 'sheeko');
-                  setActiveTab(fallback);
-                }}
-              />
-            </motion.div>
-          )}
-        </AnimatePresence>
+          </ErrorBoundary>
         </div>
 
         {shouldShowBottomNav && (

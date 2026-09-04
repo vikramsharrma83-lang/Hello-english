@@ -20,6 +20,7 @@ import {
   BellOff,
   CheckCircle,
   Video,
+  Compass,
 } from 'lucide-react';
 import { ConversationTurn, PracticeHistoryItem, DayMap, UserProgress } from '../../types';
 import { getTranslation } from '../../lib/translations';
@@ -32,6 +33,8 @@ import {
   isRemindersMuted,
   setRemindersMuted,
 } from '../../utils/reminderManager';
+import { playFixedAudio, stopSpeaking } from '../../utils/audio';
+import { AudioMuteButton } from '../AudioMuteButton';
 
 interface HomePageProps {
   onStart: () => void;
@@ -57,6 +60,7 @@ interface HomePageProps {
 export const HomePage: React.FC<HomePageProps> = ({
   onStart,
   onOpenPlayground,
+  onOpenPatternLibrary,
   onOpenChallenge,
   onOpenRockRoll,
   onOpenHelpRoadmap,
@@ -91,6 +95,17 @@ export const HomePage: React.FC<HomePageProps> = ({
     setMuteToast('On-screen notifications enabled.');
     setTimeout(() => setMuteToast(null), 2500);
   };
+
+  useEffect(() => {
+    if (showActionMenu) {
+      playFixedAudio('F_rock_and_roll_roleplay.mp3');
+    } else {
+      stopSpeaking();
+    }
+    return () => {
+      stopSpeaking();
+    };
+  }, [showActionMenu]);
 
   useEffect(() => {
     setHasIncompletePlayground(isPlaygroundActiveAndIncomplete());
@@ -372,8 +387,10 @@ export const HomePage: React.FC<HomePageProps> = ({
           )}
         </div>
 
-        {/* Controls: Language, Guide, Rock & Roll */}
+        {/* Controls: Language, Guide, Audio Mute, Rock & Roll */}
         <div className="flex items-center gap-1.5">
+          <AudioMuteButton size="sm" variant="glass" />
+
           {onToggleLanguage && (
             <button
               onClick={onToggleLanguage}
@@ -419,12 +436,15 @@ export const HomePage: React.FC<HomePageProps> = ({
                 >
                   <div className="flex items-center justify-between pb-1.5 mb-2 border-b border-slate-800">
                     <span className="text-[10px] font-bold text-amber-400 uppercase tracking-wider">Rock & Roll Sectors</span>
-                    <button 
-                      onClick={() => setShowActionMenu(false)}
-                      className="text-slate-400 hover:text-white p-0.5 rounded-full hover:bg-slate-800 transition-colors"
-                    >
-                      <X className="w-3.5 h-3.5" />
-                    </button>
+                    <div className="flex items-center gap-1">
+                      <AudioMuteButton size="sm" variant="glass" className="w-6 h-6" />
+                      <button 
+                        onClick={() => setShowActionMenu(false)}
+                        className="text-slate-400 hover:text-white p-0.5 rounded-full hover:bg-slate-800 transition-colors"
+                      >
+                        <X className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
                   </div>
                   <div className="grid grid-cols-2 gap-1.5">
                     <button

@@ -8,26 +8,28 @@ interface SplashScreenProps {
 
 export const SplashScreen: React.FC<SplashScreenProps> = ({ onFinish }) => {
   const [zoomComplete, setZoomComplete] = useState(false);
-  const [isExiting, setIsExiting] = useState(false);
+  const onFinishRef = React.useRef(onFinish);
+  onFinishRef.current = onFinish;
+  const finishedRef = React.useRef(false);
 
   const handleFinish = React.useCallback(() => {
-    if (isExiting) return;
-    setIsExiting(true);
-    setTimeout(() => {
-      onFinish();
-    }, 300);
-  }, [isExiting, onFinish]);
+    if (finishedRef.current) return;
+    finishedRef.current = true;
+    if (onFinishRef.current) {
+      onFinishRef.current();
+    }
+  }, []);
 
   useEffect(() => {
-    // Zoom-in finishes after 700ms
+    // Zoom-in finishes after 500ms
     const zoomTimer = setTimeout(() => {
       setZoomComplete(true);
-    }, 700);
+    }, 500);
 
-    // Auto-advance after 2200ms
+    // Auto-advance after 1400ms
     const autoFinishTimer = setTimeout(() => {
       handleFinish();
-    }, 2200);
+    }, 1400);
 
     return () => {
       clearTimeout(zoomTimer);
@@ -37,13 +39,10 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({ onFinish }) => {
 
   return (
     <motion.div
-      initial={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
-      animate={
-        isExiting
-          ? { opacity: 0, scale: 1.04, filter: 'blur(10px)' }
-          : { opacity: 1, scale: 1, filter: 'blur(0px)' }
-      }
-      transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+      initial={{ opacity: 1 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.2 }}
       onClick={handleFinish}
       className="fixed inset-0 z-50 flex flex-col items-center justify-between bg-slate-950 text-white cursor-pointer select-none overflow-hidden px-6 py-12"
     >

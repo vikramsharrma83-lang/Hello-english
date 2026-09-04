@@ -8,6 +8,7 @@ import {
   Trash2,
   ArrowRight,
   ArrowLeft,
+  ChevronLeft,
   Sparkles,
   CheckCircle2,
   TrendingUp,
@@ -276,6 +277,21 @@ export const ProgressView: React.FC<ProgressViewProps> = ({
                 </div>
               </motion.div>
             ))}
+          </div>
+        )}
+
+        {/* Apple Phone Style Round Dark Grey Back Button */}
+        {onBack && (
+          <div className="pt-6 pb-6 flex justify-center">
+            <button
+              type="button"
+              onClick={onBack}
+              className="inline-flex items-center justify-center gap-2.5 px-7 py-3.5 rounded-full bg-[#2c2c2e] hover:bg-[#38383a] active:bg-[#1f1f21] active:scale-95 border border-zinc-700/60 text-white text-sm font-semibold tracking-tight shadow-xl shadow-black/50 transition-all cursor-pointer"
+              aria-label="Back to Home"
+            >
+              <ChevronLeft className="w-4 h-4 stroke-[2.5] text-zinc-300" />
+              <span>Back to Home</span>
+            </button>
           </div>
         )}
       </div>

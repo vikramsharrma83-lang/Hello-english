@@ -17,7 +17,7 @@ import {
   Video
 } from 'lucide-react';
 import { DottedWaveBackground } from './DottedWaveBackground';
-import { getBestFemaleVoice } from '../utils/audio';
+import { getBestFemaleVoice, playFixedAudio, stopSpeaking, speakText } from '../utils/audio';
 
 interface AppPurposeScreenProps {
   onContinue: () => void;
@@ -142,10 +142,13 @@ export const AppPurposeScreen: React.FC<AppPurposeScreenProps> = ({ onContinue, 
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [isFinished, setIsFinished] = useState<boolean>(false);
 
-  const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
+  const audioElementRef = useRef<HTMLAudioElement | null>(null);
+  const intervalRef = useRef<number | null>(null);
+  const stepTimeoutsRef = useRef<number[]>([]);
   const isPlayingRef = useRef<boolean>(false);
   const stepTimeoutRef = useRef<number | null>(null);
   const heartbeatTimerRef = useRef<number | null>(null);
+  const hasPlayedRef = useRef<boolean>(false);
 
   const handleDismiss = () => {
     stopAudio();
@@ -153,82 +156,50 @@ export const AppPurposeScreen: React.FC<AppPurposeScreenProps> = ({ onContinue, 
     else onContinue();
   };
 
-  const getBestVoice = useCallback(() => {
-    return getBestFemaleVoice('hi-IN');
-  }, []);
-
-  const playSegment = useCallback((index: number) => {
-    if (index >= ONBOARDING_STEPS.length) {
-      // Completed all steps!
-      setIsPlaying(false);
-      isPlayingRef.current = false;
-      setIsFinished(true);
-      setCurrentStepIndex(ONBOARDING_STEPS.length - 1);
-      return;
-    }
-
-    const step = ONBOARDING_STEPS[index];
-    if (!step) return;
-
-    setCurrentStepIndex(index);
-    setIsFinished(false);
-
-    if (
-      typeof window === 'undefined' ||
-      !('speechSynthesis' in window) ||
-      typeof window.SpeechSynthesisUtterance === 'undefined'
-    ) {
-      setIsPlaying(false);
-      isPlayingRef.current = false;
-      return;
-    }
-
-    try {
-      // Cancel ongoing speech safely
-      window.speechSynthesis.cancel();
-
-      const utterance = new window.SpeechSynthesisUtterance(step.speechText);
-      utterance.lang = 'hi-IN';
-      utterance.rate = 0.92; // Comfortable, natural instructional cadence
-      utterance.pitch = 1.08; // Natural feminine voice tone
-
-      const voice = getBestVoice();
-      if (voice) utterance.voice = voice;
-
-      utteranceRef.current = utterance;
-
-      utterance.onend = () => {
-        // Natural 350ms breath before the current icon goes and the next relative icon comes
-        stepTimeoutRef.current = window.setTimeout(() => {
-          if (isPlayingRef.current) {
-            playSegment(index + 1);
-          }
-        }, 350);
-      };
-
-      utterance.onerror = (e) => {
-        if (e.error === 'interrupted' || e.error === 'canceled') return;
-        stepTimeoutRef.current = window.setTimeout(() => {
-          if (isPlayingRef.current) {
-            playSegment(index + 1);
-          }
-        }, 350);
-      };
-
-      window.speechSynthesis.speak(utterance);
-    } catch (err) {
-      console.warn('SpeechSynthesis playback prevented or unsupported:', err);
-      setIsPlaying(false);
-      isPlayingRef.current = false;
-    }
-  }, [getBestVoice]);
-
   const startAudio = useCallback((fromIndex = 0) => {
+    stopSpeaking();
+    setCurrentStepIndex(fromIndex);
     setIsPlaying(true);
     isPlayingRef.current = true;
     setIsFinished(false);
-    playSegment(fromIndex);
-  }, [playSegment]);
+
+    if (intervalRef.current) clearInterval(intervalRef.current);
+    stepTimeoutsRef.current.forEach(id => clearTimeout(id));
+    stepTimeoutsRef.current = [];
+
+    const duration = 18.5;
+    const durationMs = duration * 1000;
+
+    // Proportional duration distribution across the 6 onboarding steps (0 to 5)
+    const stepFractions = [0, 0.27, 0.54, 0.76, 0.98, 1.10];
+
+    stepFractions.forEach((fraction, idx) => {
+      if (idx <= fromIndex) return;
+      const delay = durationMs * fraction;
+      const timerId = window.setTimeout(() => {
+        if (isPlayingRef.current) {
+          setCurrentStepIndex(idx);
+        }
+      }, delay);
+      stepTimeoutsRef.current.push(timerId);
+    });
+
+    const audio = playFixedAudio(
+      '09_app_steps_intro.mp3',
+      undefined,
+      () => {
+        if (stepTimeoutRef.current) clearTimeout(stepTimeoutRef.current);
+        if (intervalRef.current) clearInterval(intervalRef.current);
+        stepTimeoutsRef.current.forEach(id => clearTimeout(id));
+        stepTimeoutsRef.current = [];
+        setIsPlaying(false);
+        isPlayingRef.current = false;
+        setIsFinished(true);
+        setCurrentStepIndex(ONBOARDING_STEPS.length - 1);
+      }
+    );
+    audioElementRef.current = audio;
+  }, []);
 
   const pauseAudio = useCallback(() => {
     setIsPlaying(false);
@@ -237,9 +208,13 @@ export const AppPurposeScreen: React.FC<AppPurposeScreenProps> = ({ onContinue, 
       clearTimeout(stepTimeoutRef.current);
       stepTimeoutRef.current = null;
     }
-    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
     }
+    stepTimeoutsRef.current.forEach(id => clearTimeout(id));
+    stepTimeoutsRef.current = [];
+    stopSpeaking();
   }, []);
 
   const stopAudio = useCallback(() => {
@@ -289,26 +264,34 @@ export const AppPurposeScreen: React.FC<AppPurposeScreenProps> = ({ onContinue, 
 
   // Preload speech synthesis voices
   useEffect(() => {
-    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-      window.speechSynthesis.getVoices();
-      const onVoicesChanged = () => {
+    try {
+      if (typeof window !== 'undefined' && window.speechSynthesis && typeof window.speechSynthesis.getVoices === 'function') {
         window.speechSynthesis.getVoices();
-      };
-      window.speechSynthesis.addEventListener('voiceschanged', onVoicesChanged);
-      return () => {
-        window.speechSynthesis.removeEventListener('voiceschanged', onVoicesChanged);
-      };
-    }
+        const onVoicesChanged = () => {
+          try {
+            window.speechSynthesis?.getVoices();
+          } catch (e) {}
+        };
+        window.speechSynthesis.addEventListener('voiceschanged', onVoicesChanged);
+        return () => {
+          try {
+            window.speechSynthesis?.removeEventListener('voiceschanged', onVoicesChanged);
+          } catch (e) {}
+        };
+      }
+    } catch (e) {}
   }, []);
 
   // Heartbeat to prevent Chrome's SpeechSynthesis timeout bug
   useEffect(() => {
     if (isPlaying) {
       heartbeatTimerRef.current = window.setInterval(() => {
-        if (typeof window !== 'undefined' && 'speechSynthesis' in window && window.speechSynthesis.speaking) {
-          window.speechSynthesis.pause();
-          window.speechSynthesis.resume();
-        }
+        try {
+          if (typeof window !== 'undefined' && window.speechSynthesis && window.speechSynthesis.speaking) {
+            window.speechSynthesis.pause();
+            window.speechSynthesis.resume();
+          }
+        } catch (e) {}
       }, 10000);
     } else {
       if (heartbeatTimerRef.current) {
@@ -325,6 +308,9 @@ export const AppPurposeScreen: React.FC<AppPurposeScreenProps> = ({ onContinue, 
 
   // Autoplay narration on screen entry
   useEffect(() => {
+    if (hasPlayedRef.current) return;
+    hasPlayedRef.current = true;
+
     const timer = window.setTimeout(() => {
       startAudio(0);
     }, 450);
@@ -334,9 +320,11 @@ export const AppPurposeScreen: React.FC<AppPurposeScreenProps> = ({ onContinue, 
       isPlayingRef.current = false;
       if (stepTimeoutRef.current) clearTimeout(stepTimeoutRef.current);
       if (heartbeatTimerRef.current) clearInterval(heartbeatTimerRef.current);
-      if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-        window.speechSynthesis.cancel();
-      }
+      try {
+        if (typeof window !== 'undefined' && window.speechSynthesis && typeof window.speechSynthesis.cancel === 'function') {
+          window.speechSynthesis.cancel();
+        }
+      } catch (e) {}
     };
   }, [startAudio]);
 
@@ -345,11 +333,7 @@ export const AppPurposeScreen: React.FC<AppPurposeScreenProps> = ({ onContinue, 
   const isLastStep = currentStepIndex === ONBOARDING_STEPS.length - 1;
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0, scale: 0.98 }}
-      transition={{ duration: 0.22 }}
+    <div
       className="fixed inset-0 z-50 bg-[#060a14] text-slate-100 flex flex-col items-center justify-between px-4 py-4 sm:py-6 overflow-hidden select-none font-sans"
     >
       {/* High-Pixel Dotted Gradient Wave Background */}
@@ -569,6 +553,6 @@ export const AppPurposeScreen: React.FC<AppPurposeScreenProps> = ({ onContinue, 
           )}
         </motion.button>
       </div>
-    </motion.div>
+    </div>
   );
 };

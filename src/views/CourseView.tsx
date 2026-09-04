@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   BookOpen, 
@@ -14,7 +14,8 @@ import {
 } from 'lucide-react';
 import { Question } from '../types';
 import { PRACTICE_QUESTIONS } from '../data/questions';
-import { speakText } from '../utils/audio';
+import { speakText, playFixedAudio, stopSpeaking } from '../utils/audio';
+import { AudioMuteButton } from '../components/AudioMuteButton';
 
 interface CourseViewProps {
   onStartPractice: (question?: Question) => void;
@@ -219,6 +220,17 @@ export const CourseView: React.FC<CourseViewProps> = ({ onStartPractice }) => {
     },
   ];
 
+  useEffect(() => {
+    stopSpeaking();
+    if (!activeSubModule) {
+      playFixedAudio('B_byte_learning_hub.mp3');
+    }
+
+    return () => {
+      stopSpeaking();
+    };
+  }, [activeSubModule]);
+
   const filteredModules = selectedCategory 
     ? courseModules.filter(m => m.category === selectedCategory)
     : courseModules;
@@ -249,7 +261,7 @@ export const CourseView: React.FC<CourseViewProps> = ({ onStartPractice }) => {
             <span className="text-[10px] uppercase font-bold text-rose-500 tracking-wider">SkillGo Snippet Lesson</span>
             <h2 className="text-sm font-bold text-white truncate max-w-[200px]">{activeSubModule.title}</h2>
           </div>
-          <div className="w-10" />
+          <AudioMuteButton size="sm" variant="glass" />
         </div>
 
         {lessonStep === 'how_to_use' && (
@@ -512,11 +524,12 @@ export const CourseView: React.FC<CourseViewProps> = ({ onStartPractice }) => {
 
   return (
     <div className="min-h-screen bg-[#000000] text-white pb-36 pt-4 px-4 font-sans select-none">
-      <header className="mb-6 px-2">
+      <header className="mb-6 px-2 flex items-center justify-between">
         <h1 className="text-3xl font-black tracking-tight flex items-center gap-2">
           <span className="text-rose-500">SkillGo</span>
           <span className="text-white">Hub</span>
         </h1>
+        <AudioMuteButton size="sm" variant="glass" />
       </header>
 
       <div className="space-y-6 max-w-xl mx-auto">

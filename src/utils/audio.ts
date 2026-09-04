@@ -6,20 +6,27 @@
 class SoundFx {
   private ctx: AudioContext | null = null;
 
-  private getContext(): AudioContext {
-    if (!this.ctx) {
-      const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
-      this.ctx = new AudioCtx();
+  private getContext(): AudioContext | null {
+    try {
+      if (typeof window === 'undefined') return null;
+      if (!this.ctx) {
+        const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
+        if (!AudioCtx) return null;
+        this.ctx = new AudioCtx();
+      }
+      if (this.ctx && this.ctx.state === 'suspended') {
+        this.ctx.resume().catch(() => {});
+      }
+      return this.ctx;
+    } catch (e) {
+      return null;
     }
-    if (this.ctx.state === 'suspended') {
-      this.ctx.resume();
-    }
-    return this.ctx;
   }
 
   playBubbleStart() {
     try {
       const ctx = this.getContext();
+      if (!ctx) return;
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
       osc.type = 'sine';
@@ -32,13 +39,14 @@ class SoundFx {
       osc.start();
       osc.stop(ctx.currentTime + 0.16);
     } catch (e) {
-      console.log('Audio fx ignored');
+      // Audio fx ignored safely
     }
   }
 
   playBubblePop() {
     try {
       const ctx = this.getContext();
+      if (!ctx) return;
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
       osc.type = 'sine';
@@ -51,13 +59,14 @@ class SoundFx {
       osc.start();
       osc.stop(ctx.currentTime + 0.09);
     } catch (e) {
-      console.log('Audio fx ignored');
+      // Audio fx ignored safely
     }
   }
 
   playSuccessChime() {
     try {
       const ctx = this.getContext();
+      if (!ctx) return;
       const now = ctx.currentTime;
       [523.25, 659.25, 783.99, 1046.5].forEach((freq, i) => {
         const osc = ctx.createOscillator();
@@ -72,7 +81,7 @@ class SoundFx {
         osc.stop(now + i * 0.08 + 0.3);
       });
     } catch (e) {
-      console.log('Audio fx ignored');
+      // Audio fx ignored safely
     }
   }
 }
@@ -266,64 +275,199 @@ export function getBestFemaleVoice(
   return pool[0] || null;
 }
 
+/**
+ * Strips emojis, UI keywords, quotes, markdown formatting, and symbols
+ * so the TTS engine speaks naturally like a human instead of reading emojis
+ * ("smiling face with smiling eyes", "clapping hands sign") or punctuation like a robot.
+ */
+export function cleanTextForSpeech(raw: string): string {
+  if (!raw) return '';
+  let text = raw;
+
+  // Strip UI label prefixes if present
+  text = text.replace(/^(Buddy|Coach Neha|Assistant|Learner|User):\s*/i, '');
+  text = text.replace(/(Natural Phrasing|Suggested Answer|Correct Sentence|Grammar Correction):\s*/gi, '');
+
+  // Strip markdown styling: headers, asterisks, underscores, backticks, tildes
+  text = text.replace(/[*_~#`]/g, '');
+
+  // Strip all emojis (Unicode ranges and pictographs)
+  // This prevents Web Speech API and TTS models from saying "smiling face with smiling eyes", "clapping hands sign", etc.
+  text = text.replace(/[\u{1F300}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F000}-\u{1F02F}\u{1F0A0}-\u{1F0FF}\u{1F100}-\u{1F64F}\u{1F680}-\u{1F6FF}\u{1FA00}-\u{1FAFF}]/gu, '');
+  try {
+    text = text.replace(/\p{Extended_Pictographic}/gu, '');
+  } catch (e) {}
+
+  // Replace single and double quotes so TTS doesn't read aloud "single quote ... end single quote"
+  text = text.replace(/['"“”‘’]/g, '');
+
+  // Replace colons followed by a space with a comma so speech pauses naturally rather than saying "colon"
+  text = text.replace(/:\s+/g, ', ');
+
+  // Clean brackets and parentheses
+  text = text.replace(/[()[\]{}]/g, ' ');
+
+  // Collapse consecutive whitespaces and trim
+  text = text.replace(/\s+/g, ' ').trim();
+
+  return text;
+}
+
+export function getPreferredVoice(): string {
+  try {
+    return localStorage.getItem('buddy_preferred_voice') || 'ritu';
+  } catch (e) {
+    return 'ritu';
+  }
+}
+
+export function setPreferredVoice(voice: string) {
+  try {
+    localStorage.setItem('buddy_preferred_voice', voice);
+  } catch (e) {}
+}
+
+const AUDIO_MUTED_KEY = 'app_audio_muted';
+let isMutedState = typeof window !== 'undefined' ? localStorage.getItem(AUDIO_MUTED_KEY) === 'true' : false;
+
+export function isAudioMuted(): boolean {
+  if (typeof window !== 'undefined') {
+    return localStorage.getItem(AUDIO_MUTED_KEY) === 'true';
+  }
+  return isMutedState;
+}
+
+export function setAudioMuted(muted: boolean): void {
+  isMutedState = muted;
+  if (typeof window !== 'undefined') {
+    localStorage.setItem(AUDIO_MUTED_KEY, muted ? 'true' : 'false');
+    window.dispatchEvent(new CustomEvent('app_audio_mute_change', { detail: { muted } }));
+  }
+  if (muted) {
+    stopSpeaking();
+  }
+}
+
+export function toggleAudioMute(): boolean {
+  const next = !isAudioMuted();
+  setAudioMuted(next);
+  return next;
+}
+
+let activeSpeakSessionId = 0;
+
 // Speech Synthesis & Natural Audio Helper
 export async function speakText(
-  text: string,
+  rawText: string,
   lang: 'en-IN' | 'en-US' | 'hi-IN' = 'en-IN',
   rate: number = 0.93,
-  onEnd?: () => void
+  onEnd?: () => void,
+  customSpeaker?: string
 ): Promise<boolean> {
-  // Stop any active audio / speech first
-  stopSpeaking();
+  try {
+    if (isAudioMuted()) {
+      if (onEnd) onEnd();
+      return false;
+    }
 
-  if (!text || !text.trim()) {
+    // Stop any active audio / speech first and invalidate in-flight fetches
+    stopSpeaking();
+    const sessionId = ++activeSpeakSessionId;
+
+    const text = cleanTextForSpeech(rawText);
+
+    if (!text || !text.trim()) {
+      if (onEnd) onEnd();
+      return false;
+    }
+
+    const isHindiText = /[\u0900-\u097F]/.test(text) || lang.startsWith('hi');
+    const targetLang = isHindiText ? 'hi-IN' : 'en-IN';
+
+    const speaker = customSpeaker || getPreferredVoice();
+
+    // If user selected browser native voice, use browser SpeechSynthesis directly
+    if (speaker === 'browser') {
+      return fallbackBrowserSpeak(text, targetLang, rate, onEnd);
+    }
+
+    // Attempt 1: Try natural backend TTS (using locked Indian speaker "ritu" on bulbul:v3)
+    try {
+      const res = await fetch('/api/tts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          text,
+          lang: targetLang,
+          speaker: speaker || 'ritu',
+          pace: 0.94,
+          loudness: 1.0,
+        }),
+      });
+
+      // If another speech request was triggered while fetching, ignore this obsolete response
+      if (sessionId !== activeSpeakSessionId) {
+        return false;
+      }
+
+      if (res.ok) {
+        const data = await res.json();
+        if (sessionId !== activeSpeakSessionId) {
+          return false;
+        }
+
+        const audioSource = data.audioData || (data.audioBase64 ? `data:audio/wav;base64,${data.audioBase64}` : null);
+        if (audioSource && (data.success || data.audioData || data.audioBase64)) {
+          // Stop any intermediate audio before playing
+          if (currentAudioElement) {
+            try {
+              currentAudioElement.pause();
+              currentAudioElement.currentTime = 0;
+            } catch (_) {}
+            currentAudioElement = null;
+          }
+
+          const audio = new Audio(audioSource);
+          currentAudioElement = audio;
+          audio.playbackRate = rate;
+
+          audio.onended = () => {
+            if (currentAudioElement === audio) {
+              currentAudioElement = null;
+            }
+            if (onEnd) onEnd();
+          };
+
+          audio.onerror = () => {
+            if (currentAudioElement === audio) {
+              currentAudioElement = null;
+            }
+            fallbackBrowserSpeak(text, targetLang, rate, onEnd);
+          };
+
+          if (sessionId !== activeSpeakSessionId) {
+            return false;
+          }
+
+          await audio.play();
+          return true;
+        }
+      }
+    } catch (err) {
+      // Gracefully fallback to browser speech synthesis
+    }
+
+    if (sessionId !== activeSpeakSessionId) {
+      return false;
+    }
+
+    // Attempt 2: Fallback to high-quality browser SpeechSynthesis with female Indian voices
+    return fallbackBrowserSpeak(text, targetLang, rate, onEnd);
+  } catch (outerErr) {
+    console.warn('Unhandled speakText error intercepted safely:', outerErr);
     if (onEnd) onEnd();
     return false;
   }
-
-  const isHindiText = /[\u0900-\u097F]/.test(text) || lang.startsWith('hi');
-  const targetLang = isHindiText ? 'hi-IN' : 'en-IN';
-
-  // Attempt 1: Try natural backend TTS (using Sarvam Indian female speaker "meera")
-  try {
-    const res = await fetch('/api/tts', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        text,
-        lang: targetLang,
-        speaker: 'meera', // Female Indian speaker
-      }),
-    });
-
-    if (res.ok) {
-      const data = await res.json();
-      const audioSource = data.audioData || (data.audioBase64 ? `data:audio/wav;base64,${data.audioBase64}` : null);
-      if (audioSource && (data.success || data.audioData || data.audioBase64)) {
-        const audio = new Audio(audioSource);
-        currentAudioElement = audio;
-        audio.playbackRate = rate;
-
-        audio.onended = () => {
-          currentAudioElement = null;
-          if (onEnd) onEnd();
-        };
-
-        audio.onerror = () => {
-          currentAudioElement = null;
-          fallbackBrowserSpeak(text, targetLang, rate, onEnd);
-        };
-
-        await audio.play();
-        return true;
-      }
-    }
-  } catch (err) {
-    // Gracefully fallback to browser speech synthesis
-  }
-
-  // Attempt 2: Fallback to high-quality browser SpeechSynthesis with female Indian voices
-  return fallbackBrowserSpeak(text, targetLang, rate, onEnd);
 }
 
 // Fallback browser speech synthesis with strict female voice and warm natural pitch
@@ -333,13 +477,17 @@ function fallbackBrowserSpeak(
   rate: number = 0.93,
   onEnd?: () => void
 ): boolean {
-  if (!('speechSynthesis' in window)) {
+  if (typeof window === 'undefined' || !window.speechSynthesis || typeof window.speechSynthesis.speak !== 'function') {
     console.warn('SpeechSynthesis not supported in this browser.');
     if (onEnd) onEnd();
     return false;
   }
 
-  window.speechSynthesis.cancel();
+  try {
+    if (typeof window.speechSynthesis.cancel === 'function') {
+      window.speechSynthesis.cancel();
+    }
+  } catch (e) {}
 
   const isHindi = lang.startsWith('hi') || /[\u0900-\u097F]/.test(text);
   const targetLang = isHindi ? 'hi-IN' : 'en-IN';
@@ -369,11 +517,75 @@ function fallbackBrowserSpeak(
     if (onEnd) onEnd();
   };
 
-  window.speechSynthesis.speak(utterance);
-  return true;
+  try {
+    window.speechSynthesis.speak(utterance);
+    return true;
+  } catch (e) {
+    console.warn('Failed to call window.speechSynthesis.speak:', e);
+    activeUtterance = null;
+    if (onEnd) onEnd();
+    return false;
+  }
+}
+
+export function playFixedAudio(
+  filename: string,
+  onPlay?: () => void,
+  onEnded?: () => void
+): HTMLAudioElement | null {
+  if (isAudioMuted()) {
+    if (onEnded) onEnded();
+    return null;
+  }
+
+  try {
+    stopSpeaking();
+    let cleanPath = filename.trim();
+    if (cleanPath.startsWith('public/')) {
+      cleanPath = cleanPath.slice(6);
+    }
+    if (!cleanPath.startsWith('/')) {
+      cleanPath = cleanPath.startsWith('audio/fixed/') ? `/${cleanPath}` : `/audio/fixed/${cleanPath}`;
+    }
+    const audio = new Audio(cleanPath);
+    audio.preload = 'auto';
+    currentAudioElement = audio;
+
+    audio.onplay = () => {
+      if (onPlay) onPlay();
+    };
+
+    audio.onended = () => {
+      if (currentAudioElement === audio) {
+        currentAudioElement = null;
+      }
+      if (onEnded) onEnded();
+    };
+
+    audio.onerror = () => {
+      console.warn(`Fixed audio file ${cleanPath} not found or failed to play.`);
+      if (currentAudioElement === audio) {
+        currentAudioElement = null;
+      }
+      if (onEnded) onEnded();
+    };
+
+    audio.play().then(() => {
+      if (onPlay) onPlay();
+    }).catch(err => {
+      console.log('Fixed audio play prevented or failed (autoplay policy):', err);
+      if (onEnded) onEnded();
+    });
+    return audio;
+  } catch (e) {
+    console.warn('Failed to play fixed audio:', e);
+    if (onEnded) onEnded();
+    return null;
+  }
 }
 
 export function stopSpeaking() {
+  activeSpeakSessionId++;
   if (currentAudioElement) {
     try {
       currentAudioElement.pause();
@@ -381,9 +593,11 @@ export function stopSpeaking() {
     } catch (e) {}
     currentAudioElement = null;
   }
-  if ('speechSynthesis' in window) {
-    window.speechSynthesis.cancel();
-  }
+  try {
+    if (typeof window !== 'undefined' && window.speechSynthesis && typeof window.speechSynthesis.cancel === 'function') {
+      window.speechSynthesis.cancel();
+    }
+  } catch (e) {}
 }
 
 // Browser Speech Recognition Factory

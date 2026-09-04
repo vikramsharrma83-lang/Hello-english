@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { ArrowLeft, ChevronRight, MessageSquareCode } from 'lucide-react';
 import { motion } from 'motion/react';
 import { DottedWaveBackground } from '../components/DottedWaveBackground';
+import { playFixedAudio, stopSpeaking } from '../utils/audio';
+import { AudioMuteButton } from '../components/AudioMuteButton';
 
 const THEME_IMAGES: Record<string, string> = {
   pikku: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=800&q=80',
@@ -33,6 +35,13 @@ export const RockAndRollSituationsView: React.FC<{
 }> = ({ theme, onBack, onSelectChallenge }) => {
   const bannerImage = THEME_IMAGES[theme.bucketId] || 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=800&q=80';
 
+  useEffect(() => {
+    playFixedAudio('H_scenario_selection.mp3');
+    return () => {
+      stopSpeaking();
+    };
+  }, []);
+
   return (
     <div className="relative w-full min-h-screen bg-black text-white p-4 pt-8 pb-16 flex flex-col overflow-hidden">
       {/* Black & Slight Grey High-Pixel Dotted Wave Background */}
@@ -48,6 +57,8 @@ export const RockAndRollSituationsView: React.FC<{
             <ArrowLeft className="w-3.5 h-3.5" />
             <span>Back to Themes</span>
           </button>
+
+          <AudioMuteButton size="sm" variant="glass" />
         </div>
 
         {/* Theme Hero Banner Card with Real Image */}

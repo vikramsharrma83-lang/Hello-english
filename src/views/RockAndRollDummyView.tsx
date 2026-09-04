@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'motion/react';
 import { Sparkles, ArrowLeft } from 'lucide-react';
 import { DottedWaveBackground } from '../components/DottedWaveBackground';
+import { AudioMuteButton } from '../components/AudioMuteButton';
 
 export const RockAndRollDummyView: React.FC<{ profileName: string; onBack: () => void }> = ({ profileName, onBack }) => {
   return (
@@ -15,6 +16,10 @@ export const RockAndRollDummyView: React.FC<{ profileName: string; onBack: () =>
       >
         <ArrowLeft className="w-4 h-4" /> Back to Profiles
       </button>
+
+      <div className="absolute top-6 right-6 z-20">
+        <AudioMuteButton size="sm" variant="glass" />
+      </div>
 
       <motion.div 
         initial={{ opacity: 0, y: 15 }}

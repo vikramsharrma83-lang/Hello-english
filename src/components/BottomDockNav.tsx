@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { Activity, Compass, Sparkles, Footprints, Music, X } from 'lucide-react';
+import { Activity, Compass, Sparkles, Footprints, Music, X, User } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { getTranslation } from '../lib/translations';
 import { isPlaygroundActiveAndIncomplete } from '../utils/playgroundManager';
 
-export type NavTab = 'sheeko' | 'dashboard' | 'buddy' | 'snippets' | 'myday' | 'fitness' | 'course' | 'profile' | 'challenge' | 'drill' | 'rocknroll' | 'practice' | 'home' | 'progress';
+export type NavTab = 'sheeko' | 'dashboard' | 'buddy' | 'snippets' | 'myday' | 'fitness' | 'course' | 'profile' | 'challenge' | 'drill' | 'rocknroll' | 'practice' | 'home' | 'progress' | 'discover';
 
 interface BottomDockNavProps {
   activeTab: NavTab;
@@ -32,8 +32,8 @@ export const BottomDockNav: React.FC<BottomDockNavProps> = ({
 
   const popoutIcons: PopoutItem[] = [
     {
-      id: 'bytes',
-      label: 'Bytes',
+      id: 'discover',
+      label: 'Discover',
       Icon: Compass,
       gradient: 'from-sky-500 to-blue-600',
       ringColor: 'ring-sky-400/40',
@@ -77,9 +77,8 @@ export const BottomDockNav: React.FC<BottomDockNavProps> = ({
       onSelectTab('rocknroll');
     } else if (id === 'sheeko') {
       onSelectTab('challenge');
-    } else if (id === 'bytes') {
-      // Kept blank as requested
-      return;
+    } else if (id === 'discover' || id === 'bytes') {
+      onSelectTab('discover');
     }
   };
 
@@ -147,7 +146,7 @@ export const BottomDockNav: React.FC<BottomDockNavProps> = ({
         {/* Main Dock Navigation */}
         <nav
           aria-label="Main Navigation"
-          className="pointer-events-auto bg-[#101522]/95 backdrop-blur-2xl rounded-full px-6 py-2.5 border border-slate-800/60 flex items-center justify-between gap-6 sm:gap-8 shadow-2xl shadow-black/80 relative w-full max-w-sm"
+          className="pointer-events-auto bg-[#101522]/95 backdrop-blur-2xl rounded-full px-7 sm:px-8 py-2.5 border border-slate-800/60 flex items-center justify-between gap-6 sm:gap-8 shadow-2xl shadow-black/80 relative w-full max-w-xs sm:max-w-sm"
         >
           {/* 1. Summary */}
           <button
@@ -166,24 +165,7 @@ export const BottomDockNav: React.FC<BottomDockNavProps> = ({
             <span className="text-[10px] font-medium tracking-tight">{getTranslation(language, 'summary')}</span>
           </button>
 
-          {/* 2. Bytes */}
-          <button
-            onClick={() => {
-              setIsSheekoOpen(false);
-              onSelectTab('snippets');
-            }}
-            className={`flex flex-col items-center gap-1 transition-colors cursor-pointer ${
-              activeTab === 'snippets' || activeTab === 'profile' || activeTab === 'course'
-                ? 'text-slate-200'
-                : 'text-[#8A92A6] hover:text-slate-200'
-            }`}
-            title={getTranslation(language, 'bytes')}
-          >
-            <Compass className="w-5.5 h-5.5 stroke-[2]" />
-            <span className="text-[10px] font-medium tracking-tight">{getTranslation(language, 'bytes')}</span>
-          </button>
-
-          {/* 3. Big Sheeko Button */}
+          {/* 2. Sheeko Center Button */}
           <div className="relative flex flex-col items-center -mt-6">
             <motion.button
               whileHover={{ scale: 1.08, y: -2 }}
@@ -213,19 +195,17 @@ export const BottomDockNav: React.FC<BottomDockNavProps> = ({
             </span>
           </div>
 
-          {/* 4. Buddy */}
+          {/* 3. Profile (unattached icon) */}
           <button
+            type="button"
             onClick={() => {
               setIsSheekoOpen(false);
-              onSelectTab('buddy');
             }}
-            className={`flex flex-col items-center gap-1 transition-colors cursor-pointer ${
-              activeTab === 'buddy' ? 'text-slate-200' : 'text-[#8A92A6] hover:text-slate-200'
-            }`}
-            title="Buddy"
+            className="flex flex-col items-center gap-1 transition-colors cursor-pointer text-[#8A92A6] hover:text-slate-200"
+            title={getTranslation(language, 'profile')}
           >
-            <Footprints className="w-5.5 h-5.5 stroke-[2]" />
-            <span className="text-[10px] font-medium tracking-tight">buddy</span>
+            <User className="w-5.5 h-5.5 stroke-[2]" />
+            <span className="text-[10px] font-medium tracking-tight">{getTranslation(language, 'profile')}</span>
           </button>
         </nav>
       </div>

@@ -8,6 +8,7 @@ import { RockAndRollSummaryView } from './RockAndRollSummaryView';
 import { RockAndRollDashboard } from './RockAndRollDashboard';
 import { RockAndRollDummyView } from './RockAndRollDummyView';
 import { RockAndRollSession } from '../types/rockAndRollTypes';
+import { playFixedAudio, stopSpeaking } from '../utils/audio';
 
 export const RockAndRollContainer: React.FC<{ 
   onBack: () => void;
@@ -27,6 +28,19 @@ export const RockAndRollContainer: React.FC<{
       setDummyProfileName(initialDummyName);
     }
   }, [initialView, initialDummyName]);
+
+  React.useEffect(() => {
+    stopSpeaking();
+
+    // Play G_industry_selected.mp3 on the theme page where we see all the themes
+    if (['dashboard', 'retail-dashboard', 'supply-dashboard', 'dummy'].includes(view)) {
+      playFixedAudio('G_industry_selected.mp3');
+    }
+
+    return () => {
+      stopSpeaking();
+    };
+  }, [view]);
 
   const handleSelectTheme = (theme: any) => {
     setSelectedTheme(theme);

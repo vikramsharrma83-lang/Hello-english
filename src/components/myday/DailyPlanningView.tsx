@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import {
   Users,
@@ -21,6 +21,7 @@ import {
   getPlaygroundData,
 } from '../../utils/playgroundManager';
 import { ReminderSetupModal } from './ReminderSetupModal';
+import { playFixedAudio, stopSpeaking } from '../../utils/audio';
 
 interface DailyPlanningViewProps {
   onPlanCreated: () => void;
@@ -33,6 +34,13 @@ export const DailyPlanningView: React.FC<DailyPlanningViewProps> = ({
 }) => {
   const existingJourney = getSheekoJourney();
   const currentDailyPlan: PlaygroundPlan = getPlaygroundData();
+
+  useEffect(() => {
+    playFixedAudio('D_myday_journey.mp3');
+    return () => {
+      stopSpeaking();
+    };
+  }, []);
 
   // Selected journey length if first time
   const [selectedJourneyLength, setSelectedJourneyLength] = useState<3 | 4 | 5>(

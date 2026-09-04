@@ -18,6 +18,8 @@ import {
 } from 'lucide-react';
 import { Question } from '../../types';
 import { PRACTICE_QUESTIONS } from '../../data/questions';
+import { playFixedAudio, stopSpeaking } from '../../utils/audio';
+import { AudioMuteButton } from '../AudioMuteButton';
 
 interface MyDayPatternsHubProps {
   onStartPracticeQuestion: (question: Question) => void;
@@ -26,7 +28,7 @@ interface MyDayPatternsHubProps {
   hideNavigation?: boolean;
 }
 
-export type CategoryKey = 'workplace' | 'daily_routine' | 'friends';
+export type CategoryKey = 'workplace' | 'daily_routine' | 'friends' | 'logistics' | 'customer';
 export type LevelKey = 'Level 1' | 'Level 2' | 'Level 3';
 
 interface CategoryConfig {
@@ -88,7 +90,7 @@ const CATEGORIES: CategoryConfig[] = [
     icon: <Users className="w-7 h-7 text-white stroke-[2]" />,
   },
   {
-    id: 'workplace',
+    id: 'logistics',
     numBadge: '04',
     title: 'Logistics & Delivery',
     subtitle: 'Warehouse Dispatch & Field Customer Calls',
@@ -102,7 +104,7 @@ const CATEGORIES: CategoryConfig[] = [
     icon: <Truck className="w-7 h-7 text-white stroke-[2]" />,
   },
   {
-    id: 'daily_routine',
+    id: 'friends',
     numBadge: '05',
     title: 'Small Talk & Chat',
     subtitle: 'Spontaneous Daily Exchanges & Banter',
@@ -159,6 +161,12 @@ export const MyDayPatternsHub: React.FC<MyDayPatternsHubProps> = ({
   const [selectedCategory, setSelectedCategory] = useState<CategoryConfig | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    return () => {
+      stopSpeaking();
+    };
+  }, []);
 
   // Helper to pick a completely random question from the selected category + level
   const handleSelectRandomLevelQuestion = (level: LevelKey) => {
@@ -232,18 +240,31 @@ export const MyDayPatternsHub: React.FC<MyDayPatternsHubProps> = ({
       <div className="w-full min-h-screen bg-black text-white px-2 sm:px-6 pt-3 sm:pt-4 pb-32 select-none flex flex-col justify-between overflow-x-hidden">
         {/* Top iOS Header */}
         <div className="w-full max-w-lg mx-auto flex items-center justify-between z-20 pb-2 px-2">
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="text-[10px] font-black uppercase tracking-widest text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-500/20">
-                Pattern Library
-              </span>
+          <div className="flex items-center gap-2.5">
+            {onBackToBuddy && (
+              <button
+                onClick={onBackToBuddy}
+                className="p-1.5 -ml-1 rounded-full bg-zinc-900/80 hover:bg-zinc-800 border border-zinc-800 text-zinc-300 hover:text-white transition-colors cursor-pointer"
+                title="Back"
+                aria-label="Back"
+              >
+                <ArrowLeft className="w-4 h-4" />
+              </button>
+            )}
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] font-black uppercase tracking-widest text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-500/20">
+                  Pattern Library
+                </span>
+              </div>
+              <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white mt-1">
+                Discover
+              </h1>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white mt-1">
-              Discover
-            </h1>
           </div>
 
-          <div className="text-right">
+          <div className="flex items-center gap-2">
+            <AudioMuteButton size="sm" variant="glass" />
             <span className="text-xs font-mono text-zinc-400 font-bold bg-zinc-900/80 px-2.5 py-1 rounded-full border border-zinc-800">
               {activeIndex + 1} <span className="text-zinc-600">/</span> {CATEGORIES.length}
             </span>
@@ -474,7 +495,7 @@ export const MyDayPatternsHub: React.FC<MyDayPatternsHubProps> = ({
   // ==========================================
   return (
     <div className="w-full min-h-screen bg-black text-white px-4 sm:px-6 pt-3 pb-32 select-none">
-      {/* Top Header with Back to All Categories */}
+      {/* Top Header with Back to All Categories & Sound Control */}
       <div className="flex items-center justify-between mb-4">
         <button
           onClick={() => setSelectedCategory(null)}
@@ -483,6 +504,8 @@ export const MyDayPatternsHub: React.FC<MyDayPatternsHubProps> = ({
           <ArrowLeft className="w-4 h-4" />
           <span>Back to Discover</span>
         </button>
+
+        <AudioMuteButton size="sm" variant="glass" />
       </div>
 
       {/* Screen Title: Only Main Category Title */}

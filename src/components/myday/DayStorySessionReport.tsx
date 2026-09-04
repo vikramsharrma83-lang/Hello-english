@@ -206,6 +206,9 @@ export const DayStorySessionReport: React.FC<DayStorySessionReportProps> = ({
             return next;
           });
         })
+        .catch((err) => {
+          console.warn('Failed to refine story pairs safely:', err);
+        })
         .finally(() => {
           setIsRefiningPairs(false);
         });
