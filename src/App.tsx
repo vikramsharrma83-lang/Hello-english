@@ -57,9 +57,10 @@ const DEFAULT_PROGRESS: UserProgress = {
 };
 
 export default function App() {
-  const [showSplash, setShowSplash] = useState<boolean>(false);
+  const [showSplash, setShowSplash] = useState<boolean>(true);
   const [showPurpose, setShowPurpose] = useState<boolean>(false);
   const [showLogin, setShowLogin] = useState<boolean>(false);
+  const [isInitialFlow, setIsInitialFlow] = useState<boolean>(true);
   // Industry Role Picker State
   const [showRolePicker, setShowRolePicker] = useState<boolean>(false);
 
@@ -69,7 +70,11 @@ export default function App() {
   const [practiceStep, setPracticeStep] = useState<PracticeStep>('question');
   const [myDayStep, setMyDayStep] = useState<string>('1_HOME');
   const [myDayInitialMode, setMyDayInitialMode] = useState<'story' | 'patterns' | 'challenge' | 'playground'>('story');
-  const [language, setLanguage] = useState<'en' | 'hi'>('en');
+  const [language, setLanguage] = useState<'en' | 'hi'>(() => {
+    const saved = localStorage.getItem('preferred_language');
+    if (saved === 'en' || saved === 'hi') return saved;
+    return 'hi';
+  });
   
   // Current active question (Defaults to the Workplace Shift scenario as requested)
   const [currentQuestion, setCurrentQuestion] = useState<Question>(
@@ -312,6 +317,7 @@ export default function App() {
           <SplashScreen
             onFinish={() => {
               setShowSplash(false);
+              setShowPurpose(true);
             }}
           />
         )}
@@ -322,13 +328,21 @@ export default function App() {
           <AppPurposeScreen 
             onContinue={() => {
               setShowPurpose(false);
-              setShowLogin(false);
-              setActiveTab('myday');
+              if (isInitialFlow) {
+                setIsInitialFlow(false);
+                setShowLogin(true);
+              } else {
+                setActiveTab('myday');
+              }
             }} 
             onClose={() => {
               setShowPurpose(false);
-              setShowLogin(false);
-              setActiveTab('myday');
+              if (isInitialFlow) {
+                setIsInitialFlow(false);
+                setShowLogin(true);
+              } else {
+                setActiveTab('myday');
+              }
             }}
             onReplaySplash={() => {
               setShowPurpose(false);
@@ -548,10 +562,19 @@ export default function App() {
                         onUpdateProgress={setProgress}
                         onStepChange={setMyDayStep}
                         onOpenRolePicker={() => setShowRolePicker(true)}
-                        onOpenHelpRoadmap={() => setShowPurpose(true)}
+                        onOpenHelpRoadmap={() => {
+                          setIsInitialFlow(false);
+                          setShowPurpose(true);
+                        }}
                         onOpenLogin={() => setShowLogin(true)}
                         language={language}
-                        onToggleLanguage={() => setLanguage((prev) => (prev === 'en' ? 'hi' : 'en'))}
+                        onToggleLanguage={() => {
+                          setLanguage((prev) => {
+                            const next = prev === 'en' ? 'hi' : 'en';
+                            localStorage.setItem('preferred_language', next);
+                            return next;
+                          });
+                        }}
                         onNavigateTab={(tab: string) => {
                           if (tab === 'practice') {
                             handleStartPractice();

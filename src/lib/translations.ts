@@ -54,9 +54,9 @@ export const translations = {
     sheeko: 'Sheeko',
     buddy: 'Buddy',
     slide_to_start: 'स्लाइड करके शुरू करें',
-    good_morning: 'शुभ प्रभात (Good Morning)',
-    good_afternoon: 'शुभ दोपहर (Good Afternoon)',
-    good_evening: 'शुभ संध्या (Good Evening)',
+    good_morning: 'शुभ प्रभात',
+    good_afternoon: 'शुभ दोपहर',
+    good_evening: 'शुभ संध्या',
     share_day: 'कोच नेहा के साथ अपना दिन साझा करें',
     voice_practice: 'वॉइस अभ्यास',
     grammar_patterns: 'व्याकरण पैटर्न',
@@ -93,9 +93,9 @@ export const translations = {
     recent_activity: 'हाल की गतिविधियां',
     view_all: 'सभी देखें',
     start_session: 'सत्र शुरू करें',
-    start_my_day: 'Din ki suruat',
-    english_from_everywhere: 'English kahin se bhi',
-    real_english_sub: 'Asli zindagi ke liye real English. Seekhein, practice karein aur poore confidence se bolein—kabhi bhi, kahin bhi.',
+    start_my_day: 'दिन की शुरुआत करें',
+    english_from_everywhere: 'इंग्लिश कहीं से भी',
+    real_english_sub: 'असली ज़िंदगी के लिए रियल इंग्लिश। सीखें, अभ्यास करें और पूरे आत्मविश्वास से बोलें — कभी भी, कहीं भी।',
   }
 };
 

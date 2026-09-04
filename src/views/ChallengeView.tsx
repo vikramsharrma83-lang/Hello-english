@@ -149,15 +149,15 @@ export const ChallengeView: React.FC<ChallengeViewProps> = ({
             }
           }}
           className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-zinc-900/80 hover:bg-zinc-800 border border-zinc-800 text-zinc-200 hover:text-white transition-all cursor-pointer text-xs font-semibold active:scale-95 shadow-sm"
-          aria-label="Back"
+          aria-label="पीछे जाएं"
         >
           <ArrowLeft className="w-4 h-4 text-sky-400" />
-          <span>Back</span>
+          <span>पीछे जाएं</span>
         </button>
 
         <div className="flex items-center gap-1.5 text-xs font-black text-white bg-zinc-900/90 px-3.5 py-1 rounded-full border border-zinc-800 tracking-tight">
           <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
-          <span>{subView === 'carousel' ? 'Talk to me' : `${selectedPlan.days} Days`}</span>
+          <span>{subView === 'carousel' ? 'शीको जर्नी' : `${selectedPlan.days} दिन`}</span>
         </div>
 
         <div className="w-12" /> {/* spacer for alignment */}
@@ -167,8 +167,8 @@ export const ChallengeView: React.FC<ChallengeViewProps> = ({
       {subView === 'carousel' && (
         <main className="relative z-20 w-full max-w-lg mx-auto flex-1 flex flex-col justify-between py-2 px-3 sm:px-4">
           <div className="text-center pt-2 pb-1">
-            <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">Choose Days</h1>
-            <p className="text-xs text-zinc-400 mt-0.5">Select your challenge duration sprint</p>
+            <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">दिन चुनें</h1>
+            <p className="text-xs text-zinc-400 mt-0.5">अपनी सीखने की अवधि और दिनों का लक्ष्य चुनें</p>
           </div>
           <div
             onTouchStart={onTouchStart}
@@ -180,7 +180,7 @@ export const ChallengeView: React.FC<ChallengeViewProps> = ({
             <button
               onClick={handlePrev}
               className="absolute left-0 sm:left-2 top-1/2 -translate-y-1/2 z-40 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-zinc-900/80 hover:bg-zinc-800 border border-zinc-700/60 text-zinc-300 hover:text-white flex items-center justify-center cursor-pointer shadow-xl transition-all active:scale-95"
-              aria-label="Previous Talk to me Duration"
+              aria-label="पिछला"
             >
               <ChevronLeft className="w-5 h-5 stroke-[2.5]" />
             </button>
@@ -188,7 +188,7 @@ export const ChallengeView: React.FC<ChallengeViewProps> = ({
             <button
               onClick={handleNext}
               className="absolute right-0 sm:right-2 top-1/2 -translate-y-1/2 z-40 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-zinc-900/80 hover:bg-zinc-800 border border-zinc-700/60 text-zinc-300 hover:text-white flex items-center justify-center cursor-pointer shadow-xl transition-all active:scale-95"
-              aria-label="Next Talk to me Duration"
+              aria-label="अगला"
             >
               <ChevronRight className="w-5 h-5 stroke-[2.5]" />
             </button>
@@ -256,7 +256,7 @@ export const ChallengeView: React.FC<ChallengeViewProps> = ({
                             : 'text-zinc-600 bg-black/40'
                         }`}
                       >
-                        {plan.days} Days Sprint
+                        {plan.days} दिन का लक्ष्य
                       </span>
                     </div>
                   </motion.div>
@@ -269,13 +269,13 @@ export const ChallengeView: React.FC<ChallengeViewProps> = ({
           <div className="w-full flex flex-col items-center text-center mt-3 mb-2 space-y-3">
             <div className="flex flex-wrap items-center justify-center gap-2 pt-1">
               <span className="text-[11px] font-bold px-3 py-1 rounded-full bg-black/50 border border-zinc-800 text-zinc-300">
-                📖 {selectedPlan.storyTarget} Day Stories
+                📖 {selectedPlan.storyTarget} डे स्टोरीज़
               </span>
               <span className="text-[11px] font-bold px-3 py-1 rounded-full bg-black/50 border border-zinc-800 text-zinc-300">
-                🎙️ {selectedPlan.questionTarget} Coach Questions
+                🎙️ {selectedPlan.questionTarget} कोच सवाल
               </span>
               <span className="text-[11px] font-bold px-3 py-1 rounded-full bg-black/50 border border-zinc-800 text-emerald-400">
-                ⏱️ {selectedPlan.dailyTime}
+                ⏱️ {selectedPlan.dailyTime.replace('mins/day', 'मिनट / दिन').replace('mins per day', 'मिनट / दिन')}
               </span>
             </div>
           </div>
@@ -290,7 +290,7 @@ export const ChallengeView: React.FC<ChallengeViewProps> = ({
             <div className="flex items-center gap-3">
               <span className={`w-3.5 h-3.5 rounded-full ${activeChallenge.isStarted ? 'bg-emerald-400 shadow-[0_0_10px_#34d399]' : 'bg-red-500 shadow-[0_0_10px_#ef4444]'}`} />
               <h1 className="text-4xl sm:text-6xl font-black text-white tracking-tight">
-                {selectedPlan.days} Days
+                {selectedPlan.days} दिन
               </h1>
             </div>
           </div>
@@ -299,14 +299,14 @@ export const ChallengeView: React.FC<ChallengeViewProps> = ({
           <div className="bg-[#12131a]/80 backdrop-blur-md border border-white/[0.06] rounded-3xl p-5 shadow-2xl">
             <div className="flex items-center justify-between pb-3 mb-3 border-b border-white/[0.06]">
               <span className="text-xs font-bold uppercase tracking-widest text-zinc-400">
-                Daily Progress Overview
+                दैनिक प्रगति विवरण
               </span>
               <div className="flex items-center gap-2">
                 <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-[11px] font-bold text-emerald-400">
-                  {currentDoneActivities} Completed
+                  {currentDoneActivities} पूरे हुए
                 </span>
                 <span className="px-2.5 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-[11px] font-bold text-amber-400">
-                  {Math.max(0, totalTargetActivities - currentDoneActivities)} Pending
+                  {Math.max(0, totalTargetActivities - currentDoneActivities)} बाकी
                 </span>
               </div>
             </div>
@@ -342,7 +342,7 @@ export const ChallengeView: React.FC<ChallengeViewProps> = ({
                           {isDone ? '✓' : dayItem.day}
                         </div>
                         <span className={`text-[11px] font-medium ${isCurrent ? 'text-amber-400 font-semibold' : isDone ? 'text-emerald-400' : 'text-zinc-500'}`}>
-                          Day {dayItem.day}
+                          दिन {dayItem.day}
                         </span>
                       </button>
                     );
@@ -371,7 +371,7 @@ export const ChallengeView: React.FC<ChallengeViewProps> = ({
                 </div>
                 <div>
                   <h3 className="text-sm font-black text-white tracking-tight group-hover:text-purple-300 transition-colors whitespace-nowrap">
-                    Practice Today's Story & Drills
+                    आज की स्टोरी और ड्रिल्स का अभ्यास करें
                   </h3>
                 </div>
               </div>
@@ -388,10 +388,10 @@ export const ChallengeView: React.FC<ChallengeViewProps> = ({
         <main className="relative z-20 w-full max-w-sm mx-auto flex-1 flex flex-col py-3 px-3 space-y-4 justify-center">
           <div className="px-1 pt-1 text-center">
             <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
-              Day {activeChallenge.currentDay || 1} Training
+              दिन {activeChallenge.currentDay || 1} का अभ्यास
             </h1>
             <p className="text-xs font-semibold text-zinc-400 mt-0.5">
-              Select module to practice
+              अभ्यास के लिए मॉड्यूल चुनें
             </p>
           </div>
 
@@ -414,20 +414,20 @@ export const ChallengeView: React.FC<ChallengeViewProps> = ({
                   <Sparkles className="w-5 h-5" />
                 </div>
                 <span className="text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-full bg-zinc-900 text-sky-300 border border-zinc-800">
-                  {currentDoneActivities} / {totalTargetActivities} Done
+                  {currentDoneActivities} / {totalTargetActivities} पूर्ण
                 </span>
               </div>
 
               <div>
                 <h3 className="text-xl font-black text-white tracking-tight group-hover:text-sky-300 transition-colors">
-                  Drills
+                  ड्रिल्स (Drills)
                 </h3>
               </div>
 
               {/* Smart Progress Linear Bar */}
               <div className="mt-4 space-y-1.5">
                 <div className="flex justify-between text-[11px] text-zinc-400 font-bold">
-                  <span>Smart Progress</span>
+                  <span>स्मार्ट प्रोग्रेस</span>
                   <span>{Math.round((currentDoneActivities / Math.max(1, totalTargetActivities)) * 100)}%</span>
                 </div>
                 <div className="w-full h-2 bg-zinc-800 rounded-full overflow-hidden">
@@ -451,13 +451,13 @@ export const ChallengeView: React.FC<ChallengeViewProps> = ({
                   <BookOpen className="w-5 h-5" />
                 </div>
                 <span className="text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-full bg-zinc-800/80 text-purple-300 border border-zinc-700">
-                  Active
+                  सक्रिय
                 </span>
               </div>
 
               <div>
                 <h3 className="text-xl font-black text-white tracking-tight group-hover:text-purple-300 transition-colors">
-                  Day story
+                  डे स्टोरी (Day Story)
                 </h3>
               </div>
             </motion.div>
@@ -496,24 +496,24 @@ export const ChallengeView: React.FC<ChallengeViewProps> = ({
                 <div>
                   <div className="flex items-center gap-2">
                     <span className="text-sm font-extrabold text-white">
-                      {selectedDayDetail.dayLabel} Activities
+                      {selectedDayDetail.dayLabel.replace('Day', 'दिन')} की गतिविधियां
                     </span>
                     {selectedDayDetail.isCompleted ? (
                       <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-950 text-emerald-400 border border-emerald-800/60">
-                        Completed
+                        पूर्ण
                       </span>
                     ) : selectedDayDetail.isCurrent ? (
                       <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-900/40 text-emerald-300 border border-emerald-700/50">
-                        Active Today
+                        आज सक्रिय
                       </span>
                     ) : (
                       <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-400">
-                        Upcoming
+                        आगामी
                       </span>
                     )}
                   </div>
                   <span className="text-xs text-zinc-400 block mt-0.5">
-                    Target: 1 My Day Story + 20 Speaking Drills
+                    लक्ष्य: 1 डे स्टोरी + 20 स्पीकिंग ड्रिल्स
                   </span>
                 </div>
                 <button
@@ -527,7 +527,7 @@ export const ChallengeView: React.FC<ChallengeViewProps> = ({
               <div className="py-4 space-y-2.5">
                 <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400 flex items-center gap-1.5">
                   <ListChecks className="w-3.5 h-3.5 text-zinc-400" />
-                  <span>Tasks on {selectedDayDetail.dayLabel}</span>
+                  <span>{selectedDayDetail.dayLabel.replace('Day', 'दिन')} के कार्य</span>
                 </span>
 
                 {selectedDayDetail.completedActivities && selectedDayDetail.completedActivities.length > 0 ? (
@@ -545,10 +545,10 @@ export const ChallengeView: React.FC<ChallengeViewProps> = ({
                 ) : (
                   <div className="p-4 rounded-2xl bg-black/30 border border-zinc-800/70 text-center text-xs text-zinc-400">
                     {selectedDayDetail.isCompleted
-                      ? 'All required activities for this day are marked completed.'
+                      ? 'इस दिन की सभी आवश्यक गतिविधियां पूरी हो चुकी हैं।'
                       : selectedDayDetail.isCurrent
-                      ? 'You are currently practicing for today. Complete 1 My Day Story and Coach Neha questions to mark this day complete.'
-                      : 'This day will unlock once previous days are completed.'}
+                      ? 'आप आज का अभ्यास कर रहे हैं। इस दिन को पूरा करने के लिए 1 डे स्टोरी और कोच सवालों को पूरा करें।'
+                      : 'यह दिन पिछले दिनों के पूरे होने पर खुलेगा।'}
                   </div>
                 )}
               </div>
@@ -558,7 +558,7 @@ export const ChallengeView: React.FC<ChallengeViewProps> = ({
                   onClick={() => setSelectedDayDetail(null)}
                   className="flex-1 py-2.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-xs font-bold transition-all cursor-pointer"
                 >
-                  Close
+                  बंद करें
                 </button>
                 {selectedDayDetail.isCurrent && (
                   <button
@@ -569,7 +569,7 @@ export const ChallengeView: React.FC<ChallengeViewProps> = ({
                     className="flex-1 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-sm"
                   >
                     <Play className="w-3 h-3 fill-current" />
-                    <span>Practice Now</span>
+                    <span>अभी अभ्यास करें</span>
                   </button>
                 )}
               </div>

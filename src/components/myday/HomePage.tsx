@@ -85,14 +85,14 @@ export const HomePage: React.FC<HomePageProps> = ({
     setRemindersMuted(true);
     setIsMuted(true);
     setActiveDueReminder(null);
-    setMuteToast('Notifications muted. Reminders will not pop up on screen.');
+    setMuteToast(language === 'hi' ? 'नोटिफिकेशन्स म्यूट कर दिए गए।' : 'Notifications muted. Reminders will not pop up on screen.');
     setTimeout(() => setMuteToast(null), 3200);
   };
 
   const handleUnmuteOnScreen = () => {
     setRemindersMuted(false);
     setIsMuted(false);
-    setMuteToast('On-screen notifications enabled.');
+    setMuteToast(language === 'hi' ? 'स्क्रीन नोटिफिकेशन्स चालू कर दिए गए।' : 'On-screen notifications enabled.');
     setTimeout(() => setMuteToast(null), 2500);
   };
 
@@ -228,13 +228,13 @@ export const HomePage: React.FC<HomePageProps> = ({
                     <Bell className="w-3.5 h-3.5 text-white drop-shadow-[0_1px_1px_rgba(0,0,0,0.3)] relative z-10" />
                   </div>
                   <span className="text-[11px] font-semibold text-zinc-600 dark:text-zinc-300 tracking-wider uppercase">
-                    HELLO ENGLISH
+                    {language === 'hi' ? 'हेलो इंग्लिश' : 'HELLO ENGLISH'}
                   </span>
                 </div>
 
                 <div className="flex items-center gap-1.5">
                   <span className="text-[11px] font-normal text-zinc-400 dark:text-zinc-500">
-                    now
+                    {language === 'hi' ? 'अभी' : 'now'}
                   </span>
                   <button
                     onClick={(e) => {
@@ -242,7 +242,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                       handleMuteOnScreen();
                     }}
                     className="p-1 rounded-full text-zinc-400 hover:text-amber-500 transition-colors cursor-pointer"
-                    title="Mute notifications (Don't show on screen)"
+                    title={language === 'hi' ? 'नोटिफिकेशन म्यूट करें' : "Mute notifications (Don't show on screen)"}
                     aria-label="Mute notifications"
                   >
                     <BellOff className="w-3.5 h-3.5" />
@@ -253,7 +253,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                       setActiveDueReminder(null);
                     }}
                     className="p-1 rounded-full text-zinc-400 hover:text-zinc-700 dark:hover:text-white transition-colors cursor-pointer"
-                    title="Dismiss"
+                    title={language === 'hi' ? 'हटाएं' : 'Dismiss'}
                     aria-label="Dismiss notification"
                   >
                     <X className="w-3.5 h-3.5" />
@@ -267,14 +267,18 @@ export const HomePage: React.FC<HomePageProps> = ({
                 className="cursor-pointer"
               >
                 <h4 className="text-[14px] sm:text-[15px] font-semibold text-zinc-900 dark:text-white tracking-tight leading-snug">
-                  Your reminder is here
+                  {language === 'hi' ? 'आपका रिमाइंडर आ गया है' : 'Your reminder is here'}
                 </h4>
                 <p className="text-[12.5px] sm:text-[13px] text-zinc-600 dark:text-zinc-200 mt-0.5 leading-snug">
-                  You planned to practise at {activeDueReminder.timeStr}.
+                  {language === 'hi'
+                    ? `आपने ${activeDueReminder.timeStr} बजे अभ्यास करने की योजना बनाई थी।`
+                    : `You planned to practise at ${activeDueReminder.timeStr}.`}
                 </p>
                 {hasIncompletePlayground && (
                   <p className="text-[11.5px] sm:text-[12px] text-sky-600 dark:text-sky-300 mt-1 font-medium">
-                    You have activities waiting in your Playground.
+                    {language === 'hi'
+                      ? 'आपके प्लेग्राउंड में गतिविधियां प्रतीक्षारत हैं।'
+                      : 'You have activities waiting in your Playground.'}
                   </p>
                 )}
               </div>
@@ -285,7 +289,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                   onClick={onStart}
                   className="px-3.5 py-1.5 rounded-full bg-[#0071e3] hover:bg-[#0077ed] text-white font-medium text-xs transition-transform active:scale-95 flex items-center gap-1.5 cursor-pointer shadow-sm shadow-blue-500/25"
                 >
-                  <span>Continue Playing</span>
+                  <span>{language === 'hi' ? 'अभ्यास जारी रखें' : 'Continue Playing'}</span>
                   <ArrowRight className="w-3 h-3" />
                 </button>
 
@@ -296,10 +300,10 @@ export const HomePage: React.FC<HomePageProps> = ({
                       handleMuteOnScreen();
                     }}
                     className="px-2.5 py-1.5 rounded-full bg-zinc-100 hover:bg-zinc-200 dark:bg-white/10 dark:hover:bg-white/15 text-zinc-700 dark:text-zinc-200 hover:text-amber-600 dark:hover:text-amber-300 text-xs font-medium cursor-pointer transition-colors flex items-center gap-1.5"
-                    title="Mute notifications (Don't show notification on screen)"
+                    title={language === 'hi' ? 'स्क्रीन पर नोटिफिकेशन न दिखाएं' : "Mute notifications (Don't show notification on screen)"}
                   >
                     <BellOff className="w-3 h-3 text-amber-500" />
-                    <span>Don't show notification</span>
+                    <span>{language === 'hi' ? 'नोटिफिकेशन बंद करें' : "Don't show notification"}</span>
                   </button>
                   <button
                     onClick={(e) => {
@@ -308,7 +312,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                     }}
                     className="px-2 py-1.5 rounded-full text-zinc-500 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-white text-xs font-medium cursor-pointer transition-colors"
                   >
-                    Dismiss
+                    {language === 'hi' ? 'हटाएं' : 'Dismiss'}
                   </button>
                 </div>
               </div>
@@ -366,7 +370,7 @@ export const HomePage: React.FC<HomePageProps> = ({
               title="Click to switch user or view login screen"
             >
               <span>{progress?.userName || 'VIKRAM'}</span>
-              <span className="text-[9px] text-zinc-400 font-normal lowercase">(switch)</span>
+              <span className="text-[9px] text-zinc-400 font-normal lowercase">{language === 'hi' ? '(बदलें)' : '(switch)'}</span>
             </button>
           ) : (
             <span className="text-[11px] font-semibold text-slate-300 tracking-wider uppercase bg-black/40 backdrop-blur-md px-2.5 py-1 rounded-full border border-white/10">
@@ -379,10 +383,10 @@ export const HomePage: React.FC<HomePageProps> = ({
             <button
               onClick={handleUnmuteOnScreen}
               className="px-2.5 py-1 rounded-full bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 hover:border-amber-400 flex items-center gap-1.5 text-amber-300 hover:text-amber-200 text-[10px] font-semibold transition-all cursor-pointer backdrop-blur-md shadow-xs active:scale-95"
-              title="Notifications are muted. Click to turn on."
+              title={language === 'hi' ? 'नोटिफिकेशन्स म्यूट हैं। चालू करने के लिए टैप करें।' : "Notifications are muted. Click to turn on."}
             >
               <BellOff className="w-3 h-3 text-amber-400" />
-              <span>Muted (Tap to unmute)</span>
+              <span>{language === 'hi' ? 'म्यूट है (चालू करें)' : 'Muted (Tap to unmute)'}</span>
             </button>
           )}
         </div>
@@ -406,10 +410,10 @@ export const HomePage: React.FC<HomePageProps> = ({
             <button
               onClick={onOpenHelpRoadmap}
               className="px-2.5 py-1 rounded-full bg-sky-950/70 border border-sky-500/50 hover:border-sky-400 flex items-center gap-1 text-sky-300 hover:text-sky-100 transition-all cursor-pointer shadow-xs active:scale-95 backdrop-blur-md"
-              title={language === 'hi' ? 'Video Guide (गाइड देखें)' : 'Video Guide'}
+              title={language === 'hi' ? 'वीडियो गाइड' : 'Video Guide'}
             >
               <Video className="w-3.5 h-3.5 text-sky-300 stroke-[2.2]" />
-              <span className="text-[10px] font-bold">{language === 'hi' ? 'Guide' : 'Guide'}</span>
+              <span className="text-[10px] font-bold">{language === 'hi' ? 'गाइड' : 'Guide'}</span>
             </button>
           )}
 
@@ -420,7 +424,7 @@ export const HomePage: React.FC<HomePageProps> = ({
               whileHover={{ scale: 1.08 }}
               whileTap={{ scale: 0.92 }}
               className="p-1.5 rounded-full bg-gradient-to-r from-amber-500/30 to-purple-600/30 border border-amber-400/80 hover:border-amber-300 flex items-center justify-center cursor-pointer shadow-md backdrop-blur-md"
-              title="Rock & Roll Sectors"
+              title={language === 'hi' ? 'रॉक एंड रोल सेक्टर्स' : 'Rock & Roll Sectors'}
             >
               <Music className="w-3.5 h-3.5 text-amber-300 stroke-[2.4]" />
             </motion.button>
@@ -435,7 +439,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                   className="absolute right-0 top-9 z-50 w-48 bg-slate-950/95 border border-amber-500/40 rounded-2xl p-2.5 shadow-2xl backdrop-blur-xl"
                 >
                   <div className="flex items-center justify-between pb-1.5 mb-2 border-b border-slate-800">
-                    <span className="text-[10px] font-bold text-amber-400 uppercase tracking-wider">Rock & Roll Sectors</span>
+                    <span className="text-[10px] font-bold text-amber-400 uppercase tracking-wider">{language === 'hi' ? 'रॉक एंड रोल सेक्टर्स' : 'Rock & Roll Sectors'}</span>
                     <div className="flex items-center gap-1">
                       <AudioMuteButton size="sm" variant="glass" className="w-6 h-6" />
                       <button 
@@ -455,7 +459,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                       className="flex flex-col items-center justify-center p-2 rounded-xl bg-slate-900/80 hover:bg-amber-950 hover:border-amber-600/60 border border-slate-800 text-slate-300 hover:text-white transition-all cursor-pointer group"
                     >
                       <Building2 className="w-4 h-4 text-amber-400 mb-1 group-hover:scale-105 transition-transform" />
-                      <span className="text-[9px] font-medium tracking-tight">Hospitality</span>
+                      <span className="text-[9px] font-medium tracking-tight">{language === 'hi' ? 'हॉस्पिटैलिटी' : 'Hospitality'}</span>
                     </button>
 
                     <button
@@ -466,7 +470,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                       className="flex flex-col items-center justify-center p-2 rounded-xl bg-slate-900/80 hover:bg-amber-950 hover:border-amber-600/60 border border-slate-800 text-slate-300 hover:text-white transition-all cursor-pointer group"
                     >
                       <ShoppingBag className="w-4 h-4 text-amber-400 mb-1 group-hover:scale-105 transition-transform" />
-                      <span className="text-[9px] font-medium tracking-tight">Retail</span>
+                      <span className="text-[9px] font-medium tracking-tight">{language === 'hi' ? 'रिटेल' : 'Retail'}</span>
                     </button>
 
                     <button
@@ -477,7 +481,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                       className="flex flex-col items-center justify-center p-2 rounded-xl bg-slate-900/80 hover:bg-amber-950 hover:border-amber-600/60 border border-slate-800 text-slate-300 hover:text-white transition-all cursor-pointer group"
                     >
                       <Truck className="w-4 h-4 text-amber-400 mb-1 group-hover:scale-105 transition-transform" />
-                      <span className="text-[9px] font-medium tracking-tight">Supply Chain</span>
+                      <span className="text-[9px] font-medium tracking-tight">{language === 'hi' ? 'सप्लाई चेन' : 'Supply Chain'}</span>
                     </button>
 
                     <button
@@ -488,7 +492,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                       className="flex flex-col items-center justify-center p-2 rounded-xl bg-slate-900/80 hover:bg-amber-950 hover:border-amber-600/60 border border-slate-800 text-slate-300 hover:text-white transition-all cursor-pointer group"
                     >
                       <Users className="w-4 h-4 text-amber-400 mb-1 group-hover:scale-105 transition-transform" />
-                      <span className="text-[9px] font-medium tracking-tight">Services</span>
+                      <span className="text-[9px] font-medium tracking-tight">{language === 'hi' ? 'सर्विसेज' : 'Services'}</span>
                     </button>
                   </div>
                 </motion.div>
@@ -506,8 +510,8 @@ export const HomePage: React.FC<HomePageProps> = ({
             whileHover={{ x: -4, scale: 1.08 }}
             whileTap={{ scale: 0.94 }}
             className="bg-slate-950/90 hover:bg-slate-900 text-sky-300 border-l-2 border-y border-sky-400/80 hover:border-sky-300 pl-2.5 pr-2 py-2.5 rounded-l-2xl shadow-[0_0_20px_rgba(56,189,248,0.4)] flex items-center justify-center cursor-pointer backdrop-blur-xl transition-all group"
-            title={language === 'hi' ? 'Video Guide (वीडियो गाइड)' : 'Video Guide'}
-            aria-label="Video Guide"
+            title={language === 'hi' ? 'वीडियो गाइड' : 'Video Guide'}
+            aria-label={language === 'hi' ? 'वीडियो गाइड' : 'Video Guide'}
           >
             <Video className="w-4 h-4 text-sky-400 group-hover:scale-110 transition-transform" />
           </motion.button>
@@ -518,29 +522,29 @@ export const HomePage: React.FC<HomePageProps> = ({
           whileHover={{ x: -3, scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           className="bg-slate-950/85 hover:bg-slate-900 text-slate-200 border-l-2 border-y border-sky-400/80 hover:border-sky-300 pl-2.5 pr-1.5 py-3 rounded-l-2xl shadow-[0_0_20px_rgba(56,189,248,0.35)] flex flex-col items-center gap-1.5 cursor-pointer backdrop-blur-xl transition-colors group"
-          title={language === 'hi' ? 'Pragati aur Stats' : 'Open Progress & Stats'}
-          aria-label={language === 'hi' ? 'Pragati aur Stats' : 'Open Progress & Stats'}
+          title={language === 'hi' ? 'प्रगति और आंकड़े' : 'Open Progress & Stats'}
+          aria-label={language === 'hi' ? 'प्रगति और आंकड़े' : 'Open Progress & Stats'}
         >
           <TrendingUp className="w-4 h-4 text-sky-400 group-hover:scale-110 transition-transform" />
           <div className="flex items-center text-[10px] font-bold text-sky-300 uppercase tracking-widest [writing-mode:vertical-lr] rotate-180">
-            {language === 'hi' ? 'Pragati' : 'Stats'}
+            {language === 'hi' ? 'प्रगति' : 'Stats'}
           </div>
         </motion.button>
       </div>
 
       {/* 4. Exact Hero Typography & Call-To-Action (Replicated directly from attachment) */}
       <div className="w-full flex-1 flex flex-col justify-center px-8 sm:px-10 relative z-10 max-w-lg mx-auto pb-24">
-        {/* Large Bold Display Typography (Nearest Hindi: english kahin se bhi) */}
+        {/* Large Bold Display Typography (Hindi: इंग्लिश कहीं से भी) */}
         {language === 'hi' ? (
           <div className="flex flex-col mb-2">
             <h1 className="text-[44px] sm:text-[54px] font-black tracking-tight leading-[1.05] text-white">
-              English
+              इंग्लिश
             </h1>
             <h1 className="text-[44px] sm:text-[54px] font-black tracking-tight leading-[1.05] text-white">
-              kahin se
+              कहीं से
             </h1>
             <h1 className="text-[44px] sm:text-[54px] font-black tracking-tight leading-[1.05] text-amber-400 drop-shadow-[0_0_20px_rgba(245,158,11,0.45)]">
-              bhi
+              भी
             </h1>
           </div>
         ) : (
@@ -563,11 +567,11 @@ export const HomePage: React.FC<HomePageProps> = ({
         {/* Subtitle Description */}
         {language === 'hi' ? (
           <p className="text-slate-300 text-sm sm:text-base leading-relaxed font-normal max-w-[280px] sm:max-w-xs mb-8 drop-shadow-sm">
-            Asli zindagi ke liye real English.
+            असली ज़िंदगी के लिए रियल इंग्लिश।
             <br />
-            Seekhein, practice karein aur poore
+            सीखें, अभ्यास करें और पूरे
             <br />
-            confidence se bolein—kabhi bhi, kahin bhi.
+            आत्मविश्वास से बोलें — कभी भी, कहीं भी।
           </p>
         ) : (
           <p className="text-slate-300 text-sm sm:text-base leading-relaxed font-normal max-w-[280px] sm:max-w-xs mb-8 drop-shadow-sm">
@@ -579,7 +583,7 @@ export const HomePage: React.FC<HomePageProps> = ({
           </p>
         )}
 
-        {/* Start My Day Pill Button (Nearest Hindi: Din ki suruat) */}
+        {/* Start My Day Pill Button */}
         <div>
           <motion.button
             onClick={onStart}
@@ -611,7 +615,7 @@ export const HomePage: React.FC<HomePageProps> = ({
               )}
             </div>
             <span className="tracking-wide">
-              {language === 'hi' ? 'Din ki suruat' : 'Start My Day'}
+              {language === 'hi' ? 'दिन की शुरुआत करें' : 'Start My Day'}
             </span>
             <ArrowRight
               className={`w-4 h-4 group-hover:translate-x-1 transition-transform ${
@@ -649,7 +653,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                 <div className="flex items-center gap-2">
                   <TrendingUp className="w-5 h-5 text-sky-400" />
                   <span className="font-bold text-white text-base tracking-tight">
-                    {language === 'hi' ? 'Aapki Pragati (Your Progress)' : 'Your Progress'}
+                    {language === 'hi' ? 'आपकी प्रगति' : 'Your Progress'}
                   </span>
                 </div>
                 <button
@@ -666,11 +670,11 @@ export const HomePage: React.FC<HomePageProps> = ({
                   <div className="flex items-center gap-2">
                     <div className="w-2.5 h-2.5 rounded-full bg-sky-400 shadow-[0_0_10px_rgba(56,189,248,0.9)]" />
                     <span className="text-sm font-bold text-white tracking-tight">
-                      {language === 'hi' ? 'Beginner (शुरुआती)' : 'Beginner'}
+                      {language === 'hi' ? 'शुरुआती स्तर (Beginner)' : 'Beginner'}
                     </span>
                   </div>
                   <span className="text-xs font-mono font-bold text-sky-300 bg-sky-950 px-2 py-0.5 rounded-md border border-sky-700/60 shadow-xs">
-                    0 Pts
+                    {(progress?.totalPracticed || 0) * 10} {language === 'hi' ? 'अंक' : 'Pts'}
                   </span>
                 </div>
 
@@ -681,9 +685,9 @@ export const HomePage: React.FC<HomePageProps> = ({
                 </div>
 
                 <div className="flex items-center justify-between text-xs text-slate-300 font-medium">
-                  <span className="text-slate-200 font-bold">Lvl 1</span>
+                  <span className="text-slate-200 font-bold">{language === 'hi' ? 'लेवल 1' : 'Lvl 1'}</span>
                   <span className="text-slate-400">
-                    {language === 'hi' ? 'Level 2 ke liye 100 pts' : '100 pts to Lvl 2'}
+                    {language === 'hi' ? 'लेवल 2 के लिए 100 अंक' : '100 pts to Lvl 2'}
                   </span>
                 </div>
               </div>
@@ -692,16 +696,16 @@ export const HomePage: React.FC<HomePageProps> = ({
               <div className="w-full bg-slate-900/85 border border-slate-700/80 rounded-2xl p-4 flex flex-col justify-between shadow-lg backdrop-blur-xl">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-bold text-slate-300 uppercase tracking-wider">
-                    {language === 'hi' ? 'Is Hafte (This Week)' : 'This Week'}
+                    {language === 'hi' ? 'इस सप्ताह' : 'This Week'}
                   </span>
                   <div className="flex items-center gap-1.5 text-sky-300 font-bold text-xs">
                     <Flame className="w-4 h-4 text-sky-400 fill-sky-400/40" />
-                    <span>{progress?.streakDays || 1}{language === 'hi' ? ' din ki Streak' : 'd Streak'}</span>
+                    <span>{progress?.streakDays || 1}{language === 'hi' ? ' दिन की स्ट्रीक' : 'd Streak'}</span>
                   </div>
                 </div>
 
                 <div className="flex items-center justify-between gap-1 mt-4">
-                  {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((day, index) => {
+                  {(language === 'hi' ? ['सो', 'मं', 'बु', 'गु', 'शु', 'श', 'र'] : ['M', 'T', 'W', 'T', 'F', 'S', 'S']).map((day, index) => {
                     const isToday = index === todayIndex;
                     const isCompleted = index < todayIndex;
 

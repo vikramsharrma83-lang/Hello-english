@@ -57,10 +57,10 @@ export const PlanConfirmationView: React.FC<PlanConfirmationViewProps> = ({
             </div>
             <div>
               <h1 className="text-base font-semibold text-white tracking-tight">
-                Your plan is ready!
+                आपका प्लान तैयार है!
               </h1>
               <p className="text-xs text-zinc-400 mt-0.5">
-                Whenever you want, come here, play, and complete your tasks.
+                दिन में जब भी चाहें, यहाँ आकर अभ्यास करें और अपने टास्क पूरे करें।
               </p>
             </div>
           </div>
@@ -69,7 +69,7 @@ export const PlanConfirmationView: React.FC<PlanConfirmationViewProps> = ({
           <div className="grid grid-cols-3 gap-2 mb-4">
             <div className="bg-zinc-900/90 border border-zinc-800 rounded-xl p-2.5 text-center">
               <span className="text-[10px] text-zinc-400 uppercase tracking-wide block">
-                Today's Activities
+                आज की गतिविधियां
               </span>
               <span className="text-sm font-bold text-amber-400 mt-0.5 block">
                 {totalActivities}
@@ -78,19 +78,19 @@ export const PlanConfirmationView: React.FC<PlanConfirmationViewProps> = ({
 
             <div className="bg-zinc-900/90 border border-zinc-800 rounded-xl p-2.5 text-center">
               <span className="text-[10px] text-zinc-400 uppercase tracking-wide block">
-                Sheeko Journey
+                शीको जर्नी
               </span>
               <span className="text-sm font-bold text-white mt-0.5 block">
-                Day {currentDay} of {journeyLength}
+                दिन {currentDay} / {journeyLength}
               </span>
             </div>
 
             <div className="bg-zinc-900/90 border border-zinc-800 rounded-xl p-2.5 text-center">
               <span className="text-[10px] text-zinc-400 uppercase tracking-wide block">
-                Reminders
+                रिमाइंडर्स
               </span>
               <span className="text-sm font-bold text-emerald-400 mt-0.5 block">
-                {reminders.length} set
+                {reminders.length} सेट
               </span>
             </div>
           </div>
@@ -104,10 +104,10 @@ export const PlanConfirmationView: React.FC<PlanConfirmationViewProps> = ({
                 </div>
                 <div>
                   <span className="text-xs font-semibold text-white block">
-                    Sheeko Speaking Journey
+                    शीको स्पीकिंग जर्नी
                   </span>
                   <span className="text-xs text-zinc-400">
-                    Day {currentDay} of {journeyLength} ({journeyLength}-day commitment)
+                    दिन {currentDay} / {journeyLength} ({journeyLength} दिनों का लक्ष्य)
                   </span>
                 </div>
               </div>
@@ -129,7 +129,7 @@ export const PlanConfirmationView: React.FC<PlanConfirmationViewProps> = ({
           {/* Today's Activities Section */}
           <div className="space-y-2">
             <div className="text-xs font-semibold text-zinc-400 tracking-wide px-1 mb-1">
-              Scheduled Practice Modules
+              निर्धारित अभ्यास मॉड्यूल
             </div>
 
             {/* Buddy */}
@@ -140,15 +140,15 @@ export const PlanConfirmationView: React.FC<PlanConfirmationViewProps> = ({
                 </div>
                 <div>
                   <span className="text-xs font-semibold text-white block">
-                    AI Buddy Practice
+                    AI बडी प्रैक्टिस
                   </span>
                   <span className="text-[11px] text-zinc-400">
-                    Live speaking roleplays
+                    लाइव स्पीकिंग रोलप्ले
                   </span>
                 </div>
               </div>
               <span className="text-xs font-semibold text-zinc-300 bg-zinc-800 px-2.5 py-1 rounded-lg border border-zinc-700/60">
-                {plan.buddyTargetCount || 1} {plan.buddyTargetCount === 1 ? 'session' : 'sessions'}
+                {plan.buddyTargetCount || 1} {plan.buddyTargetCount === 1 ? 'सत्र' : 'सत्र'}
               </span>
             </div>
 
@@ -160,15 +160,15 @@ export const PlanConfirmationView: React.FC<PlanConfirmationViewProps> = ({
                 </div>
                 <div>
                   <span className="text-xs font-semibold text-white block">
-                    Daily Bytes Lessons
+                    डेली बाइट्स लेसन्स
                   </span>
                   <span className="text-[11px] text-zinc-400">
-                    Micro-lessons & idioms
+                    माइक्रो-लेसन्स और मुहावरे
                   </span>
                 </div>
               </div>
               <span className="text-xs font-semibold text-zinc-300 bg-zinc-800 px-2.5 py-1 rounded-lg border border-zinc-700/60">
-                {plan.bytesTargetCount || 2} {plan.bytesTargetCount === 1 ? 'lesson' : 'lessons'}
+                {plan.bytesTargetCount || 2} {plan.bytesTargetCount === 1 ? 'लेसन' : 'लेसन्स'}
               </span>
             </div>
 
@@ -180,15 +180,15 @@ export const PlanConfirmationView: React.FC<PlanConfirmationViewProps> = ({
                 </div>
                 <div>
                   <span className="text-xs font-semibold text-white block">
-                    Scenario Speed Drills
+                    सिनेरियो स्पीड ड्रिल्स
                   </span>
                   <span className="text-[11px] text-zinc-400">
-                    Reflex challenge rounds
+                    रिफ्लेक्स चैलेंज राउंड
                   </span>
                 </div>
               </div>
               <span className="text-xs font-semibold text-zinc-300 bg-zinc-800 px-2.5 py-1 rounded-lg border border-zinc-700/60">
-                {plan.rockRollTargetCount || 1} {plan.rockRollTargetCount === 1 ? 'drill' : 'drills'}
+                {plan.rockRollTargetCount || 1} {plan.rockRollTargetCount === 1 ? 'ड्रिल' : 'ड्रिल्स'}
               </span>
             </div>
           </div>
@@ -198,10 +198,10 @@ export const PlanConfirmationView: React.FC<PlanConfirmationViewProps> = ({
         <div className="mt-4 space-y-2.5">
           <div className="w-full bg-zinc-900/90 border border-zinc-800 rounded-xl px-4 py-2.5 flex items-center justify-between">
             <span className="text-xs font-medium text-zinc-400">
-              Total Planned Today
+              आज का कुल प्लान
             </span>
             <span className="text-xs font-bold text-amber-400">
-              {totalActivities} Activities
+              {totalActivities} गतिविधियां
             </span>
           </div>
 
@@ -209,7 +209,7 @@ export const PlanConfirmationView: React.FC<PlanConfirmationViewProps> = ({
             onClick={onGoToPlayground}
             className="w-full py-3 px-5 rounded-xl bg-amber-500 hover:bg-amber-400 text-zinc-950 font-semibold text-xs sm:text-sm transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-amber-500/20"
           >
-            <span>Enter Daily Playground • प्लेग्राउंड में जाएं</span>
+            <span>डेली प्लेग्राउंड में जाएं</span>
             <ArrowRight className="w-4 h-4" />
           </button>
         </div>

@@ -423,16 +423,16 @@ export const StartMyDayWarmupView: React.FC<StartMyDayWarmupViewProps> = ({
             <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-stone-900/90 border border-amber-500/30 shadow-[0_0_12px_rgba(245,158,11,0.12)]">
               <span className={`w-2 h-2 rounded-full ${isDebriefSpeaking ? 'bg-emerald-400 ring-2 ring-emerald-400/30 animate-pulse' : 'bg-stone-500'}`} />
               <span className="text-[11px] font-bold text-amber-400 uppercase tracking-wider">
-                Coach Neha
+                कोच नेहा
               </span>
             </div>
 
             <button
               onClick={handleSkipDebrief}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-stone-900/90 hover:bg-stone-800 text-stone-300 hover:text-white border border-stone-700/80 text-xs font-semibold transition-all cursor-pointer group shadow-sm"
-              title="Skip briefing and start questions"
+              title="ब्रीफिंग छोड़ें और सवाल शुरू करें"
             >
-              <span>Skip</span>
+              <span>छोड़ें</span>
               <SkipForward className="w-3.5 h-3.5 text-amber-400 group-hover:translate-x-0.5 transition-transform" />
             </button>
           </div>
@@ -484,7 +484,7 @@ export const StartMyDayWarmupView: React.FC<StartMyDayWarmupViewProps> = ({
                 <button
                   onClick={toggleDebriefSpeech}
                   className="absolute bottom-1 right-2 w-10 h-10 rounded-full bg-amber-500 hover:bg-amber-400 text-stone-950 flex items-center justify-center border-2 border-stone-950 shadow-lg cursor-pointer transition-transform hover:scale-105 active:scale-95"
-                  title={isDebriefSpeaking ? 'Pause voice' : 'Replay voice'}
+                  title={isDebriefSpeaking ? 'आवाज़ रोकें' : 'दोबारा सुनें'}
                 >
                   {isDebriefSpeaking ? (
                     <Volume2 className="w-5 h-5 animate-pulse" />
@@ -498,7 +498,7 @@ export const StartMyDayWarmupView: React.FC<StartMyDayWarmupViewProps> = ({
             {/* Speaking Status / Greeting Title Only (NO written script) */}
             <div className="space-y-1.5">
               <h2 className="text-xl sm:text-2xl font-bold text-white tracking-tight">
-                {greetingData.enGreeting}
+                {greetingData.hiGreeting || greetingData.enGreeting}
               </h2>
 
               {isDebriefSpeaking ? (
@@ -508,12 +508,12 @@ export const StartMyDayWarmupView: React.FC<StartMyDayWarmupViewProps> = ({
                     <span className="w-1 h-4 bg-amber-400 rounded-full animate-bounce [animation-delay:-0.15s]" />
                     <span className="w-1 h-2.5 bg-amber-400 rounded-full animate-bounce" />
                   </div>
-                  <span>Coach Neha is speaking...</span>
+                  <span>कोच नेहा बोल रही हैं...</span>
                 </div>
               ) : debriefCompleted ? (
                 <p className="text-xs text-emerald-400 font-medium flex items-center justify-center gap-1">
                   <CheckCircle2 className="w-3.5 h-3.5" />
-                  <span>Routine briefing completed</span>
+                  <span>दैनिक ब्रीफिंग पूरी हुई</span>
                 </p>
               ) : (
                 <button
@@ -521,7 +521,7 @@ export const StartMyDayWarmupView: React.FC<StartMyDayWarmupViewProps> = ({
                   className="text-xs text-stone-400 hover:text-amber-400 transition-colors inline-flex items-center gap-1 cursor-pointer"
                 >
                   <Volume2 className="w-3.5 h-3.5" />
-                  <span>Tap to listen in Hindi</span>
+                  <span>हिंदी में सुनने के लिए टैप करें</span>
                 </button>
               )}
             </div>
@@ -537,7 +537,7 @@ export const StartMyDayWarmupView: React.FC<StartMyDayWarmupViewProps> = ({
                 onClick={handleStartWarmupFromDebrief}
                 className="w-full py-3.5 px-6 rounded-full bg-amber-500 hover:bg-amber-400 text-stone-950 font-bold text-sm uppercase tracking-wider shadow-[0_4px_24px_rgba(245,158,11,0.35)] flex items-center justify-center gap-2 cursor-pointer transition-all"
               >
-                <span>Continue</span>
+                <span>आगे बढ़ें</span>
                 <ArrowRight className="w-4 h-4" />
               </motion.button>
             ) : (
@@ -547,7 +547,7 @@ export const StartMyDayWarmupView: React.FC<StartMyDayWarmupViewProps> = ({
                   onClick={handleSkipDebrief}
                   className="w-full py-3 px-6 rounded-full bg-stone-900/90 hover:bg-stone-800 text-stone-300 hover:text-white border border-stone-800 text-xs font-semibold tracking-wide transition-all cursor-pointer flex items-center justify-center gap-2"
                 >
-                  <span>Skip & Continue to Question 1</span>
+                  <span>छोड़ें और सवाल 1 पर जाएं</span>
                   <ArrowRight className="w-3.5 h-3.5" />
                 </button>
               </div>
@@ -564,14 +564,14 @@ export const StartMyDayWarmupView: React.FC<StartMyDayWarmupViewProps> = ({
             <button
               onClick={onExit}
               className="p-2 rounded-full text-stone-400 hover:text-white transition-colors cursor-pointer"
-              title="Exit"
+              title="बाहर निकलें"
             >
               <X className="w-6 h-6" />
             </button>
 
             <div className="flex flex-col items-center">
               <span className="text-xs font-bold text-stone-300 tracking-[0.2em] uppercase">
-                START MY DAY
+                दिन की शुरुआत
               </span>
               {/* Dot Indicators */}
               <div className="flex items-center gap-1.5 mt-1">
@@ -595,7 +595,7 @@ export const StartMyDayWarmupView: React.FC<StartMyDayWarmupViewProps> = ({
 
           {/* Question Sub-Eyebrow */}
           <div className="w-full text-center text-xs font-semibold text-stone-400 uppercase tracking-wider mt-3 mb-2">
-            QUESTION {currentIndex + 1} OF {totalQuestions}
+            सवाल {currentIndex + 1} / {totalQuestions}
           </div>
 
           {/* Main Question Card */}
@@ -683,7 +683,7 @@ export const StartMyDayWarmupView: React.FC<StartMyDayWarmupViewProps> = ({
                 </div>
 
                 <div className="text-[11px] font-semibold text-stone-400 uppercase tracking-wider mb-1">
-                  CORRECT ANSWER
+                  सही उत्तर
                 </div>
                 <div className="flex items-center justify-between gap-2">
                   <p className="text-sm font-semibold text-stone-100 tracking-tight">
@@ -705,7 +705,7 @@ export const StartMyDayWarmupView: React.FC<StartMyDayWarmupViewProps> = ({
             {/* Live Spoken Transcript Display */}
             {transcript && (
               <div className="w-full bg-[#181614]/90 border border-amber-500/40 rounded-xl px-4 py-2.5 text-center text-xs text-stone-200 shadow-lg">
-                <span className="text-[10px] uppercase font-bold text-amber-400 block mb-0.5">Spoken Answer:</span>
+                <span className="text-[10px] uppercase font-bold text-amber-400 block mb-0.5">आपका बोला गया उत्तर:</span>
                 "{transcript}"
               </div>
             )}
@@ -722,7 +722,7 @@ export const StartMyDayWarmupView: React.FC<StartMyDayWarmupViewProps> = ({
                       handleEvaluate(manualText);
                     }
                   }}
-                  placeholder="Type your answer in English..."
+                  placeholder="अपना उत्तर अंग्रेजी में टाइप करें..."
                   className="flex-1 bg-transparent px-3 py-1.5 text-xs text-stone-100 placeholder:text-stone-500 focus:outline-none"
                 />
                 {manualText.trim() && (
@@ -730,7 +730,7 @@ export const StartMyDayWarmupView: React.FC<StartMyDayWarmupViewProps> = ({
                     onClick={() => handleEvaluate(manualText)}
                     disabled={isEvaluating}
                     className="p-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-stone-950 font-bold transition-all cursor-pointer"
-                    title="Submit"
+                    title="सबमिट करें"
                   >
                     <Send className="w-3.5 h-3.5" />
                   </button>
@@ -746,7 +746,7 @@ export const StartMyDayWarmupView: React.FC<StartMyDayWarmupViewProps> = ({
                 onClick={handleNextQuestion}
                 className="w-full py-3.5 px-6 rounded-full bg-amber-500 hover:bg-amber-400 text-stone-950 font-bold text-xs sm:text-sm uppercase tracking-wider shadow-[0_4px_20px_rgba(245,158,11,0.35)] flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-98"
               >
-                <span>NEXT QUESTION</span>
+                <span>अगला सवाल</span>
                 <ArrowRight className="w-4 h-4" />
               </motion.button>
             ) : (
@@ -762,7 +762,7 @@ export const StartMyDayWarmupView: React.FC<StartMyDayWarmupViewProps> = ({
                         ? 'bg-amber-500 text-stone-950 shadow-[0_0_30px_rgba(245,158,11,0.8)] animate-pulse'
                         : 'bg-amber-500 text-stone-950 shadow-[0_4px_20px_rgba(245,158,11,0.4)] hover:bg-amber-400'
                     }`}
-                    title={isRecording ? 'Stop Recording' : 'Speak in English'}
+                    title={isRecording ? 'रिकॉर्डिंग रोकें' : 'अंग्रेजी में बोलें'}
                   >
                     {isRecording ? (
                       <MicOff className="w-7 h-7 text-stone-950" />
@@ -774,18 +774,18 @@ export const StartMyDayWarmupView: React.FC<StartMyDayWarmupViewProps> = ({
                   <div className="flex items-center gap-2 mt-0.5">
                     <span className="text-xs font-semibold text-stone-300 tracking-wider uppercase">
                       {isRecording
-                        ? 'LISTENING...'
+                        ? 'सुन रहे हैं...'
                         : attemptCount === 2
-                        ? 'TRY ATTEMPT 2: SPEAK IN ENGLISH'
+                        ? 'प्रयास 2: अंग्रेजी में बोलें'
                         : attemptCount === 3
-                        ? 'READ & SPEAK MODEL ANSWER'
-                        : 'SPEAK IN ENGLISH'}
+                        ? 'सही उत्तर पढ़ें और बोलें'
+                        : 'अंग्रेजी में बोलें'}
                     </span>
 
                     <button
                       onClick={() => setShowTextInput((prev) => !prev)}
                       className="p-1 rounded-full text-stone-500 hover:text-stone-300 transition-colors cursor-pointer"
-                      title={showTextInput ? 'Hide typing input' : 'Type answer instead'}
+                      title={showTextInput ? 'टाइपिंग छुपाएं' : 'टाइप करके उत्तर दें'}
                     >
                       <Keyboard className="w-3.5 h-3.5" />
                     </button>
@@ -803,12 +803,12 @@ export const StartMyDayWarmupView: React.FC<StartMyDayWarmupViewProps> = ({
                   >
                     <span>
                       {isEvaluating
-                        ? 'CHECKING ANSWER...'
+                        ? 'जांच हो रही है...'
                         : attemptCount === 2
-                        ? 'SUBMIT ATTEMPT 2 →'
+                        ? 'प्रयास 2 सबमिट करें →'
                         : attemptCount === 3
-                        ? 'SUBMIT & VERIFY →'
-                        : 'SUBMIT ANSWER →'}
+                        ? 'सत्यापित करें →'
+                        : 'उत्तर सबमिट करें →'}
                     </span>
                   </motion.button>
                 )}
@@ -822,7 +822,7 @@ export const StartMyDayWarmupView: React.FC<StartMyDayWarmupViewProps> = ({
                     disabled={isEvaluating}
                     className="w-full py-2.5 px-5 rounded-full bg-stone-900 hover:bg-stone-800 border border-amber-500/50 text-amber-300 font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer transition-all"
                   >
-                    <span>I've Read the Model Answer (Continue) →</span>
+                    <span>मैंने उत्तर पढ़ लिया है (आगे बढ़ें) →</span>
                   </motion.button>
                 )}
               </div>
@@ -845,12 +845,12 @@ export const StartMyDayWarmupView: React.FC<StartMyDayWarmupViewProps> = ({
 
           {/* Title */}
           <h1 className="text-lg sm:text-xl font-bold text-stone-100 tracking-wide uppercase mb-1.5">
-            WARM-UP COMPLETE!
+            वॉर्म-अप पूरा हुआ!
           </h1>
 
           {/* Subtitle */}
           <p className="text-xs text-stone-400 max-w-xs mb-6 leading-relaxed">
-            Great start! You're ready to plan your day and start your English journey.
+            शानदार शुरुआत! अब आप अपने दिन की योजना बनाने और अंग्रेजी सीखने के लिए तैयार हैं।
           </p>
 
           {/* 3 Circular Metric Pills */}
@@ -861,7 +861,7 @@ export const StartMyDayWarmupView: React.FC<StartMyDayWarmupViewProps> = ({
                 {totalQuestions}
               </span>
               <span className="text-[10px] font-semibold text-stone-400 tracking-wider uppercase mt-1">
-                QUESTIONS
+                सवाल
               </span>
             </div>
 
@@ -871,7 +871,7 @@ export const StartMyDayWarmupView: React.FC<StartMyDayWarmupViewProps> = ({
                 {correctCount || totalQuestions}
               </span>
               <span className="text-[10px] font-semibold text-stone-400 tracking-wider uppercase mt-1">
-                CORRECT
+                सही
               </span>
             </div>
 
@@ -881,7 +881,7 @@ export const StartMyDayWarmupView: React.FC<StartMyDayWarmupViewProps> = ({
                 {learnedCount > 0 ? learnedCount : 1}
               </span>
               <span className="text-[10px] font-semibold text-stone-400 tracking-wider uppercase mt-1">
-                LEARNED
+                सीखे
               </span>
             </div>
           </div>
@@ -892,7 +892,7 @@ export const StartMyDayWarmupView: React.FC<StartMyDayWarmupViewProps> = ({
             onClick={handleFinishWarmupToPlan}
             className="w-full py-3.5 px-6 rounded-full bg-amber-500 hover:bg-amber-400 text-stone-950 font-bold text-xs sm:text-sm uppercase tracking-wider shadow-[0_4px_20px_rgba(245,158,11,0.35)] flex items-center justify-center gap-2 cursor-pointer transition-all"
           >
-            <span>CREATE MY PLAN</span>
+            <span>मेरी योजना बनाएं</span>
           </motion.button>
         </div>
       )}

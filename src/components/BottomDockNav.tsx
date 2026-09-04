@@ -33,7 +33,7 @@ export const BottomDockNav: React.FC<BottomDockNavProps> = ({
   const popoutIcons: PopoutItem[] = [
     {
       id: 'discover',
-      label: 'Discover',
+      label: 'डिस्कवर',
       Icon: Compass,
       gradient: 'from-sky-500 to-blue-600',
       ringColor: 'ring-sky-400/40',

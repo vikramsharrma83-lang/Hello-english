@@ -246,10 +246,10 @@ export const ReminderSetupModal: React.FC<ReminderSetupModalProps> = ({
             </div>
 
             <h2 className="text-lg font-bold text-white tracking-tight mb-1">
-              Would you like reminders?
+              क्या आप रिमाइंडर्स सेट करना चाहते हैं?
             </h2>
             <p className="text-xs text-stone-400 mb-6 leading-relaxed">
-              Get reminded to complete your planned activities.
+              अपनी निर्धारित गतिविधियों को पूरा करने के लिए रिमाइंडर पाएं।
             </p>
 
             <div className="space-y-2.5">
@@ -257,7 +257,7 @@ export const ReminderSetupModal: React.FC<ReminderSetupModalProps> = ({
                 onClick={() => setStep('SETUP')}
                 className="w-full py-3.5 px-4 rounded-xl bg-amber-500 hover:bg-amber-400 text-stone-950 font-bold text-xs uppercase tracking-wider transition-all shadow-lg shadow-amber-500/20 cursor-pointer flex items-center justify-center gap-2"
               >
-                <span>Yes, Set Reminders</span>
+                <span>हाँ, रिमाइंडर सेट करें</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
 
@@ -265,7 +265,7 @@ export const ReminderSetupModal: React.FC<ReminderSetupModalProps> = ({
                 onClick={onSkip}
                 className="w-full py-3 px-4 rounded-xl bg-stone-900 hover:bg-stone-800 text-stone-400 hover:text-stone-200 text-xs font-semibold transition-all border border-stone-800 cursor-pointer"
               >
-                No, Maybe Later
+                नहीं, बाद में
               </button>
             </div>
           </motion.div>
@@ -286,10 +286,10 @@ export const ReminderSetupModal: React.FC<ReminderSetupModalProps> = ({
                 </div>
                 <div>
                   <h2 className="text-sm sm:text-base font-bold text-white tracking-tight">
-                    Set up to 4 reminders
+                    अधिकतम 4 रिमाइंडर सेट करें
                   </h2>
                   <p className="text-[11px] text-stone-400">
-                    {reminders.length}/4 reminders set for today
+                    आज के लिए {reminders.length}/4 रिमाइंडर सेट हैं
                   </p>
                 </div>
               </div>
@@ -297,7 +297,7 @@ export const ReminderSetupModal: React.FC<ReminderSetupModalProps> = ({
               <button
                 onClick={handleFinish}
                 className="p-1.5 text-stone-400 hover:text-white rounded-lg transition-colors cursor-pointer"
-                title="Done"
+                title="पूरा हुआ"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -317,7 +317,7 @@ export const ReminderSetupModal: React.FC<ReminderSetupModalProps> = ({
                     }`}
                   >
                     <div className="text-[10px] font-bold uppercase tracking-wider truncate">
-                      Slot {slotIdx + 1}
+                      स्लॉट {slotIdx + 1}
                     </div>
                     <div className="text-xs font-semibold mt-0.5 flex items-center justify-center gap-0.5">
                       {rem ? (
@@ -338,7 +338,7 @@ export const ReminderSetupModal: React.FC<ReminderSetupModalProps> = ({
             <div className="space-y-2 overflow-y-auto max-h-[160px] pr-1 mb-4">
               {reminders.length === 0 ? (
                 <div className="text-center py-4 text-stone-500 text-xs bg-stone-900/40 rounded-xl border border-dashed border-stone-800">
-                  No reminders set yet. Speak or type a time below.
+                  अभी तक कोई रिमाइंडर सेट नहीं है। नीचे समय बोलें या टाइप करें।
                 </div>
               ) : (
                 reminders.map((rem, idx) => (
@@ -363,7 +363,7 @@ export const ReminderSetupModal: React.FC<ReminderSetupModalProps> = ({
                               onClick={() => handleSaveEdit(rem.id)}
                               className="text-[10px] font-bold px-2 py-1 bg-amber-500 text-stone-950 rounded cursor-pointer"
                             >
-                              Save
+                              सेव
                             </button>
                           </div>
                         ) : (
@@ -386,14 +386,14 @@ export const ReminderSetupModal: React.FC<ReminderSetupModalProps> = ({
                       <button
                         onClick={() => handleStartEdit(rem)}
                         className="p-1.5 text-stone-400 hover:text-amber-400 hover:bg-stone-800 rounded transition-colors cursor-pointer"
-                        title="Edit Time"
+                        title="समय बदलें"
                       >
                         <Edit2 className="w-3.5 h-3.5" />
                       </button>
                       <button
                         onClick={() => handleDeleteReminder(rem.id)}
                         className="p-1.5 text-stone-400 hover:text-red-400 hover:bg-stone-800 rounded transition-colors cursor-pointer"
-                        title="Delete"
+                        title="हटाएं"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
                       </button>
@@ -416,7 +416,7 @@ export const ReminderSetupModal: React.FC<ReminderSetupModalProps> = ({
               <div className="bg-stone-900/90 border border-stone-800 rounded-2xl p-3 mb-4">
                 <div className="flex items-center justify-between mb-2 pb-1.5 border-b border-stone-800">
                   <span className="text-[11px] font-semibold text-stone-300 uppercase tracking-wider">
-                    Add Reminder (English Only)
+                    रिमाइंडर जोड़ें (अंग्रेजी में)
                   </span>
                   <div className="flex items-center gap-1 bg-stone-950 p-0.5 rounded-lg border border-stone-800">
                     <button
@@ -427,7 +427,7 @@ export const ReminderSetupModal: React.FC<ReminderSetupModalProps> = ({
                           : 'text-stone-400 hover:text-white'
                       }`}
                     >
-                      🎤 Speak
+                      🎤 बोलें
                     </button>
                     <button
                       onClick={() => setInputMode('type')}
@@ -437,7 +437,7 @@ export const ReminderSetupModal: React.FC<ReminderSetupModalProps> = ({
                           : 'text-stone-400 hover:text-white'
                       }`}
                     >
-                      ⌨️ Type
+                      ⌨️ टाइप करें
                     </button>
                   </div>
                 </div>
@@ -459,10 +459,10 @@ export const ReminderSetupModal: React.FC<ReminderSetupModalProps> = ({
                       )}
                     </button>
                     <div className="mt-2 text-xs font-semibold text-white">
-                      {isListening ? 'Listening in English... Speak now' : 'Tap to Speak Reminder'}
+                      {isListening ? 'सुन रहे हैं... अब अंग्रेजी में बोलें' : 'रिमाइंडर बोलने के लिए टैप करें'}
                     </div>
                     <div className="text-[11px] text-stone-400 mt-0.5">
-                      Say e.g., "Remind me at 5 PM to practise Buddy"
+                      उदा. बोलें: "Remind me at 5 PM to practise Buddy"
                     </div>
                   </div>
                 ) : (
@@ -472,7 +472,7 @@ export const ReminderSetupModal: React.FC<ReminderSetupModalProps> = ({
                         type="text"
                         value={inputText}
                         onChange={(e) => setInputText(e.target.value)}
-                        placeholder="e.g. Remind me at 8 PM to complete activities"
+                        placeholder="उदा. Remind me at 8 PM to complete activities"
                         className="flex-1 bg-stone-950 border border-stone-700 rounded-xl px-3 py-2 text-xs text-white placeholder-stone-500 focus:outline-none focus:border-amber-500"
                       />
                       <button
@@ -480,7 +480,7 @@ export const ReminderSetupModal: React.FC<ReminderSetupModalProps> = ({
                         disabled={!inputText.trim()}
                         className="px-3 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 disabled:opacity-50 text-stone-950 font-bold text-xs cursor-pointer transition-colors shrink-0"
                       >
-                        Add
+                        जोड़ें
                       </button>
                     </div>
 
@@ -506,40 +506,13 @@ export const ReminderSetupModal: React.FC<ReminderSetupModalProps> = ({
               </div>
             )}
 
-            {/* Dev Only Testing shortcuts */}
-            {process.env.NODE_ENV !== 'production' && (
-              <div className="mb-3 p-2 bg-stone-900/50 rounded-xl border border-stone-800/80 flex items-center justify-between text-[11px]">
-                <span className="text-stone-500 font-mono">Dev Test:</span>
-                <div className="flex gap-1.5">
-                  <button
-                    onClick={() => handleAddDevTest(0)}
-                    className="px-2 py-0.5 rounded bg-sky-950/80 border border-sky-600/40 text-sky-300 hover:bg-sky-900 hover:text-white cursor-pointer font-mono"
-                  >
-                    +0s (Now)
-                  </button>
-                  <button
-                    onClick={() => handleAddDevTest(30)}
-                    className="px-2 py-0.5 rounded bg-stone-800 text-stone-300 hover:text-amber-400 cursor-pointer font-mono"
-                  >
-                    +30s test
-                  </button>
-                  <button
-                    onClick={() => handleAddDevTest(60)}
-                    className="px-2 py-0.5 rounded bg-stone-800 text-stone-300 hover:text-amber-400 cursor-pointer font-mono"
-                  >
-                    +1m test
-                  </button>
-                </div>
-              </div>
-            )}
-
             {/* Finish and continue */}
             <div className="mt-auto pt-2 border-t border-stone-800">
               <button
                 onClick={handleFinish}
                 className="w-full py-3 px-4 rounded-xl bg-amber-500 hover:bg-amber-400 text-stone-950 font-bold text-xs uppercase tracking-wider transition-all shadow-lg shadow-amber-500/20 cursor-pointer flex items-center justify-center gap-2"
               >
-                <span>Confirm & Ready My Plan</span>
+                <span>कन्फर्म करें और प्लान तैयार करें</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
             </div>
