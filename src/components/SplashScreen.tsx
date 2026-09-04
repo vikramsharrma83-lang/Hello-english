@@ -26,10 +26,10 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({ onFinish }) => {
       setZoomComplete(true);
     }, 500);
 
-    // Auto-advance after 1400ms
+    // Auto-advance after 4.3 seconds (4300ms)
     const autoFinishTimer = setTimeout(() => {
       handleFinish();
-    }, 1400);
+    }, 4300);
 
     return () => {
       clearTimeout(zoomTimer);
