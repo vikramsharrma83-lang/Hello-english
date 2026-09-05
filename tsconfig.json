@@ -20,6 +20,10 @@
         "./*"
       ]
     },
+    "types": [
+      "jest",
+      "node"
+    ],
     "allowImportingTsExtensions": true,
     "noEmit": true
   }

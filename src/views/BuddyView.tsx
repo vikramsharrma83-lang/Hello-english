@@ -30,6 +30,7 @@ interface BuddyMessage {
   nextQuestion?: string;
   rephrase?: string;
   subtleRecast?: string;
+  awaitingEnglishRetry?: boolean;
   timestamp: number;
 }
 
@@ -209,6 +210,9 @@ export const BuddyView: React.FC<BuddyViewProps> = ({ onStartPractice, onBack, l
     setIsThinking(true);
 
     try {
+      const lastBuddyMessage = [...messages].reverse().find(m => m.sender === 'buddy');
+      const wasAwaitingRetry = Boolean(lastBuddyMessage?.awaitingEnglishRetry);
+
       const response = await fetch('/api/buddy-chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -216,13 +220,17 @@ export const BuddyView: React.FC<BuddyViewProps> = ({ onStartPractice, onBack, l
           history: updatedMessages.map(m => ({ sender: m.sender, text: m.text })),
           learnerMessage: text.trim(),
           exchangeCount: newExchanges,
+          wasAwaitingEnglishRetry: wasAwaitingRetry,
         })
       });
 
       const data = await response.json();
 
+      const isAwaitingRetry = Boolean(data.awaitingEnglishRetry);
       let fullText = (data.naturalResponse || "I'm listening and understand you 😊").trim();
-      if (data.nextQuestion && data.nextQuestion.trim() && !fullText.includes(data.nextQuestion.trim())) {
+
+      // STOP & WAIT: If awaiting retry, never concatenate nextQuestion
+      if (!isAwaitingRetry && data.nextQuestion && data.nextQuestion.trim() && !fullText.includes(data.nextQuestion.trim())) {
         fullText = `${fullText} ${data.nextQuestion.trim()}`;
       }
 
@@ -230,8 +238,9 @@ export const BuddyView: React.FC<BuddyViewProps> = ({ onStartPractice, onBack, l
         id: (Date.now() + 1).toString(),
         sender: 'buddy',
         text: fullText,
-        nextQuestion: data.nextQuestion ? data.nextQuestion.trim() : '',
+        nextQuestion: isAwaitingRetry ? '' : (data.nextQuestion ? data.nextQuestion.trim() : ''),
         subtleRecast: data.subtleRecast || '',
+        awaitingEnglishRetry: isAwaitingRetry,
         timestamp: Date.now()
       };
 
@@ -254,6 +263,7 @@ export const BuddyView: React.FC<BuddyViewProps> = ({ onStartPractice, onBack, l
         text: "I'm listening and understand you completely 😊 Take your time.",
         nextQuestion: '',
         subtleRecast: '',
+        awaitingEnglishRetry: false,
         timestamp: Date.now()
       };
       setMessages(prev => [...prev, fallbackMsg]);
@@ -644,6 +654,21 @@ export const BuddyView: React.FC<BuddyViewProps> = ({ onStartPractice, onBack, l
                   </button>
                 )}
               </div>
+
+              {msg.sender === 'buddy' && msg.awaitingEnglishRetry && msg.subtleRecast && (
+                <div className="mt-3 pt-2.5 border-t border-zinc-800/80 flex items-center justify-between gap-2">
+                  <div className="text-xs text-sky-400 font-semibold flex items-center gap-1.5 flex-wrap">
+                    <span>Try saying:</span>
+                    <span className="text-white italic bg-sky-950/60 px-2 py-0.5 rounded-md border border-sky-800/60 font-medium">"{msg.subtleRecast}"</span>
+                  </div>
+                  <button
+                    onClick={() => setInputMessage(msg.subtleRecast || '')}
+                    className="text-[11px] text-zinc-400 hover:text-sky-300 underline font-semibold cursor-pointer shrink-0"
+                  >
+                    Tap to use
+                  </button>
+                </div>
+              )}
             </div>
           </motion.div>
         ))}

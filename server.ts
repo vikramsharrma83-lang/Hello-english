@@ -13,6 +13,7 @@ import {
   findSheekoRephraseTemplate,
   getSheekoReferences
 } from "./server/services/sheekoServerEngine.ts";
+import { orchestrateConversationTurn, getProviderHealthStatus } from "./server/services/conversationOrchestrator.ts";
 import { callLlamaConversationStep } from "./server/services/llamaService.ts";
 import { analyzeDrillFeedbackWithLlama } from "./server/services/llamaDrillService.ts";
 import { generateGeminiContent } from "./server/services/geminiService.ts";
@@ -105,13 +106,13 @@ app.post("/api/understand", async (req, res) => {
 // Endpoint: Engine 3 Buddy Chat conversation step
 app.post("/api/buddy-chat", async (req, res) => {
   try {
-    const { history, learnerMessage, exchangeCount } = req.body;
-    const cleanMsg = (learnerMessage || "").trim();
+    const { history, learnerMessage, message, exchangeCount, wasAwaitingEnglishRetry: explicitRetry } = req.body;
+    const cleanMsg = (learnerMessage || message || "").trim();
     const currentExchanges = typeof exchangeCount === 'number' ? exchangeCount : 1;
 
     // Detect if previous Buddy message was waiting for an English retry
-    let wasAwaitingEnglishRetry = false;
-    if (history && history.length > 0) {
+    let wasAwaitingEnglishRetry = Boolean(explicitRetry);
+    if (!wasAwaitingEnglishRetry && history && history.length > 0) {
       const lastBuddyMsg = [...history].reverse().find((m: any) => m.sender === 'buddy');
       if (lastBuddyMsg) {
         const text = (lastBuddyMsg.text || '').toLowerCase();
@@ -123,333 +124,26 @@ app.post("/api/buddy-chat", async (req, res) => {
           text.includes('aap try karo') ||
           text.includes('in english:') ||
           text.includes('english mein aap keh sakte ho') ||
-          text.includes('you can say:')
+          text.includes('you can say:') ||
+          text.includes('bolo') ||
+          text.includes('try')
         ) {
           wasAwaitingEnglishRetry = true;
         }
       }
     }
 
-    const groqKey = process.env.GROQ_API_KEY;
-    const geminiKey = process.env.GEMINI_API_KEY;
-
-    const systemPrompt = `You are Buddy, a friendly English-speaking companion and language coach for beginner Indian learners.
-
-BUDDY ADAPTIVE CONVERSATION INTELLIGENCE:
-Buddy always starts the conversation in simple English with one short, friendly question.
-Example: "Hello! I'm your English Buddy 😊 How are you today?"
-Do not ask the learner to choose Hindi or English.
-
-The learner may respond in Hindi, Hinglish, broken English, or English.
-
-FOR EVERY LEARNER MESSAGE, BUDDY MUST INTELLIGENTLY UNDERSTAND:
-1. What does the learner mean?
-2. What language is the learner comfortable using right now?
-3. How well can the learner currently express themselves in English?
-4. Is the learner attempting English?
-5. How much help does the learner need?
-6. Should Buddy give support in Hinglish or continue the conversation in English?
-
-BUDDY MUST ADAPT NATURALLY ON EVERY TURN:
-
-1. IF THE LEARNER SPEAKS HINDI:
-* Understand the meaning.
-* Respond naturally in Hinglish.
-* Give a simple English sentence for the learner's exact meaning.
-* Encourage the learner to try saying it in English.
-* STOP AND WAIT (Do not ask a new question! Leave nextQuestion as "").
-Example:
-Learner: "Aaj mera din acha nahi tha."
-Buddy: "Achha, toh aaj aapka din acha nahi raha 😊 English mein aap bol sakte ho, 'My day was not good.' Aap ek baar English mein try karo."
-
-2. IF THE LEARNER TRIES BROKEN ENGLISH:
-* First recognise and encourage the effort.
-* Understand the meaning.
-* Give a gentle improvement only if needed.
-* Do not make the learner feel wrong.
-* Continue the natural conversation with ONE short question.
-Example:
-Learner: "My day not good."
-Buddy: "Very good! 😊 Aapne acha try kiya. Bas ek chhota improvement: 'My day was not good.' Tell me, why was your day not good?"
-
-3. IF THE LEARNER SPEAKS CORRECT OR UNDERSTANDABLE ENGLISH:
-* Respond naturally.
-* Continue the conversation primarily in simple English.
-* Do not unnecessarily translate or teach.
-Example:
-Learner: "My day was not good."
-Buddy: "Oh, I understand. Why was your day not good?"
-
-4. IF THE LEARNER SWITCHES BACK TO HINDI:
-* Do not reject Hindi.
-* Understand the meaning.
-* Return to Hinglish support.
-* Give the learner the English version.
-* Encourage another English attempt.
-
-LANGUAGE PROGRESSION:
-- Hindi/Hinglish is the support language.
-- English is the conversation goal.
-- As the learner becomes more comfortable speaking English, Buddy should naturally increase the amount of English used.
-- Do not force this progression.
-- Do not ask the learner which language they prefer.
-- Buddy must infer the learner's current comfort level from the conversation.
-
-BUDDY IS NOT A TRANSLATOR:
-- Do not mechanically translate every sentence.
-- Buddy is a natural conversation companion who: listens, understands, responds, encourages, gently improves English, continues the conversation.
-- After helping the learner express something in English, Buddy should continue the conversation naturally in simple English whenever the learner is ready.
-- If the learner struggles to understand the English question (e.g. "Samajh nahi aaya"), then Buddy may briefly explain it in Hindi/Hinglish and help them answer.
-- Always provide the minimum amount of help needed. Never over-explain. Never give grammar lectures unless specifically asked.
-- Never behave like an interviewer. Do not ask a question after every message. Sometimes simply respond naturally and allow the learner to continue.
-- When asking a question, ask only one short and relevant question.
-
-NO MACHINE-LIKE OUTPUT:
-- Buddy must sound like a real, friendly person.
-- Keep responses short, warm, and conversational.
-- Do NOT output UI labels, SVG text, icon descriptions, headings, or technical information.
-- Never output prefixes like "Natural Phrasing:", "Suggested Answer:", "Correct Sentence:", "Grammar Correction:".
-- Put the complete, natural conversational reply directly in "naturalResponse".
-
-THE GOLDEN RULE:
-Buddy should meet the learner at their current level and gently move them one step toward better English.
-Never push too hard. Never leave the learner stuck. Never make the learner feel wrong.
-Understand first. Encourage second. Guide third. Adapt continuously.
-
-Target exchange count is 12-15. If exchangeCount >= 13 or learner expresses goodbye/stopping, set shouldEnd to true.
-
-RESPONSE FORMAT (Valid JSON ONLY):
-{
-  "understoodMeaning": "string - what the learner intended to say",
-  "naturalResponse": "string - the complete, warm conversational response for Buddy to speak/send",
-  "nextQuestion": "string - leave as empty string \"\" if already included in naturalResponse or if not asking a question",
-  "subtleRecast": "string - simple English sentence model, or empty string \"\"",
-  "awaitingEnglishRetry": boolean,
-  "learnerComfortLanguage": "hindi" | "hinglish" | "english",
-  "topic": "string",
-  "conversationDepth": number,
-  "needsClarification": boolean,
-  "shouldEnd": boolean
-}`;
-
-    const userPrompt = JSON.stringify({
-      exchangeCount: currentExchanges,
+    const orchestrationResult = await orchestrateConversationTurn({
       history: history || [],
-      latestLearnerMessage: cleanMsg,
+      learnerMessage: cleanMsg,
+      exchangeCount: currentExchanges,
       wasAwaitingEnglishRetry,
     });
 
-    const parseJSONSafely = (text: string) => {
-      try {
-        return JSON.parse(text);
-      } catch (e) {
-        // Try extracting json block via regex
-        const match = text.match(/\{[\s\S]*\}/);
-        if (match) {
-          try {
-            return JSON.parse(match[0]);
-          } catch (err) {
-            return null;
-          }
-        }
-        return null;
-      }
-    };
-
-    let result = null;
-    if (groqKey && groqKey.trim()) {
-      try {
-        const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${groqKey.trim()}`,
-          },
-          body: JSON.stringify({
-            model: "llama-3.1-8b-instant",
-            messages: [
-              { role: "system", content: systemPrompt },
-              { role: "user", content: userPrompt },
-            ],
-            temperature: 0.6,
-            max_tokens: 600,
-            response_format: { type: "json_object" },
-          }),
-        });
-        if (response.ok) {
-          const data = await response.json();
-          const content = data?.choices?.[0]?.message?.content;
-          if (content) {
-            result = parseJSONSafely(content);
-          }
-        }
-      } catch (e) {
-        console.warn("Groq buddy chat error:", e);
-      }
-    }
-
-    if (!result && geminiKey && geminiKey.trim()) {
-      try {
-        const text = await generateGeminiContent({
-          apiKey: geminiKey,
-          contents: `${systemPrompt}\n\nContext:\n${userPrompt}`,
-          responseMimeType: "application/json",
-          temperature: 0.6,
-        });
-        if (text) {
-          result = parseJSONSafely(text);
-        }
-      } catch (e) {
-        console.warn("Gemini buddy chat error:", e);
-      }
-    }
-
-    if (!result) {
-      const lower = cleanMsg.toLowerCase();
-      const shouldEnd = currentExchanges >= 13 || lower.includes('bye') || lower.includes('goodbye') || lower.includes('stop');
-
-      // Check if learner said they didn't understand the English question
-      const isNotUnderstanding = /\b(samajh|samjha|nahi aaya|nahi samjha|samjh|kya matlab|don't understand|did not understand)\b/i.test(lower);
-
-      const isHindiOrHinglish = /[\u0900-\u097F]/.test(cleanMsg) ||
-        /\b(maine|khana|kha|liya|kiya|kaam|theek|samajh|gaya|gayi|aaya|aayi|kar|raha|rahi|hoon|hai|hain|mein|mera|meri|kuch|nahi|kya|bhai|dost|aaj|kal|subah|shaam|bahut|achha|accha|bohot|ghar|pata|mujhe|tum|aap|khelne|khel)\b/i.test(cleanMsg);
-
-      let understoodMeaning = cleanMsg ? `You shared: "${cleanMsg}"` : "You started the conversation.";
-      let naturalResponse = "Nice! 😊 That sounds interesting.";
-      let nextQuestion = "";
-      let subtleRecast = "";
-      let awaitingEnglishRetry = false;
-      let learnerComfortLanguage: 'hindi' | 'hinglish' | 'english' = isHindiOrHinglish ? 'hinglish' : 'english';
-
-      if (!cleanMsg) {
-        naturalResponse = "Hello! I'm your English Buddy 😊 How are you today?";
-        nextQuestion = "";
-      } else if (isNotUnderstanding) {
-        // Learner does not understand the English question -> Explain gently in Hinglish + repeat in English + ask to try
-        understoodMeaning = "You needed clarification on what was asked.";
-        naturalResponse = "No problem 😊 Main pooch raha hoon: 'Aap aaj kya kar rahe the?' In English: 'What were you doing today?' Ab aap answer try karo. Main sun raha hoon 😊";
-        nextQuestion = ""; // STOP AND WAIT!
-        subtleRecast = "What were you doing today?";
-        awaitingEnglishRetry = true;
-      } else if (wasAwaitingEnglishRetry && !isHindiOrHinglish) {
-        // Learner tried in English after practice prompt!
-        understoodMeaning = "You practiced expressing your thought in English.";
-        if (/\bmy day was not good\b/i.test(lower)) {
-          naturalResponse = "Oh, I understand. Why was your day not good?";
-        } else {
-          naturalResponse = "Bahut badhiya! 👏 You said that very well.";
-        }
-        nextQuestion = shouldEnd ? "It was so wonderful chatting with you! Would you like to see our chat report?" : "";
-        subtleRecast = "";
-        awaitingEnglishRetry = false;
-        learnerComfortLanguage = 'english';
-      } else if (isHindiOrHinglish) {
-        // Learner expressed in Hindi/Hinglish -> Follow flow: Understand -> Respond naturally in Hinglish -> English model -> Encourage -> WAIT
-        awaitingEnglishRetry = true;
-        learnerComfortLanguage = 'hindi';
-
-        if (/\b(din.*(acha|accha|theek|kharab|sahi|bad)|nahi tha|din acha|din theek)\b/i.test(lower)) {
-          understoodMeaning = "Your day was not good.";
-          naturalResponse = "Achha, toh aaj aapka din acha nahi raha 😊 English mein aap bol sakte ho, 'My day was not good.' Aap ek baar English mein try karo.";
-          nextQuestion = ""; // STOP AND WAIT!
-          subtleRecast = "My day was not good.";
-        } else if (/\b(khelne|khel|play|cricket|football|game)\b/i.test(lower)) {
-          understoodMeaning = "You talked about not playing or going out to play.";
-          naturalResponse = "Achha 😊 Samajh gaya. Kabhi kabhi aisa hota hai. English mein aap keh sakte ho: 'I didn't go out to play today.' Ab aap try karo. Main sun raha hoon.";
-          nextQuestion = ""; // STOP AND WAIT!
-          subtleRecast = "I didn't go out to play today.";
-        } else if (/\b(thak|thaka|tired|neend|rest)\b/i.test(lower)) {
-          understoodMeaning = "You were tired or exhausted.";
-          naturalResponse = "Achha 😊 Samajh gaya. Aap keh sakte ho: 'I was tired today.' Ab aap English mein try karo. Main sun raha hoon.";
-          nextQuestion = ""; // STOP AND WAIT!
-          subtleRecast = "I was tired today.";
-        } else if (/\b(khana|kha|dinner|lunch|breakfast|roti|chai)\b/i.test(lower)) {
-          understoodMeaning = "You talked about your meal or food.";
-          naturalResponse = "Achha 😊 Samajh gaya. English mein aap keh sakte ho: 'I have had my food.' Ab aap try karo. Main sun raha hoon.";
-          nextQuestion = ""; // STOP AND WAIT!
-          subtleRecast = "I have had my food.";
-        } else if (/\b(kaam|office|shift|duty)\b/i.test(lower)) {
-          understoodMeaning = "You talked about your work or office.";
-          naturalResponse = "Got it! 😊 Work days can be busy. English mein aap keh sakte ho: 'I was busy with my work.' Ab aap try karo. Main sun raha hoon.";
-          nextQuestion = ""; // STOP AND WAIT!
-          subtleRecast = "I was busy with my work.";
-        } else if (/\b(market|bazaar|shopping|dukaan)\b/i.test(lower)) {
-          understoodMeaning = "You went to the market or shopping.";
-          naturalResponse = "Achha 😊 Samajh gaya. English mein aap keh sakte ho: 'I went to the market.' Ab aap try karo. Main sun raha hoon.";
-          nextQuestion = ""; // STOP AND WAIT!
-          subtleRecast = "I went to the market.";
-        } else if (/\b(theek|badhiya|accha|achha|mast)\b/i.test(lower)) {
-          understoodMeaning = "You are feeling good today.";
-          naturalResponse = "Bahut badhiya! 😊 Glad to hear that. English mein aap keh sakte ho: 'I am doing well today.' Ab aap try karo. Main sun raha hoon.";
-          nextQuestion = ""; // STOP AND WAIT!
-          subtleRecast = "I am doing well today.";
-        } else {
-          understoodMeaning = `You expressed: "${cleanMsg}"`;
-          naturalResponse = `Achha 😊 Samajh gaya. English mein aap keh sakte ho: 'I want to share my thoughts.' Ab aap try karo. Main sun raha hoon.`;
-          nextQuestion = ""; // STOP AND WAIT!
-          subtleRecast = "I want to share my thoughts.";
-        }
-      } else if (/\b(my day not good|day not good|i not good)\b/i.test(lower)) {
-        understoodMeaning = "Your day was not good.";
-        naturalResponse = "Very good! 😊 Aapne acha try kiya. Bas ek chhota improvement: 'My day was not good.' Tell me, why was your day not good?";
-        nextQuestion = "";
-        subtleRecast = "My day was not good.";
-        awaitingEnglishRetry = false;
-        learnerComfortLanguage = 'english';
-      } else if (/\bmy day was not good\b/i.test(lower)) {
-        understoodMeaning = "Your day was not good.";
-        naturalResponse = "Oh, I understand. Why was your day not good?";
-        nextQuestion = "";
-        subtleRecast = "";
-        awaitingEnglishRetry = false;
-        learnerComfortLanguage = 'english';
-      } else if (/\bi go (yesterday|market|home)\b/i.test(lower)) {
-        understoodMeaning = "You went somewhere recently.";
-        naturalResponse = "Bahut badhiya! 👏 I understood you clearly. A more natural way to say it is: 'I went yesterday.' Where did you go?";
-        nextQuestion = "";
-        subtleRecast = "I went yesterday.";
-        awaitingEnglishRetry = false;
-        learnerComfortLanguage = 'english';
-      } else {
-        // Learner spoke clear or understandable English
-        const encouragementResponses = [
-          "Bahut badhiya! 👏 You expressed that so clearly.",
-          "Nice! 😊 You said that very naturally.",
-          "Awesome! That sounded really clear.",
-          "Very good! 😊 I understood you completely."
-        ];
-        const idx = Math.abs(cleanMsg.length + currentExchanges) % encouragementResponses.length;
-        naturalResponse = encouragementResponses[idx];
-
-        // Continue in simple English; occasionally ask ONE natural question
-        if (shouldEnd) {
-          nextQuestion = "It was so wonderful chatting with you! Would you like to see our chat report?";
-        } else if (currentExchanges % 3 === 0) {
-          nextQuestion = "What did you do instead?";
-        } else {
-          nextQuestion = ""; // Sometimes simply listen!
-        }
-        subtleRecast = "";
-        awaitingEnglishRetry = false;
-        learnerComfortLanguage = 'english';
-      }
-
-      result = {
-        understoodMeaning,
-        naturalResponse,
-        nextQuestion: shouldEnd ? "It was so wonderful chatting with you! Would you like to see our chat report?" : nextQuestion,
-        subtleRecast,
-        awaitingEnglishRetry,
-        learnerComfortLanguage,
-        newFacts: cleanMsg ? [cleanMsg] : [],
-        topic: "Daily Life & Experiences",
-        conversationDepth: currentExchanges,
-        needsClarification: false,
-        shouldEnd,
-      };
-    }
-
-    return res.json(result);
+    return res.json({
+      ...orchestrationResult,
+      englishModel: orchestrationResult.subtleRecast || "",
+    });
   } catch (err) {
     console.error("Buddy chat API error:", err);
     return res.json({
@@ -457,6 +151,7 @@ RESPONSE FORMAT (Valid JSON ONLY):
       naturalResponse: "I'm listening and understand you completely 😊 Take your time.",
       nextQuestion: "",
       subtleRecast: "",
+      englishModel: "",
       awaitingEnglishRetry: false,
       learnerComfortLanguage: "english",
       newFacts: [],
@@ -464,6 +159,8 @@ RESPONSE FORMAT (Valid JSON ONLY):
       conversationDepth: 1,
       needsClarification: false,
       shouldEnd: false,
+      providerUsed: "sheeko_local",
+      responseTimeMs: 0,
     });
   }
 });
@@ -1586,12 +1283,16 @@ app.post("/api/tts", async (req, res) => {
     const target_language_code = lang.startsWith('hi') ? 'hi-IN' : 'en-IN';
     const chosenSpeaker = (!speaker || speaker === "meera" || speaker === "neha") ? "ritu" : speaker;
 
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 6500);
+
     const response = await fetch("https://api.sarvam.ai/text-to-speech", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "api-subscription-key": apiKey,
+        "api-subscription-key": apiKey.trim(),
       },
+      signal: controller.signal,
       body: JSON.stringify({
         inputs: [text],
         target_language_code,
@@ -1605,6 +1306,8 @@ app.post("/api/tts", async (req, res) => {
       }),
     });
 
+    clearTimeout(timeoutId);
+
     const data = await response.json();
     if (response.ok && data.audios && data.audios[0]) {
       return res.json({
@@ -1615,21 +1318,54 @@ app.post("/api/tts", async (req, res) => {
       });
     }
 
+    console.warn("[TTS] Sarvam response fallback:", data?.message || response.statusText);
     return res.json({ fallback: true, message: "Sarvam TTS fallback." });
-  } catch (err) {
-    console.error("Error in /api/tts Sarvam wrapper:", err);
+  } catch (err: any) {
+    console.warn("[TTS] Sarvam request error/timeout, using fallback:", err?.message || err);
     return res.json({ fallback: true, message: "Use client-side Web Speech API." });
   }
 });
 
-// Health check
-app.get("/api/health", (_req, res) => {
+// Root Health check - Confirms backend process is alive
+app.get("/health", (_req, res) => {
   res.json({
-    status: "ok",
-    coach: "Coach Neha",
+    status: "alive",
+    process: "healthy",
     app: "HELLO ENGLISH",
+    uptimeSeconds: Math.round(process.uptime()),
     engine: "Deterministic Local 10000-Reference-Pattern Engine",
     referencePatternsLoaded: referencePatterns.length,
+    timestamp: new Date().toISOString(),
+  });
+});
+
+app.get("/api/health", (_req, res) => {
+  res.json({
+    status: "alive",
+    process: "healthy",
+    coach: "Coach Neha",
+    app: "HELLO ENGLISH",
+    uptimeSeconds: Math.round(process.uptime()),
+    engine: "Deterministic Local 10000-Reference-Pattern Engine",
+    referencePatternsLoaded: referencePatterns.length,
+    timestamp: new Date().toISOString(),
+  });
+});
+
+// Diagnostic Providers Health check - reports provider availability safely without exposing secrets
+app.get("/health/providers", (_req, res) => {
+  res.json({
+    status: "ok",
+    providers: getProviderHealthStatus(),
+    timestamp: new Date().toISOString(),
+  });
+});
+
+app.get("/api/health/providers", (_req, res) => {
+  res.json({
+    status: "ok",
+    providers: getProviderHealthStatus(),
+    timestamp: new Date().toISOString(),
   });
 });
 
@@ -1655,3 +1391,5 @@ async function startServer() {
 }
 
 startServer();
+
+export { app };

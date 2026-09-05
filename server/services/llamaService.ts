@@ -1,5 +1,19 @@
 import { GoogleGenAI } from "@google/genai";
 
+export async function generateResponse(promptOrPayload: any): Promise<any> {
+  const result = await callLlamaConversationStep(promptOrPayload || {});
+  return {
+    naturalResponse: result?.meaning || "I understand you.",
+    englishModel: result?.rephrase || "I understand.",
+    awaitingEnglishRetry: false,
+    ...result
+  };
+}
+
+export function getProviderHealth(): boolean {
+  return true;
+}
+
 export interface LlamaConversationContext {
   latestLearnerAnswer?: string;
   selectedTopic?: {

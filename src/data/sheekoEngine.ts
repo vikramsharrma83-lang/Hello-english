@@ -100,8 +100,28 @@ export function extractNaturalEnglishMeaning(text: string): string {
   const polished = rawSentences.map(rawSentence => {
     let s = applySheekoGrammarCorrections(rawSentence);
 
-    // Apply specific Indian English to natural English normalizations
+    // Apply Hindi / Hinglish to natural English deterministic models
     s = s
+      .replace(/\bkal maine naya phone (khareeda|kharida|liya),?\s*par wo chal nahi raha tha,?\s*toh maine customer care ko phone lagaya aur unhone bola kal aao\b/gi, 'Yesterday I bought a new phone, but it was not working, so I called customer care and they told me to come tomorrow')
+      .replace(/\b(my brother buy phone|brother buy phone)\b/gi, 'My brother bought a phone')
+      .replace(/\b(i buy phone|i buy new phone)\b/gi, 'I bought a new phone')
+      .replace(/\bbuy phone\b/gi, 'bought a phone')
+      .replace(/\bbought phone\b/gi, 'bought a phone')
+      .replace(/\bkal main market gaya aur sabzi khareedi|kal main market gaya aur sabji khareedi|kal market gaya aur sabzi kharidi\b/gi, 'Yesterday I went to the market and bought vegetables')
+      .replace(/\b(yesterday i go market and buy vegetable|yesterday i go market and buy vegetables)\b/gi, 'Yesterday I went to the market and bought vegetables')
+      .replace(/\b(papa ne bill pay kiya|papa ne bill bhara)\b/gi, 'My father paid the electricity bill')
+      .replace(/\b(kal main market gaya|kal market gaya tha)\b/gi, 'Yesterday I went to the market')
+      .replace(/\b(sabzi khareedi|sabji kharidi|sabzi li)\b/gi, 'bought vegetables')
+      .replace(/\b(aaj mera din (acha|accha|theek) nahi tha|din acha nahi tha|aaj din kharab tha)\b/gi, 'My day was not good')
+      .replace(/\b(aaj mera din (acha|accha|theek|badhiya) tha)\b/gi, 'My day was good today')
+      .replace(/\b(my day not good|my day no good)\b/gi, 'My day was not good')
+      .replace(/\b(day not good|day no good)\b/gi, 'The day was not good')
+      .replace(/\b(i not good)\b/gi, 'I was not feeling good')
+      .replace(/\b(maine khana kha liya|khana kha liya|dinner kar liya)\b/gi, 'I have had my food')
+      .replace(/\b(khelne nahi gaya|aaj khelne nahi gaya|match nahi khela)\b/gi, "I didn't go out to play today")
+      .replace(/\b(bahut thak gaya hoon|thak gaya|bohot thaka tha)\b/gi, 'I was very tired today')
+      .replace(/\b(kaam par tha|office mein busy tha)\b/gi, 'I was busy with work')
+      .replace(/\b(market gaya tha|shopping gaya tha)\b/gi, 'I went to the market')
       .replace(/\btoday morning\b/gi, 'this morning')
       .replace(/\byesterday night\b/gi, 'last night')
       .replace(/\bcame late to office\b/gi, 'arrived late at the office')

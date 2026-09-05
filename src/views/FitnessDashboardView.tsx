@@ -105,7 +105,7 @@ export const FitnessDashboardView: React.FC<FitnessDashboardViewProps> = ({
   }
 
   return (
-    <div className="min-h-screen bg-black text-white pb-32 pt-5 px-4 font-sans select-none max-w-[440px] mx-auto">
+    <div className="w-full min-h-full bg-black text-white pb-36 pt-5 px-4 font-sans select-none max-w-[440px] mx-auto">
       {/* Top Header */}
       <header className="flex items-center justify-between mb-5 px-1">
         <div>

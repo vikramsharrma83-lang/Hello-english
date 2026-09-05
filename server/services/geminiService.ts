@@ -1,9 +1,9 @@
 import { GoogleGenAI } from "@google/genai";
 
 const APPROVED_MODELS = [
-  "gemini-3.1-flash-lite",
+  "gemini-2.5-flash",
+  "gemini-2.5-flash-lite",
   "gemini-flash-latest",
-  "gemini-3.8-flash",
 ];
 
 export interface GeminiContentOptions {
@@ -61,3 +61,15 @@ export async function generateGeminiContent(options: GeminiContentOptions): Prom
   console.warn("[GeminiService] All approved Gemini fallback models failed:", lastError?.message || lastError);
   return null;
 }
+
+export async function generateResponse(promptOrPayload: any): Promise<any> {
+  const text = await generateGeminiContent({
+    contents: typeof promptOrPayload === 'string' ? promptOrPayload : JSON.stringify(promptOrPayload)
+  });
+  return {
+    naturalResponse: text || "Achha, samajh gaya.",
+    englishModel: "I understood.",
+    awaitingEnglishRetry: false
+  };
+}
+

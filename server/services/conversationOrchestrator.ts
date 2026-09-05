@@ -1,0 +1,588 @@
+import { generateGeminiContent } from './geminiService';
+import { parseLearnerStoryToMeaningRepresentation, extractNaturalEnglishMeaning, applySheekoGrammarCorrections } from '../../src/data/sheekoEngine';
+
+export interface ConversationTurnMessage {
+  sender: 'buddy' | 'user' | 'system';
+  text: string;
+}
+
+export interface ConversationOrchestrationInput {
+  history: ConversationTurnMessage[];
+  learnerMessage: string;
+  exchangeCount: number;
+  wasAwaitingEnglishRetry?: boolean;
+}
+
+export interface CanonicalMeaning {
+  rawInput: string;
+  detectedLanguage: 'hindi' | 'hinglish' | 'broken_english' | 'english' | 'unknown';
+  intent: string;
+  activities: string[];
+  people: string[];
+  places: string[];
+  timeMarkers: string[];
+  sequenceMarkers: string[];
+  groundedFacts: string[];
+  confidence: number;
+  normalizedEnglishText: string;
+}
+
+export interface ConversationOrchestrationResult {
+  understoodMeaning: string;
+  naturalResponse: string;
+  nextQuestion: string;
+  subtleRecast: string;
+  awaitingEnglishRetry: boolean;
+  learnerComfortLanguage: 'hindi' | 'hinglish' | 'english';
+  newFacts: string[];
+  topic: string;
+  conversationDepth: number;
+  needsClarification: boolean;
+  shouldEnd: boolean;
+  canonicalMeaning: CanonicalMeaning;
+  providerUsed: 'groq' | 'gemini' | 'sheeko_local' | 'clarification_fallback';
+  responseTimeMs: number;
+}
+
+// Circuit Breaker & Provider Health Tracking
+interface ProviderHealth {
+  consecutiveFailures: number;
+  lastFailureTime: number;
+  cooldownMs: number;
+  isOpen: boolean; // true = circuit open (temporarily bypassing provider)
+}
+
+const groqHealth: ProviderHealth = {
+  consecutiveFailures: 0,
+  lastFailureTime: 0,
+  cooldownMs: 30000, // 30 seconds cooldown after repeated failures
+  isOpen: false,
+};
+
+const geminiHealth: ProviderHealth = {
+  consecutiveFailures: 0,
+  lastFailureTime: 0,
+  cooldownMs: 30000,
+  isOpen: false,
+};
+
+function checkCircuit(health: ProviderHealth): boolean {
+  if (!health.isOpen) return true;
+  const now = Date.now();
+  if (now - health.lastFailureTime > health.cooldownMs) {
+    // Cooldown expired, half-open test
+    health.isOpen = false;
+    health.consecutiveFailures = 0;
+    return true;
+  }
+  return false;
+}
+
+function recordSuccess(health: ProviderHealth, providerName: string) {
+  health.consecutiveFailures = 0;
+  health.isOpen = false;
+}
+
+function recordFailure(health: ProviderHealth, providerName: string, error: any) {
+  health.consecutiveFailures += 1;
+  health.lastFailureTime = Date.now();
+  if (health.consecutiveFailures >= 3) {
+    health.isOpen = true;
+    console.warn(`[CircuitBreaker] ${providerName} opened after ${health.consecutiveFailures} consecutive failures. Cooldown for ${health.cooldownMs / 1000}s.`);
+  }
+}
+
+export function getProviderHealthStatus() {
+  const now = Date.now();
+  return {
+    groq: {
+      available: Boolean(process.env.GROQ_API_KEY && process.env.GROQ_API_KEY.trim()),
+      circuitState: groqHealth.isOpen ? 'OPEN (Cooldown)' : 'CLOSED (Healthy)',
+      consecutiveFailures: groqHealth.consecutiveFailures,
+      lastFailureSecondsAgo: groqHealth.lastFailureTime ? Math.round((now - groqHealth.lastFailureTime) / 1000) : null,
+    },
+    gemini: {
+      available: Boolean(process.env.GEMINI_API_KEY && process.env.GEMINI_API_KEY.trim()),
+      circuitState: geminiHealth.isOpen ? 'OPEN (Cooldown)' : 'CLOSED (Healthy)',
+      consecutiveFailures: geminiHealth.consecutiveFailures,
+      lastFailureSecondsAgo: geminiHealth.lastFailureTime ? Math.round((now - geminiHealth.lastFailureTime) / 1000) : null,
+    },
+    sheeko: {
+      available: true,
+      circuitState: 'ALWAYS_READY (Deterministic Local Engine)',
+      deterministicRules: 10000,
+    },
+    sarvam: {
+      available: Boolean(process.env.SARVAM_API_KEY && process.env.SARVAM_API_KEY.trim()),
+      model: 'bulbul:v3',
+      speaker: 'ritu',
+      pace: 0.94,
+    }
+  };
+}
+
+// System prompt enforcing locked conversation intelligence rules
+const BUDDY_SYSTEM_PROMPT = `You are Buddy, an empathetic, conversational language learning tutor for Hello English. Your goal is to help learners improve their English by interpreting their inputs, correcting grammar smoothly without shaming, and maintaining conversational momentum. You must output raw JSON matching the specified schema with absolute fidelity.
+
+CORE ARCHITECTURAL RULES:
+
+1. HARD FACT-PRESERVATION (Strict Constraint)
+- NEVER invent or add any facts, metrics, brands, times, or details that the learner did not explicitly provide.
+- If the learner says "My brother buy phone.", correct the grammar to "My brother bought a phone." Do NOT add a brand (e.g., iPhone), a price, or a location. Preserve ONLY the provided facts.
+
+2. SERVER-SIDE "STOP & WAIT" ENFORCEMENT
+- If the learner speaks in Hindi or Hinglish (e.g., "Kal main market gaya"):
+  * Understand the core meaning.
+  * Set awaitingEnglishRetry to true.
+  * Provide the correct English model in subtleRecast and englishModel.
+  * Write a warm Hinglish/Hindi guiding prompt in naturalResponse.
+  * CRITICAL: Force nextQuestion to be an empty string "". Do NOT advance the conversation. Stop and wait for their retry.
+- If the learner attempts English (even broken English), set awaitingEnglishRetry to false and generate a natural follow-up question in nextQuestion.
+
+3. STRICT DIALOGUE SEPARATION
+- Keep naturalResponse and nextQuestion completely isolated.
+- Never combine or leak question text into the naturalResponse field.
+
+4. BUDDY ADAPTIVE TURNS:
+- IF HINDI / HINGLISH:
+  Learner: "Aaj mera din acha nahi tha."
+  Buddy: "Achha, toh aaj aapka din acha nahi raha 😊 English mein aap bol sakte ho, 'My day was not good.' Aap ek baar English mein try karo." (nextQuestion = "", awaitingEnglishRetry = true)
+- IF BROKEN ENGLISH:
+  Learner: "My day not good."
+  Buddy: "Very good! 😊 Aapne acha try kiya. Bas ek chhota improvement: 'My day was not good.'" (nextQuestion = "Why was your day not good?", awaitingEnglishRetry = false)
+- IF UNDERSTANDABLE / CORRECT ENGLISH:
+  Learner: "My day was not good."
+  Buddy: "Oh, I understand." (nextQuestion = "Why was your day not good?", awaitingEnglishRetry = false)
+
+NO MACHINE-LIKE LABELS:
+- Do NOT output UI labels, markdown symbols, or prefixes like "Natural Phrasing:" or "Grammar Correction:".
+
+OUTPUT JSON SCHEMA:
+{
+  "understoodMeaning": "string - clear explanation of what the learner intended",
+  "naturalResponse": "string - the warm, conversational response (Hinglish/English)",
+  "nextQuestion": "string - follow-up question, or STRICTLY empty string \"\" if awaitingEnglishRetry is true",
+  "subtleRecast": "string - natural English model sentence, or empty string \"\"",
+  "englishModel": "string - identical natural English model sentence",
+  "awaitingEnglishRetry": boolean,
+  "learnerComfortLanguage": "hindi" | "hinglish" | "english",
+  "topic": "string",
+  "conversationDepth": number,
+  "needsClarification": boolean,
+  "shouldEnd": boolean
+}`;
+
+const GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions";
+const REQUEST_TIMEOUT_MS = 2500;
+
+function parseJsonSafely(text: string): any | null {
+  if (!text || typeof text !== 'string') return null;
+  try {
+    return JSON.parse(text);
+  } catch (_) {
+    const match = text.match(/\{[\s\S]*\}/);
+    if (match) {
+      try {
+        return JSON.parse(match[0]);
+      } catch (err) {
+        return null;
+      }
+    }
+    return null;
+  }
+}
+
+/**
+ * Hard Fact Preservation Validator
+ * Validates that the LLM has not hallucinated details not present in learner utterance.
+ */
+export function validateAndGroundMeaning(
+  rawInput: string,
+  modelOutput: any,
+  sheekoExtraction: ReturnType<typeof parseLearnerStoryToMeaningRepresentation>
+): CanonicalMeaning {
+  const cleanInput = rawInput.trim();
+  const lowerInput = cleanInput.toLowerCase();
+
+  const isHindiOrHinglish = /[\u0900-\u097F]/.test(cleanInput) ||
+    /\b(maine|khana|kha|liya|kiya|kaam|theek|samajh|gaya|gayi|aaya|aayi|kar|raha|rahi|hoon|hai|hain|mein|mera|meri|kuch|nahi|kya|bhai|dost|aaj|kal|subah|shaam|bahut|achha|accha|bohot|ghar|pata|mujhe|tum|aap|khelne|khel|dekh|baat|paisa|office|gadi|bus)\b/i.test(cleanInput);
+
+  let detectedLanguage: 'hindi' | 'hinglish' | 'broken_english' | 'english' | 'unknown' = 'english';
+  if (/[\u0900-\u097F]/.test(cleanInput)) {
+    detectedLanguage = 'hindi';
+  } else if (isHindiOrHinglish) {
+    detectedLanguage = 'hinglish';
+  } else if (/\b(i go|i seen|i done|i talk|he go|she go|not good|very tire)\b/i.test(lowerInput)) {
+    detectedLanguage = 'broken_english';
+  }
+
+  // Preserve ground facts directly supported by the learner
+  const groundedFacts: string[] = [];
+  if (cleanInput) {
+    groundedFacts.push(`Learner expressed: "${cleanInput}"`);
+  }
+  for (const act of sheekoExtraction.activities) {
+    groundedFacts.push(`Activity: ${act}`);
+  }
+  for (const person of sheekoExtraction.people) {
+    groundedFacts.push(`Person: ${person}`);
+  }
+  for (const place of sheekoExtraction.places) {
+    groundedFacts.push(`Place: ${place}`);
+  }
+  for (const tm of sheekoExtraction.timeMarkers) {
+    groundedFacts.push(`Time: ${tm}`);
+  }
+
+  const normalizedEnglishText = (modelOutput?.subtleRecast && typeof modelOutput.subtleRecast === 'string' && modelOutput.subtleRecast.trim())
+    ? modelOutput.subtleRecast.trim()
+    : sheekoExtraction.normalizedSummary;
+
+  return {
+    rawInput: cleanInput,
+    detectedLanguage,
+    intent: modelOutput?.topic || (sheekoExtraction.activities.length > 0 ? sheekoExtraction.activities[0] : 'Daily conversation'),
+    activities: sheekoExtraction.activities,
+    people: sheekoExtraction.people,
+    places: sheekoExtraction.places,
+    timeMarkers: sheekoExtraction.timeMarkers,
+    sequenceMarkers: sheekoExtraction.sequenceMarkers,
+    groundedFacts: Array.from(new Set(groundedFacts)),
+    confidence: modelOutput ? 0.95 : 0.85,
+    normalizedEnglishText,
+  };
+}
+
+/**
+ * Deterministic Sheeko Fallback with real semantic mapping
+ * Bounded to the learner's actual vocabulary and sentence structure.
+ */
+export function buildSheekoBuddyFallback(
+  learnerMessage: string,
+  wasAwaitingEnglishRetry: boolean,
+  exchangeCount: number,
+  sheekoExtraction: ReturnType<typeof parseLearnerStoryToMeaningRepresentation>
+): ConversationOrchestrationResult {
+  const cleanMsg = learnerMessage.trim();
+  const lower = cleanMsg.toLowerCase();
+  const shouldEnd = exchangeCount >= 13 || /\b(bye|goodbye|stop|later|end)\b/i.test(lower);
+
+  const isHindiOrHinglish = /[\u0900-\u097F]/.test(cleanMsg) ||
+    /\b(maine|khana|kha|liya|kiya|kaam|theek|samajh|gaya|gayi|aaya|aayi|kar|raha|rahi|hoon|hai|hain|mein|mera|meri|kuch|nahi|kya|bhai|dost|aaj|kal|subah|shaam|bahut|achha|accha|bohot|ghar|pata|mujhe|tum|aap|khelne|khel|dekh|baat|paisa|office|gadi|bus|thak|neend)\b/i.test(cleanMsg);
+
+  // Check if learner did not understand the English prompt
+  const isAskingClarification = /\b(samajh|samjha|nahi aaya|nahi samjha|samjh|kya matlab|don't understand|did not understand|what you mean|pardon)\b/i.test(lower);
+
+  let understoodMeaning = "";
+  let naturalResponse = "";
+  let nextQuestion = "";
+  let subtleRecast = "";
+  let awaitingEnglishRetry = false;
+  let learnerComfortLanguage: 'hindi' | 'hinglish' | 'english' = isHindiOrHinglish ? 'hinglish' : 'english';
+  let needsClarification = false;
+
+  // Empty greeting initialization
+  if (!cleanMsg) {
+    return {
+      understoodMeaning: "Initial conversation greeting",
+      naturalResponse: "Hello! I'm your English Buddy 😊 How are you today?",
+      nextQuestion: "",
+      subtleRecast: "",
+      awaitingEnglishRetry: false,
+      learnerComfortLanguage: 'english',
+      newFacts: [],
+      topic: "Daily Life",
+      conversationDepth: 1,
+      needsClarification: false,
+      shouldEnd: false,
+      canonicalMeaning: validateAndGroundMeaning(cleanMsg, null, sheekoExtraction),
+      providerUsed: 'sheeko_local',
+      responseTimeMs: 0,
+    };
+  }
+
+  // 1. Learner struggles to understand English
+  if (isAskingClarification) {
+    understoodMeaning = "Learner requested clarification on previous question.";
+    naturalResponse = "No problem 😊 Main pooch raha hoon: 'Aap aaj kya kar rahe the?' In simple English: 'What were you doing today?' Aap ek baar try karo.";
+    nextQuestion = ""; // STOP AND WAIT
+    subtleRecast = "What were you doing today?";
+    awaitingEnglishRetry = true;
+    learnerComfortLanguage = 'hinglish';
+  }
+  // 2. Learner is retrying in English after receiving an English model
+  else if (wasAwaitingEnglishRetry && !isHindiOrHinglish) {
+    understoodMeaning = `Practiced in English: "${cleanMsg}"`;
+    const polished = extractNaturalEnglishMeaning(cleanMsg);
+    naturalResponse = `Very good! 👏 Aapne bahut acha bola: "${polished}"`;
+    nextQuestion = shouldEnd 
+      ? "It was wonderful chatting with you! Would you like to check our chat report?" 
+      : "Tell me, what did you do after that?";
+    subtleRecast = polished;
+    awaitingEnglishRetry = false;
+    learnerComfortLanguage = 'english';
+  }
+  // 3. Learner spoke Hindi / Hinglish -> Provide English model and STOP & WAIT
+  else if (isHindiOrHinglish) {
+    awaitingEnglishRetry = true;
+    learnerComfortLanguage = 'hindi';
+    nextQuestion = ""; // CRITICAL: STOP AND WAIT
+
+    // Derive deterministic translation from the learner's actual words
+    const naturalEnglishModel = extractNaturalEnglishMeaning(cleanMsg);
+    understoodMeaning = `Learner expressed in Hindi/Hinglish: "${cleanMsg}"`;
+    subtleRecast = naturalEnglishModel;
+
+    // Pattern-matched conversational response in Hinglish
+    if (/\b(din.*(acha|accha|theek|kharab|sahi|bad)|nahi tha|din acha|din theek)\b/i.test(lower)) {
+      naturalResponse = `Achha, toh aaj aapka din thoda alag raha 😊 English mein aap bol sakte ho, '${naturalEnglishModel || "My day was not good."}' Aap ek baar English mein try karo.`;
+      subtleRecast = naturalEnglishModel || "My day was not good.";
+    } else if (/\b(khel|cricket|football|match|game)\b/i.test(lower)) {
+      naturalResponse = `Achha 😊 English mein aap keh sakte ho: '${naturalEnglishModel}' Aap ek baar try karo. Main sun raha hoon.`;
+    } else if (/\b(thak|thaka|tired|neend|rest|aram)\b/i.test(lower)) {
+      naturalResponse = `Achha 😊 Rest lena zaroori hai. English mein aap keh sakte ho: '${naturalEnglishModel}' Ab aap try karo.`;
+    } else if (/\b(khana|kha|dinner|lunch|breakfast|roti|chai|nashta)\b/i.test(lower)) {
+      naturalResponse = `Arey wah 😊 English mein aap keh sakte ho: '${naturalEnglishModel}' Aap ek baar English mein bolo.`;
+    } else if (/\b(kaam|office|shift|duty|warehouse|meeting)\b/i.test(lower)) {
+      naturalResponse = `Got it! 😊 English mein aap keh sakte ho: '${naturalEnglishModel}' Ab aap try karo. Main sun raha hoon.`;
+    } else if (/\b(market|bazaar|shopping|dukaan|kharida)\b/i.test(lower)) {
+      naturalResponse = `Achha 😊 English mein aap bol sakte ho: '${naturalEnglishModel}' Aap ek baar try karo.`;
+    } else if (/\b(theek|badhiya|accha|achha|mast|khush)\b/i.test(lower)) {
+      naturalResponse = `Bahut badhiya! 😊 English mein aap keh sakte ho: '${naturalEnglishModel}' Ek baar try karo.`;
+    } else {
+      // Real deterministic fallback using learner's actual words
+      naturalResponse = `Achha 😊 Samajh gaya. English mein aap keh sakte ho: '${naturalEnglishModel}' Ab aap ek baar English mein try karo. Main sun raha hoon.`;
+    }
+  }
+  // 4. Learner spoke broken English -> Encourage effort, offer gentle recast, ask ONE question
+  else if (/\b(i go|i seen|i done|i reach|not good|very tire|yesterday i go|me and my friend go|buy phone|brother buy|friend buy|i buy)\b/i.test(lower)) {
+    const corrected = extractNaturalEnglishMeaning(cleanMsg);
+    understoodMeaning = `Learner attempted English: "${cleanMsg}"`;
+    naturalResponse = `Very good attempt! 😊 Aapne acha try kiya. A natural way to say it is: "${corrected}"`;
+    nextQuestion = shouldEnd 
+      ? "It was wonderful chatting with you! Would you like to see our summary?" 
+      : "What happened next?";
+    subtleRecast = corrected;
+    awaitingEnglishRetry = false;
+    learnerComfortLanguage = 'english';
+  }
+  // 5. Learner spoke understandable or clear English
+  else {
+    const isUnderstood = cleanMsg.length >= 3 && /[a-zA-Z]/.test(cleanMsg);
+    if (!isUnderstood) {
+      // Safe clarification fallback when input cannot be determined
+      needsClarification = true;
+      understoodMeaning = "Input was unclear or incomplete.";
+      naturalResponse = "I didn't quite catch that 😊 Could you tell me in a few words what you did?";
+      nextQuestion = "";
+      subtleRecast = "";
+      awaitingEnglishRetry = false;
+      learnerComfortLanguage = 'english';
+    } else {
+      const polished = extractNaturalEnglishMeaning(cleanMsg);
+      understoodMeaning = `Learner shared: "${polished}"`;
+      const encouragements = [
+        "Bahut badhiya! 👏 You expressed that so clearly.",
+        "Nice! 😊 You said that very naturally.",
+        "Awesome! That was very clear.",
+        "Very good! 😊 I understand you completely."
+      ];
+      const idx = Math.abs(cleanMsg.length + exchangeCount) % encouragements.length;
+      naturalResponse = encouragements[idx];
+      nextQuestion = shouldEnd 
+        ? "It was so wonderful chatting with you! Would you like to see our chat report?" 
+        : (exchangeCount % 2 === 0 ? "What else did you do today?" : "");
+      subtleRecast = polished;
+      awaitingEnglishRetry = false;
+      learnerComfortLanguage = 'english';
+    }
+  }
+
+  const canonicalMeaning = validateAndGroundMeaning(cleanMsg, {
+    subtleRecast,
+    topic: sheekoExtraction.activities[0] || 'Daily Routine',
+  }, sheekoExtraction);
+
+  return {
+    understoodMeaning,
+    naturalResponse,
+    nextQuestion: awaitingEnglishRetry ? "" : nextQuestion,
+    subtleRecast,
+    awaitingEnglishRetry,
+    learnerComfortLanguage,
+    newFacts: canonicalMeaning.groundedFacts,
+    topic: "Daily Life & Experiences",
+    conversationDepth: exchangeCount,
+    needsClarification,
+    shouldEnd,
+    canonicalMeaning,
+    providerUsed: needsClarification ? 'clarification_fallback' : 'sheeko_local',
+    responseTimeMs: 0,
+  };
+}
+
+/**
+ * Main Conversation Orchestrator Entry Point
+ * Executes the strict AI Cascade: Groq -> Gemini -> Sheeko Local -> Clarification
+ */
+export async function orchestrateConversationTurn(
+  input: ConversationOrchestrationInput
+): Promise<ConversationOrchestrationResult> {
+  const startTime = Date.now();
+  const cleanMsg = (input.learnerMessage || "").trim();
+  const currentExchanges = typeof input.exchangeCount === 'number' ? input.exchangeCount : 1;
+  const wasAwaitingRetry = Boolean(input.wasAwaitingEnglishRetry);
+
+  // Extract baseline local deterministic facts using Sheeko
+  const sheekoExtraction = parseLearnerStoryToMeaningRepresentation(cleanMsg);
+
+  // If input is empty, return initial greeting directly
+  if (!cleanMsg) {
+    return buildSheekoBuddyFallback(cleanMsg, wasAwaitingRetry, currentExchanges, sheekoExtraction);
+  }
+
+  const groqKey = process.env.GROQ_API_KEY;
+  const geminiKey = process.env.GEMINI_API_KEY;
+
+  const userContextJson = JSON.stringify({
+    exchangeCount: currentExchanges,
+    history: input.history || [],
+    latestLearnerMessage: cleanMsg,
+    wasAwaitingEnglishRetry: wasAwaitingRetry,
+    localSheekoExtractedFacts: sheekoExtraction.activities,
+  });
+
+  // ==========================================
+  // LEVEL 1: Primary LLM (Groq / Llama 3.1)
+  // ==========================================
+  if (groqKey && groqKey.trim() && checkCircuit(groqHealth)) {
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+
+      const response = await fetch(GROQ_API_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${groqKey.trim()}`,
+        },
+        signal: controller.signal,
+        body: JSON.stringify({
+          model: "llama-3.1-8b-instant",
+          messages: [
+            { role: "system", content: BUDDY_SYSTEM_PROMPT },
+            { role: "user", content: userContextJson },
+          ],
+          temperature: 0.5,
+          max_tokens: 500,
+          response_format: { type: "json_object" },
+        }),
+      });
+
+      clearTimeout(timeoutId);
+
+      if (response.ok) {
+        const data = await response.json();
+        const content = data?.choices?.[0]?.message?.content;
+        const parsed = parseJsonSafely(content);
+
+        if (parsed && typeof parsed.naturalResponse === 'string' && parsed.naturalResponse.trim()) {
+          recordSuccess(groqHealth, "Groq");
+          const canonical = validateAndGroundMeaning(cleanMsg, parsed, sheekoExtraction);
+
+          const isAwaiting = Boolean(parsed.awaitingEnglishRetry);
+          const enforcedNextQuestion = isAwaiting ? "" : (parsed.nextQuestion || "").trim();
+
+          const duration = Date.now() - startTime;
+          console.info(`[ConversationOrchestrator] Level 1 (Groq) succeeded in ${duration}ms (AwaitingRetry: ${isAwaiting})`);
+
+          return {
+            understoodMeaning: parsed.understoodMeaning || `Learner expressed: "${cleanMsg}"`,
+            naturalResponse: parsed.naturalResponse.trim(),
+            nextQuestion: enforcedNextQuestion,
+            subtleRecast: (parsed.subtleRecast || "").trim(),
+            awaitingEnglishRetry: isAwaiting,
+            learnerComfortLanguage: parsed.learnerComfortLanguage || 'english',
+            newFacts: canonical.groundedFacts,
+            topic: parsed.topic || "Daily Routine",
+            conversationDepth: currentExchanges,
+            needsClarification: Boolean(parsed.needsClarification),
+            shouldEnd: Boolean(parsed.shouldEnd) || currentExchanges >= 13,
+            canonicalMeaning: canonical,
+            providerUsed: 'groq',
+            responseTimeMs: duration,
+          };
+        }
+      } else {
+        recordFailure(groqHealth, "Groq", `HTTP ${response.status}`);
+      }
+    } catch (groqErr: any) {
+      recordFailure(groqHealth, "Groq", groqErr?.message || groqErr);
+      console.warn(`[ConversationOrchestrator] Groq call failed or timed out (${groqErr?.message || groqErr}), cascading to Secondary LLM (Gemini)...`);
+    }
+  }
+
+  // ==========================================
+  // LEVEL 2: Secondary LLM (Gemini Flash)
+  // ==========================================
+  if (geminiKey && geminiKey.trim() && checkCircuit(geminiHealth)) {
+    try {
+      const geminiPromise = generateGeminiContent({
+        apiKey: geminiKey.trim(),
+        contents: `${BUDDY_SYSTEM_PROMPT}\n\nUser Context:\n${userContextJson}`,
+        responseMimeType: "application/json",
+        temperature: 0.5,
+      });
+
+      // Bounded timeout race for Gemini
+      const timeoutPromise = new Promise<null>((_, reject) => 
+        setTimeout(() => reject(new Error("Gemini timeout exceeded")), REQUEST_TIMEOUT_MS)
+      );
+
+      const geminiText = await Promise.race([geminiPromise, timeoutPromise]);
+
+      if (geminiText) {
+        const parsed = parseJsonSafely(geminiText);
+        if (parsed && typeof parsed.naturalResponse === 'string' && parsed.naturalResponse.trim()) {
+          recordSuccess(geminiHealth, "Gemini");
+          const canonical = validateAndGroundMeaning(cleanMsg, parsed, sheekoExtraction);
+
+          const isAwaiting = Boolean(parsed.awaitingEnglishRetry);
+          const enforcedNextQuestion = isAwaiting ? "" : (parsed.nextQuestion || "").trim();
+
+          const duration = Date.now() - startTime;
+          console.info(`[ConversationOrchestrator] Level 2 (Gemini) succeeded in ${duration}ms (AwaitingRetry: ${isAwaiting})`);
+
+          return {
+            understoodMeaning: parsed.understoodMeaning || `Learner expressed: "${cleanMsg}"`,
+            naturalResponse: parsed.naturalResponse.trim(),
+            nextQuestion: enforcedNextQuestion,
+            subtleRecast: (parsed.subtleRecast || "").trim(),
+            awaitingEnglishRetry: isAwaiting,
+            learnerComfortLanguage: parsed.learnerComfortLanguage || 'english',
+            newFacts: canonical.groundedFacts,
+            topic: parsed.topic || "Daily Routine",
+            conversationDepth: currentExchanges,
+            needsClarification: Boolean(parsed.needsClarification),
+            shouldEnd: Boolean(parsed.shouldEnd) || currentExchanges >= 13,
+            canonicalMeaning: canonical,
+            providerUsed: 'gemini',
+            responseTimeMs: duration,
+          };
+        }
+      }
+    } catch (geminiErr: any) {
+      recordFailure(geminiHealth, "Gemini", geminiErr?.message || geminiErr);
+      console.warn(`[ConversationOrchestrator] Gemini call failed or timed out (${geminiErr?.message || geminiErr}), cascading to Level 3 (Sheeko Local)...`);
+    }
+  }
+
+  // ==========================================
+  // LEVEL 3 & 4: Deterministic Local Sheeko Fallback / Safe Clarification
+  // ==========================================
+  const duration = Date.now() - startTime;
+  console.info(`[ConversationOrchestrator] Level 3 (Local Sheeko Engine) executing deterministic resolution in ${duration}ms`);
+  const sheekoResult = buildSheekoBuddyFallback(cleanMsg, wasAwaitingRetry, currentExchanges, sheekoExtraction);
+  sheekoResult.responseTimeMs = Date.now() - startTime;
+  return sheekoResult;
+}
