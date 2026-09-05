@@ -102,26 +102,63 @@ export function extractNaturalEnglishMeaning(text: string): string {
 
     // Apply Hindi / Hinglish to natural English deterministic models
     s = s
+      // Complex multi-clause sentences
       .replace(/\bkal maine naya phone (khareeda|kharida|liya),?\s*par wo chal nahi raha tha,?\s*toh maine customer care ko phone lagaya aur unhone bola kal aao\b/gi, 'Yesterday I bought a new phone, but it was not working, so I called customer care and they told me to come tomorrow')
+      
+      // Food, meals & negations
+      .replace(/\b(maine khana nahi khaya|maine khana nahin khaya|khana nahi khaya|khana nahin khaya|maine khana nahi khaya tha)\b/gi, 'I have not eaten food')
+      .replace(/\b(maine dinner nahi kiya|dinner nahi kiya|dinner nahi khaya)\b/gi, 'I have not had dinner')
+      .replace(/\b(maine lunch nahi kiya|lunch nahi kiya|lunch nahi khaya)\b/gi, 'I have not had lunch')
+      .replace(/\b(maine breakfast nahi kiya|breakfast nahi kiya|nashta nahi kiya)\b/gi, 'I have not had breakfast')
+      .replace(/\b(chai nahi pee|chai nahi pi|chai nahi li)\b/gi, 'I did not have tea')
+      .replace(/\b(chai pee|chai pi|chai pi li|chai li)\b/gi, 'I had a cup of tea')
+      .replace(/\b(paani nahi piya|pani nahi piya)\b/gi, 'I did not drink water')
+      .replace(/\b(bhookh lagi hai|bhookh lagi thi|bhookh lag rahi hai)\b/gi, 'I am feeling hungry')
+      .replace(/\b(maine khana kha liya|khana kha liya|dinner kar liya|lunch kar liya|nashta kar liya)\b/gi, 'I have had my food')
+
+      // Purchases & objects
       .replace(/\b(my brother buy phone|brother buy phone)\b/gi, 'My brother bought a phone')
       .replace(/\b(i buy phone|i buy new phone)\b/gi, 'I bought a new phone')
+      .replace(/\b(naya phone khareeda|naya phone liya|new phone buy kiya)\b/gi, 'I bought a new phone')
       .replace(/\bbuy phone\b/gi, 'bought a phone')
       .replace(/\bbought phone\b/gi, 'bought a phone')
-      .replace(/\bkal main market gaya aur sabzi khareedi|kal main market gaya aur sabji khareedi|kal market gaya aur sabzi kharidi\b/gi, 'Yesterday I went to the market and bought vegetables')
-      .replace(/\b(yesterday i go market and buy vegetable|yesterday i go market and buy vegetables)\b/gi, 'Yesterday I went to the market and bought vegetables')
-      .replace(/\b(papa ne bill pay kiya|papa ne bill bhara)\b/gi, 'My father paid the electricity bill')
-      .replace(/\b(kal main market gaya|kal market gaya tha)\b/gi, 'Yesterday I went to the market')
-      .replace(/\b(sabzi khareedi|sabji kharidi|sabzi li)\b/gi, 'bought vegetables')
+
+      // Routine & Home
+      .replace(/\b(ghar par hi tha|ghar par tha|ghar mein tha|ghar pe tha)\b/gi, 'I stayed at home today')
+      .replace(/\b(kuch nahi kiya|aaj kuch nahi kiya|kuch khas nahi kiya)\b/gi, "I didn't do anything special today")
+      .replace(/\b(so nahi paya|neend nahi aayi|soya nahi)\b/gi, "I couldn't sleep well")
+      .replace(/\b(subah jaldi utha|jaldi uth gaya)\b/gi, 'I woke up early in the morning')
+      .replace(/\b(der se utha|late utha)\b/gi, 'I woke up late today')
+      .replace(/\b(so gaya|so gaya tha)\b/gi, 'I went to sleep')
+      .replace(/\b(padhai ki|padhai kar raha tha)\b/gi, 'I was studying')
+      .replace(/\b(padhai nahi ki)\b/gi, 'I did not study today')
+
+      // Health & Mood
+      .replace(/\b(tabiyat theek nahi hai|tabiyat kharab hai|tabiyat thik nahi)\b/gi, 'I am not feeling well')
+      .replace(/\b(sar dard ho raha hai|headache hai|sar dard tha)\b/gi, 'I have a headache')
       .replace(/\b(aaj mera din (acha|accha|theek) nahi tha|din acha nahi tha|aaj din kharab tha)\b/gi, 'My day was not good')
       .replace(/\b(aaj mera din (acha|accha|theek|badhiya) tha)\b/gi, 'My day was good today')
+      .replace(/\b(bahut thak gaya hoon|thak gaya|bohot thaka tha|bohot thak gaya)\b/gi, 'I was very tired today')
       .replace(/\b(my day not good|my day no good)\b/gi, 'My day was not good')
       .replace(/\b(day not good|day no good)\b/gi, 'The day was not good')
       .replace(/\b(i not good)\b/gi, 'I was not feeling good')
-      .replace(/\b(maine khana kha liya|khana kha liya|dinner kar liya)\b/gi, 'I have had my food')
+
+      // Social & People
+      .replace(/\b(papa ne bill pay kiya|papa ne bill bhara)\b/gi, 'My father paid the electricity bill')
+      .replace(/\b(dost se mila|dosto se mila|friends se mila)\b/gi, 'I met my friends')
+      .replace(/\b(dost se baat ki|dosto ke sath tha)\b/gi, 'I talked to my friends')
+      .replace(/\b(kisi se baat nahi ki)\b/gi, "I didn't talk to anyone")
+
+      // Sports & Outings
       .replace(/\b(khelne nahi gaya|aaj khelne nahi gaya|match nahi khela)\b/gi, "I didn't go out to play today")
-      .replace(/\b(bahut thak gaya hoon|thak gaya|bohot thaka tha)\b/gi, 'I was very tired today')
-      .replace(/\b(kaam par tha|office mein busy tha)\b/gi, 'I was busy with work')
+      .replace(/\b(khelne gaya|cricket khela|match khela)\b/gi, 'I went out to play cricket')
+      .replace(/\b(kal main market gaya aur sabzi khareedi|kal main market gaya aur sabji khareedi|kal market gaya aur sabzi kharidi)\b/gi, 'Yesterday I went to the market and bought vegetables')
+      .replace(/\b(yesterday i go market and buy vegetable|yesterday i go market and buy vegetables)\b/gi, 'Yesterday I went to the market and bought vegetables')
+      .replace(/\b(kal main market gaya|kal market gaya tha)\b/gi, 'Yesterday I went to the market')
+      .replace(/\b(sabzi khareedi|sabji kharidi|sabzi li)\b/gi, 'bought vegetables')
       .replace(/\b(market gaya tha|shopping gaya tha)\b/gi, 'I went to the market')
+      .replace(/\b(office nahi gaya|aaj office nahi gaya)\b/gi, 'I did not go to the office today')
+      .replace(/\b(kaam par tha|office mein busy tha|bahut kaam tha)\b/gi, 'I was busy with work')
       .replace(/\btoday morning\b/gi, 'this morning')
       .replace(/\byesterday night\b/gi, 'last night')
       .replace(/\bcame late to office\b/gi, 'arrived late at the office')

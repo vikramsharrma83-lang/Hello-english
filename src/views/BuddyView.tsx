@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion } from 'motion/react';
 import { 
   Mic, 
   MicOff, 
@@ -67,7 +67,7 @@ interface BuddyViewProps {
   language?: 'en' | 'hi';
 }
 
-export const BuddyView: React.FC<BuddyViewProps> = ({ onStartPractice, onBack, language = 'en' }) => {
+export const BuddyView: React.FC<BuddyViewProps> = ({ onBack }) => {
   const [messages, setMessages] = useState<BuddyMessage[]>([
     {
       id: '1',
@@ -84,7 +84,7 @@ export const BuddyView: React.FC<BuddyViewProps> = ({ onStartPractice, onBack, l
   const [summaryData, setSummaryData] = useState<BuddySummary | null>(null);
   const [isLoadingSummary, setIsLoadingSummary] = useState(false);
   const [isProgressScreenOpen, setIsProgressScreenOpen] = useState(false);
-  const [voiceEnabled, setVoiceEnabled] = useState(true);
+  const [voiceEnabled] = useState(true);
   const [currentVoice, setCurrentVoice] = useState(getPreferredVoice());
   const [playingId, setPlayingId] = useState<string | null>(null);
 
@@ -116,7 +116,7 @@ export const BuddyView: React.FC<BuddyViewProps> = ({ onStartPractice, onBack, l
     if (!voiceEnabled || messages.length === 0 || isSummaryView) return;
     const lastMsg = messages[messages.length - 1];
     if (lastMsg.sender === 'buddy') {
-      // Guard against duplicate playback of the same message (e.g. StrictMode, double mount, or state re-evaluation)
+      // Guard against duplicate playback of the same message
       if (spokenMessageIdsRef.current.has(lastMsg.id)) {
         return;
       }
@@ -126,7 +126,7 @@ export const BuddyView: React.FC<BuddyViewProps> = ({ onStartPractice, onBack, l
       speakText(
         lastMsg.text,
         'en-IN',
-        0.92,
+        0.94,
         () => {
           setPlayingId(null);
         },
@@ -183,6 +183,58 @@ export const BuddyView: React.FC<BuddyViewProps> = ({ onStartPractice, onBack, l
     }
   };
 
+  const fetchSummary = async (conversationHistory: BuddyMessage[]) => {
+    setIsLoadingSummary(true);
+    try {
+      const response = await fetch('/api/buddy-chat/summary', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ history: conversationHistory })
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setSummaryData(data);
+        setIsSummaryView(true);
+      } else {
+        throw new Error("Summary API failed");
+      }
+    } catch (e) {
+      console.warn("Using fallback summary payload", e);
+      const fallbackSummary: BuddySummary = {
+        whatWeTalkedAbout: "Daily activities, routine management, and expressing completion states.",
+        overallScore: 84,
+        detailedScores: {
+          overallScore: 84,
+          expression: { score: 85, rating: "Good" },
+          grammar: { score: 80, rating: "Getting Better" },
+          sentenceMaking: { score: 85, rating: "Good" },
+          details: { score: 85, rating: "Good" },
+          confidence: { score: 90, rating: "Great" }
+        },
+        ratings: {
+          speaking: 'Good',
+          fluency: 'Getting Better',
+          confidence: 'Great',
+          conversationFlow: 'Good'
+        },
+        strengths: ["Strong voice clarity during imitation retries", "Excellent response initiative"],
+        improvementAreas: ["Tense agreement when stating past actions"],
+        naturalCorrections: [
+          {
+            learnerSaid: "My brother buy phone.",
+            betterEnglish: "My brother bought a phone.",
+            explanation: "Past events use past tense 'bought' instead of root verb 'buy'."
+          }
+        ],
+        nextTimeGoal: "Consolidate simple past tense sentences containing action verbs explicitly."
+      };
+      setSummaryData(fallbackSummary);
+      setIsSummaryView(true);
+    } finally {
+      setIsLoadingSummary(false);
+    }
+  };
+
   const handleSend = async (textToSend?: string) => {
     const text = textToSend || inputMessage;
     if (!text.trim() || isThinking) return;
@@ -190,7 +242,7 @@ export const BuddyView: React.FC<BuddyViewProps> = ({ onStartPractice, onBack, l
     if (isRecording && recognitionRef.current) {
       try {
         recognitionRef.current.stop();
-      } catch (e) {}
+      } catch (_) {}
       setIsRecording(false);
     }
 
@@ -247,9 +299,7 @@ export const BuddyView: React.FC<BuddyViewProps> = ({ onStartPractice, onBack, l
       setMessages(prev => [...prev, buddyMsg]);
       setIsThinking(false);
 
-      // If shouldEnd is true or exchangeCount reaches 13+, prompt or auto-show summary
       if (data.shouldEnd || newExchanges >= 13) {
-        // Automatically fetch and show summary after a short pause
         setTimeout(() => {
           fetchSummary([...updatedMessages, buddyMsg]);
         }, 1500);
@@ -257,46 +307,17 @@ export const BuddyView: React.FC<BuddyViewProps> = ({ onStartPractice, onBack, l
     } catch (err) {
       console.error("Buddy chat error:", err);
       setIsThinking(false);
-      const fallbackMsg: BuddyMessage = {
+      
+      const errorMsg: BuddyMessage = {
         id: (Date.now() + 1).toString(),
         sender: 'buddy',
-        text: "I'm listening and understand you completely 😊 Take your time.",
+        text: "Main samajh gaya! Kya aap isse English mein bolne ki koshish karenge? Main sun raha hoon. 😊",
         nextQuestion: '',
         subtleRecast: '',
-        awaitingEnglishRetry: false,
+        awaitingEnglishRetry: true,
         timestamp: Date.now()
       };
-      setMessages(prev => [...prev, fallbackMsg]);
-    }
-  };
-
-  const fetchSummary = async (currentHistory: BuddyMessage[]) => {
-    setIsLoadingSummary(true);
-    try {
-      const response = await fetch('/api/buddy-chat/summary', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ history: currentHistory })
-      });
-      const data = await response.json();
-      setSummaryData(data);
-      setIsLoadingSummary(false);
-      setIsSummaryView(true);
-    } catch (err) {
-      console.error("Summary fetch error:", err);
-      setIsLoadingSummary(false);
-      // Fallback summary
-      setSummaryData({
-        whatWeTalkedAbout: "You had a natural conversation about your daily life and activities.",
-        ratings: { speaking: 'Good', fluency: 'Getting Better', confidence: 'Good', conversationFlow: 'Good' },
-        strengths: ["Expressed ideas clearly", "Maintained conversation flow"],
-        improvementAreas: ["Use past tense verbs", "Add more descriptive details"],
-        naturalCorrections: [
-          { learnerSaid: "I go to office", betterEnglish: "I went to the office", explanation: "Use past tense for completed actions." }
-        ],
-        nextTimeGoal: "Try adding time expressions to your sentences."
-      });
-      setIsSummaryView(true);
+      setMessages(prev => [...prev, errorMsg]);
     }
   };
 
@@ -349,7 +370,7 @@ export const BuddyView: React.FC<BuddyViewProps> = ({ onStartPractice, onBack, l
           </button>
         </div>
 
-        {/* Large Overall Confidence Hero Banner (Clickable to open 30-Day Graph) */}
+        {/* Large Overall Confidence Hero Banner */}
         {summaryData.detailedScores && (
           <div 
             onClick={() => setIsProgressScreenOpen(true)}
@@ -407,7 +428,7 @@ export const BuddyView: React.FC<BuddyViewProps> = ({ onStartPractice, onBack, l
             </p>
           </section>
 
-          {/* 2. My English Today (Scoring Breakdown) */}
+          {/* 2. My English Today */}
           {summaryData.detailedScores && (
             <section className="bg-white border border-zinc-200/90 rounded-2xl p-5 shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
               <div className="mb-3.5">
@@ -640,7 +661,7 @@ export const BuddyView: React.FC<BuddyViewProps> = ({ onStartPractice, onBack, l
                         setPlayingId(null);
                       } else {
                         setPlayingId(msg.id);
-                        speakText(msg.text, 'en-IN', 0.92, () => setPlayingId(null), currentVoice);
+                        speakText(msg.text, 'en-IN', 0.94, () => setPlayingId(null), currentVoice);
                       }
                     }}
                     className="shrink-0 p-1.5 text-zinc-400 hover:text-sky-300 hover:bg-zinc-800/80 rounded-lg transition-colors cursor-pointer"
